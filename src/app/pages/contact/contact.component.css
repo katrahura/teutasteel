@@ -1,15 +1,40 @@
-/* .contact-page {
-  background: linear-gradient(135deg, #D3D3D3, #FFFFFF);
-  animation: gradientAnimation 10s ease infinite;
+.container {
+  max-width: 600px;
+  margin: 0 auto; /* Center the container */
+  background-color: #f8f9fa; /* Light background for the form */
+  padding: 30px;
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
 
-  } */
-  @keyframes gradientAnimation {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }}
+.contact-form .form-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.contact-form .form-control {
+  border-radius: 5px; /* Soft rounded corners */
+}
+
+.contact-form textarea {
+  resize: none; /* Disable resize for consistency */
+}
+
+.contact-form button {
+  width: 100%; /* Make the button full width */
+  padding: 10px;
+  font-size: 1.2rem;
+}
+
+.contact-form button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+h2 {
+  color: #333;
+}
+
+body {
+  background-color: #eef2f5; /* Light background to contrast with the form */
+}
