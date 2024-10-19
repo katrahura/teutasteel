@@ -1,12 +1,4 @@
-.navbar-brand {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  
-  .navbar-nav .nav-item .nav-link {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-  }
+
  
   
   @keyframes gradientAnimation {
@@ -17,11 +9,7 @@
       background-position: 100% 50%;
     }
   }
-  .navbar {
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-    overflow: hidden; /* Ensures no content overflows outside the rounded corners */
-  }
+  
   footer {
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
@@ -55,3 +43,113 @@
     animation: gradientAnimation 5s ease infinite alternate;  /* 'alternate' ensures reverse */
 
   }
+.language-selector {
+  margin: 1rem;
+}
+
+.lang-circle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  margin: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.lang-circle:hover {
+  transform: translateY(-5px);
+}
+
+/* Specific colors for each language circle */
+.lang-circle.al {
+  background-color: #e63946; /* Red for Albanian */
+}
+
+.lang-circle.en {
+  background-color: #007bff; /* Blue for English */
+}
+
+.lang-circle.sb {
+  background-color: #6a994e; /* Green for Serbian */
+}
+
+/* Hover and Active Styles */
+.lang-circle.al:hover {
+  background-color: #d62839;
+}
+
+.lang-circle.en:hover {
+  background-color: #0056b3;
+}
+
+.lang-circle.sb:hover {
+  background-color: #4b8655;
+}
+
+.lang-circle.active {
+  border-color: #333; /* Different border color when active */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+.language-selector {
+  margin: 1rem;
+}
+
+.lang-circle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  margin: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.lang-circle:hover {
+  transform: translateY(-5px);
+}
+
+/* Specific colors for each language circle */
+.lang-circle.al {
+  background-color: #e63946; /* Red for Albanian */
+}
+
+.lang-circle.en {
+  background-color: #007bff; /* Blue for English */
+}
+
+.lang-circle.sb {
+  background-color: #6a994e; /* Green for Serbian */
+}
+
+/* Hover and Active Styles */
+.lang-circle.al:hover {
+  background-color: #d62839;
+}
+
+.lang-circle.en:hover {
+  background-color: #0056b3;
+}
+
+.lang-circle.sb:hover {
+  background-color: #4b8655;
+}
+
+.lang-circle.active {
+  border-color: #333; /* Different border color when active */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}

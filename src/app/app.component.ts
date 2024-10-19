@@ -2,18 +2,24 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule,NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule,CommonModule],  // Import RouterModule to enable routerLink
+  imports: [RouterModule,CommonModule,TranslateModule,NgbDropdownModule],  // Import RouterModule to enable routerLink
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   currentRoute: string = '';
 
-  constructor(private router: Router) {
+  constructor(private router: Router,private translate: TranslateService) {
     // Detect route changes and update the currentRoute variable
+    this.translate.setDefaultLang('en');
+
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
@@ -32,5 +38,7 @@ export class AppComponent {
       return 'default-gradient'; // Fallback for the home or other pages
     }
   }
-  
+  switchLanguage(lang: string) {
+    this.translate.use(lang);
+  }
 }

@@ -1,43 +1,42 @@
 <section class="about-us py-5">
-    <div class="container">
-      <h2 class="text-center mb-4">About Us</h2>
-      <div class="row">
-        <div class="col-md-6">
-          <h3>Our Mission</h3>
-          <p>At <strong>TeutaSteel</strong>, our mission is to provide reliable and superior steel solutions tailored to the unique needs of our clients. Whether you’re looking for structural steel, pipes, or custom-made steel components, we deliver products that exceed industry standards and ensure long-lasting performance.</p>
-        </div>
-        <div class="col-md-6">
-          <h3>What We Offer</h3>
-          <ul>
-            <li><strong>Galvanized Steel Pipes:</strong> Available in a wide range of dimensions and thicknesses, suitable for industrial, commercial, and residential applications.</li>
-            <li><strong>Steel Sheets:</strong> High-quality sheets designed for various construction and manufacturing purposes, offering durability and corrosion resistance.</li>
-            <li><strong>Custom Solutions:</strong> We offer custom steel solutions tailored to your exact specifications.</li>
-          </ul>
-        </div>
+  <div class="container">
+    <h2 class="text-center mb-4">{{ 'ABOUT.TITLE' | translate }}</h2>
+    <div class="row">
+      <div class="col-md-6">
+        <h3>{{ 'ABOUT.MISSION_TITLE' | translate }}</h3>
+        <p [innerHTML]="'ABOUT.MISSION_CONTENT' | translate"></p>
       </div>
-      
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <h3>Our Values</h3>
-          <ul>
-            <li><strong>Quality First:</strong> We believe that quality is the foundation of our success. Each product undergoes rigorous testing to ensure it meets the highest standards.</li>
-            <li><strong>Customer Focus:</strong> We strive to build long-term relationships with our customers by providing exceptional service and support.</li>
-            <li><strong>Sustainability:</strong> TeutaSteel is committed to sustainable practices, including responsible sourcing of materials and minimizing our environmental impact.</li>
-          </ul>
-        </div>
-        <div class="col-md-6">
-          <h3>Why Choose Us?</h3>
-          <ul>
-            <li><strong>Expertise:</strong> With years of experience in the steel industry, our team is equipped with the knowledge and expertise to meet your needs.</li>
-            <li><strong>Innovation:</strong> We continuously invest in cutting-edge technology and processes to stay at the forefront of the industry.</li>
-            <li><strong>Reliable Delivery:</strong> We understand the importance of timely delivery. TeutaSteel ensures that your products are delivered on time, every time.</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="text-center mt-5">
-        <a href="/contact" class="btn btn-primary btn-lg">Contact Us</a>
+      <div class="col-md-6">
+        <h3>{{ 'ABOUT.OFFER_TITLE' | translate }}</h3>
+        <ul>
+          <li><strong>{{ 'ABOUT.OFFER_LIST.PIPES' | translate }}</strong></li>
+          <li><strong>{{ 'ABOUT.OFFER_LIST.SHEETS' | translate }}</strong></li>
+          <li><strong>{{ 'ABOUT.OFFER_LIST.CUSTOM_SOLUTIONS' | translate }}</strong></li>
+        </ul>
       </div>
     </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h3>{{ 'ABOUT.VALUES_TITLE' | translate }}</h3>
+        <ul>
+          <li><strong>{{ 'ABOUT.VALUES_LIST.QUALITY_FIRST' | translate }}</strong></li>
+          <li><strong>{{ 'ABOUT.VALUES_LIST.CUSTOMER_FOCUS' | translate }}</strong></li>
+          <li><strong>{{ 'ABOUT.VALUES_LIST.SUSTAINABILITY' | translate }}</strong></li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <h3>{{ 'ABOUT.WHY_US_TITLE' | translate }}</h3>
+        <ul>
+          <li><strong>{{ 'ABOUT.WHY_US_LIST.EXPERTISE' | translate }}</strong></li>
+          <li><strong>{{ 'ABOUT.WHY_US_LIST.INNOVATION' | translate }}</strong></li>
+          <li><strong>{{ 'ABOUT.WHY_US_LIST.DELIVERY' | translate }}</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="text-center mt-5">
+      <a href="/contact" class="btn btn-primary btn-lg">{{ 'ABOUT.CONTACT_BUTTON' | translate }}</a>
+    </div>
+  </div>
 </section>
-  

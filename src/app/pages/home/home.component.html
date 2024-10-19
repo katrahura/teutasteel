@@ -1,21 +1,19 @@
+<section class="px-3">
 
-<section class="px-3" >
-
+  <!-- Hero Section -->
   <section class="hero-section text-center py-5" 
-  style="background-image: url('https://picsum.photos/300/200'); background-size: cover;">
-<div class="container">
-  <h1 class="display-4 text-white">Welcome to TeutaSteel</h1>
-  <p class="lead text-white">High-quality galvanized steel products for every need</p>
-  <a class="btn btn-primary btn-lg" routerLink="/products">Explore Our Products</a>
-</div>
-</section>
-
-  
+           style="background-image: url('https://picsum.photos/300/200'); background-size: cover;">
+    <div class="container">
+      <h1 class="display-4 text-white">{{ 'HOME.HERO_TITLE' | translate }}</h1>
+      <p class="lead text-white">{{ 'HOME.HERO_SUBTITLE' | translate }}</p>
+      <a class="btn btn-primary btn-lg" routerLink="/products">{{ 'HOME.HERO_BUTTON' | translate }}</a>
+    </div>
+  </section>
 
   <!-- Products Section -->
   <section class="products-section py-5">
     <div class="container">
-      <h2 class="text-center mb-5">Our Top Products</h2>
+      <h2 class="text-center mb-5">{{ 'HOME.TOP_PRODUCTS_TITLE' | translate }}</h2>
       <div class="row">
         <!-- Product Cards -->
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let product of products">
@@ -24,81 +22,71 @@
             <div class="card-body">
               <h5 class="card-title">{{product.name}}</h5>
               <p class="card-text">{{product.description}}</p>
-              <a href="#" class="btn btn-primary">View Details</a>  
+              <a href="#" class="btn btn-primary">{{ 'HOME.VIEW_DETAILS_BUTTON' | translate }}</a>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
   </section>
 
+  <!-- Featured Products Section -->
   <section class="featured-products py-5">
     <div class="container">
-      <h2 class="text-center mb-4">Featured Products</h2>
+      <h2 class="text-center mb-4">{{ 'HOME.FEATURED_PRODUCTS_TITLE' | translate }}</h2>
       <div id="featuredProductsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-        
-
-  
-        <!-- Carousel items -->
         <div class="carousel-inner">
           <div class="carousel-item active" *ngFor="let product of featuredProducts; let i = index" [class.active]="i === 0">
             <div class="row justify-content-center">
               <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                 <div class="card h-100 position-relative">
-                  <span *ngIf="product.isNew" class="badge bg-primary position-absolute top-0 start-0">New</span>
+                  <span *ngIf="product.isNew" class="badge bg-primary position-absolute top-0 start-0">{{ 'HOME.NEW_BADGE' | translate }}</span>
                   <img [src]="product.image" class="card-img-top" alt="{{product.name}}" loading="lazy">
-                  <div class="card-img-overlay">
+                  <div class="card-body text-center">
                     <h5 class="card-title">{{product.name}}</h5>
                     <p class="card-text">{{product.description}}</p>
-                  </div>
-                  <div class="card-body text-center">
-                    <button class="btn btn-success" (click)="contactViaWhatsApp(product)">Contact us via WhatsApp</button>
+                    <button class="btn btn-success" (click)="contactViaWhatsApp(product)">{{ 'HOME.CONTACT_BUTTON' | translate }}</button>
                   </div>
                 </div>
               </div>  
             </div>
           </div>
         </div>
-  
+
         <!-- Carousel controls -->
         <button class="carousel-control-prev" type="button" data-bs-target="#featuredProductsCarousel" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
+          <span class="visually-hidden">{{ 'HOME.PREVIOUS_BUTTON' | translate }}</span>
         </button>
         <button class="carousel-control-next" type="button" data-bs-target="#featuredProductsCarousel" data-bs-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
+          <span class="visually-hidden">{{ 'HOME.NEXT_BUTTON' | translate }}</span>
         </button>
       </div>
     </div>
   </section>
-  
-  
-  
-  <!-- Testimonials -->
+
+  <!-- Testimonials Section -->
   <section class="testimonials py-5 bg-light">
     <div class="container">
-      <h2 class="text-center mb-5">What Our Clients Say</h2>
+      <h2 class="text-center mb-5">{{ 'HOME.TESTIMONIALS_TITLE' | translate }}</h2>
       <div class="row">
         <div class="col-md-4">
           <blockquote class="blockquote">
-            <p>"TeutaSteel provides top-notch galvanized steel. We've used their products for years and are very satisfied."</p>
-            <footer class="blockquote-footer">John Doe, Industrial Contractor</footer>
+            <p>{{ 'HOME.TESTIMONIAL_1_TEXT' | translate }}</p>
+            <footer class="blockquote-footer">{{ 'HOME.TESTIMONIAL_1_AUTHOR' | translate }}</footer>
           </blockquote>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA Section -->
+  <!-- Call-to-Action Section -->
   <section class="cta-section text-center py-5 bg-primary text-white">
     <div class="container">
-      <h2>Ready to Order Your Steel Products?</h2>
-      <p>Contact us today to get a quote or learn more about our products and services.</p>
-      <a class="btn btn-lg btn-light" routerLink="/contact">Get in Touch</a>
+      <h2>{{ 'HOME.CTA_TITLE' | translate }}</h2>
+      <p>{{ 'HOME.CTA_TEXT' | translate }}</p>
+      <a class="btn btn-lg btn-light" routerLink="/contact">{{ 'HOME.CTA_BUTTON' | translate }}</a>
     </div>
   </section>
 </section>
-
- 

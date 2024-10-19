@@ -3,39 +3,46 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">TeutaSteel</a>
+        <a class="navbar-brand" href="#">{{ 'NAVBAR.BRAND' | translate }}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" [routerLink]="['/']" routerLinkActive="active">Home</a>
+              <a class="nav-link" [routerLink]="['/']" routerLinkActive="active">{{ 'NAVBAR.HOME' | translate }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" [routerLink]="['/products']" routerLinkActive="active">Products</a>
+              <a class="nav-link" [routerLink]="['/products']" routerLinkActive="active">{{ 'NAVBAR.PRODUCTS' | translate }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" [routerLink]="['/about']" routerLinkActive="active">About Us</a>
+              <a class="nav-link" [routerLink]="['/about']" routerLinkActive="active">{{ 'NAVBAR.ABOUT_US' | translate }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" [routerLink]="['/contact']" routerLinkActive="active">Contact</a>
+              <a class="nav-link" [routerLink]="['/contact']" routerLinkActive="active">{{ 'NAVBAR.CONTACT' | translate }}</a>
             </li>
+          </ul>
+
+          <!-- Language Selector -->
+          <ul class="navbar-nav">
+            <div class="language-selector d-flex justify-content-center">
+              <button class="lang-circle al" (click)="switchLanguage('al')">AL</button>
+              <button class="lang-circle en" (click)="switchLanguage('en')">EN</button>
+              <button class="lang-circle sb" (click)="switchLanguage('sb')">SB</button>
+            </div>
           </ul>
         </div>
       </div>
     </nav>
 
-      <router-outlet></router-outlet>
+    <!-- Main Content -->
+    <router-outlet></router-outlet>
 
-
-
-<router-outlet></router-outlet>
-
-<footer class="bg-light text-center text-lg-start" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
-  <div class="text-center p-3">
-    © 2024 TeutaSteel. All rights reserved.
+    <!-- Footer -->
+    <footer class="bg-light text-center text-lg-start" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+      <div class="text-center p-3">
+        {{ 'FOOTER.COPYRIGHT' | translate }}
+      </div>
+    </footer>
   </div>
-</footer>
-</div> 
 </section>

@@ -1,20 +1,20 @@
 <div class="container py-5">
-  <h2 class="text-center mb-4">Contact Us</h2>
+  <h2 class="text-center mb-4">{{ 'CONTACT.TITLE' | translate }}</h2>
   <form class="contact-form">
     <div class="mb-3">
-      <label for="name" class="form-label">Name</label>
-      <input type="text" class="form-control" id="name" placeholder="Your Name">
+      <label for="name" class="form-label">{{ 'CONTACT.NAME_LABEL' | translate }}</label>
+      <input type="text" class="form-control" id="name" placeholder="{{ 'CONTACT.NAME_PLACEHOLDER' | translate }}">
     </div>
     <div class="mb-3">
-      <label for="email" class="form-label">Email</label>
-      <input type="email" class="form-control" id="email" placeholder="name@example.com">
+      <label for="email" class="form-label">{{ 'CONTACT.EMAIL_LABEL' | translate }}</label>
+      <input type="email" class="form-control" id="email" placeholder="{{ 'CONTACT.EMAIL_PLACEHOLDER' | translate }}">
     </div>
     <div class="mb-3">
-      <label for="message" class="form-label">Message</label>
-      <textarea class="form-control" id="message" rows="4" placeholder="Type your message here..."></textarea>
+      <label for="message" class="form-label">{{ 'CONTACT.MESSAGE_LABEL' | translate }}</label>
+      <textarea class="form-control" id="message" rows="4" placeholder="{{ 'CONTACT.MESSAGE_PLACEHOLDER' | translate }}"></textarea>
     </div>
     <div class="text-center">
-      <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+      <button type="submit" class="btn btn-primary btn-lg">{{ 'CONTACT.SUBMIT_BUTTON' | translate }}</button>
     </div>
   </form>
 </div>
