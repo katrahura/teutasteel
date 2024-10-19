@@ -1,0 +1,57 @@
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .navbar-nav .nav-item .nav-link {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+ 
+  
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
+  .navbar {
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    overflow: hidden; /* Ensures no content overflows outside the rounded corners */
+  }
+  footer {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    overflow: hidden; /* Ensures no content overflows outside the rounded corners */
+
+  }
+  .default-gradient{
+
+    background: linear-gradient(135deg, #333333, #87CEFA); /* Dark gray to light blue */
+
+    min-height: 100vh;
+    animation: gradientAnimation 5s ease infinite alternate;  /* 'alternate' ensures reverse */
+  }
+  .products-gradient {
+    background: linear-gradient(135deg, #4F4F4F, #C0C0C0); /* Gray to silver */
+    min-height: 100vh;
+    animation: gradientAnimation 5s ease infinite alternate;  /* 'alternate' ensures reverse */
+
+  }
+  
+  .about-gradient {
+    background: linear-gradient(135deg, #ADD8E6, #D3D3D3); /* Light blue to soft gray */
+    min-height: 100vh;
+    animation: gradientAnimation 5s ease infinite alternate;  /* 'alternate' ensures reverse */
+
+  }
+  
+  .contact-gradient {
+    background: linear-gradient(135deg, #D3D3D3, #FFFFFF); /* Light gray to white */
+    min-height: 100vh;
+    animation: gradientAnimation 5s ease infinite alternate;  /* 'alternate' ensures reverse */
+
+  }
