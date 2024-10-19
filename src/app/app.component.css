@@ -43,113 +43,70 @@
     animation: gradientAnimation 5s ease infinite alternate;  /* 'alternate' ensures reverse */
 
   }
-.language-selector {
-  margin: 1rem;
+
+  .navbar {
+    position: relative;
+    z-index: 1000; /* Ensure it's layered above other content */
+    overflow: visible; /* Allow content like dropdowns to overflow */
+  }
+  .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .navbar-nav .nav-item .nav-link {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  .navbar {
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    overflow: hidden; /* Ensures no content overflows outside the rounded corners */
+  }
+ /* Logo styling */
+.logo {
+  height: 40px; /* Adjust this height based on your design */
+  margin-right: 10px; /* Space between the logo and the brand text */
 }
 
-.lang-circle {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  margin: 0 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
+.navbar-brand {
+  display: flex;
+  align-items: center; /* Align logo and text vertically */
+}
+.language-switcher {
+  display: flex;
+  align-items: center; /* Vertically center the logo and buttons */
+  gap: 5px; /* Space between the logo and buttons */
+}
+
+.lang-btn {
+  padding: 4px 8px;
+  border: 2px solid #007bff;
+  border-radius: 15px;
+  background-color: transparent;
+  color: #007bff;
+  font-size: 12px;
   font-weight: bold;
-  color: white;
-  transition: background-color 0.3s ease, transform 0.3s ease;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-.lang-circle:hover {
-  transform: translateY(-5px);
-}
-
-/* Specific colors for each language circle */
-.lang-circle.al {
-  background-color: #e63946; /* Red for Albanian */
-}
-
-.lang-circle.en {
-  background-color: #007bff; /* Blue for English */
-}
-
-.lang-circle.sb {
-  background-color: #6a994e; /* Green for Serbian */
-}
-
-/* Hover and Active Styles */
-.lang-circle.al:hover {
-  background-color: #d62839;
-}
-
-.lang-circle.en:hover {
-  background-color: #0056b3;
-}
-
-.lang-circle.sb:hover {
-  background-color: #4b8655;
-}
-
-.lang-circle.active {
-  border-color: #333; /* Different border color when active */
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-}
-.language-selector {
-  margin: 1rem;
-}
-
-.lang-circle {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  margin: 0 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  font-weight: bold;
+.lang-btn.active {
+  background-color: #007bff;
   color: white;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.lang-circle:hover {
-  transform: translateY(-5px);
+.lang-btn:hover {
+  background-color: #007bff;
+  color: white;
 }
 
-/* Specific colors for each language circle */
-.lang-circle.al {
-  background-color: #e63946; /* Red for Albanian */
+.logo {
+  height: 30px; /* Adjust the size of the logo */
+  margin-right: 10px; /* Space between the logo and buttons */
 }
 
-.lang-circle.en {
-  background-color: #007bff; /* Blue for English */
-}
 
-.lang-circle.sb {
-  background-color: #6a994e; /* Green for Serbian */
-}
 
-/* Hover and Active Styles */
-.lang-circle.al:hover {
-  background-color: #d62839;
-}
-
-.lang-circle.en:hover {
-  background-color: #0056b3;
-}
-
-.lang-circle.sb:hover {
-  background-color: #4b8655;
-}
-
-.lang-circle.active {
-  border-color: #333; /* Different border color when active */
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-}
+  
+ 

@@ -15,6 +15,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AppComponent {
   currentRoute: string = '';
+  currentLanguage = 'en'; // Default language is English
 
   constructor(private router: Router,private translate: TranslateService) {
     // Detect route changes and update the currentRoute variable
@@ -38,7 +39,8 @@ export class AppComponent {
       return 'default-gradient'; // Fallback for the home or other pages
     }
   }
-  switchLanguage(lang: string) {
-    this.translate.use(lang);
+  switchLanguage(language: string) {
+    this.currentLanguage = language;
+    this.translate.use(language); // Switch the language in ngx-translate
   }
 }

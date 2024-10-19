@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+/* Apply glow effect globally for all text elements */
+body, h1, h2, h3, p, a, span {
+    --text-color: rgb(0, 0, 0); /* Default text color */
+    --glow-color: rgba(255, 255, 255, 0); /* Default glow color */
+    color: var(--text-color);
+    text-shadow: 0.01em 0.01em 0.1em var(--glow-color);
+  }
+  
+  /* Specific style for headings if needed */
+  h1, h2 {
+    --text-color: #000000; /* Example custom text color for headings */
+    --glow-color: rgba(255, 255, 255, 0.4); /* Example custom glow color */
+  }
+  
+  /* You can also override glow color for other specific elements */
+  p {
+    --glow-color: rgba(255, 255, 255, 0.4); /* Custom glow color for paragraphs */
+  }
+  /* You can add global styles to this file, and also import other style files */
