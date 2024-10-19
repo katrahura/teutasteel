@@ -1,0 +1,74 @@
+{
+  "NAVBAR": {
+    "BRAND": "TeutaSteel",
+    "HOME": "Home",
+    "PRODUCTS": "Products",
+    "ABOUT_US": "About Us",
+    "CONTACT": "Contact"
+  },
+  "FOOTER": {
+    "COPYRIGHT": "© 2024 TeutaSteel. All rights reserved."
+  },
+  "ABOUT": {
+    "TITLE": "About Us",
+    "MISSION_TITLE": "Our Mission",
+    "MISSION_CONTENT": "At <strong>TeutaSteel</strong>, our mission is to provide reliable and superior steel solutions tailored to the unique needs of our clients. Whether you’re looking for structural steel, pipes, or custom-made steel components, we deliver products that exceed industry standards and ensure long-lasting performance.",
+    "OFFER_TITLE": "What We Offer",
+    "OFFER_LIST": {
+      "PIPES": "Galvanized Steel Pipes: Available in a wide range of dimensions and thicknesses, suitable for industrial, commercial, and residential applications.",
+      "SHEETS": "Steel Sheets: High-quality sheets designed for various construction and manufacturing purposes, offering durability and corrosion resistance.",
+      "CUSTOM_SOLUTIONS": "Custom Solutions: We offer custom steel solutions tailored to your exact specifications."
+    },
+    "VALUES_TITLE": "Our Values",
+    "VALUES_LIST": {
+      "QUALITY_FIRST": "Quality First: We believe that quality is the foundation of our success. Each product undergoes rigorous testing to ensure it meets the highest standards.",
+      "CUSTOMER_FOCUS": "Customer Focus: We strive to build long-term relationships with our customers by providing exceptional service and support.",
+      "SUSTAINABILITY": "Sustainability: TeutaSteel is committed to sustainable practices, including responsible sourcing of materials and minimizing our environmental impact."
+    },
+    "WHY_US_TITLE": "Why Choose Us?",
+    "WHY_US_LIST": {
+      "EXPERTISE": "Expertise: With years of experience in the steel industry, our team is equipped with the knowledge and expertise to meet your needs.",
+      "INNOVATION": "Innovation: We continuously invest in cutting-edge technology and processes to stay at the forefront of the industry.",
+      "DELIVERY": "Reliable Delivery: We understand the importance of timely delivery. TeutaSteel ensures that your products are delivered on time, every time."
+    },
+    "CONTACT_BUTTON": "Contact Us"
+  },
+  "CONTACT": {
+    "TITLE": "Contact Us",
+    "NAME_LABEL": "Name",
+    "NAME_PLACEHOLDER": "Your Name",
+    "EMAIL_LABEL": "Email",
+    "EMAIL_PLACEHOLDER": "name@example.com",
+    "MESSAGE_LABEL": "Message",
+    "MESSAGE_PLACEHOLDER": "Type your message here...",
+    "SUBMIT_BUTTON": "Submit"
+  },
+  "HOME": {
+    "HERO_TITLE": "Welcome to TeutaSteel",
+    "HERO_SUBTITLE": "High-quality galvanized steel products for every need",
+    "HERO_BUTTON": "Explore Our Products",
+    "TOP_PRODUCTS_TITLE": "Our Top Products",
+    "VIEW_DETAILS_BUTTON": "View Details",
+    "FEATURED_PRODUCTS_TITLE": "Featured Products",
+    "NEW_BADGE": "New",
+    "CONTACT_BUTTON": "Contact us via WhatsApp",
+    "PREVIOUS_BUTTON": "Previous",
+    "NEXT_BUTTON": "Next",
+    "TESTIMONIALS_TITLE": "What Our Clients Say",
+    "TESTIMONIAL_1_TEXT": "\"TeutaSteel provides top-notch galvanized steel. We've used their products for years and are very satisfied.\"",
+    "TESTIMONIAL_1_AUTHOR": "John Doe, Industrial Contractor",
+    "CTA_TITLE": "Ready to Order Your Steel Products?",
+    "CTA_TEXT": "Contact us today to get a quote or learn more about our products and services.",
+    "CTA_BUTTON": "Get in Touch"
+  },"PRODUCTS": {
+    "GROUPS_TITLE": "Product Groups",
+    "VIEW_PRODUCTS_BUTTON": "View Products",
+    "PRODUCTS_TITLE": "Products",
+    "BACK_TO_GROUPS_BUTTON": "Back to Groups",
+    "DIMENSIONS": "Dimensions",
+    "HEIGHT": "Height",
+    "LENGTH": "Length",
+    "WIDTH": "Width",
+    "CONTACT_WHATSAPP": "Contact on WhatsApp"
+  }
+}

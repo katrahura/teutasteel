@@ -1,7 +1,6 @@
-
 <section class="groups-section py-5" *ngIf="showingGroups">
   <div class="container">
-    <h2 class="text-center mb-5">Product Groups</h2>
+    <h2 class="text-center mb-5">{{ 'PRODUCTS.GROUPS_TITLE' | translate }}</h2>
     <div class="row">
       <div class="col-md-4 mb-4" *ngFor="let group of productGroups">
         <div class="card h-100">
@@ -9,7 +8,7 @@
           <div class="card-body">
             <h5 class="card-title">{{group.name}}</h5>
             <p class="card-text">{{group.description}}</p>
-            <button class="btn btn-primary" (click)="showProducts(group)">View Products</button>
+            <button class="btn btn-primary" (click)="showProducts(group)">{{ 'PRODUCTS.VIEW_PRODUCTS_BUTTON' | translate }}</button>
           </div>
         </div>
       </div>
@@ -20,8 +19,8 @@
 <!-- Products View -->
 <section class="products-section py-5" *ngIf="!showingGroups">
   <div class="container">
-    <h2 class="text-center mb-5">{{ selectedGroup!.name }} Products</h2>
-    <button class="btn btn-secondary mb-4" (click)="goBackToGroups()">Back to Groups</button>
+    <h2 class="text-center mb-5">{{ selectedGroup!.name }} {{ 'PRODUCTS.PRODUCTS_TITLE' | translate }}</h2>
+    <button class="btn btn-secondary mb-4" (click)="goBackToGroups()">{{ 'PRODUCTS.BACK_TO_GROUPS_BUTTON' | translate }}</button>
     <div class="row">
       <!-- Iterate over the products in the selected group -->
       <div class="col-md-4 mb-4" *ngFor="let product of productsByGroup[selectedGroup!.id]">
@@ -29,21 +28,21 @@
           <img src="{{product.image}}" class="card-img-top" alt="{{product.name}}">
           <div class="card-body">
             <h5 class="card-title">{{product.name}}</h5>
-            
+
             <!-- Conditionally display the product icon if available -->
             <div *ngIf="product.icon" class="product-icon mb-3">
               <img [src]="product.icon" alt="{{product.name}} icon" class="img-fluid" style="max-height: 40px;">
             </div>
 
             <p class="card-text">
-              <strong>Dimensions:</strong><br>
-              Height: {{product.height}} mm<br>
-              Length: {{product.length}} mm<br>
-              Width: {{product.width}} mm
+              <strong>{{ 'PRODUCTS.DIMENSIONS' | translate }}:</strong><br>
+              {{ 'PRODUCTS.HEIGHT' | translate }}: {{product.height}} mm<br>
+              {{ 'PRODUCTS.LENGTH' | translate }}: {{product.length}} mm<br>
+              {{ 'PRODUCTS.WIDTH' | translate }}: {{product.width}} mm
             </p>
             <!-- WhatsApp button -->
             <a [href]="getWhatsAppLink(product)" class="btn btn-success" target="_blank">
-              Contact on WhatsApp
+              {{ 'PRODUCTS.CONTACT_WHATSAPP' | translate }}
             </a>
           </div>
         </div>
@@ -51,5 +50,3 @@
     </div>
   </div>
 </section>
-
-

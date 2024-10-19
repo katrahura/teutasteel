@@ -1,0 +1,74 @@
+{
+  "NAVBAR": {
+    "BRAND": "TeutaSteel",
+    "HOME": "Kryefaqja",
+    "PRODUCTS": "Produkte",
+    "ABOUT_US": "Rreth Nesh",
+    "CONTACT": "Kontaktoni"
+  },
+  "FOOTER": {
+    "COPYRIGHT": "© 2024 TeutaSteel. Të gjitha të drejtat janë të rezervuara."
+  },
+  "ABOUT": {
+    "TITLE": "Rreth Nesh",
+    "MISSION_TITLE": "Misioni Ynë",
+    "MISSION_CONTENT": "Në <strong>TeutaSteel</strong>, misioni ynë është të ofrojmë zgjidhje të besueshme dhe superiore çeliku të përshtatura për nevojat unike të klientëve tanë. Nëse jeni duke kërkuar për çelik strukturor, tuba ose komponentë të bërë me porosi, ne ofrojmë produkte që tejkalojnë standardet e industrisë dhe sigurojnë performancë afatgjatë.",
+    "OFFER_TITLE": "Çfarë Ofrojmë",
+    "OFFER_LIST": {
+      "PIPES": "Tuba çeliku të galvanizuar: Të disponueshme në një gamë të gjerë dimensionesh dhe trashësish, të përshtatshme për aplikime industriale, komerciale dhe rezidenciale.",
+      "SHEETS": "Fletë çeliku: Fletë me cilësi të lartë të dizajnuara për qëllime të ndryshme ndërtimi dhe prodhimi, që ofrojnë qëndrueshmëri dhe rezistencë ndaj korrozionit.",
+      "CUSTOM_SOLUTIONS": "Zgjidhje të personalizuara: Ne ofrojmë zgjidhje të personalizuara të çelikut sipas specifikimeve tuaja të sakta."
+    },
+    "VALUES_TITLE": "Vlerat Tona",
+    "VALUES_LIST": {
+      "QUALITY_FIRST": "Cilësia në radhë të parë: Ne besojmë se cilësia është themeli i suksesit tonë. Secili produkt i nënshtrohet testimeve rigoroze për të siguruar që i plotëson standardet më të larta.",
+      "CUSTOMER_FOCUS": "Fokus te klienti: Ne përpiqemi të ndërtojmë marrëdhënie afatgjata me klientët tanë duke ofruar shërbim dhe mbështetje të shkëlqyer.",
+      "SUSTAINABILITY": "Qëndrueshmëria: TeutaSteel është e angazhuar për praktika të qëndrueshme, përfshirë burimet e përgjegjshme të materialeve dhe minimizimin e ndikimit tonë në mjedis."
+    },
+    "WHY_US_TITLE": "Pse të Zgjidhni Ne?",
+    "WHY_US_LIST": {
+      "EXPERTISE": "Ekspertizë: Me vite përvojë në industrinë e çelikut, ekipi ynë është i pajisur me njohuri dhe ekspertizë për të përmbushur nevojat tuaja.",
+      "INNOVATION": "Inovacion: Ne investojmë vazhdimisht në teknologjinë dhe proceset më të fundit për të qëndruar në ballë të industrisë.",
+      "DELIVERY": "Dërgim i besueshëm: Ne e kuptojmë rëndësinë e dërgesave në kohë. TeutaSteel siguron që produktet tuaja të dorëzohen në kohë, çdo herë."
+    },
+    "CONTACT_BUTTON": "Na Kontaktoni"
+  },
+  "CONTACT": {
+    "TITLE": "Na Kontaktoni",
+    "NAME_LABEL": "Emri",
+    "NAME_PLACEHOLDER": "Emri Juaj",
+    "EMAIL_LABEL": "Email",
+    "EMAIL_PLACEHOLDER": "name@example.com",
+    "MESSAGE_LABEL": "Mesazhi",
+    "MESSAGE_PLACEHOLDER": "Shkruani mesazhin tuaj këtu...",
+    "SUBMIT_BUTTON": "Dërgo"
+  },
+  "HOME": {
+    "HERO_TITLE": "Mirësevini në TeutaSteel",
+    "HERO_SUBTITLE": "Produkte çeliku të galvanizuar me cilësi të lartë për çdo nevojë",
+    "HERO_BUTTON": "Eksploroni Produktet Tona",
+    "TOP_PRODUCTS_TITLE": "Produktet Tonë Kryesore",
+    "VIEW_DETAILS_BUTTON": "Shikoni Detajet",
+    "FEATURED_PRODUCTS_TITLE": "Produktet e Zgjedhura",
+    "NEW_BADGE": "I Ri",
+    "CONTACT_BUTTON": "Na kontaktoni në WhatsApp",
+    "PREVIOUS_BUTTON": "Mëparshëm",
+    "NEXT_BUTTON": "Tjetër",
+    "TESTIMONIALS_TITLE": "Çfarë Thonë Klientët Tanë",
+    "TESTIMONIAL_1_TEXT": "\"TeutaSteel ofron çelik të galvanizuar me cilësi të lartë. Ne kemi përdorur produktet e tyre për vite dhe jemi shumë të kënaqur.\"",
+    "TESTIMONIAL_1_AUTHOR": "John Doe, Kontraktor Industrial",
+    "CTA_TITLE": "Gati për të Porositur Produktet e Çelikut?",
+    "CTA_TEXT": "Na kontaktoni sot për të marrë një ofertë ose për të mësuar më shumë rreth produkteve dhe shërbimeve tona.",
+    "CTA_BUTTON": "Na Kontaktoni"
+  },"PRODUCTS": {
+    "GROUPS_TITLE": "Grupet e Produkteve",
+    "VIEW_PRODUCTS_BUTTON": "Shiko Produktet",
+    "PRODUCTS_TITLE": "Produkte",
+    "BACK_TO_GROUPS_BUTTON": "Kthehu te Grupet",
+    "DIMENSIONS": "Përmasat",
+    "HEIGHT": "Lartësia",
+    "LENGTH": "Gjatësia",
+    "WIDTH": "Gjerësia",
+    "CONTACT_WHATSAPP": "Na kontaktoni në WhatsApp"
+  }
+}
