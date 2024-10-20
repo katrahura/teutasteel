@@ -70,5 +70,13 @@
     "LENGTH": "Length",
     "WIDTH": "Width",
     "CONTACT_WHATSAPP": "Contact on WhatsApp"
+  },
+  "MODAL": {
+    "CLOSE": "Close",
+    "DIMENSIONS": "Dimensions",
+    "HEIGHT": "Height",
+    "LENGTH": "Length",
+    "WIDTH": "Width",
+    "CONTACT_WHATSAPP": "Contact via WhatsApp"
   }
 }

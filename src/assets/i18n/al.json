@@ -70,5 +70,16 @@
     "LENGTH": "Gjatësia",
     "WIDTH": "Gjerësia",
     "CONTACT_WHATSAPP": "Na kontaktoni në WhatsApp"
-  }
+  },
+  
+    "MODAL": {
+      "CLOSE": "Mbyll",
+      "DIMENSIONS": "Përmasat",
+      "HEIGHT": "Lartësia",
+      "LENGTH": "Gjatësia",
+      "WIDTH": "Gjerësia",
+      "CONTACT_WHATSAPP": "Kontakto në WhatsApp"
+    }
+  
+  
 }
