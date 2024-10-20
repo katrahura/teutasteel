@@ -10,25 +10,27 @@
     </div>
   </section>
 
-  <!-- Products Section -->
-  <section class="products-section py-5">
-    <div class="container">
-      <h2 class="text-center mb-5">{{ 'HOME.TOP_PRODUCTS_TITLE' | translate }}</h2>
-      <div class="row">
-        <!-- Product Cards -->
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let product of products">
-          <div class="card h-100">
-            <img src="https://picsum.photos/300/200" class="card-img-top" alt="{{product.name}}">
-            <div class="card-body">
-              <h5 class="card-title">{{product.name}}</h5>
-              <p class="card-text">{{product.description}}</p>
-              <a href="#" class="btn btn-primary">{{ 'HOME.VIEW_DETAILS_BUTTON' | translate }}</a>
-            </div>
+<!-- Products Section -->
+<section class="products-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-5">{{ 'HOME.TOP_PRODUCTS_TITLE' | translate }}</h2>
+    <div class="row">
+      <!-- Product Cards -->
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let product of products; let i = index" 
+           [ngStyle]="{'--animation-index': i}">
+        <div class="card h-100">
+          <img src="https://picsum.photos/300/200" class="card-img-top" alt="{{product.name}}">
+          <div class="card-body">
+            <h5 class="card-title">{{product.name}}</h5>
+            <p class="card-text">{{product.description}}</p>
+            <a href="#" class="btn btn-primary">{{ 'HOME.VIEW_DETAILS_BUTTON' | translate }}</a>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- Featured Products Section -->
   <section class="featured-products py-5">

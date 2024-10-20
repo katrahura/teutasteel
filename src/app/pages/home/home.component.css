@@ -1,6 +1,7 @@
 .card:hover {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.368);
   transition:  box-shadow 0.3s ease;
+
 }
 
 .fa-star, .fa-star-o {
@@ -14,5 +15,21 @@
   border-bottom-left-radius: 10px; /* Rounds the bottom-left corner */
   border-bottom-right-radius: 10px; /* Rounds the bottom-right corner */
   overflow: hidden; /* Ensures content stays within rounded corners */
+}
+
+/* Define the keyframe animation for wave effect */
+@keyframes waveEffect {
+  0%, 100% {
+    transform: translateY(0); /* Initial and final position */
+  }
+  50% {
+    transform: translateY(-4px); /* Moves up by 10px */
+  }
+}
+
+.products-section .card {
+  animation: waveEffect 3s ease-in-out infinite; /* Apply wave animation */
+  animation-delay: calc(var(--animation-index) * 0.2s); /* Delay for staggered effect */
+  transition: transform 0.3s ease; /* Smooth transition */
 }
 

@@ -18,7 +18,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
         animate('0.3s ease-in', style({ opacity: 1 }))  // fade to opacity 1
       ]),
       transition(':leave', [  // when element leaves
-        animate('0.1s ease-out', style({ opacity: 0 }))  // fade to opacity 0
+        animate('0.2s ease-out', style({ opacity: 0 }))  // fade to opacity 0
       ])
     ])
   ]
