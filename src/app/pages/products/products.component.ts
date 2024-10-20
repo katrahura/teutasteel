@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import bootstrap from 'bootstrap';  // Import Bootstrap's Modal class
 import { TranslateModule } from '@ngx-translate/core';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { Product } from '../../models/product.model';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule,RouterModule,TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './products.component.html',
-  styleUrl: './products.component.css',
+  styleUrls: ['./products.component.css'], // corrected from 'styleUrl' to 'styleUrls'
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [  // when element enters
@@ -28,10 +28,10 @@ export class ProductsComponent {
   showingGroups = true;
 
   // Selected group for displaying products
-  selectedGroup: ProductGroup | null = null;
+  selectedGroup: Product | null = null;
 
   // Define the product groups
-  productGroups: ProductGroup[] = [
+  productGroups: Product[] = [
     {
       id: 1,
       name: 'Steel Pipes',
@@ -44,7 +44,6 @@ export class ProductsComponent {
       description: 'High-quality steel sheets for various construction needs.',
       image: 'https://picsum.photos/300/200',
     },
-    // Add more groups as needed
   ];
 
   // Define the products for each group
@@ -56,7 +55,7 @@ export class ProductsComponent {
         height: 3000,
         length: 100,
         width: 50,
-        weight:90,
+        weight: 90,
         whatsappNumber: '+1234567890',
       },
       {
@@ -65,7 +64,7 @@ export class ProductsComponent {
         height: 2500,
         length: 120,
         width: 60,
-        weight:90,
+        weight: 90,
         whatsappNumber: '+1234567890',
       },
     ],
@@ -76,7 +75,7 @@ export class ProductsComponent {
         height: 2000,
         length: 150,
         width: 70,
-        weight:90,
+        weight: 90,
         whatsappNumber: '+1234567890',
       },
       {
@@ -85,14 +84,14 @@ export class ProductsComponent {
         height: 1800,
         length: 130,
         width: 80,
-        weight:90,
+        weight: 90,
         whatsappNumber: '+1234567890',
       },
     ],
   };
 
   // Function to show the products in a specific group
-  showProducts(group: ProductGroup) {
+  showProducts(group: Product) {
     this.selectedGroup = group;
     this.showingGroups = false;
   }
@@ -107,26 +106,5 @@ export class ProductsComponent {
   getWhatsAppLink(product: Product): string {
     const message = `Hi, I'm interested in your product: ${product.name} (Height: ${product.height}mm, Length: ${product.length}mm, Width: ${product.width}mm). Could you provide more details?`;
     return `https://wa.me/${product.whatsappNumber}?text=${encodeURIComponent(message)}`;
-  } 
-   
-}// Define the structure for a product
-interface Product {
-weight: any;
-  name: string;
-  image: string;
-  height: number;
-  length: number;
-  width: number;
-  whatsappNumber: string;
-  icon?: string;
+  }
 }
-
-// Define the structure for a product group
-interface ProductGroup {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-  
-}
-

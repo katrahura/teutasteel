@@ -32,4 +32,64 @@
   animation-delay: calc(var(--animation-index) * 0.2s); /* Delay for staggered effect */
   transition: transform 0.3s ease; /* Smooth transition */
 }
+.modal-content {
+  border-radius: 10px;
+}
+
+.modal-header {
+  background-color: #f8f9fa;
+}
+
+.modal-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+.modal-content {
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.modal-header {
+  border-bottom: none;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-footer {
+  border-top: none;
+  padding-top: 15px;
+}
+
+.btn-success {
+  font-size: 1rem;
+  padding: 10px 20px;
+}
+
+.btn-secondary {
+  padding: 10px 20px;
+}
+
+p {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+}
 

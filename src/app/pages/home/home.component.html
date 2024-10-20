@@ -23,7 +23,9 @@
           <div class="card-body">
             <h5 class="card-title">{{product.name}}</h5>
             <p class="card-text">{{product.description}}</p>
-            <a href="#" class="btn btn-primary">{{ 'HOME.VIEW_DETAILS_BUTTON' | translate }}</a>
+            <button type="button" class="btn btn-primary" (click)="openProductModal(product)" data-bs-toggle="modal" data-bs-target="#productDetailsModal">
+              {{ 'HOME.VIEW_DETAILS_BUTTON' | translate }}
+            </button>
           </div>
         </div>
       </div>
@@ -32,11 +34,48 @@
 </section>
 
 
+<!-- Product Details Modal -->
+<div class="modal fade" id="productDetailsModal" tabindex="-1" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="productDetailsModalLabel">{{ selectedProduct?.name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" ></button>
+      </div>
+      <!-- Modal Body -->
+      <div class="modal-body text-center">
+        <!-- Image -->
+        <img [src]="selectedProduct?.image" class="img-fluid mb-3" alt="{{ selectedProduct?.name }}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        
+        <!-- Product Description -->
+        <p class="text-muted">{{ selectedProduct?.description }}</p>
+        
+        <!-- Dimensions -->
+        <p><strong>{{ 'MODAL.DIMENSIONS' | translate }}:</strong> {{ 'MODAL.HEIGHT' | translate }}: {{ selectedProduct?.height }} mm, {{ 'MODAL.LENGTH' | translate }}: {{ selectedProduct?.length }} mm, {{ 'MODAL.WIDTH' | translate }}: {{ selectedProduct?.width }} mm</p>
+      </div>
+      <!-- Modal Footer -->
+      <div class="modal-footer justify-content-between">
+        <!-- WhatsApp Button -->
+        <button class="btn btn-success me-auto" (click)="contactViaWhatsApp(selectedProduct)" target="_blank">
+          {{ 'MODAL.CONTACT_WHATSAPP' | translate }}
+        </button>
+        <!-- Close Button -->
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          {{ 'MODAL.CLOSE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
   <!-- Featured Products Section -->
   <section class="featured-products py-5">
     <div class="container">
       <h2 class="text-center mb-4">{{ 'HOME.FEATURED_PRODUCTS_TITLE' | translate }}</h2>
-      <div id="featuredProductsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+      <div id="featuredProductsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
         <div class="carousel-inner">
           <div class="carousel-item active" *ngFor="let product of featuredProducts; let i = index" [class.active]="i === 0">
             <div class="row justify-content-center">
@@ -69,7 +108,7 @@
   </section>
 
   <!-- Testimonials Section -->
-  <section class="testimonials py-5 bg-light">
+  <section class="testimonials py-5 bg-light" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
     <div class="container">
       <h2 class="text-center mb-5">{{ 'HOME.TESTIMONIALS_TITLE' | translate }}</h2>
       <div class="row">

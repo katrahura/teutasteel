@@ -17,32 +17,24 @@
 </section>
 
 <!-- Products View -->
-<section class="products-section py-5" *ngIf="!showingGroups"@fadeInOut>
+<section class="products-section py-5" *ngIf="selectedGroup">
   <div class="container">
-    <h2 class="text-center mb-5">{{ selectedGroup!.name }} {{ 'PRODUCTS.PRODUCTS_TITLE' | translate }}</h2>
-    <button class="btn btn-secondary mb-4" (click)="goBackToGroups()">{{ 'PRODUCTS.BACK_TO_GROUPS_BUTTON' | translate }}</button>
+    <h2 class="text-center mb-5">{{ selectedGroup?.name }} Products</h2>
+    <button class="btn btn-secondary mb-4" (click)="goBackToGroups()">Back to Groups</button>
     <div class="row">
-      <!-- Iterate over the products in the selected group -->
-      <div class="col-md-4 mb-4" *ngFor="let product of productsByGroup[selectedGroup!.id]">
+      <div class="col-md-4 mb-4" *ngFor="let product of productsByGroup[2]">
         <div class="card h-100">
-          <img src="{{product.image}}" class="card-img-top" alt="{{product.name}}">
+          <img [src]="product.image" class="card-img-top" alt="{{ product.name }}">
           <div class="card-body">
-            <h5 class="card-title">{{product.name}}</h5>
-
-            <!-- Conditionally display the product icon if available -->
-            <div *ngIf="product.icon" class="product-icon mb-3">
-              <img [src]="product.icon" alt="{{product.name}} icon" class="img-fluid" style="max-height: 40px;">
-            </div>
-
+            <h5 class="card-title">{{ product.name }}</h5>
             <p class="card-text">
-              <strong>{{ 'PRODUCTS.DIMENSIONS' | translate }}:</strong><br>
-              {{ 'PRODUCTS.HEIGHT' | translate }}: {{product.height}} mm<br>
-              {{ 'PRODUCTS.LENGTH' | translate }}: {{product.length}} mm<br>
-              {{ 'PRODUCTS.WIDTH' | translate }}: {{product.width}} mm
+              <strong>Dimensions:</strong><br>
+              Height: {{ product.height }} mm<br>
+              Length: {{ product.length }} mm<br>
+              Width: {{ product.width }} mm
             </p>
-            <!-- WhatsApp button -->
             <a [href]="getWhatsAppLink(product)" class="btn btn-success" target="_blank">
-              {{ 'PRODUCTS.CONTACT_WHATSAPP' | translate }}
+              Contact on WhatsApp
             </a>
           </div>
         </div>
@@ -50,3 +42,4 @@
     </div>
   </div>
 </section>
+

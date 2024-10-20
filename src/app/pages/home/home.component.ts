@@ -3,6 +3,8 @@ import { Component, ElementRef, Renderer2, Inject, PLATFORM_ID  } from '@angular
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { isPlatformBrowser } from '@angular/common';
+import { ProductService } from '../../services/product.service';
+import { Product } from '../../models/product.model';
 
 
 @Component({
@@ -11,9 +13,10 @@ import { isPlatformBrowser } from '@angular/common';
   imports: [RouterModule,CommonModule,TranslateModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
-})
+})  
 export class HomeComponent {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private el: ElementRef, private renderer: Renderer2) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private el: ElementRef, private renderer: Renderer2,private productService: ProductService) {}
+  selectedProduct: any = null;
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -94,6 +97,9 @@ export class HomeComponent {
     const luminance = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
     return luminance > 150 ? 'black' : 'white';
   }
+  openProductModal(product: any) {
+    this.selectedProduct = product;
+  }
   products = [
     {
       name: 'Galvanized Steel Pipe 1',
@@ -149,14 +155,12 @@ export class HomeComponent {
       name: 'Galvanized Steel Pipe 1',
       description: 'High-quality galvanized steel pipe, perfect for industrial and commercial applications.',
       image: 'https://picsum.photos/300/200',
-      whatsappNumber: '1234567890', // Replace with actual WhatsApp number
       isNew:true
     },
     {
       name: 'Galvanized Steel Pipe 2',
       description: 'Durable steel pipe designed for heavy-duty use in construction projects.',
       image: 'https://picsum.photos/300/200',
-      whatsappNumber: '1234567890',
       isNew:true
 
     },
@@ -164,14 +168,15 @@ export class HomeComponent {
       name: 'Steel Sheet 1',
       description: 'High-grade steel sheets, ideal for various construction and industrial purposes.',
       image: 'https://picsum.photos/300/200',
-      whatsappNumber: '1234567890',
       isNew:true
 
     }
   ];
-  contactViaWhatsApp(product: { name: any; whatsappNumber: any; }) {
+  contactViaWhatsApp(product: Product) {
+    if (product && product.name) {
     const message = encodeURIComponent(`Hello, I am interested in your product: ${product.name}`);
-    const whatsappUrl = `https://wa.me/${product.whatsappNumber}?text=${message}`;
+    const whatsappUrl = `https://wa.me/1234567890?text=${message}`;
     window.open(whatsappUrl, '_blank');
+  }
   }
 }
