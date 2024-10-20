@@ -1,3 +1,7 @@
+* {
+  transition: all 0.3s ease-in-out; /* Applies to all CSS properties */
+}
+
 /* Apply glow effect globally for all text elements */
 body, h1, h2, h3, p, a, span {
     --text-color: rgb(0, 0, 0); /* Default text color */

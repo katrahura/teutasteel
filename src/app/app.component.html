@@ -41,7 +41,10 @@
     </nav>
     
     <!-- Main Content -->
-    <router-outlet></router-outlet>
+    <main [@routeAnimations]="prepareRoute(outlet)">
+      <router-outlet #outlet="outlet"></router-outlet>
+    </main>
+    
 
     <!-- Footer -->
     <footer class="bg-light text-center text-lg-start" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">

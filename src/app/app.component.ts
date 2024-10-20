@@ -5,18 +5,36 @@ import { filter } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterModule,CommonModule,TranslateModule,NgbDropdownModule],  // Import RouterModule to enable routerLink
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  animations: [
+    trigger('routeAnimations', [
+      transition('HomePage <=> ProductsPage, HomePage <=> ContactPage, HomePage <=> AboutPage', [
+        style({ opacity: 0 }),
+        animate('0.3s ease-in-out', style({ opacity: 1 }))
+      ]),
+      transition('* <=> *', [
+        style({ opacity: 0 }),
+        animate('0.3s ease-in-out', style({ opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class AppComponent {
   currentRoute: string = '';
   currentLanguage = 'en'; // Default language is English
-
+  prepareRoute(outlet: RouterOutlet) {
+    const animationData = outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
+    return animationData;
+  }
+  
   constructor(private router: Router,private translate: TranslateService) {
     // Detect route changes and update the currentRoute variable
     this.translate.setDefaultLang('en');
@@ -43,4 +61,6 @@ export class AppComponent {
     this.currentLanguage = language;
     this.translate.use(language); // Switch the language in ngx-translate
   }
+
+  
 }

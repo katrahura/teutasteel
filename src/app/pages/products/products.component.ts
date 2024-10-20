@@ -3,13 +3,25 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import bootstrap from 'bootstrap';  // Import Bootstrap's Modal class
 import { TranslateModule } from '@ngx-translate/core';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-products',
   standalone: true,
   imports: [CommonModule,RouterModule,TranslateModule],
   templateUrl: './products.component.html',
-  styleUrl: './products.component.css'
+  styleUrl: './products.component.css',
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [  // when element enters
+        style({ opacity: 0 }),  // start with opacity 0
+        animate('0.3s ease-in', style({ opacity: 1 }))  // fade to opacity 1
+      ]),
+      transition(':leave', [  // when element leaves
+        animate('0.1s ease-out', style({ opacity: 0 }))  // fade to opacity 0
+      ])
+    ])
+  ]
 })
 export class ProductsComponent {
   // Flag to track whether we're showing groups or products

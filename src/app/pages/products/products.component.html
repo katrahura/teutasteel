@@ -1,4 +1,4 @@
-<section class="groups-section py-5" *ngIf="showingGroups">
+<section class="groups-section py-5" *ngIf="showingGroups" @fadeInOut>
   <div class="container">
     <h2 class="text-center mb-5">{{ 'PRODUCTS.GROUPS_TITLE' | translate }}</h2>
     <div class="row">
@@ -17,7 +17,7 @@
 </section>
 
 <!-- Products View -->
-<section class="products-section py-5" *ngIf="!showingGroups">
+<section class="products-section py-5" *ngIf="!showingGroups"@fadeInOut>
   <div class="container">
     <h2 class="text-center mb-5">{{ selectedGroup!.name }} {{ 'PRODUCTS.PRODUCTS_TITLE' | translate }}</h2>
     <button class="btn btn-secondary mb-4" (click)="goBackToGroups()">{{ 'PRODUCTS.BACK_TO_GROUPS_BUTTON' | translate }}</button>
