@@ -23,7 +23,7 @@
     transform: translateY(0); /* Initial and final position */
   }
   50% {
-    transform: translateY(-4px); /* Moves up by 10px */
+    transform: translateY(-1px); /* Moves up by 10px */
   }
 }
 

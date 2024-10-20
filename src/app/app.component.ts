@@ -18,11 +18,11 @@ import { RouterOutlet } from '@angular/router';
     trigger('routeAnimations', [
       transition('HomePage <=> ProductsPage, HomePage <=> ContactPage, HomePage <=> AboutPage', [
         style({ opacity: 0 }),
-        animate('0.3s ease-in-out', style({ opacity: 1 }))
+        animate('0.5s ease-in-out', style({ opacity: 1 }))
       ]),
       transition('* <=> *', [
         style({ opacity: 0 }),
-        animate('0.3s ease-in-out', style({ opacity: 1 }))
+        animate('0.5s ease-in-out', style({ opacity: 1 }))
       ])
     ])
   ]
