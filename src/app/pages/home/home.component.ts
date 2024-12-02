@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -15,9 +16,19 @@ import { Product } from '../../models/product.model';
   styleUrl: './home.component.css'
 })  
 export class HomeComponent {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private el: ElementRef, private renderer: Renderer2,private productService: ProductService) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private el: ElementRef, private renderer: Renderer2,private productService: ProductService,private authService: AuthService) {}
   selectedProduct: any = null;
-
+  login(): void {
+    this.authService.login({ username: 'endriti', password: 'endriti' }).subscribe({
+      next: (response) => {
+        localStorage.setItem('token', response.access_token); // Save token to local storage
+       // this.router.navigate(['/']); // Redirect to the home page
+      },
+      error: (error) => {
+        console.error('Login failed', error);
+      },
+    });
+  }
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       const sectionElement = this.el.nativeElement.querySelector('#backgroundImage');
@@ -39,6 +50,11 @@ export class HomeComponent {
         console.error("Section element not found.");
       }
     }
+  }
+  ngOnInit():void{
+
+    this.login();
+
   }
   
   
@@ -173,10 +189,11 @@ export class HomeComponent {
     }
   ];
   contactViaWhatsApp(product: Product) {
-    if (product && product.name) {
-    const message = encodeURIComponent(`Hello, I am interested in your product: ${product.name}`);
+    if (product && product.code) {
+    const message = encodeURIComponent(`Hello, I am interested in your product: ${product.code}`);
     const whatsappUrl = `https://wa.me/1234567890?text=${message}`;
     window.open(whatsappUrl, '_blank');
   }
+  
   }
 }

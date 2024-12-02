@@ -1,45 +1,250 @@
+<!-- Enhanced Categories View -->
 <section class="groups-section py-5" *ngIf="showingGroups" @fadeInOut>
   <div class="container">
-    <h2 class="text-center mb-5">{{ 'PRODUCTS.GROUPS_TITLE' | translate }}</h2>
-    <div class="row">
-      <div class="col-md-4 mb-4" *ngFor="let group of productGroups">
-        <div class="card h-100">
-          <img src="{{group.image}}" class="card-img-top" alt="{{group.name}}">
-          <div class="card-body">
-            <h5 class="card-title">{{group.name}}</h5>
-            <p class="card-text">{{group.description}}</p>
-            <button class="btn btn-primary" (click)="showProducts(group)">{{ 'PRODUCTS.VIEW_PRODUCTS_BUTTON' | translate }}</button>
+    <h2 class="text-center mb-5">
+      {{ "PRODUCTS.GROUPS_TITLE" | translate }}
+    </h2>
+    <div class="container" *ngIf="showingGroups && isLoading">
+      <div class="row">
+        <div class="col-md-3 mb-4" *ngFor="let _ of [1, 2, 3, 4]">
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-image"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-desc"></div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-image"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-desc"></div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- Products View -->
-<section class="products-section py-5" *ngIf="selectedGroup">
-  <div class="container">
-    <h2 class="text-center mb-5">{{ selectedGroup?.name }} Products</h2>
-    <button class="btn btn-secondary mb-4" (click)="goBackToGroups()">Back to Groups</button>
     <div class="row">
-      <div class="col-md-4 mb-4" *ngFor="let product of productsByGroup[2]">
+      <div class="col-md-3 mb-4" *ngFor="let category of categories">
         <div class="card h-100">
-          <img [src]="product.image" class="card-img-top" alt="{{ product.name }}">
+          <!-- Category Image -->
+          <div class="category-image-container">
+            <img
+              [src]="
+                category.image_asset?.thumbnail_path ||
+                'assets/images/placeholder_category.jpg'
+              "
+              class="category-image"
+              [alt]="category.image_asset?.alternative_text || category.title"
+            />
+          </div>
+          <!-- Category Details -->
           <div class="card-body">
-            <h5 class="card-title">{{ product.name }}</h5>
+            <h5 class="card-title">{{ category.title }}</h5>
             <p class="card-text">
-              <strong>Dimensions:</strong><br>
-              Height: {{ product.height }} mm<br>
-              Length: {{ product.length }} mm<br>
-              Width: {{ product.width }} mm
+              {{ category.description || "No description available." }}
             </p>
-            <a [href]="getWhatsAppLink(product)" class="btn btn-success" target="_blank">
-              Contact on WhatsApp
-            </a>
+            <p class="card-text" *ngIf="category.products">
+              <small class="text-muted">
+                {{ category.products.length }} product(s) available
+              </small>
+            </p>
+            <!-- View Products Button -->
+            <div class="text-center mt-3">
+              <button class="btn btn-primary" (click)="showProducts(category)">
+                {{ "PRODUCTS.VIEW_PRODUCTS_BUTTON" | translate }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+<!-- products.component.html -->
+
+<section
+  class="products-section py-5"
+  *ngIf="!showingGroups && selectedCategory"
+>
+  <div class="container">
+    <h2 class="text-center mb-5">{{ selectedCategory.title }} Products</h2>
+    <button class="btn btn-secondary mb-4" (click)="goBackToGroups()">
+      Back to Categories
+    </button>
+    <div class="container" *ngIf="!showingGroups && isLoading">
+      <div class="row">
+        <div class="col-md-3 mb-4" *ngFor="let _ of [1, 2, 3, 4]">
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-image"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-desc"></div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4" *ngFor="let _ of [1, 2, 3, 4]">
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-image"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-desc"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="products-pagination-container">
+      <!-- Product Cards -->
+      <div class="row">
+        <div class="col-md-3 mb-4" *ngFor="let product of products">
+          <div
+            class="card h-100"
+            (click)="openModal(product)"
+            data-bs-toggle="modal"
+            data-bs-target="#productDetailsModal"
+            style="cursor: pointer"
+          >
+            <div class="position-relative">
+              <!-- Badges -->
+              <div class="position-absolute top-0 start-0 m-2">
+                <span *ngIf="product.new_product" class="badge bg-success"
+                  >New</span
+                >
+                <span
+                  *ngIf="product.top_product"
+                  class="badge bg-warning text-dark"
+                  >Top</span
+                >
+              </div>
+            </div>
+            <!-- Product Image -->
+            <div class="image-container">
+              <img
+                [src]="
+                  product.image_asset?.thumbnail_path ||
+                  'assets/images/placeholder_product.jpg'
+                "
+                class="product-image"
+                [alt]="product.image_asset?.alternative_text || product.code"
+              />
+            </div>
+            <div class="card-body text-center">
+              <h5 class="card-title">{{ product.code }}</h5>
+              <p class="card-text">
+                {{ product.description || "No description available." }}
+              </p>
+              <p class="card-text">
+                <strong>Dimensions:</strong><br />
+                Height: {{ getProductDimension(product, "height") }} mm<br />
+                Width: {{ getProductDimension(product, "width") }} mm
+              </p>
+              <p class="card-text">
+                <strong>Price:</strong>
+                {{ getProductDimension(product, "price") }}
+                {{ getProductDimension(product, "currency") }}
+              </p>
+              <a
+                [href]="getWhatsAppLink(product)"
+                class="btn btn-success mt-2"
+                target="_blank"
+                (click)="$event.stopPropagation()"
+              >
+                <i class="fab fa-whatsapp"></i> Contact on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div
+        class="pagination-controls mt-4 d-flex justify-content-center"
+        *ngIf="totalPages > 1"
+      >
+        <button
+          class="btn btn-outline-primary me-2"
+          (click)="loadPreviousPage()"
+          [disabled]="currentPage === 1"
+        >
+          Previous
+        </button>
+        <span class="pagination-info"
+          >Page {{ currentPage }} of {{ totalPages }}</span
+        >
+        <button
+          class="btn btn-outline-primary ms-2"
+          (click)="loadNextPage()"
+          [disabled]="currentPage === totalPages"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<div
+  class="product-modal modal fade"
+  id="productDetailsModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="productDetailsModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg" style="width: 70vw;">
+    <div class="modal-content">
+      <div class="modal-body d-flex">
+        <!-- Left Section -->
+        <div class="image-container">
+          <!-- Left Navigation Arrow -->
+          <button
+          class="navigation-arrows left-arrow"
+          aria-label="Previous"
+          (click)="navigateProduct(-1)"
+        >
+          <i class="fas fa-chevron-left"></i> <!-- Font Awesome Left Icon -->
+        </button>
+          <!-- Product Image -->
+          <img
+            [src]="selectedProduct?.image_asset?.thumbnail_path || 'assets/images/placeholder_product.jpg'"
+            [alt]="selectedProduct?.image_asset?.alternative_text || 'Product Image'"
+            class="product-image"
+          />
+        </div>
+
+        <!-- Right Section -->
+        <div class="info-container">
+          <h5>{{ selectedProduct?.code }}</h5>
+          <p>
+            {{ selectedProduct?.description || 'No description available.' }}
+          </p>
+          <h6>Dimensions:</h6>
+          <ul *ngIf="selectedProduct?.dimensions && selectedProduct.dimensions.length">
+            <li *ngFor="let dimension of selectedProduct.dimensions">
+              <strong>Height:</strong> {{ dimension.height || 'N/A' }} mm<br />
+              <strong>Width:</strong> {{ dimension.width || 'N/A' }} mm<br />
+              <strong>Length:</strong> {{ dimension.length || 'N/A' }} mm<br />
+              <strong>Weight:</strong> {{ dimension.weight || 'N/A' }} kg<br />
+              <strong>Price:</strong> {{ dimension.price || 'N/A' }}
+              {{ dimension.currency || '' }}
+            </li>
+          </ul>
+          <a
+            [href]="getWhatsAppLink(selectedProduct)"
+            class="btn btn-success mt-2"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fab fa-whatsapp"></i> Contact on WhatsApp
+          </a>
+        </div>
+        
+        <!-- Right Navigation Arrow -->
+        <button
+        class="navigation-arrows right-arrow"
+        aria-label="Next"
+        (click)="navigateProduct(1)"
+      >
+        <i class="fas fa-chevron-right"></i> <!-- Font Awesome Right Icon -->
+      </button>
+      </div>
+    </div>
+  </div>
+</div>
 
