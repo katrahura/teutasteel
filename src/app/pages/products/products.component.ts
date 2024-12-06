@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import {  Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -10,8 +10,8 @@ import {
   Category,
   CategoryResponse,
   Product,
-  ProductDimension,
 } from '../../models/product.model';
+import { FormsModule } from '@angular/forms';
 type DimensionKey =
   | 'height'
   | 'width'
@@ -24,7 +24,7 @@ type DimensionKey =
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
   animations: [
@@ -37,8 +37,7 @@ type DimensionKey =
     ]),
   ],
 })
-export class ProductsComponent implements OnInit, OnDestroy,AfterViewInit {
-  @ViewChild('productDetailsModal') productDetailsModal!: ElementRef;
+export class ProductsComponent implements OnInit, OnDestroy {
 
   subscriptions: Subscription[] = [];
   showingGroups = true;
@@ -61,6 +60,7 @@ export class ProductsComponent implements OnInit, OnDestroy,AfterViewInit {
   totalPages = 1;
   perPage = 10;
   isLoading = true; // Default to loading
+  isLoggedIn: boolean = false;
 
   // Cut Type Names Mapping
   cutTypeNames: { [key: number]: string } = {
@@ -69,43 +69,182 @@ export class ProductsComponent implements OnInit, OnDestroy,AfterViewInit {
     3: 'Type C',
     // Add other mappings as needed
   };
+  changeDetectorRef: any;
 
   constructor(private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object) {}
-  ngAfterViewInit(): void {
-    throw new Error('Method not implemented.');
-  }
-  openModal(product: Product): void {
+
+  openModal(product: any, event: Event): void {
+    event.stopPropagation(); // Stop event propagation
     this.selectedProduct = product;
-  
-    const modalElement = this.productDetailsModal?.nativeElement;
-    if (!modalElement) {
-      console.error('Modal element not found!');
-      return;
-    }
-  
-    let modalInstance = bootstrap.Modal.getInstance(modalElement);
-    if (!modalInstance) {
-      modalInstance = new bootstrap.Modal(modalElement);
-    }
+
+    // Ensure Angular detects the change
+
+    // Open the Bootstrap modal
+    const modalElement = document.getElementById('productDetailsModal');
+    const modalInstance = new bootstrap.Modal(modalElement as HTMLElement);
     modalInstance.show();
   }
   
-  
-
   closeModal(): void {
-    const modalElement = this.productDetailsModal?.nativeElement;
+    const modalElement = document.getElementById('productDetailsModal');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement);
       modalInstance?.hide();
     }
+  
+    // Remove inert from body
+    document.body.removeAttribute('inert');
+  
     this.selectedProduct = null; // Clear selected product context
   }
   
   
+  
+  getFileNameFromPath(path: string): string {
+    return path ? path.split('/').pop() || '' : '';
+  }
+  get thumbnailPath(): string {
+    return this.selectedProduct?.image_asset?.thumbnail_path
+      ? this.selectedProduct.image_asset.thumbnail_path.split('/').pop() || ''
+      : '';
+  }
+  
+  set thumbnailPath(value: string) {
+    if (this.selectedProduct?.image_asset) {
+      this.selectedProduct.image_asset.thumbnail_path = value;
+  
+    }
+  }
+  
+  get originalPath(): string {
+    return this.selectedProduct?.image_asset?.original_path
+      ? this.selectedProduct.image_asset.original_path.split('/').pop() || ''
+      : '';
+  }
+  
+  set originalPath(value: string) {
+    if (this.selectedProduct?.image_asset) {
+      this.selectedProduct.image_asset.original_path = value;
+  
+    }
+  }
+  navigateLeft(): void {
+    this.navigateProduct(-1);
+  }
+  
+  navigateRight(): void {
+    this.navigateProduct(1);
+  }
+  isNumericAndNotZero(value: any): boolean {
+    return typeof value === 'number' && !isNaN(value) && value !== 0;
+  }
+  
+  addNewDimension(): void {
+    if (this.selectedProduct?.dimensions) {
+      this.selectedProduct.dimensions.push({
+        height: null,
+        width: null,
+        length: null,
+        weight: null,
+        price: null,
+        currency: null
+      });
+    } else {
+      this.selectedProduct.dimensions = [
+        {
+          height: null,
+          width: null,
+          length: null,
+          weight: null,
+          price: null,
+          currency: null
+        }
+      ];
+    }
+  }
+  
+  addNewTranslation(): void {
+    if (this.selectedProduct?.translations) {
+      this.selectedProduct.translations.push({
+        id: 0,
+        language: '',
+        content: '',
+        slug: '',
+        description: ''
+      });
+    } else {
+      this.selectedProduct.translations = [
+        {
+          id: 0,
+          language: '',
+          content: '',
+          slug: '',
+          description: ''
+        }
+      ];
+    }
+  }
+  
+  removeDimension(index: number): void {
+    if (this.selectedProduct?.dimensions) {
+      this.selectedProduct.dimensions.splice(index, 1);
+    }
+  }
+  
+  removeTranslation(index: number): void {
+    if (this.selectedProduct?.translations) {
+      this.selectedProduct.translations.splice(index, 1);
+    }
+  }
+    
+ 
+  
+  
   ngOnInit(): void {
     this.loadCategories();
+    this.checkLoginStatus();
+
+  }
+  checkLoginStatus(): void {
+    // Replace with your actual login check logic
+    this.isLoggedIn = !!localStorage.getItem('token');
+  }
+  openEditModal(product: Product): void {
+    // Clone the product to avoid direct mutation
+    this.selectedProduct = { ...product };
+  
+    // Update the paths when the modal is opened
+    if (this.selectedProduct?.image_asset) {
+      this.originalPath = this.getFileNameFromPath(this.selectedProduct.image_asset.original_path);
+      this.thumbnailPath = this.getFileNameFromPath(this.selectedProduct.image_asset.thumbnail_path);
+    }
+  
+    // Open the Bootstrap modal
+    const modalElement = document.getElementById('editProductModal');
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    }
+  }
+  
+
+  updateProduct(): void {
+    if (this.selectedProduct) {
+      this.productService.updateProduct(this.selectedProduct).subscribe(() => {
+        alert('Product updated successfully!');
+        this.productService.getCategoryById(this.selectedCategory!.id, this.currentPage)
+        this.closeEditModal();
+      });
+    }
   }
 
+  closeEditModal(): void {
+    const modalElement = document.getElementById('editProductModal');
+    if (modalElement) {
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      modal.hide();
+    }
+  }
   // Load categories from the API
   loadCategories() {
     this.isLoading=true;
@@ -180,7 +319,7 @@ export class ProductsComponent implements OnInit, OnDestroy,AfterViewInit {
     this.isLoading=true;
     const sub = this.productService.getCategoryById(categoryId, page).subscribe({
       next: (categoryResponse: CategoryResponse) => {
-        this.products = categoryResponse.products || [];
+        this.products = this.selectedProduct = categoryResponse.products || [];
         this.currentPage = categoryResponse.pagination.page;
         this.totalPages = categoryResponse.pagination.total_pages;
         this.isLoading = false; // Turn off loader

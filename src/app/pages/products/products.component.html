@@ -63,7 +63,7 @@
 
 <section
   class="products-section py-5"
-  *ngIf="!showingGroups && selectedCategory"
+  *ngIf="!showingGroups && selectedCategory "
 >
   <div class="container">
     <h2 class="text-center mb-5">{{ selectedCategory.title }} Products</h2>
@@ -92,13 +92,11 @@
     </div>
     <div class="products-pagination-container">
       <!-- Product Cards -->
-      <div class="row">
+      <div class="row" *ngIf="!isLoading">
         <div class="col-md-3 mb-4" *ngFor="let product of products">
           <div
             class="card h-100"
-            (click)="openModal(product)"
-            data-bs-toggle="modal"
-            data-bs-target="#productDetailsModal"
+            (click)="openModal(product, $event)"
             style="cursor: pointer"
           >
             <div class="position-relative">
@@ -149,6 +147,13 @@
                 <i class="fab fa-whatsapp"></i> Contact on WhatsApp
               </a>
             </div>
+            <button
+              *ngIf="isLoggedIn"
+              class="btn btn-primary edit-btn"
+              (click)="openEditModal(product); $event.stopPropagation()"
+            >
+              Edit
+            </button>
           </div>
         </div>
       </div>
@@ -179,6 +184,7 @@
     </div>
   </div>
 </section>
+<!-- Product Details Modal -->
 <div
   class="product-modal modal fade"
   id="productDetailsModal"
@@ -187,44 +193,68 @@
   aria-labelledby="productDetailsModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-lg" style="width: 70vw;">
+  <div class="modal-dialog modal-lg" style="width: 70vw">
     <div class="modal-content">
       <div class="modal-body d-flex">
         <!-- Left Section -->
         <div class="image-container">
-          <!-- Left Navigation Arrow -->
-          <button
-          class="navigation-arrows left-arrow"
-          aria-label="Previous"
-          (click)="navigateProduct(-1)"
-        >
-          <i class="fas fa-chevron-left"></i> <!-- Font Awesome Left Icon -->
-        </button>
+         
           <!-- Product Image -->
           <img
-            [src]="selectedProduct?.image_asset?.thumbnail_path || 'assets/images/placeholder_product.jpg'"
-            [alt]="selectedProduct?.image_asset?.alternative_text || 'Product Image'"
+            [src]="
+              selectedProduct?.image_asset?.thumbnail_path ||
+              'assets/images/placeholder_product.jpg'
+            "
+            [alt]="
+              selectedProduct?.image_asset?.alternative_text || 'Product Image'
+            "
             class="product-image"
           />
         </div>
+        <button 
+        class="btn btn-light nav-btn prev-btn" 
+        (click)="navigateLeft()" 
+        aria-label="Navigate left">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button 
+        class="btn btn-light nav-btn next-btn" 
+        (click)="navigateRight()" 
+        aria-label="Navigate right">
+        <i class="bi bi-chevron-right"></i>
+      </button>
 
         <!-- Right Section -->
         <div class="info-container">
           <h5>{{ selectedProduct?.code }}</h5>
           <p>
-            {{ selectedProduct?.description || 'No description available.' }}
+            {{ selectedProduct?.description || "No description available." }}
           </p>
           <h6>Dimensions:</h6>
-          <ul *ngIf="selectedProduct?.dimensions && selectedProduct.dimensions.length">
+          <ul
+            *ngIf="
+              selectedProduct?.dimensions && selectedProduct.dimensions.length
+            "
+          >
             <li *ngFor="let dimension of selectedProduct.dimensions">
-              <strong>Height:</strong> {{ dimension.height || 'N/A' }} mm<br />
-              <strong>Width:</strong> {{ dimension.width || 'N/A' }} mm<br />
-              <strong>Length:</strong> {{ dimension.length || 'N/A' }} mm<br />
-              <strong>Weight:</strong> {{ dimension.weight || 'N/A' }} kg<br />
-              <strong>Price:</strong> {{ dimension.price || 'N/A' }}
-              {{ dimension.currency || '' }}
+              <div *ngIf="isNumericAndNotZero(dimension.height)">
+                <strong>Height:</strong> {{ dimension.height }} mm
+              </div>
+              <div *ngIf="isNumericAndNotZero(dimension.width)">
+                <strong>Width:</strong> {{ dimension.width }} mm
+              </div>
+              <div *ngIf="isNumericAndNotZero(dimension.length)">
+                <strong>Length:</strong> {{ dimension.length }} mm
+              </div>
+              <div *ngIf="isNumericAndNotZero(dimension.weight)">
+                <strong>Weight:</strong> {{ dimension.weight }} g
+              </div>
+              <div *ngIf="isNumericAndNotZero(dimension.price)">
+                <strong>Price:</strong> {{ dimension.price }} {{ dimension.currency || "" }}
+              </div>
             </li>
           </ul>
+          
           <a
             [href]="getWhatsAppLink(selectedProduct)"
             class="btn btn-success mt-2"
@@ -234,17 +264,317 @@
             <i class="fab fa-whatsapp"></i> Contact on WhatsApp
           </a>
         </div>
-        
-        <!-- Right Navigation Arrow -->
-        <button
-        class="navigation-arrows right-arrow"
-        aria-label="Next"
-        (click)="navigateProduct(1)"
-      >
-        <i class="fas fa-chevron-right"></i> <!-- Font Awesome Right Icon -->
-      </button>
+
       </div>
     </div>
   </div>
 </div>
 
+
+
+
+
+
+<div
+*ngIf="!showingGroups && selectedCategory"
+
+  class="modal fade"
+  id="editProductModal"
+  tabindex="-1"
+  aria-labelledby="editProductModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <h5>General Information</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="productCode" class="form-label">Product Code</label>
+              <input
+                type="text"
+                class="form-control"
+                id="productCode"
+                [(ngModel)]="selectedProduct.code"
+                name="code"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="productCutType" class="form-label">Cut Type</label>
+              <input
+                type="number"
+                class="form-control"
+                id="productCutType"
+                [(ngModel)]="selectedProduct.cut_type"
+                name="cut_type"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="productActive"
+                  [(ngModel)]="selectedProduct.is_active"
+                  name="is_active"
+                />
+                <label class="form-check-label" for="productActive">Is Active</label>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="productTop"
+                  [(ngModel)]="selectedProduct.top_product"
+                  name="top_product"
+                />
+                <label class="form-check-label" for="productTop">Top Product</label>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="productNew"
+                  [(ngModel)]="selectedProduct.new_product"
+                  name="new_product"
+                />
+                <label class="form-check-label" for="productNew">New Product</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="mb-3">
+            <label for="productContent" class="form-label">Content</label>
+            <textarea
+              class="form-control"
+              id="productContent"
+              rows="3"
+              [(ngModel)]="selectedProduct.content"
+              name="content"
+            ></textarea>
+          </div> -->
+
+          <!-- Image Asset -->
+          <h5 class="mt-4">Image Asset</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="imageFileName" class="form-label">File Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="imageFileName"
+                [(ngModel)]="selectedProduct.image_asset.file_name"
+                name="image_file_name"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="imageAltText" class="form-label">Alternative Text</label>
+              <input
+                type="text"
+                class="form-control"
+                id="imageAltText"
+                [(ngModel)]="selectedProduct.image_asset.alternative_text"
+                name="image_alt_text"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="imageThumbnailPath" class="form-label">Thumbnail Path</label>
+              <input
+                type="text"
+                class="form-control"
+                id="imageThumbnailPath"
+                [(ngModel)]="thumbnailPath"
+                name="thumbnail_path"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="imageOriginalPath" class="form-label">Original Path</label>
+              <input
+                type="text"
+                class="form-control"
+                id="imageOriginalPath"
+                [(ngModel)]="originalPath"
+                name="original_path"
+              />
+            </div>
+          </div>
+
+          <h5 class="mt-4">Product Dimensions</h5>
+          <div *ngIf="selectedProduct?.dimensions?.length > 0">
+            <div
+              class="row mb-3"
+              *ngFor="let dimension of selectedProduct.dimensions; let i = index"
+            >
+              <div class="col-md-2">
+                <label for="height-{{ i }}" class="form-label">Height</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="height-{{ i }}"
+                  placeholder="Height"
+                  [(ngModel)]="dimension.height"
+                  name="height-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="width-{{ i }}" class="form-label">Width</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="width-{{ i }}"
+                  placeholder="Width"
+                  [(ngModel)]="dimension.width"
+                  name="width-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="length-{{ i }}" class="form-label">Length</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="length-{{ i }}"
+                  placeholder="Length"
+                  [(ngModel)]="dimension.length"
+                  name="length-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="weight-{{ i }}" class="form-label">Weight</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="weight-{{ i }}"
+                  placeholder="Weight"
+                  [(ngModel)]="dimension.weight"
+                  name="weight-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="price-{{ i }}" class="form-label">Price</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="price-{{ i }}"
+                  placeholder="Price"
+                  [(ngModel)]="dimension.price"
+                  name="price-{{ i }}"
+                />
+              </div>
+              <div class="col-md-1">
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  (click)="removeDimension(i)"
+                >
+                  &times;
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <button type="button" class="btn btn-success" (click)="addNewDimension()">
+              Add Dimension
+            </button>
+          </div>
+          
+
+          <!-- Translations -->
+          <h5 class="mt-4">Product Translations</h5>
+          <div *ngIf="selectedProduct?.translations?.length > 0">
+            <div
+              class="row mb-3"
+              *ngFor="let translation of selectedProduct.translations; let i = index"
+            >
+              <div class="col-md-3">
+                <label for="language-{{ i }}" class="form-label">Language</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Language"
+                  [(ngModel)]="translation.language"
+                  id="language-{{ i }}"
+                  name="language-{{ i }}"
+                />
+              </div>
+              <div class="col-md-3">
+                <label for="content-{{ i }}" class="form-label">Content</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Content"
+                  [(ngModel)]="translation.content"
+                  id="content-{{ i }}"
+                  name="content-{{ i }}"
+                />
+              </div>
+              <div class="col-md-3">
+                <label for="slug-{{ i }}" class="form-label">Slug</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Slug"
+                  [(ngModel)]="translation.slug"
+                  id="slug-{{ i }}"
+                  name="slug-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="description-{{ i }}" class="form-label">Description</label>
+                <textarea
+                  class="form-control"
+                  placeholder="Description"
+                  [(ngModel)]="translation.description"
+                  id="description-{{ i }}"
+                  name="description-{{ i }}"
+                ></textarea>
+              </div>
+              <div class="col-md-1">
+                <label class="form-label d-block">&nbsp;</label>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  (click)="removeTranslation(i)"
+                >
+                  &times;
+                </button>
+              </div>
+            </div>
+          </div>          
+          <div class="mb-3">
+            <button type="button" class="btn btn-success" (click)="addNewTranslation()">
+              Add Translation
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" (click)="updateProduct()">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

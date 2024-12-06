@@ -141,36 +141,71 @@
   background-color: #f8f9fa;
 }
 
-/* Navigation Arrows */
-.navigation-arrows {
+.nav-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 2.5rem;
-  color: #007bff5e; /* Primary blue color */
-  background-color: rgba(255, 255, 255, 0.8); /* Light background */
-  border-radius: 50%; /* Circular shape */
-  border: 2px solid #ddd; /* Subtle border */
-  padding: 25px;
+  z-index: 1050;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px; /* Adjust width for the button size */
+  height: 60px; /* Adjust height for the button size */
+  border: none;
+  z-index: 10;
   cursor: pointer;
-  transition: all 0.3s ease; /* Smooth transition */
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  transition: transform 0.3s ease;
 }
 
-.navigation-arrows:hover {
-  background-color: #0057b380;
-  color: #fff;
-  transform: translateY(-50%) scale(1.1); /* Slight scale-up effect */
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 91, 187, 0.7); /* Blue glow */
+.nav-btn:hover {
+  transform: translateY(-50%) scale(1.1);
 }
 
-.left-arrow {
-  left: 3%;
+.nav-btn.prev-btn {
+  left: -30px; /* Adjust as needed */
 }
 
-.right-arrow {
-  right: 3%;
+.nav-btn.next-btn {
+  right: -30px; /* Adjust as needed */
 }
+
+.nav-btn i {
+  display: none; /* Hide icon since we're creating arrows */
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 20px; /* Width of the arrow */
+  height: 20px; /* Height of the arrow */
+  border: solid #333; /* Arrow color */
+  border-width: 0 6px 6px 0; /* Thickness of the arrow */
+}
+
+.nav-btn.prev-btn::before {
+  transform: translate(-50%, -50%) rotate(135deg); /* Rotate to point left */
+}
+
+.nav-btn.next-btn::before {
+  transform: translate(-50%, -50%) rotate(-45deg); /* Rotate to point right */
+}
+
 
 /* Premium Modal Info Section */
 .product-modal .info-container {
@@ -302,4 +337,12 @@
 .skeleton-desc {
   height: 15px;
   width: 40%;
+}
+.edit-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  border-radius: 5px;
 }

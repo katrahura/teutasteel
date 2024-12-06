@@ -94,4 +94,37 @@ export class ProductService {
     console.error('Full error details:', error);
     return throwError('Something went wrong; please try again later.');
   }
+
+  updateProduct(product: Product): Observable<Product> {
+    const headers = this.getAuthHeaders(); // Get authorization headers
+  
+    // Sanitize the product object
+    const sanitizedProduct = this.sanitizePayload(product);
+  
+    return this.http.put<Product>(
+      `${this.apiUrl}/product/${product.id}`,
+      sanitizedProduct,
+      { headers }
+    );
+  }
+  
+  // Helper function to sanitize the payload
+  private sanitizePayload(product: any): any {
+    const { id, ...cleanedProduct } = product; // Remove the top-level id
+    return {
+      ...cleanedProduct,
+      dimensions: product.dimensions.map((dimension: any) => {
+        const { price_history, ...cleanedDimension } = dimension;
+        return {
+          ...cleanedDimension,
+          
+        };
+      }),
+    
+      image_asset: (() => {
+        const { id, ...cleanedImageAsset } = product.image_asset;
+        return cleanedImageAsset;
+      })()
+    };
+  } 
 }

@@ -1,5 +1,4 @@
     export interface ImageAsset {
-      id: number;
       file_name: string;
       alternative_text: string;
       thumbnail_path: string;
@@ -7,7 +6,6 @@
     }
     
     export interface ProductDimension {
-      id?: number;
       height?: number;
       width?: number;
       length?: number;
@@ -19,7 +17,6 @@
       
     
     export interface ProductTranslation {
-      id: number;
       language: string;
       content: string;
       slug: string;
@@ -33,7 +30,7 @@
       is_active: boolean;
       top_product: boolean;
       new_product: boolean;
-      content?: string;
+      // content?: string;
       slug?: string;
       description?: string;
       image_asset: ImageAsset;
@@ -41,13 +38,15 @@
       translations: ProductTranslation[];
     }
     
+
     export interface Category {
       id: number;
       title: string;
       is_active: boolean;
       image_asset: ImageAsset;
       products?: Product[];
-      description: string;
+      pagination?: Pagination; // Add this line
+      description: string; // If you have a description field
     }
     
   // models/pagination.model.ts
@@ -58,15 +57,7 @@ export interface Pagination {
   total_pages: number;
   total_items: number;
 }
-export interface Category {
-  id: number;
-  title: string;
-  is_active: boolean;
-  image_asset: ImageAsset;
-  products?: Product[];
-  pagination?: Pagination; // Add this line
-  description: string; // If you have a description field
-}
+
 export interface CategoryResponse {
   products: Product[];
   pagination: Pagination;
