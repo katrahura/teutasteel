@@ -29,16 +29,24 @@
             </li>
           </ul>
           <!-- Language Selector -->
-          <ul class="navbar-nav">
-            <div class="language-switcher">
-              <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'al'}" (click)="switchLanguage('al')">AL</button>
-              <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'en'}" (click)="switchLanguage('en')">EN</button>
-            </div>
-            
-        </ul>
+          <ul class="navbar-nav align-items-center">
+            <li class="nav-item me-3">
+              <div class="language-switcher">
+                <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'al'}" (click)="switchLanguage('al')">AL</button>
+                <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'en'}" (click)="switchLanguage('en')">EN</button>
+              </div>
+            </li>
+            <!-- Login Icon -->
+            <li class="nav-item">
+              <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active">
+                <i class="bi bi-person-circle fs-4"></i>
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
+    
     
     <!-- Main Content -->
     <main [@routeAnimations]="prepareRoute(outlet)">

@@ -12,6 +12,7 @@ import {
   Product,
 } from '../../models/product.model';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 type DimensionKey =
   | 'height'
   | 'width'
@@ -71,7 +72,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   };
   changeDetectorRef: any;
 
-  constructor(private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService,) {}
 
   openModal(product: any, event: Event): void {
     event.stopPropagation(); // Stop event propagation
@@ -202,21 +203,18 @@ export class ProductsComponent implements OnInit, OnDestroy {
   
   ngOnInit(): void {
     this.loadCategories();
-    this.checkLoginStatus();
+    this.isLoggedIn= this.authService.isAuthenticated();
 
   }
-  checkLoginStatus(): void {
-    // Replace with your actual login check logic
-    this.isLoggedIn = !!localStorage.getItem('token');
-  }
+
   openEditModal(product: Product): void {
     // Clone the product to avoid direct mutation
     this.selectedProduct = { ...product };
   
     // Update the paths when the modal is opened
     if (this.selectedProduct?.image_asset) {
-      this.originalPath = this.getFileNameFromPath(this.selectedProduct.image_asset.original_path);
-      this.thumbnailPath = this.getFileNameFromPath(this.selectedProduct.image_asset.thumbnail_path);
+      this.originalPath = this.originalPath;
+      this.thumbnailPath = this.thumbnailPath;
     }
   
     // Open the Bootstrap modal
@@ -362,6 +360,119 @@ export class ProductsComponent implements OnInit, OnDestroy {
   
     const newIndex = (currentIndex + direction + this.products.length) % this.products.length;
     this.selectedProduct = this.products[newIndex];
+  }
+  editCategory(category: Category): void {
+    this.selectedCategory = { ...category }; // Clone to avoid direct mutation
+        // Update the paths when the modal is opened
+        if (this.selectedCategory?.image_asset) {
+          this.originalPathC = this.getFileNameFromPath(this.selectedCategory.image_asset.original_path);
+          this.thumbnailPathC = this.getFileNameFromPath(this.selectedCategory.image_asset.thumbnail_path);
+        }
+        console.log(this.originalPath)
+    const modalElement = document.getElementById('editCategoryModal');
+    if (modalElement) {
+      const modalInstance = new bootstrap.Modal(modalElement);
+      modalInstance.show();
+    }
+  }
+  
+  updateCategory(): void {
+    if (this.selectedCategory) {
+      this.productService.updateCategory(this.selectedCategory).subscribe({
+        next: () => {
+          alert('Category updated successfully!');
+          this.loadCategories(); // Refresh categories after update
+          this.closeEditCategoryModal();
+        },
+        error: (err) => {
+          console.error('Error updating category:', err);
+          alert('Failed to update category. Please try again.');
+        },
+      });
+    }
+  }
+  
+  closeEditCategoryModal(): void {
+    const modalElement = document.getElementById('editCategoryModal');
+
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement);
+      modalInstance?.hide();
+    }
+    this.selectedCategory = null; // Clear the selected category
+  }
+  get categoryTitle(): string {
+    return this.selectedCategory?.title || '';
+  }
+  
+  set categoryTitle(value: string) {
+    if (this.selectedCategory) {
+      this.selectedCategory.title = value;
+    }
+  }
+  
+  get isActive(): boolean {
+    return !!this.selectedCategory?.is_active;
+  }
+  
+  set isActive(value: boolean) {
+    if (this.selectedCategory) {
+      this.selectedCategory.is_active = value;
+    }
+  }
+  
+  get topCategory(): boolean {
+    return !!this.selectedCategory?.top_category;
+  }
+  
+  set topCategory(value: boolean) {
+    if (this.selectedCategory) {
+      this.selectedCategory.top_category = value;
+    }
+  }
+  
+  get fileName(): string {
+    return this.selectedCategory?.image_asset?.file_name || '';
+  }
+  
+  set fileName(value: string) {
+    if (this.selectedCategory?.image_asset) {
+      this.selectedCategory.image_asset.file_name = value;
+    }
+  }
+  
+  get alternativeText(): string {
+    return this.selectedCategory?.image_asset?.alternative_text || '';
+  }
+  
+  set alternativeText(value: string) {
+    if (this.selectedCategory?.image_asset) {
+      this.selectedCategory.image_asset.alternative_text = value;
+    }
+  }
+  get thumbnailPathC(): string {
+    return this.selectedCategory?.image_asset?.thumbnail_path
+    ? this.selectedCategory.image_asset.thumbnail_path.split('/').pop() || ''
+    : '';
+  }
+  
+  set thumbnailPathC(value: string) {
+    if (this.selectedCategory?.image_asset) {
+      this.selectedCategory.image_asset.thumbnail_path = value;
+    }
+  }
+  
+  get originalPathC(): string {
+    return this.selectedCategory?.image_asset?.original_path
+    ? this.selectedCategory.image_asset.original_path.split('/').pop() || ''
+    : '';
+    
+  }
+  
+  set originalPathC(value: string) {
+    if (this.selectedCategory?.image_asset) {
+      this.selectedCategory.image_asset.original_path = value;
+    }
   }
   
 }

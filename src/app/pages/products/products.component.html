@@ -22,6 +22,7 @@
         </div>
       </div>
     </div>
+    <!-- Add Edit Button in Category View -->
     <div class="row">
       <div class="col-md-3 mb-4" *ngFor="let category of categories">
         <div class="card h-100">
@@ -42,14 +43,18 @@
             <p class="card-text">
               {{ category.description || "No description available." }}
             </p>
-            <p class="card-text" *ngIf="category.products">
-              <small class="text-muted">
-                {{ category.products.length }} product(s) available
-              </small>
-            </p>
-            <!-- View Products Button -->
             <div class="text-center mt-3">
-              <button class="btn btn-primary" (click)="showProducts(category)">
+              <button
+                *ngIf="isLoggedIn"
+                class="btn btn-primary edit-btn"
+                (click)="editCategory(category)"
+              >
+                Edit
+              </button>
+              <button
+                class="btn btn-secondary"
+                (click)="showProducts(category)"
+              >
                 {{ "PRODUCTS.VIEW_PRODUCTS_BUTTON" | translate }}
               </button>
             </div>
@@ -63,7 +68,7 @@
 
 <section
   class="products-section py-5"
-  *ngIf="!showingGroups && selectedCategory "
+  *ngIf="!showingGroups && selectedCategory"
 >
   <div class="container">
     <h2 class="text-center mb-5">{{ selectedCategory.title }} Products</h2>
@@ -198,7 +203,6 @@
       <div class="modal-body d-flex">
         <!-- Left Section -->
         <div class="image-container">
-         
           <!-- Product Image -->
           <img
             [src]="
@@ -211,18 +215,20 @@
             class="product-image"
           />
         </div>
-        <button 
-        class="btn btn-light nav-btn prev-btn" 
-        (click)="navigateLeft()" 
-        aria-label="Navigate left">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-      <button 
-        class="btn btn-light nav-btn next-btn" 
-        (click)="navigateRight()" 
-        aria-label="Navigate right">
-        <i class="bi bi-chevron-right"></i>
-      </button>
+        <button
+          class="btn btn-light nav-btn prev-btn"
+          (click)="navigateLeft()"
+          aria-label="Navigate left"
+        >
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <button
+          class="btn btn-light nav-btn next-btn"
+          (click)="navigateRight()"
+          aria-label="Navigate right"
+        >
+          <i class="bi bi-chevron-right"></i>
+        </button>
 
         <!-- Right Section -->
         <div class="info-container">
@@ -250,11 +256,12 @@
                 <strong>Weight:</strong> {{ dimension.weight }} g
               </div>
               <div *ngIf="isNumericAndNotZero(dimension.price)">
-                <strong>Price:</strong> {{ dimension.price }} {{ dimension.currency || "" }}
+                <strong>Price:</strong> {{ dimension.price }}
+                {{ dimension.currency || "" }}
               </div>
             </li>
           </ul>
-          
+
           <a
             [href]="getWhatsAppLink(selectedProduct)"
             class="btn btn-success mt-2"
@@ -264,20 +271,13 @@
             <i class="fab fa-whatsapp"></i> Contact on WhatsApp
           </a>
         </div>
-
       </div>
     </div>
   </div>
 </div>
 
-
-
-
-
-
 <div
-*ngIf="!showingGroups && selectedCategory"
-
+  *ngIf="!showingGroups && selectedCategory"
   class="modal fade"
   id="editProductModal"
   tabindex="-1"
@@ -331,7 +331,9 @@
                   [(ngModel)]="selectedProduct.is_active"
                   name="is_active"
                 />
-                <label class="form-check-label" for="productActive">Is Active</label>
+                <label class="form-check-label" for="productActive"
+                  >Is Active</label
+                >
               </div>
             </div>
             <div class="col-md-4 mb-3">
@@ -343,7 +345,9 @@
                   [(ngModel)]="selectedProduct.top_product"
                   name="top_product"
                 />
-                <label class="form-check-label" for="productTop">Top Product</label>
+                <label class="form-check-label" for="productTop"
+                  >Top Product</label
+                >
               </div>
             </div>
             <div class="col-md-4 mb-3">
@@ -355,7 +359,9 @@
                   [(ngModel)]="selectedProduct.new_product"
                   name="new_product"
                 />
-                <label class="form-check-label" for="productNew">New Product</label>
+                <label class="form-check-label" for="productNew"
+                  >New Product</label
+                >
               </div>
             </div>
           </div>
@@ -385,7 +391,9 @@
               />
             </div>
             <div class="col-md-6 mb-3">
-              <label for="imageAltText" class="form-label">Alternative Text</label>
+              <label for="imageAltText" class="form-label"
+                >Alternative Text</label
+              >
               <input
                 type="text"
                 class="form-control"
@@ -398,7 +406,9 @@
 
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="imageThumbnailPath" class="form-label">Thumbnail Path</label>
+              <label for="imageThumbnailPath" class="form-label"
+                >Thumbnail Path</label
+              >
               <input
                 type="text"
                 class="form-control"
@@ -408,7 +418,9 @@
               />
             </div>
             <div class="col-md-6 mb-3">
-              <label for="imageOriginalPath" class="form-label">Original Path</label>
+              <label for="imageOriginalPath" class="form-label"
+                >Original Path</label
+              >
               <input
                 type="text"
                 class="form-control"
@@ -423,7 +435,10 @@
           <div *ngIf="selectedProduct?.dimensions?.length > 0">
             <div
               class="row mb-3"
-              *ngFor="let dimension of selectedProduct.dimensions; let i = index"
+              *ngFor="
+                let dimension of selectedProduct.dimensions;
+                let i = index
+              "
             >
               <div class="col-md-2">
                 <label for="height-{{ i }}" class="form-label">Height</label>
@@ -492,21 +507,29 @@
             </div>
           </div>
           <div class="mb-3">
-            <button type="button" class="btn btn-success" (click)="addNewDimension()">
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="addNewDimension()"
+            >
               Add Dimension
             </button>
           </div>
-          
 
           <!-- Translations -->
           <h5 class="mt-4">Product Translations</h5>
           <div *ngIf="selectedProduct?.translations?.length > 0">
             <div
               class="row mb-3"
-              *ngFor="let translation of selectedProduct.translations; let i = index"
+              *ngFor="
+                let translation of selectedProduct.translations;
+                let i = index
+              "
             >
               <div class="col-md-3">
-                <label for="language-{{ i }}" class="form-label">Language</label>
+                <label for="language-{{ i }}" class="form-label"
+                  >Language</label
+                >
                 <input
                   type="text"
                   class="form-control"
@@ -539,7 +562,9 @@
                 />
               </div>
               <div class="col-md-2">
-                <label for="description-{{ i }}" class="form-label">Description</label>
+                <label for="description-{{ i }}" class="form-label"
+                  >Description</label
+                >
                 <textarea
                   class="form-control"
                   placeholder="Description"
@@ -559,9 +584,13 @@
                 </button>
               </div>
             </div>
-          </div>          
+          </div>
           <div class="mb-3">
-            <button type="button" class="btn btn-success" (click)="addNewTranslation()">
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="addNewTranslation()"
+            >
               Add Translation
             </button>
           </div>
@@ -572,6 +601,127 @@
           Close
         </button>
         <button type="button" class="btn btn-primary" (click)="updateProduct()">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div
+  class="modal fade"
+  id="editCategoryModal"
+  tabindex="-1"
+  aria-labelledby="editCategoryModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <!-- Category Title -->
+          <div class="mb-3">
+            <label for="categoryTitle" class="form-label">Category Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="categoryTitle"
+              [(ngModel)]="categoryTitle"
+              name="title"
+            />
+          </div>
+
+          <!-- Active Status -->
+          <div class="mb-3">
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="isActive"
+                [(ngModel)]="isActive"
+                name="is_active"
+              />
+              <label class="form-check-label" for="isActive">Active</label>
+            </div>
+          </div>
+
+          <!-- Top Category -->
+          <div class="mb-3">
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="topCategory"
+                [(ngModel)]="topCategory"
+                name="top_category"
+              />
+              <label class="form-check-label" for="topCategory">Top Category</label>
+            </div>
+          </div>
+
+          <!-- Image Asset Section -->
+          <h5>Image Asset</h5>
+          <div class="mb-3">
+            <label for="fileName" class="form-label">File Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="fileName"
+              [(ngModel)]="fileName"
+              name="file_name"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="altText" class="form-label">Alternative Text</label>
+            <input
+              type="text"
+              class="form-control"
+              id="altText"
+              [(ngModel)]="alternativeText"
+              name="alternative_text"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="thumbnailPath" class="form-label">Thumbnail Path</label>
+            <input
+              type="text"
+              class="form-control"
+              id="thumbnailPath"
+              [(ngModel)]="thumbnailPathC"
+              name="thumbnail_path"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="originalPath" class="form-label">Original Path</label>
+            <input
+              type="text"
+              class="form-control"
+              id="originalPath"
+              [(ngModel)]="originalPathC"
+              name="original_path"
+            />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="updateCategory()"
+        >
           Save Changes
         </button>
       </div>

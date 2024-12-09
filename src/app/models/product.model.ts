@@ -43,9 +43,18 @@
       id: number;
       title: string;
       is_active: boolean;
+      top_category:boolean;
       image_asset: ImageAsset;
       products?: Product[];
       pagination?: Pagination; // Add this line
+      description: string; // If you have a description field
+    }
+    export interface TopCategory {
+      id: number;
+      title: string;
+      is_active: boolean;
+      top_category:boolean;
+      image_asset: ImageAsset;
       description: string; // If you have a description field
     }
     

@@ -5,7 +5,7 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import { catchError, Observable, throwError, map, retry } from 'rxjs';
-import { Category, CategoryResponse, Product } from '../models/product.model';
+import { Category, CategoryResponse, Product, TopCategory } from '../models/product.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -28,6 +28,17 @@ export class ProductService {
         ), // Transform the response
         catchError(this.handleError)
       );
+  }
+  getTopCategories(): Observable<TopCategory[]> {
+    const url = `${this.apiUrl}/category/top_categories/`;
+    return this.http
+      .get<TopCategory[]>(url, { headers: this.getAuthHeaders() })
+      .pipe(retry(4),
+      map((categories) =>
+        this.transformCategories(categories, 'category_images')
+      ), // Transform the response
+      catchError(this.handleError)
+    );
   }
   
   private transformCategories(
@@ -68,10 +79,6 @@ export class ProductService {
       );
   }
   // product.service.ts
-
-
-
-
 
   // Helper method to get authorization headers
   private getAuthHeaders(): HttpHeaders {
@@ -126,5 +133,25 @@ export class ProductService {
         return cleanedImageAsset;
       })()
     };
+    
   } 
+  updateCategory(category: Category): Observable<Category> {
+    const headers = this.getAuthHeaders();
+    const sanitizedCategory = this.sanitizeCategoryPayload(category);
+  
+    return this.http.put<Category>(
+      `${this.apiUrl}/category/without-products/${category.id}`,
+      sanitizedCategory,
+      { headers }
+    );
+  }
+  // Helper function to sanitize category payload
+private sanitizeCategoryPayload(category: Category): any {
+  const { id, ...cleanedCategory } = category; // Remove the top-level id
+  return {
+    ...cleanedCategory,
+
+  };
+}
+
 }
