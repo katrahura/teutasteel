@@ -1,10 +1,12 @@
+import { BlobOptions } from "buffer";
+
     export interface ImageAsset {
       file_name: string;
       alternative_text: string;
       thumbnail_path: string;
       original_path: string;
     }
-    
+
     export interface ProductDimension {
       height?: number;
       width?: number;
@@ -12,10 +14,16 @@
       weight?: number;
       price?: number;
       currency?: string;
-      price_history?: any[]; // Adjust the type as needed
+      price_history?: PriceHistory[]; // Adjust the type as needed
     }
-      
-    
+    export interface PriceHistory {
+      id?: number;
+      price: number;
+      currency: string;
+      start_date: string;
+      end_date?: string;
+    }
+
     export interface ProductTranslation {
       language: string;
       content: string;
@@ -24,38 +32,36 @@
     }
     
     export interface Product {
-      id: number;
+      id?: number;
       code: string;
       cut_type: number;
       is_active: boolean;
-      top_product: boolean;
-      new_product: boolean;
+      new_product:boolean;
+      category_id?: number; // Added categoryId field
       // content?: string;
       slug?: string;
       description?: string;
-      image_asset: ImageAsset;
+      image_asset?: ImageAsset;
       dimensions: ProductDimension[];
       translations: ProductTranslation[];
     }
     
 
     export interface Category {
-      id: number;
+      id?: number;
       title: string;
       is_active: boolean;
       top_category:boolean;
-      image_asset: ImageAsset;
+      image_asset?: ImageAsset;
       products?: Product[];
       pagination?: Pagination; // Add this line
-      description: string; // If you have a description field
     }
     export interface TopCategory {
-      id: number;
+      id?: number;
       title: string;
       is_active: boolean;
       top_category:boolean;
-      image_asset: ImageAsset;
-      description: string; // If you have a description field
+      image_asset?: ImageAsset;
     }
     
   // models/pagination.model.ts

@@ -44,7 +44,9 @@
   padding: 5px 10px;
   font-size: 0.75rem;
 }
-
+.groups-section h2 {
+  color: #333;
+}
 /* Buttons (Global Styling) */
 .btn-success {
   background-color: #25d366; /* Fallback for older browsers */

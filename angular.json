@@ -24,7 +24,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              },              "src/assets"
+              },
+              "src/assets"
 
             ],
             "styles": [
@@ -92,10 +93,12 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/assets"
             ],
             "styles": [
               "src/styles.css"
+              
             ],
             "scripts": []
           }

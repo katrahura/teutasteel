@@ -40,7 +40,16 @@ export class ProductService {
       catchError(this.handleError)
     );
   }
+  createCategory(category: Category): Observable<Category> {
+    const headers = this.getAuthHeaders(); // Get authorization headers
+    return this.http.post<Category>(`${this.apiUrl}/category/create`, category, { headers });
+  }
   
+  createProduct(product: Product): Observable<Product> {
+    const headers = this.getAuthHeaders(); // Get authorization headers
+    const sanitizedProduct = this.sanitizePayload(product);
+    return this.http.post<Product>(`${this.apiUrl}/product/create`, sanitizedProduct, { headers });
+  }
   private transformCategories(
     categories: Category[],
     folder: string
@@ -67,8 +76,8 @@ export class ProductService {
   // Method to get a single category by ID, including its products
 
 
-  getCategoryById(categoryId: number, page: number = 1, perPage: number = 8): Observable<CategoryResponse> {
-    const url = `${this.apiUrl}/category/${categoryId}?page=${page}&per_page=${perPage}`;
+  getCategoryById(category_id: number, page: number = 1, perPage: number = 8): Observable<CategoryResponse> {
+    const url = `${this.apiUrl}/category/${category_id}?page=${page}&per_page=${perPage}`;
     return this.http.get<CategoryResponse>(url, { headers: this.getAuthHeaders() })
       .pipe(
         retry(4),

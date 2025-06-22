@@ -1,6 +1,6 @@
 import {  Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
@@ -10,9 +10,11 @@ import {
   Category,
   CategoryResponse,
   Product,
+  ImageAsset
 } from '../../models/product.model';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { SharedService } from '../../shared.service';
 type DimensionKey =
   | 'height'
   | 'width'
@@ -62,7 +64,51 @@ export class ProductsComponent implements OnInit, OnDestroy {
   perPage = 10;
   isLoading = true; // Default to loading
   isLoggedIn: boolean = false;
+  newCategory: Category = {
+    title: '',
+    is_active: true,
+    top_category: true,
+    image_asset: {
+      file_name: '',
+      alternative_text: '',
+      thumbnail_path: '',
+      original_path: ''
+    },
+    }
 
+    newProduct: Product = {
+      code: '',
+      category_id: 0,
+      new_product:false,
+      dimensions: [
+        {
+          height: 0,
+          width: 0,
+          length: 0,
+          weight: 0,
+          price: 0,
+          currency: 'EUR',
+        },
+      ],
+      translations: [
+        {
+          language: 'en',
+          slug: '',
+          description: '',
+          content: '', // IMPORTANT if your schema expects "content"
+        },
+      ],
+      cut_type: 0,
+      is_active: true,
+      image_asset: {
+        file_name: '',
+        alternative_text: '',
+        thumbnail_path: '',
+        original_path: '',
+      },
+    };
+    
+  
   // Cut Type Names Mapping
   cutTypeNames: { [key: number]: string } = {
     1: 'Type A',
@@ -71,8 +117,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
     // Add other mappings as needed
   };
   changeDetectorRef: any;
+  selectedCategoryId: any;
 
-  constructor(private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService,) {}
+  constructor(private sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService,private route: ActivatedRoute) {}
 
   openModal(product: any, event: Event): void {
     event.stopPropagation(); // Stop event propagation
@@ -148,7 +195,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
         length: null,
         weight: null,
         price: null,
-        currency: null
+        currency: "EUR"
       });
     } else {
       this.selectedProduct.dimensions = [
@@ -158,7 +205,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
           length: null,
           weight: null,
           price: null,
-          currency: null
+          currency: "EUR"
         }
       ];
     }
@@ -204,8 +251,147 @@ export class ProductsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadCategories();
     this.isLoggedIn= this.authService.isAuthenticated();
+// Get the navigation object
+const navigation = this.router.getCurrentNavigation();
 
+// Check if the navigation contains a state
+ if (this.sharedService.getCategory()){
+  this.selectedCategory = this.sharedService.getCategory();
+  this.showProducts(this.selectedCategory);
+  this.sharedService.setCategory(null);
+ }
+
+
+}
+addTranslation() {
+  this.newProduct.translations!.push({
+    language: '',
+    slug: '',
+    description: '',
+    content: '' // Add the missing 'content' field
+  });
+}
+
+NremoveTranslation(index: number) {
+  this.newProduct.translations!.splice(index, 1);
+}
+createCategory() {
+  this.productService.createCategory(this.newCategory).subscribe(
+    (response) => {
+      console.log('Category Created:', response);
+
+    },
+    (error) => console.error('Error creating category:', error)
+  );
+}
+NewProdAddTranslation() {
+  this.newProduct.translations!.push({
+    language: '',
+    slug: '',
+    description: '',
+    content: '' // If your schema expects 'content'
+  });
+}
+
+addDimension() {
+  this.newProduct.dimensions!.push({
+    height: 0,
+    width: 0,
+    length: 0,
+    weight: 0,
+    price: 0,
+    currency: 'EUR'
+  });
+}
+
+
+createProduct() {
+  if (!this.selectedCategory) {
+    alert('Please select a category first.');
+    return;
   }
+  if (this.newProduct.dimensions.length === 0) {
+    alert('Please add at least one dimension.');
+    return;
+  }
+  if (this.newProduct.translations.length === 0) {
+    alert('Please add at least one translation.');
+    return;
+  }
+  
+debugger;
+  // Attach the categoryId
+  this.newProduct.category_id = this.selectedCategory.id!;
+
+  // POST the product
+  this.productService.createProduct(this.newProduct).subscribe({
+    next: (response) => {
+        this.productService.getCategoryById(this.selectedCategory!.id!, this.currentPage)
+
+      // Reset the form
+      this.newProduct = {
+        code: '',
+        category_id: 0,
+        new_product:false,
+        dimensions: [
+          {
+            height: 0,
+            width: 0,
+            length: 0,
+            weight: 0,
+            price: 0,
+            currency: 'EUR',
+          },
+        ],
+        translations: [
+          {
+            language: 'en',
+            slug: '',
+            description: '',
+            content: '',
+          },
+        ],
+        cut_type: 0,
+        is_active: true,
+        image_asset: {
+          file_name: '',
+          alternative_text: '',
+          thumbnail_path: '',
+          original_path: '',
+        },
+      };
+      
+
+
+
+
+
+      
+this.closeProductModals();
+this.showProducts(this.selectedCategory)
+
+
+
+    },
+  });
+  
+}
+
+
+ closeProductModals(): void {
+    const modalElementa = document.getElementById('createProductModal');
+    if (modalElementa) {
+      const modal = bootstrap.Modal.getInstance(modalElementa);
+      modal.hide();
+      setTimeout(() => {
+  document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+  document.body.classList.remove('modal-open');
+  document.body.style.removeProperty('padding-right');
+  document.body.style.removeProperty('overflow');
+}, 200);
+
+    }}
+
 
   openEditModal(product: Product): void {
     // Clone the product to avoid direct mutation
@@ -230,7 +416,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
     if (this.selectedProduct) {
       this.productService.updateProduct(this.selectedProduct).subscribe(() => {
         alert('Product updated successfully!');
-        this.productService.getCategoryById(this.selectedCategory!.id, this.currentPage)
+        this.productService.getCategoryById(this.selectedCategory!.id!, this.currentPage)
+        this.showProducts(this.selectedCategory)
         this.closeEditModal();
       });
     }
@@ -262,7 +449,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   
 
   // Show products for a specific category
-  showProducts(category: Category) {
+  showProducts(category: any) {
     this.selectedCategory = category;
     this.showingGroups = false;
 
@@ -313,16 +500,15 @@ export class ProductsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
-  loadCategoryWithProducts(categoryId: number, page: number = 1) {
+  loadCategoryWithProducts(category_id: number, page: number = 1) {
     this.isLoading=true;
-    const sub = this.productService.getCategoryById(categoryId, page).subscribe({
+    const sub = this.productService.getCategoryById(category_id, page).subscribe({
       next: (categoryResponse: CategoryResponse) => {
         this.products = this.selectedProduct = categoryResponse.products || [];
         this.currentPage = categoryResponse.pagination.page;
         this.totalPages = categoryResponse.pagination.total_pages;
         this.isLoading = false; // Turn off loader
 
-        // this.selectedCategory = categoryResponse; // Now includes pagination
       },
       error: (error) => {
         console.error('Error occurred while fetching category:', error);
@@ -334,7 +520,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   loadNextPage() {
     if (this.currentPage < this.totalPages && this.selectedCategory) {
       this.loadCategoryWithProducts(
-        this.selectedCategory.id,
+        this.selectedCategory.id!,
         this.currentPage + 1
       );
     }
@@ -343,7 +529,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   loadPreviousPage() {
     if (this.currentPage > 1 && this.selectedCategory) {
       this.loadCategoryWithProducts(
-        this.selectedCategory.id,
+        this.selectedCategory.id!,
         this.currentPage - 1
       );
     }

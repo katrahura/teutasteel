@@ -1,112 +1,187 @@
 
  
-  
-  @keyframes gradientAnimation {
-    0% {
-      background-position: 0% 50%;
-    }
-    100% {
-      background-position: 100% 50%;
-    }
-  }
-  
   footer {
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
     overflow: hidden; /* Ensures no content overflows outside the rounded corners */
 
   }
-  .default-gradient{
-
-    background: linear-gradient(135deg, #333333, #87CEFA); /* Dark gray to light blue */
-
-    min-height: 100vh;
-    animation: gradientAnimation 5s ease infinite alternate;  /* 'alternate' ensures reverse */
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%; /* Start at left */
+    }
+    50% {
+      background-position: 100% 50%; /* Move to right */
+    }
+    100% {
+      background-position: 0% 50%; /* Move back to left */
+    }
   }
-  .products-gradient {
-    background: linear-gradient(135deg, #4F4F4F, #C0C0C0); /* Gray to silver */
-    min-height: 100vh;
-    animation: gradientAnimation 5s ease infinite alternate;  /* 'alternate' ensures reverse */
+  html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-wrapper > *:not(footer) {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex-shrink: 0;
+}
+
+  
+  /* Rotating Gradient Animation */
+  @keyframes gradientRotation {
+    0% {
+      background: linear-gradient(135deg, #f8f9fa, #003566a1);
+    }
+    10% {
+      background: linear-gradient(153deg, #f8f9fa, #003566a1);
+    }
+    20% {
+      background: linear-gradient(171deg, #f8f9fa, #003566a1);
+    }
+    30% {
+      background: linear-gradient(189deg, #f8f9fa, #003566a1);
+    }
+    40% {
+      background: linear-gradient(207deg, #f8f9fa, #003566a1);
+    }
+    50% {
+      background: linear-gradient(225deg, #f8f9fa, #003566a1);
+    }
+    60% {
+      background: linear-gradient(207deg, #f8f9fa, #003566a1);
+    }
+    70% {
+      background: linear-gradient(189deg, #f8f9fa, #003566a1);
+    }
+    80% {
+      background: linear-gradient(171deg, #f8f9fa, #003566a1);
+    }
+    90% {
+      background: linear-gradient(153deg, #f8f9fa, #003566a1);
+    }
+    100% {
+      background: linear-gradient(135deg, #f8f9fa, #003566a1);
+    }
   }
   
-  .about-gradient {
-    background: linear-gradient(135deg, #ADD8E6, #D3D3D3); /* Light blue to soft gray */
-    min-height: 100vh;
-    animation: gradientAnimation 5s ease infinite alternate;  /* 'alternate' ensures reverse */
-
-  }
   
-  .contact-gradient {
-    background: linear-gradient(135deg, #D3D3D3, #FFFFFF); /* Light gray to white */
-    min-height: 100vh;
-    animation: gradientAnimation 5s ease infinite alternate;  /* 'alternate' ensures reverse */
 
-  }
+/* Default Gradient with Rotation */
+.default-gradient {
+  background: linear-gradient(135deg, #f8f9fa, #003566a1);
+  background-size: 200% ; /* Ensures smooth movement */
+  /* animation: gradientRotation 30s infinite linear; Rotating animation */
+}
 
-  .navbar {
-    position: relative;
-    z-index: 1000; /* Ensure it's layered above other content */
-    overflow: visible; /* Allow content like dropdowns to overflow */
-  }
-  .navbar-brand {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
+/* Products Gradient */
+.products-gradient {
+  background: linear-gradient(135deg, #f2f4f6, #054b91b0);
+  background-size: 200% 200%;
+  min-height: 100vh;
+  /* animation: gradientRotation 30s infinite ease-in-out; */
+}
+
+/* About Gradient */
+.about-gradient {
+  background: linear-gradient(135deg, #eef1f4, #0033667e);
+  background-size: 200% 200%;
+  min-height: 100vh;
+  /* animation: gradientRotation 30s infinite ease-in-out; */
+}
+
+/* Contact Gradient */
+.contact-gradient {
+  background: linear-gradient(135deg, #f5f7fa, #006a9477);
+  background-size: 200% 200%;
+  min-height: 100vh;
+  /* animation: gradientRotation 30s infinite ease-in-out; */
+}
+
+/* Centered Navigation Links and Logo */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-nav.mx-auto {
+  flex-grow: 1; /* Allow center links to grow and center-align */
+}
+
+.nav-item {
+  margin: 0 10px; /* Add equal spacing between links */
   
-  .navbar-nav .nav-item .nav-link {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-  }
-  .navbar {
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-    overflow: hidden; /* Ensures no content overflows outside the rounded corners */
-  }
- /* Logo styling */
+}
+
 .logo {
-  height: 40px; /* Adjust this height based on your design */
-  margin-right: 10px; /* Space between the logo and the brand text */
+  height: 40px;
+  max-width: 80px;
+  display: block;
 }
 
-.navbar-brand {
-  display: flex;
-  align-items: center; /* Align logo and text vertically */
-}
-.language-switcher {
-  display: flex;
-  align-items: center; /* Vertically center the logo and buttons */
-  gap: 5px; /* Space between the logo and buttons */
+/* Right-Side Items */
+.navbar-nav.ms-auto {
+  justify-content: flex-end;
 }
 
-.lang-btn {
-  padding: 4px 8px;
-  border: 2px solid #007bff;
-  border-radius: 15px;
+.language-switcher .lang-btn {
   background-color: transparent;
-  color: #007bff;
-  font-size: 12px;
+  border: none;
+  color: #000;
+  font-size: 1rem;
   font-weight: bold;
+  margin-right: 5px;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
-.lang-btn.active {
-  background-color: #007bff;
-  color: white;
+.language-switcher .lang-btn.active {
+  color: #007bff;
+  text-decoration: underline;
 }
 
-.lang-btn:hover {
-  background-color: #007bff;
-  color: white;
+/* Placeholder for Alignment */
+.left-placeholder {
+  flex-grow: 1; /* Balances the center and right sections */
 }
 
-.logo {
-  height: 30px; /* Adjust the size of the logo */
-  margin-right: 10px; /* Space between the logo and buttons */
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+  .navbar-nav.mx-auto {
+    flex-direction: column; /* Stack items vertically on smaller screens */
+  }
+
+  .logo {
+    height: 30px; /* Adjust logo size for mobile */
+  }
 }
 
 
 
-  
+
+
+  .centered-navbar {
+position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 60vw;      /* or 100vw if you want full width */
+  min-width: 300px;
+  max-width: 900px; /* Adjust as needed */
+  background: rgba(255,255,255,0.97); /* Optional: for contrast */
+  border-radius: 0 0 18px 18px;       /* Only bottom corners rounded */
+  box-shadow: 0 2px 24px 4px #00356630;
+  padding: 1rem 2rem;
+}
  

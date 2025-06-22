@@ -1,7 +1,7 @@
 <!-- Enhanced Categories View -->
 <section class="groups-section py-5" *ngIf="showingGroups" @fadeInOut>
   <div class="container">
-    <h2 class="text-center mb-5">
+    <h2 class="text-center mb-5 mt-5">
       {{ "PRODUCTS.GROUPS_TITLE" | translate }}
     </h2>
     <div class="container" *ngIf="showingGroups && isLoading">
@@ -41,7 +41,6 @@
           <div class="card-body">
             <h5 class="card-title">{{ category.title }}</h5>
             <p class="card-text">
-              {{ category.description || "No description available." }}
             </p>
             <div class="text-center mt-3">
               <button
@@ -63,16 +62,375 @@
       </div>
     </div>
   </div>
+  <div class="actions text-center" *ngIf="isLoggedIn">
+    <button class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+      Create New Category
+    </button>
+    <button
+    class="btn btn-success"
+    [disabled]="!selectedCategory"
+    data-bs-toggle="modal"
+    data-bs-target="#createProductModal"
+  >
+    Create New Product
+  </button>
+
+  </div>
 </section>
 <!-- products.component.html -->
+<!-- Buttons -->
 
+<!-- Create Category Modal -->
+<div
+  class="modal fade"
+  id="createCategoryModal"
+  tabindex="-1"
+  aria-labelledby="createCategoryModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createCategoryModalLabel">Create New Category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form #categoryForm="ngForm">
+          <!-- Title -->
+          <div class="mb-3">
+            <label for="categoryTitle" class="form-label">Title</label>
+            <input
+              type="text"
+              id="categoryTitle"
+              class="form-control"
+              [(ngModel)]="newCategory.title"
+              name="title"
+              required
+            />
+          </div>
+          <!-- Is Active -->
+          <div class="mb-3">
+            <label for="categoryActive" class="form-label">Is Active</label>
+            <select
+              id="categoryActive"
+              class="form-select"
+              [(ngModel)]="newCategory.is_active"
+              name="is_active"
+            >
+              <option [value]="true">Yes</option>
+              <option [value]="false">No</option>
+            </select>
+          </div>
+          <!-- Top Category -->
+          <div class="mb-3">
+            <label for="categoryTop" class="form-label">Top Category</label>
+            <select
+              id="categoryTop"
+              class="form-select"
+              [(ngModel)]="newCategory.top_category"
+              name="top_category"
+            >
+              <option [value]="true">Yes</option>
+              <option [value]="false">No</option>
+            </select>
+          </div>
+          <!-- Image Asset -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="imageFileName" class="form-label">Image File Name</label>
+              <input
+                type="text"
+                id="imageFileName"
+                class="form-control"
+                [(ngModel)]="newCategory.image_asset!.file_name"
+                name="image_file_name"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="altText" class="form-label">Alternative Text</label>
+              <input
+                type="text"
+                id="altText"
+                class="form-control"
+                [(ngModel)]="newCategory.image_asset!.alternative_text"
+                name="alternative_text"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="thumbnailPath" class="form-label">Thumbnail Path</label>
+              <input
+                type="text"
+                id="thumbnailPath"
+                class="form-control"
+                [(ngModel)]="newCategory.image_asset!.thumbnail_path"
+                name="thumbnail_path"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="originalPath" class="form-label">Original Path</label>
+              <input
+                type="text"
+                id="originalPath"
+                class="form-control"
+                [(ngModel)]="newCategory.image_asset!.original_path"
+                name="original_path"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" (click)="createCategory()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- create product modal -->
+<div
+  class="modal fade"
+  id="createProductModal"
+  tabindex="-1"
+  aria-labelledby="createProductModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createProductModalLabel">Create New Product</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form #productForm="ngForm">
+          <!-- REQUIRED: Product Code (string, unique) -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="productCode" class="form-label">Product Code</label>
+              <input
+                type="text"
+                id="productCode"
+                class="form-control"
+                [(ngModel)]="newProduct.code"
+                name="code"
+                required
+              />
+            </div>
+
+            <!-- REQUIRED: Cut Type (integer) -->
+            <div class="col-md-6 mb-3">
+              <label for="productCutType" class="form-label">Cut Type</label>
+              <input
+                type="number"
+                id="productCutType"
+                class="form-control"
+                [(ngModel)]="newProduct.cut_type"
+                name="cut_type"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- OPTIONAL: Is Active -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="productActive" class="form-label">Is Active</label>
+              <select
+                id="productActive"
+                class="form-select"
+                [(ngModel)]="newProduct.is_active"
+                name="is_active"
+              >
+                <option [value]="true">Yes</option>
+                <option [value]="false">No</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- OPTIONAL: Image Asset -->
+          <div class="mb-3">
+            <label for="productImageFile" class="form-label">Image File Name</label>
+            <input
+              type="text"
+              id="productImageFile"
+              class="form-control"
+              [(ngModel)]="newProduct.image_asset!.file_name"
+              name="image_file_name"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="productAlternativeText" class="form-label">Image Alt Text</label>
+            <input
+              type="text"
+              id="productAlternativeText"
+              class="form-control"
+              [(ngModel)]="newProduct.image_asset!.alternative_text"
+              name="image_alternative_text"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="productThumbnailPath" class="form-label">Thumbnail Path</label>
+            <input
+              type="text"
+              id="productThumbnailPath"
+              class="form-control"
+              [(ngModel)]="newProduct.image_asset!.thumbnail_path"
+              name="image_thumbnail_path"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="productOriginalPath" class="form-label">Original Path</label>
+            <input
+              type="text"
+              id="productOriginalPath"
+              class="form-control"
+              [(ngModel)]="newProduct.image_asset!.original_path"
+              name="image_original_path"
+            />
+          </div>
+
+          <!-- REQUIRED: Translations (many=True). 
+               At least one translation is required. -->
+          <div class="mb-3">
+            <label class="form-label">Translations</label>
+            <div *ngFor="let translation of newProduct.translations; let i = index" class="mb-3 border p-2">
+              <div class="mb-2">
+                <label for="translationLanguage_{{ i }}" class="form-label">Language</label>
+                <input
+                  type="text"
+                  id="translationLanguage_{{ i }}"
+                  class="form-control"
+                  [(ngModel)]="translation.language"
+                  name="translation_language_{{ i }}"
+                />
+              </div>
+              <div class="mb-2">
+                <label for="translationContent_{{ i }}" class="form-label">Content</label>
+                <input
+                  type="text"
+                  id="translationContent_{{ i }}"
+                  class="form-control"
+                  [(ngModel)]="translation.content"
+                  name="translation_content_{{ i }}"
+                />
+              </div>
+              <div class="mb-2">
+                <label for="translationSlug_{{ i }}" class="form-label">Slug</label>
+                <input
+                  type="text"
+                  id="translationSlug_{{ i }}"
+                  class="form-control"
+                  [(ngModel)]="translation.slug"
+                  name="translation_slug_{{ i }}"
+                />
+              </div>
+              <div class="mb-2">
+                <label for="translationDescription_{{ i }}" class="form-label">Description</label>
+                <textarea
+                  id="translationDescription_{{ i }}"
+                  class="form-control"
+                  [(ngModel)]="translation.description"
+                  name="translation_description_{{ i }}"
+                ></textarea>
+              </div>
+            </div>
+            <!-- Button to add new translations dynamically -->
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              (click)="NewProdAddTranslation()"
+            >Add Translation</button>
+          </div>
+
+          <!-- REQUIRED: Dimensions (many=True).
+               At least one dimension is required. -->
+          <div class="mb-3">
+            <label class="form-label">Dimensions</label>
+            <div *ngFor="let dimension of newProduct.dimensions; let i = index" class="mb-3 border p-2">
+              <label for="dimensionHeight_{{ i }}" class="form-label">Height</label>
+              <input
+                type="number"
+                class="form-control mb-2"
+                id="dimensionHeight_{{ i }}"
+                [(ngModel)]="dimension.height"
+                name="dimension_height_{{ i }}"
+                placeholder="Height"
+              />
+              <label for="dimensionWidth_{{ i }}" class="form-label">Width</label>
+              <input
+                type="number"
+                class="form-control mb-2"
+                id="dimensionWidth_{{ i }}"
+                [(ngModel)]="dimension.width"
+                name="dimension_width_{{ i }}"
+                placeholder="Width"
+              />
+              <label for="dimensionLength_{{ i }}" class="form-label">Length</label>
+              <input
+                type="number"
+                class="form-control mb-2"
+                id="dimensionLength_{{ i }}"
+                [(ngModel)]="dimension.length"
+                name="dimension_length_{{ i }}"
+                placeholder="Length"
+              />
+              <label for="dimensionPrice_{{ i }}" class="form-label">Price</label>
+              <input
+                type="number"
+                class="form-control mb-2"
+                id="dimensionPrice_{{ i }}"
+                [(ngModel)]="dimension.price"
+                name="dimension_price_{{ i }}"
+                placeholder="Price"
+              />
+              <label for="dimensionCurrency_{{ i }}" class="form-label">Currency</label>
+              <input
+                type="text"
+                class="form-control mb-2"
+                id="dimensionCurrency_{{ i }}"
+                [(ngModel)]="dimension.currency"
+                name="dimension_currency_{{ i }}"
+                placeholder="Currency (e.g. 'USD')"
+              />
+            </div>
+            <!-- Button to add new dimensions dynamically -->
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              (click)="addDimension()"
+            >Add Dimension</button>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >Close</button>
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="createProduct()"
+        >Save</button>
+      </div>
+    </div>
+  </div>
+</div>
 <section
   class="products-section py-5"
   *ngIf="!showingGroups && selectedCategory"
 >
-  <div class="container">
-    <h2 class="text-center mb-5">{{ selectedCategory.title }} Products</h2>
-    <button class="btn btn-secondary mb-4" (click)="goBackToGroups()">
+  <div class="container ">
+    <h2 class="text-center mb-5 mt-5">{{ selectedCategory.title }} Products</h2>
+    <button class="btn btn-secondary mb-1" (click)="goBackToGroups()">
       Back to Categories
     </button>
     <div class="container" *ngIf="!showingGroups && isLoading">
@@ -104,54 +462,51 @@
             (click)="openModal(product, $event)"
             style="cursor: pointer"
           >
-            <div class="position-relative">
-              <!-- Badges -->
-              <div class="position-absolute top-0 start-0 m-2">
-                <span *ngIf="product.new_product" class="badge bg-success"
-                  >New</span
-                >
-                <span
-                  *ngIf="product.top_product"
-                  class="badge bg-warning text-dark"
-                  >Top</span
-                >
-              </div>
-            </div>
-            <!-- Product Image -->
-            <div class="image-container">
-              <img
-                [src]="
-                  product.image_asset?.thumbnail_path ||
-                  'assets/images/placeholder_product.jpg'
-                "
-                class="product-image"
-                [alt]="product.image_asset?.alternative_text || product.code"
-              />
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title">{{ product.code }}</h5>
-              <p class="card-text">
-                {{ product.description || "No description available." }}
-              </p>
-              <p class="card-text">
-                <strong>Dimensions:</strong><br />
-                Height: {{ getProductDimension(product, "height") }} mm<br />
-                Width: {{ getProductDimension(product, "width") }} mm
-              </p>
-              <p class="card-text">
-                <strong>Price:</strong>
-                {{ getProductDimension(product, "price") }}
-                {{ getProductDimension(product, "currency") }}
-              </p>
-              <a
-                [href]="getWhatsAppLink(product)"
-                class="btn btn-success mt-2"
-                target="_blank"
-                (click)="$event.stopPropagation()"
+          <div class="position-relative">
+            <!-- Badges -->
+            <div class="position-absolute top-0 start-0 m-2">
+              <span *ngIf="product.new_product" class="badge bg-success"
+                >New</span
               >
-                <i class="fab fa-whatsapp"></i> Contact on WhatsApp
-              </a>
+
+              
             </div>
+          </div>
+                      <!-- Product Image -->
+                      <div class="image-container">
+                        <img
+                          [src]="
+                            product.image_asset?.thumbnail_path ||
+                            'assets/images/placeholder_product.jpg'
+                          "
+                          class="product-image"
+                          [alt]="product.image_asset?.alternative_text || product?.code"
+                        />
+                      </div>
+                      <div class="card-body text-center">
+                        <h5 class="card-title">{{ product?.code }}</h5>
+                        <p class="card-text">
+                          {{ product.description || "No description available." }}
+                        </p>
+                        <p class="card-text">
+                          <strong>Dimensions:</strong><br />
+                          Height: {{ getProductDimension(product, "height") }} mm<br />
+                          Width: {{ getProductDimension(product, "width") }} mm
+                        </p>
+                        <p class="card-text">
+                          <strong>Price:</strong>
+                          {{ getProductDimension(product, "price") }}
+                          {{ getProductDimension(product, "currency") }}
+                        </p>
+                        <a
+                          [href]="getWhatsAppLink(product)"
+                          class="btn btn-success mt-2"
+                          target="_blank"
+                          (click)="$event.stopPropagation()"
+                        >
+                          <i class="fab fa-whatsapp"></i> Contact on WhatsApp
+                        </a>
+                      </div>
             <button
               *ngIf="isLoggedIn"
               class="btn btn-primary edit-btn"
@@ -187,6 +542,17 @@
         </button>
       </div>
     </div>
+  <div class="actions text-center" *ngIf="isLoggedIn">
+
+    <button
+      class="btn btn-secondary"
+      [disabled]="!selectedCategory"
+      data-bs-toggle="modal"
+      data-bs-target="#createProductModal"
+    >
+      Create New Product
+    </button>
+  </div>
   </div>
 </section>
 <!-- Product Details Modal -->
@@ -337,18 +703,18 @@
               </div>
             </div>
             <div class="col-md-4 mb-3">
-              <div class="form-check">
+              <!-- <div class="form-check">
                 <input
                   type="checkbox"
                   class="form-check-input"
                   id="productTop"
-                  [(ngModel)]="selectedProduct.top_product"
+                  [(ngModel)]="selectedProduct!.top_product"
                   name="top_product"
                 />
                 <label class="form-check-label" for="productTop"
                   >Top Product</label
                 >
-              </div>
+              </div> -->
             </div>
             <div class="col-md-4 mb-3">
               <div class="form-check">
@@ -366,18 +732,8 @@
             </div>
           </div>
 
-          <!-- <div class="mb-3">
-            <label for="productContent" class="form-label">Content</label>
-            <textarea
-              class="form-control"
-              id="productContent"
-              rows="3"
-              [(ngModel)]="selectedProduct.content"
-              name="content"
-            ></textarea>
-          </div> -->
+    
 
-          <!-- Image Asset -->
           <h5 class="mt-4">Image Asset</h5>
           <div class="row">
             <div class="col-md-6 mb-3">
@@ -386,7 +742,7 @@
                 type="text"
                 class="form-control"
                 id="imageFileName"
-                [(ngModel)]="selectedProduct.image_asset.file_name"
+                [(ngModel)]="selectedProduct!.image_asset!.file_name!"
                 name="image_file_name"
               />
             </div>
@@ -398,7 +754,7 @@
                 type="text"
                 class="form-control"
                 id="imageAltText"
-                [(ngModel)]="selectedProduct.image_asset.alternative_text"
+                [(ngModel)]="selectedProduct!.image_asset.alternative_text"
                 name="image_alt_text"
               />
             </div>
@@ -516,7 +872,6 @@
             </button>
           </div>
 
-          <!-- Translations -->
           <h5 class="mt-4">Product Translations</h5>
           <div *ngIf="selectedProduct?.translations?.length > 0">
             <div

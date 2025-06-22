@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Renderer2, Inject, PLATFORM_ID  } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ProductService } from '../../services/product.service';
-import { Product } from '../../models/product.model';
+import { Product, TopCategory } from '../../models/product.model';
 import { AuthService } from '../../services/auth.service';
+import { SharedService } from '../../shared.service';
 
 
 @Component({
@@ -16,19 +17,11 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './home.component.css'
 })  
 export class HomeComponent {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private el: ElementRef, private renderer: Renderer2,private productService: ProductService,private authService: AuthService) {}
-  selectedProduct: any = null;
-  login(): void {
-    this.authService.login({ username: 'endriti', password: 'endriti' }).subscribe({
-      next: (response) => {
-        localStorage.setItem('token', response.access_token); // Save token to local storage
-       // this.router.navigate(['/']); // Redirect to the home page
-      },
-      error: (error) => {
-        console.error('Login failed', error);
-      },
-    });
-  }
+  subscriptions: any;
+  constructor(private sharedService: SharedService,private router: Router,@Inject(PLATFORM_ID) private platformId: Object, private el: ElementRef, private renderer: Renderer2,private productService: ProductService,private authService: AuthService) {}
+  selectedCategory: any = null;
+  topCategories: TopCategory[] = [];
+ 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       const sectionElement = this.el.nativeElement.querySelector('#backgroundImage');
@@ -52,9 +45,24 @@ export class HomeComponent {
     }
   }
   ngOnInit():void{
+    this.productService.getTopCategories()
+    const sub = this.productService.getTopCategories().subscribe({
+      next: (data) => {
+        this.topCategories = data;
+        // this.isLoading = false; // Turn off loader
 
-    this.login();
+      },
+      error: (error) => {
+        console.error('Error occurred while fetching categories:', error);
+      },
+    });
+    this.subscriptions.push(sub);
 
+  }
+  navigateToProducts(category: any): void {
+   
+    this.sharedService.setCategory(category); // Save the object
+    this.router.navigate(['/products']); // Navigate to products page
   }
   
   
@@ -114,58 +122,9 @@ export class HomeComponent {
     return luminance > 150 ? 'black' : 'white';
   }
   openProductModal(product: any) {
-    this.selectedProduct = product;
+    this.selectedCategory = product;
   }
-  products = [
-    {
-      name: 'Galvanized Steel Pipe 1',
-      description: 'High-quality galvanized steel pipe, perfect for industrial and commercial applications.',
-      image: 'https://picsum.photos/300/200',  // Placeholder image
-      height: 3000,
-      length: 100,
-      width: 50
-    },
-    {
-      name: 'Galvanized Steel Pipe 2',
-      description: 'Durable steel pipe designed for heavy-duty use in construction projects.',
-      image: 'https://picsum.photos/300/200',  // Placeholder image
-      height: 2500,
-      length: 120,
-      width: 60
-    },
-    {
-      name: 'Steel Sheet 1',
-      description: 'High-grade steel sheets, ideal for various construction and industrial purposes.',
-      image: 'https://picsum.photos/300/200',  // Placeholder image
-      height: 2000,
-      length: 150,
-      width: 70
-    },
-    {
-      name: 'Steel Beam 1',
-      description: 'Strong and durable steel beams for supporting large structures.',
-      image: 'https://picsum.photos/300/200',  // Placeholder image
-      height: 1800,
-      length: 130,
-      width: 80
-    },
-    {
-      name: 'Metal Fencing Panel',
-      description: 'Galvanized steel fencing panels for secure perimeter protection.',
-      image: 'https://picsum.photos/300/200',  // Placeholder image
-      height: 2500,
-      length: 200,
-      width: 20
-    },
-    {
-      name: 'Steel Wire',
-      description: 'High-tensile steel wire for industrial and construction applications.',
-      image: 'https://picsum.photos/300/200',  // Placeholder image
-      height: 1500,
-      length: 100,
-      width: 10
-    }
-  ];
+
   featuredProducts = [
     {
       name: 'Galvanized Steel Pipe 1',

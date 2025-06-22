@@ -11,11 +11,14 @@ body, h1, h2, h3, p, a, span {
   }
   
   /* Specific style for headings if needed */
-  h1, h2 {
+  h2 {
     --text-color: #000000; /* Example custom text color for headings */
     --glow-color: rgba(255, 255, 255, 0.4); /* Example custom glow color */
   }
-  
+  h1 {
+    --text-color: #ffffff; /* Example custom text color for headings */
+    --glow-color: rgba(255, 255, 255, 0.4); /* Example custom glow color */
+  }
   /* You can also override glow color for other specific elements */
   p {
     --glow-color: rgba(255, 255, 255, 0.4); /* Custom glow color for paragraphs */
