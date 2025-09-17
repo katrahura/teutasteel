@@ -67,12 +67,12 @@ body{
 }
 
 /* 5) Touch-friendly targets */
-button, .button, [role="button"], .btn, input[type="submit"]{
+/* button, .button, [role="button"], .btn, input[type="submit"]{
   min-height: 44px;
   padding: .6rem 1rem;
   font-size: var(--fs-md);
   border-radius: calc(var(--radius) - 6px);
-}
+} */
 
 /* 6) Tables: make them scroll instead of squish */
 .table-wrap{ width:100%; overflow-x:auto; -webkit-overflow-scrolling: touch; }

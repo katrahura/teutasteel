@@ -1,0 +1,77 @@
+<!-- Sticky mobile header -->
+<header class="mnav-header" role="banner">
+  <!-- Left: Language Switcher -->
+  <div class="language-switcher d-flex align-items-center">
+    <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'al'}" (click)="switchLanguage('al')">AL</button>
+    <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'en'}" (click)="switchLanguage('en')">EN</button>
+  </div>
+
+  <!-- Brand (centered logo/name) -->
+  <a class="brand" routerLink="/" aria-label="Home">
+    <!-- <img class="brand-logo" src="assets/logo.svg" alt="YourBrand logo" /> -->
+    <span class="brand-name">Teuta Steel</span>
+  </a>
+
+  <!-- Hamburger -->
+  <button
+    class="mnav-toggle"
+    type="button"
+    (click)="toggle()"
+    [attr.aria-expanded]="open"
+    aria-controls="mnav-sheet"
+    aria-label="Open menu"
+  >
+    <span class="sr-only">Menu</span>
+    <span class="mnav-bar"></span>
+    <span class="mnav-bar"></span>
+    <span class="mnav-bar"></span>
+  </button>
+</header>
+
+<!-- Off-canvas drawer -->
+<nav id="mnav-sheet" class="mnav-sheet" [class.open]="open" aria-label="Mobile navigation">
+  <div class="mnav-panel" role="dialog" aria-modal="true" aria-labelledby="mnav-title">
+    <div class="mnav-top">
+      <a class="brand small" routerLink="/" (click)="close()">
+        <img class="brand-logo" src="assets/logo.svg" alt="" />
+        <span id="mnav-title" class="brand-name">Teuta Steel</span>
+      </a>
+      <button class="mnav-close" type="button" (click)="close()" aria-label="Close menu">✕</button>
+    </div>
+
+    <ul class="mnav-links" role="menu">
+      <li role="none">
+        <a role="menuitem" routerLink="/" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact:true}" (click)="close()">
+          {{ 'NAVBAR.HOME' | translate }}
+        </a>
+      </li>
+      <li role="none">
+        <a role="menuitem" routerLink="/products" routerLinkActive="active" (click)="close()">
+          {{ 'NAVBAR.PRODUCTS' | translate }}
+        </a>
+      </li>
+      <li role="none">
+        <a role="menuitem" routerLink="/about" routerLinkActive="active" (click)="close()">
+          {{ 'NAVBAR.ABOUT_US' | translate }}
+        </a>
+      </li>
+      <li role="none">
+        <a role="menuitem" routerLink="/contact" routerLinkActive="active" (click)="close()">
+          {{ 'NAVBAR.CONTACT' | translate }}
+        </a>
+      </li>
+      <li role="none" class="mnav-cta">
+        <a role="menuitem" routerLink="/login" (click)="close()">
+          <i class="bi bi-person-circle fs-5"></i> {{ 'NAVBAR.LOGIN' | translate }}
+        </a>
+      </li>
+    </ul>
+
+    <div class="mnav-footer">
+      <a href="mailto:info@teutasteel.com" class="link">info&#64;teutasteel.com</a>
+      <a href="tel:+38344133208" class="link">+383 44 133208</a>
+    </div>
+  </div>
+
+  <!-- <button class="mnav-scrim" (click)="close()" aria-label="Close menu overlay"></button> -->
+</nav>

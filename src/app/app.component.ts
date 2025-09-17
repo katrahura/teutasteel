@@ -7,11 +7,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { RouterOutlet } from '@angular/router';
+import { MobileNavComponent } from './shared/mobile-nav/mobile-nav.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule,CommonModule,TranslateModule,NgbDropdownModule],  // Import RouterModule to enable routerLink
+  imports: [RouterModule,CommonModule,TranslateModule,NgbDropdownModule,MobileNavComponent],  // Import RouterModule to enable routerLink
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   animations: [
@@ -37,7 +38,7 @@ export class AppComponent {
   
   constructor(private router: Router,private translate: TranslateService) {
     // Detect route changes and update the currentRoute variable
-    this.translate.setDefaultLang('en');
+    this.translate.setDefaultLang('al');
 
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)

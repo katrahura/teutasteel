@@ -226,3 +226,6 @@ position: absolute;
     margin: 0.5rem 0;
   }
 }
+@media (max-width: 899.98px) {
+  .desktop-nav { display: none !important; }
+}
