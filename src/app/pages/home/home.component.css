@@ -134,6 +134,11 @@ p {
   color: #333;
   line-height: 1.5;
 }
+.cta-section p {
+  font-size: 1rem;
+  color: #eeeeee;
+  line-height: 1.5;
+}
 
 .services-section {
   padding: 40px 20px;

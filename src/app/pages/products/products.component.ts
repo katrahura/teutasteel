@@ -1,7 +1,7 @@
 import {  Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 
@@ -75,6 +75,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
       original_path: ''
     },
     }
+    getTranslatedCategoryTitle(category: any): string {
+  if (    this.translate.currentLang === 'al') {
+    const key = 'CATEGORY.' + category.title.toUpperCase().replace(/ /g, '_');
+    return this.translate.instant(key);
+  }
+  return category.title;
+}
 
     newProduct: Product = {
       code: '',
@@ -119,7 +126,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   changeDetectorRef: any;
   selectedCategoryId: any;
 
-  constructor(private sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService,private route: ActivatedRoute) {}
+  constructor(private translate: TranslateService ,private sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService,private route: ActivatedRoute) {}
 
   openModal(product: any, event: Event): void {
     event.stopPropagation(); // Stop event propagation

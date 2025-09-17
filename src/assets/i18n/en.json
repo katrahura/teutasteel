@@ -33,16 +33,6 @@
     },
     "CONTACT_BUTTON": "Contact Us"
   },
-  "CONTACT": {
-    "TITLE": "Contact Us",
-    "NAME_LABEL": "Name",
-    "NAME_PLACEHOLDER": "Your Name",
-    "EMAIL_LABEL": "Email",
-    "EMAIL_PLACEHOLDER": "name@example.com",
-    "MESSAGE_LABEL": "Message",
-    "MESSAGE_PLACEHOLDER": "Type your message here...",
-    "SUBMIT_BUTTON": "Submit"
-  },
   "HOME": {
     "HERO_TITLE": "Welcome to TeutaSteel",
     "HERO_SUBTITLE": "High-quality galvanized steel products for every need",
@@ -60,7 +50,8 @@
     "CTA_TITLE": "Ready to Order Your Steel Products?",
     "CTA_TEXT": "Contact us today to get a quote or learn more about our products and services.",
     "CTA_BUTTON": "Get in Touch"
-  },"PRODUCTS": {
+  },
+  "PRODUCTS": {
     "GROUPS_TITLE": "Product Groups",
     "VIEW_PRODUCTS_BUTTON": "View Products",
     "PRODUCTS_TITLE": "Products",
@@ -78,5 +69,76 @@
     "LENGTH": "Length",
     "WIDTH": "Width",
     "CONTACT_WHATSAPP": "Contact via WhatsApp"
+  },
+  "CONTACT": {
+    "TITLE": "Contact Us",
+    "REACH_US": "Reach us directly through phone or social media.",
+    "PHONE": "Phone",
+    "EMAIL": "Email",
+    "AVAILABILITY": "Available Monday to Saturday, 8:00 - 17:00",
+    "CONTACT_US": "Contact Us",
+    "CONTACT_ON_WHATSAPP": "Contact on WhatsApp",
+    "VISIT_US": "Visit Us"
+  },
+  "ADMIN": {
+    "ADMIN_DASHBOARD": "Admin Dashboard"
+  },
+  "MISC": {
+        "IMAGE_ASSET": "Image Asset",
+    "PRODUCT_TRANSLATIONS": "Product Translations",
+    "YOUR_TRUSTED_PARTNER_IN_STEEL_SOLUTIONS": "Your Trusted Partner in Steel Solutions",
+    "HIGH-QUALITY_GALVANIZED_STEEL_PRODUCTS_AND_PROFESSIONAL_PROCESSING_SERVICES.": "High-quality galvanized steel products and professional processing services.",
+    "VIEW_PRODUCTS": "View Products",
+    "OUR_TOP_CATEGORIES": "Our Top Categories",
+    "OUR_SERVICES": "Our Services",
+    "CNC_METAL_CUTTING": "CNC Metal Cutting",
+    "PRECISION_CNC_CUTTING_FOR_PLATES_PIPES_AND_PROFILES.": "Precision CNC cutting for plates, pipes, and profiles.",
+    "PIPE_BENDING": "Pipe Bending",
+    "HIGH-QUALITY_BENDING_FOR_VARIOUS_STEEL_PIPES_AND_PROFILES.": "High-quality bending for various steel pipes and profiles.",
+    "CUSTOM_SOLUTIONS": "Custom Solutions",
+    "TAILORED_STEEL_SOLUTIONS_FOR_CONSTRUCTION_AND_INDUSTRIAL_NEEDS.": "Tailored steel solutions for construction and industrial needs.",
+    "WELCOME_USERNAME_": "Welcome, {{ username }}",
+    "ENTER_YOUR_USERNAME": "Enter your username",
+    "PASSWORD": "Password",
+    "ENTER_YOUR_PASSWORD": "Enter your password",
+    "LOGOUT": "Logout",
+    "GO_TO_ADMIN_DASHBOARD": "Go to Admin Dashboard",
+    "GO_TO_USER_DASHBOARD": "Go to User Dashboard",
+    "CREATE_NEW_CATEGORY": "Create New Category",
+    "TITLE": "Title",
+    "IS_ACTIVE": "Is Active",
+    "YES": "Yes",
+    "NO": "No",
+    "TOP_CATEGORY": "Top Category",
+    "IMAGE_FILE_NAME": "Image File Name",
+    "ALTERNATIVE_TEXT": "Alternative Text",
+    "THUMBNAIL_PATH": "Thumbnail Path",
+    "ORIGINAL_PATH": "Original Path",
+    "CREATE_NEW_PRODUCT": "Create New Product",
+    "PRODUCT_CODE": "Product Code",
+    "CUT_TYPE": "Cut Type",
+    "IMAGE_ALT_TEXT": "Image Alt Text",
+    "EDIT": "Edit",
+    "BACK_TO_CATEGORIES": "Back to Categories",
+    "NO_DESCRIPTION_AVAILABLE.": "No description available.",
+    "DIMENSIONS": "Dimensions:",
+    "HEIGHT": "Height:",
+    "WIDTH": "Width:",
+    "PRICE": "Price:",
+    "WEIGHT": "Weight:",
+    "EDIT_PRODUCT": "Edit Product",
+    "FILE_NAME": "File Name",
+    "NAME": "Name:",
+    "EMAIL": "Email:",
+    "EDIT_PROFILE": "Edit Profile",
+    "PAGE":"Page",
+    "OF":"Of"
+  },
+  "LOGIN": {
+    "LOGIN": "Login"
+  },
+  "USER_DASHBOARD": {
+    "USER_NAME": "User Name",
+    "USER_DASHBOARD": "User Dashboard"
   }
 }

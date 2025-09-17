@@ -29,7 +29,7 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   currentRoute: string = '';
-  currentLanguage = 'en'; // Default language is English
+  currentLanguage = 'al'; // Default language is English
   prepareRoute(outlet: RouterOutlet) {
     const animationData = outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
     return animationData;

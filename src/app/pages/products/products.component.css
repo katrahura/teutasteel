@@ -177,11 +177,11 @@
 }
 
 .nav-btn.prev-btn {
-  left: -30px; /* Adjust as needed */
+  left: -2%; /* Adjust as needed */
 }
 
 .nav-btn.next-btn {
-  right: -30px; /* Adjust as needed */
+  right: -2%; /* Adjust as needed */
 }
 
 .nav-btn i {

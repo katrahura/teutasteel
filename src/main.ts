@@ -9,6 +9,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
 import { AuthInterceptor } from './app/services/auth.interceptor';
+import { ReactiveFormsModule } from '@angular/forms';
 
 // Factory function for translation loader
 export function HttpLoaderFactory(http: HttpClient) {
@@ -19,6 +20,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(appRoutes),
     provideHttpClient(),
+    ReactiveFormsModule, 
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -26,6 +28,7 @@ bootstrapApplication(AppComponent, {
     },
     importProvidersFrom(
       BrowserAnimationsModule,
+      ReactiveFormsModule,
       TranslateModule.forRoot({
         loader: {
           provide: TranslateLoader,

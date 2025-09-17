@@ -39,7 +39,8 @@
           </div>
           <!-- Category Details -->
           <div class="card-body">
-            <h5 class="card-title">{{ category.title }}</h5>
+<h5 class="card-title">{{ getTranslatedCategoryTitle(category) }}</h5>
+
             <p class="card-text">
             </p>
             <div class="text-center mt-3">
@@ -48,7 +49,7 @@
                 class="btn btn-primary edit-btn"
                 (click)="editCategory(category)"
               >
-                Edit
+                {{ 'MISC.EDIT' | translate }}
               </button>
               <button
                 class="btn btn-secondary"
@@ -64,21 +65,18 @@
   </div>
   <div class="actions text-center" *ngIf="isLoggedIn">
     <button class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
-      Create New Category
+      {{ 'MISC.CREATE_NEW_CATEGORY' | translate }}
     </button>
     <button
-    class="btn btn-success"
-    [disabled]="!selectedCategory"
-    data-bs-toggle="modal"
-    data-bs-target="#createProductModal"
-  >
-    Create New Product
-  </button>
-
+      class="btn btn-success"
+      [disabled]="!selectedCategory"
+      data-bs-toggle="modal"
+      data-bs-target="#createProductModal"
+    >
+      {{ 'MISC.CREATE_NEW_PRODUCT' | translate }}
+    </button>
   </div>
 </section>
-<!-- products.component.html -->
-<!-- Buttons -->
 
 <!-- Create Category Modal -->
 <div
@@ -91,14 +89,14 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="createCategoryModalLabel">Create New Category</h5>
+        <h5 class="modal-title" id="createCategoryModalLabel">{{ 'MISC.CREATE_NEW_CATEGORY' | translate }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form #categoryForm="ngForm">
           <!-- Title -->
           <div class="mb-3">
-            <label for="categoryTitle" class="form-label">Title</label>
+            <label for="categoryTitle" class="form-label">{{ 'MISC.TITLE' | translate }}</label>
             <input
               type="text"
               id="categoryTitle"
@@ -110,34 +108,34 @@
           </div>
           <!-- Is Active -->
           <div class="mb-3">
-            <label for="categoryActive" class="form-label">Is Active</label>
+            <label for="categoryActive" class="form-label">{{ 'MISC.IS_ACTIVE' | translate }}</label>
             <select
               id="categoryActive"
               class="form-select"
               [(ngModel)]="newCategory.is_active"
               name="is_active"
             >
-              <option [value]="true">Yes</option>
-              <option [value]="false">No</option>
+              <option [value]="true">{{ 'MISC.YES' | translate }}</option>
+              <option [value]="false">{{ 'MISC.NO' | translate }}</option>
             </select>
           </div>
           <!-- Top Category -->
           <div class="mb-3">
-            <label for="categoryTop" class="form-label">Top Category</label>
+            <label for="categoryTop" class="form-label">{{ 'MISC.TOP_CATEGORY' | translate }}</label>
             <select
               id="categoryTop"
               class="form-select"
               [(ngModel)]="newCategory.top_category"
               name="top_category"
             >
-              <option [value]="true">Yes</option>
-              <option [value]="false">No</option>
+              <option [value]="true">{{ 'MISC.YES' | translate }}</option>
+              <option [value]="false">{{ 'MISC.NO' | translate }}</option>
             </select>
           </div>
           <!-- Image Asset -->
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="imageFileName" class="form-label">Image File Name</label>
+              <label for="imageFileName" class="form-label">{{ 'MISC.IMAGE_FILE_NAME' | translate }}</label>
               <input
                 type="text"
                 id="imageFileName"
@@ -147,7 +145,7 @@
               />
             </div>
             <div class="col-md-6 mb-3">
-              <label for="altText" class="form-label">Alternative Text</label>
+              <label for="altText" class="form-label">{{ 'MISC.ALTERNATIVE_TEXT' | translate }}</label>
               <input
                 type="text"
                 id="altText"
@@ -159,7 +157,7 @@
           </div>
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="thumbnailPath" class="form-label">Thumbnail Path</label>
+              <label for="thumbnailPath" class="form-label">{{ 'MISC.THUMBNAIL_PATH' | translate }}</label>
               <input
                 type="text"
                 id="thumbnailPath"
@@ -169,7 +167,7 @@
               />
             </div>
             <div class="col-md-6 mb-3">
-              <label for="originalPath" class="form-label">Original Path</label>
+              <label for="originalPath" class="form-label">{{ 'MISC.ORIGINAL_PATH' | translate }}</label>
               <input
                 type="text"
                 id="originalPath"
@@ -182,13 +180,18 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" (click)="createCategory()">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          {{ 'MODAL.CLOSE' | translate }}
+        </button>
+        <button type="button" class="btn btn-primary" (click)="createCategory()">
+          {{ 'MISC.SAVE_CHANGES' | translate }}
+        </button>
       </div>
     </div>
   </div>
 </div>
-<!-- create product modal -->
+
+<!-- Create Product Modal -->
 <div
   class="modal fade"
   id="createProductModal"
@@ -199,7 +202,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="createProductModalLabel">Create New Product</h5>
+        <h5 class="modal-title" id="createProductModalLabel">{{ 'MISC.CREATE_NEW_PRODUCT' | translate }}</h5>
         <button
           type="button"
           class="btn-close"
@@ -212,7 +215,7 @@
           <!-- REQUIRED: Product Code (string, unique) -->
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="productCode" class="form-label">Product Code</label>
+              <label for="productCode" class="form-label">{{ 'MISC.PRODUCT_CODE' | translate }}</label>
               <input
                 type="text"
                 id="productCode"
@@ -225,7 +228,7 @@
 
             <!-- REQUIRED: Cut Type (integer) -->
             <div class="col-md-6 mb-3">
-              <label for="productCutType" class="form-label">Cut Type</label>
+              <label for="productCutType" class="form-label">{{ 'MISC.CUT_TYPE' | translate }}</label>
               <input
                 type="number"
                 id="productCutType"
@@ -240,22 +243,22 @@
           <!-- OPTIONAL: Is Active -->
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="productActive" class="form-label">Is Active</label>
+              <label for="productActive" class="form-label">{{ 'MISC.IS_ACTIVE' | translate }}</label>
               <select
                 id="productActive"
                 class="form-select"
                 [(ngModel)]="newProduct.is_active"
                 name="is_active"
               >
-                <option [value]="true">Yes</option>
-                <option [value]="false">No</option>
+                <option [value]="true">{{ 'MISC.YES' | translate }}</option>
+                <option [value]="false">{{ 'MISC.NO' | translate }}</option>
               </select>
             </div>
           </div>
 
           <!-- OPTIONAL: Image Asset -->
           <div class="mb-3">
-            <label for="productImageFile" class="form-label">Image File Name</label>
+            <label for="productImageFile" class="form-label">{{ 'MISC.IMAGE_FILE_NAME' | translate }}</label>
             <input
               type="text"
               id="productImageFile"
@@ -265,7 +268,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="productAlternativeText" class="form-label">Image Alt Text</label>
+            <label for="productAlternativeText" class="form-label">{{ 'MISC.IMAGE_ALT_TEXT' | translate }}</label>
             <input
               type="text"
               id="productAlternativeText"
@@ -275,7 +278,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="productThumbnailPath" class="form-label">Thumbnail Path</label>
+            <label for="productThumbnailPath" class="form-label">{{ 'MISC.THUMBNAIL_PATH' | translate }}</label>
             <input
               type="text"
               id="productThumbnailPath"
@@ -285,7 +288,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="productOriginalPath" class="form-label">Original Path</label>
+            <label for="productOriginalPath" class="form-label">{{ 'MISC.ORIGINAL_PATH' | translate }}</label>
             <input
               type="text"
               id="productOriginalPath"
@@ -295,13 +298,12 @@
             />
           </div>
 
-          <!-- REQUIRED: Translations (many=True). 
-               At least one translation is required. -->
+          <!-- REQUIRED: Translations -->
           <div class="mb-3">
-            <label class="form-label">Translations</label>
+            <label class="form-label">{{ 'MISC.TRANSLATIONS' | translate }}</label>
             <div *ngFor="let translation of newProduct.translations; let i = index" class="mb-3 border p-2">
               <div class="mb-2">
-                <label for="translationLanguage_{{ i }}" class="form-label">Language</label>
+                <label for="translationLanguage_{{ i }}" class="form-label">{{ 'MISC.LANGUAGE' | translate }}</label>
                 <input
                   type="text"
                   id="translationLanguage_{{ i }}"
@@ -311,7 +313,7 @@
                 />
               </div>
               <div class="mb-2">
-                <label for="translationContent_{{ i }}" class="form-label">Content</label>
+                <label for="translationContent_{{ i }}" class="form-label">{{ 'MISC.CONTENT' | translate }}</label>
                 <input
                   type="text"
                   id="translationContent_{{ i }}"
@@ -321,7 +323,7 @@
                 />
               </div>
               <div class="mb-2">
-                <label for="translationSlug_{{ i }}" class="form-label">Slug</label>
+                <label for="translationSlug_{{ i }}" class="form-label">{{ 'MISC.SLUG' | translate }}</label>
                 <input
                   type="text"
                   id="translationSlug_{{ i }}"
@@ -331,7 +333,7 @@
                 />
               </div>
               <div class="mb-2">
-                <label for="translationDescription_{{ i }}" class="form-label">Description</label>
+                <label for="translationDescription_{{ i }}" class="form-label">{{ 'MISC.DESCRIPTION' | translate }}</label>
                 <textarea
                   id="translationDescription_{{ i }}"
                   class="form-control"
@@ -340,98 +342,95 @@
                 ></textarea>
               </div>
             </div>
-            <!-- Button to add new translations dynamically -->
             <button
               type="button"
               class="btn btn-sm btn-outline-primary"
               (click)="NewProdAddTranslation()"
-            >Add Translation</button>
+            >
+              {{ 'MISC.ADD_TRANSLATION' | translate }}
+            </button>
           </div>
 
-          <!-- REQUIRED: Dimensions (many=True).
-               At least one dimension is required. -->
+          <!-- REQUIRED: Dimensions -->
           <div class="mb-3">
-            <label class="form-label">Dimensions</label>
+            <label class="form-label">{{ 'PRODUCTS.DIMENSIONS' | translate }}</label>
             <div *ngFor="let dimension of newProduct.dimensions; let i = index" class="mb-3 border p-2">
-              <label for="dimensionHeight_{{ i }}" class="form-label">Height</label>
+              <label for="dimensionHeight_{{ i }}" class="form-label">{{ 'PRODUCTS.HEIGHT' | translate }}</label>
               <input
                 type="number"
                 class="form-control mb-2"
                 id="dimensionHeight_{{ i }}"
                 [(ngModel)]="dimension.height"
                 name="dimension_height_{{ i }}"
-                placeholder="Height"
+                [placeholder]="'PRODUCTS.HEIGHT' | translate"
               />
-              <label for="dimensionWidth_{{ i }}" class="form-label">Width</label>
+              <label for="dimensionWidth_{{ i }}" class="form-label">{{ 'PRODUCTS.WIDTH' | translate }}</label>
               <input
                 type="number"
                 class="form-control mb-2"
                 id="dimensionWidth_{{ i }}"
                 [(ngModel)]="dimension.width"
                 name="dimension_width_{{ i }}"
-                placeholder="Width"
+                [placeholder]="'PRODUCTS.WIDTH' | translate"
               />
-              <label for="dimensionLength_{{ i }}" class="form-label">Length</label>
+              <label for="dimensionLength_{{ i }}" class="form-label">{{ 'PRODUCTS.LENGTH' | translate }}</label>
               <input
                 type="number"
                 class="form-control mb-2"
                 id="dimensionLength_{{ i }}"
                 [(ngModel)]="dimension.length"
                 name="dimension_length_{{ i }}"
-                placeholder="Length"
+                [placeholder]="'PRODUCTS.LENGTH' | translate"
               />
-              <label for="dimensionPrice_{{ i }}" class="form-label">Price</label>
+              <label for="dimensionPrice_{{ i }}" class="form-label">{{ 'MISC.PRICE' | translate }}</label>
               <input
                 type="number"
                 class="form-control mb-2"
                 id="dimensionPrice_{{ i }}"
                 [(ngModel)]="dimension.price"
                 name="dimension_price_{{ i }}"
-                placeholder="Price"
+                [placeholder]="'MISC.PRICE' | translate"
               />
-              <label for="dimensionCurrency_{{ i }}" class="form-label">Currency</label>
+              <label for="dimensionCurrency_{{ i }}" class="form-label">{{ 'MISC.CURRENCY' | translate }}</label>
               <input
                 type="text"
                 class="form-control mb-2"
                 id="dimensionCurrency_{{ i }}"
                 [(ngModel)]="dimension.currency"
                 name="dimension_currency_{{ i }}"
-                placeholder="Currency (e.g. 'USD')"
+                [placeholder]="'MISC.CURRENCY' | translate"
               />
             </div>
-            <!-- Button to add new dimensions dynamically -->
             <button
               type="button"
               class="btn btn-sm btn-outline-primary"
               (click)="addDimension()"
-            >Add Dimension</button>
+            >
+              {{ 'MISC.ADD_DIMENSION' | translate }}
+            </button>
           </div>
-
         </form>
       </div>
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-        >Close</button>
-        <button
-          type="button"
-          class="btn btn-success"
-          (click)="createProduct()"
-        >Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          {{ 'MODAL.CLOSE' | translate }}
+        </button>
+        <button type="button" class="btn btn-success" (click)="createProduct()">
+          {{ 'MISC.SAVE_CHANGES' | translate }}
+        </button>
       </div>
     </div>
   </div>
 </div>
-<section
-  class="products-section py-5"
-  *ngIf="!showingGroups && selectedCategory"
->
-  <div class="container ">
-    <h2 class="text-center mb-5 mt-5">{{ selectedCategory.title }} Products</h2>
+
+<!-- Products Section -->
+<section class="products-section py-5" *ngIf="!showingGroups && selectedCategory">
+  <div class="container">
+    <h2 class="text-center mb-5 mt-5">
+      {{ selectedCategory.title }} {{ 'PRODUCTS.PRODUCTS_TITLE' | translate }}
+    </h2>
     <button class="btn btn-secondary mb-1" (click)="goBackToGroups()">
-      Back to Categories
+      {{ 'PRODUCTS.BACK_TO_GROUPS_BUTTON' | translate }}
     </button>
     <div class="container" *ngIf="!showingGroups && isLoading">
       <div class="row">
@@ -457,104 +456,95 @@
       <!-- Product Cards -->
       <div class="row" *ngIf="!isLoading">
         <div class="col-md-3 mb-4" *ngFor="let product of products">
-          <div
-            class="card h-100"
-            (click)="openModal(product, $event)"
-            style="cursor: pointer"
-          >
-          <div class="position-relative">
-            <!-- Badges -->
-            <div class="position-absolute top-0 start-0 m-2">
-              <span *ngIf="product.new_product" class="badge bg-success"
-                >New</span
-              >
-
-              
+          <div class="card h-100" (click)="openModal(product, $event)" style="cursor: pointer">
+            <div class="position-relative">
+              <!-- Badges -->
+              <div class="position-absolute top-0 start-0 m-2">
+                <span *ngIf="product.new_product" class="badge bg-success">
+                  {{ 'HOME.NEW_BADGE' | translate }}
+                </span>
+              </div>
             </div>
-          </div>
-                      <!-- Product Image -->
-                      <div class="image-container">
-                        <img
-                          [src]="
-                            product.image_asset?.thumbnail_path ||
-                            'assets/images/placeholder_product.jpg'
-                          "
-                          class="product-image"
-                          [alt]="product.image_asset?.alternative_text || product?.code"
-                        />
-                      </div>
-                      <div class="card-body text-center">
-                        <h5 class="card-title">{{ product?.code }}</h5>
-                        <p class="card-text">
-                          {{ product.description || "No description available." }}
-                        </p>
-                        <p class="card-text">
-                          <strong>Dimensions:</strong><br />
-                          Height: {{ getProductDimension(product, "height") }} mm<br />
-                          Width: {{ getProductDimension(product, "width") }} mm
-                        </p>
-                        <p class="card-text">
-                          <strong>Price:</strong>
-                          {{ getProductDimension(product, "price") }}
-                          {{ getProductDimension(product, "currency") }}
-                        </p>
-                        <a
-                          [href]="getWhatsAppLink(product)"
-                          class="btn btn-success mt-2"
-                          target="_blank"
-                          (click)="$event.stopPropagation()"
-                        >
-                          <i class="fab fa-whatsapp"></i> Contact on WhatsApp
-                        </a>
-                      </div>
+            <!-- Product Image -->
+            <div class="image-container">
+              <img
+                [src]="
+                  product.image_asset?.thumbnail_path ||
+                  'assets/images/placeholder_product.jpg'
+                "
+                class="product-image"
+                [alt]="product.image_asset?.alternative_text || product?.code"
+              />
+            </div>
+            <div class="card-body text-center">
+              <h5 class="card-title">{{ product?.code }}</h5>
+              <p class="card-text">
+                {{ product.description || ('MISC.NO_DESCRIPTION_AVAILABLE.' | translate) }}
+              </p>
+              <p class="card-text">
+                <strong>{{ 'PRODUCTS.DIMENSIONS' | translate }}:</strong><br />
+                {{ 'PRODUCTS.HEIGHT' | translate }}: {{ getProductDimension(product, "height") }} mm<br />
+                {{ 'PRODUCTS.WIDTH' | translate }}: {{ getProductDimension(product, "width") }} mm
+              </p>
+              <p class="card-text">
+                <strong>{{ 'MISC.PRICE' | translate }}:</strong>
+                {{ getProductDimension(product, "price") }}
+                {{ getProductDimension(product, "currency") }}
+              </p>
+              <a
+                [href]="getWhatsAppLink(product)"
+                class="btn btn-success mt-2"
+                target="_blank"
+                (click)="$event.stopPropagation()"
+              >
+                <i class="fab fa-whatsapp"></i> {{ 'MODAL.CONTACT_WHATSAPP' | translate }}
+              </a>
+            </div>
             <button
               *ngIf="isLoggedIn"
               class="btn btn-primary edit-btn"
               (click)="openEditModal(product); $event.stopPropagation()"
             >
-              Edit
+              {{ 'MISC.EDIT' | translate }}
             </button>
           </div>
         </div>
       </div>
 
       <!-- Pagination Controls -->
-      <div
-        class="pagination-controls mt-4 d-flex justify-content-center"
-        *ngIf="totalPages > 1"
-      >
+      <div class="pagination-controls mt-4 d-flex justify-content-center" *ngIf="totalPages > 1">
         <button
           class="btn btn-outline-primary me-2"
           (click)="loadPreviousPage()"
           [disabled]="currentPage === 1"
         >
-          Previous
+          {{ 'HOME.PREVIOUS_BUTTON' | translate }}
         </button>
-        <span class="pagination-info"
-          >Page {{ currentPage }} of {{ totalPages }}</span
-        >
+        <span class="pagination-info">
+          {{ 'MISC.PAGE' | translate }} {{ currentPage }} {{ 'MISC.OF' | translate }} {{ totalPages }}
+        </span>
         <button
           class="btn btn-outline-primary ms-2"
           (click)="loadNextPage()"
           [disabled]="currentPage === totalPages"
         >
-          Next
+          {{ 'HOME.NEXT_BUTTON' | translate }}
         </button>
       </div>
     </div>
-  <div class="actions text-center" *ngIf="isLoggedIn">
-
-    <button
-      class="btn btn-secondary"
-      [disabled]="!selectedCategory"
-      data-bs-toggle="modal"
-      data-bs-target="#createProductModal"
-    >
-      Create New Product
-    </button>
-  </div>
+    <div class="actions text-center" *ngIf="isLoggedIn">
+      <button
+        class="btn btn-success"
+        [disabled]="!selectedCategory"
+        data-bs-toggle="modal"
+        data-bs-target="#createProductModal"
+      >
+        {{ 'MISC.CREATE_NEW_PRODUCT' | translate }}
+      </button>
+    </div>
   </div>
 </section>
+
 <!-- Product Details Modal -->
 <div
   class="product-modal modal fade"
@@ -564,19 +554,18 @@
   aria-labelledby="productDetailsModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-lg" style="width: 70vw">
+  <div class="modal-dialog modal-lg" >
     <div class="modal-content">
       <div class="modal-body d-flex">
         <!-- Left Section -->
         <div class="image-container">
-          <!-- Product Image -->
           <img
             [src]="
               selectedProduct?.image_asset?.thumbnail_path ||
               'assets/images/placeholder_product.jpg'
             "
             [alt]="
-              selectedProduct?.image_asset?.alternative_text || 'Product Image'
+              selectedProduct?.image_asset?.alternative_text || ('MISC.PRODUCT_IMAGE' | translate)
             "
             class="product-image"
           />
@@ -584,14 +573,14 @@
         <button
           class="btn btn-light nav-btn prev-btn"
           (click)="navigateLeft()"
-          aria-label="Navigate left"
+          [attr.aria-label]="'MISC.PREVIOUS' | translate"
         >
           <i class="bi bi-chevron-left"></i>
         </button>
         <button
           class="btn btn-light nav-btn next-btn"
           (click)="navigateRight()"
-          aria-label="Navigate right"
+          [attr.aria-label]="'MISC.NEXT' | translate"
         >
           <i class="bi bi-chevron-right"></i>
         </button>
@@ -600,29 +589,25 @@
         <div class="info-container">
           <h5>{{ selectedProduct?.code }}</h5>
           <p>
-            {{ selectedProduct?.description || "No description available." }}
+            {{ selectedProduct?.description || ('MISC.NO_DESCRIPTION_AVAILABLE.' | translate) }}
           </p>
-          <h6>Dimensions:</h6>
-          <ul
-            *ngIf="
-              selectedProduct?.dimensions && selectedProduct.dimensions.length
-            "
-          >
+          <h6>{{ 'PRODUCTS.DIMENSIONS' | translate }}:</h6>
+          <ul *ngIf="selectedProduct?.dimensions && selectedProduct.dimensions.length">
             <li *ngFor="let dimension of selectedProduct.dimensions">
               <div *ngIf="isNumericAndNotZero(dimension.height)">
-                <strong>Height:</strong> {{ dimension.height }} mm
+                <strong>{{ 'PRODUCTS.HEIGHT' | translate }}:</strong> {{ dimension.height }} mm
               </div>
               <div *ngIf="isNumericAndNotZero(dimension.width)">
-                <strong>Width:</strong> {{ dimension.width }} mm
+                <strong>{{ 'PRODUCTS.WIDTH' | translate }}:</strong> {{ dimension.width }} mm
               </div>
               <div *ngIf="isNumericAndNotZero(dimension.length)">
-                <strong>Length:</strong> {{ dimension.length }} mm
+                <strong>{{ 'PRODUCTS.LENGTH' | translate }}:</strong> {{ dimension.length }} mm
               </div>
               <div *ngIf="isNumericAndNotZero(dimension.weight)">
-                <strong>Weight:</strong> {{ dimension.weight }} g
+                <strong>{{ 'MISC.WEIGHT' | translate }}:</strong> {{ dimension.weight }} g
               </div>
               <div *ngIf="isNumericAndNotZero(dimension.price)">
-                <strong>Price:</strong> {{ dimension.price }}
+                <strong>{{ 'MISC.PRICE' | translate }}:</strong> {{ dimension.price }}
                 {{ dimension.currency || "" }}
               </div>
             </li>
@@ -634,7 +619,7 @@
             target="_blank"
             rel="noopener noreferrer"
           >
-            <i class="fab fa-whatsapp"></i> Contact on WhatsApp
+            <i class="fab fa-whatsapp"></i> {{ 'MODAL.CONTACT_WHATSAPP' | translate }}
           </a>
         </div>
       </div>
@@ -642,6 +627,7 @@
   </div>
 </div>
 
+<!-- Edit Product Modal -->
 <div
   *ngIf="!showingGroups && selectedCategory"
   class="modal fade"
@@ -653,20 +639,15 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <h5 class="modal-title">{{ 'MISC.EDIT_PRODUCT' | translate }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form>
-          <h5>General Information</h5>
+          <h5>{{ 'MISC.GENERAL_INFORMATION' | translate }}</h5>
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="productCode" class="form-label">Product Code</label>
+              <label for="productCode" class="form-label">{{ 'MISC.PRODUCT_CODE' | translate }}</label>
               <input
                 type="text"
                 class="form-control"
@@ -676,7 +657,7 @@
               />
             </div>
             <div class="col-md-6 mb-3">
-              <label for="productCutType" class="form-label">Cut Type</label>
+              <label for="productCutType" class="form-label">{{ 'MISC.CUT_TYPE' | translate }}</label>
               <input
                 type="number"
                 class="form-control"
@@ -697,24 +678,10 @@
                   [(ngModel)]="selectedProduct.is_active"
                   name="is_active"
                 />
-                <label class="form-check-label" for="productActive"
-                  >Is Active</label
-                >
+                <label class="form-check-label" for="productActive">
+                  {{ 'MISC.IS_ACTIVE' | translate }}
+                </label>
               </div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <!-- <div class="form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="productTop"
-                  [(ngModel)]="selectedProduct!.top_product"
-                  name="top_product"
-                />
-                <label class="form-check-label" for="productTop"
-                  >Top Product</label
-                >
-              </div> -->
             </div>
             <div class="col-md-4 mb-3">
               <div class="form-check">
@@ -725,19 +692,17 @@
                   [(ngModel)]="selectedProduct.new_product"
                   name="new_product"
                 />
-                <label class="form-check-label" for="productNew"
-                  >New Product</label
-                >
+                <label class="form-check-label" for="productNew">
+                  {{ 'MISC.NEW_PRODUCT' | translate }}
+                </label>
               </div>
             </div>
           </div>
 
-    
-
-          <h5 class="mt-4">Image Asset</h5>
+          <h5 class="mt-4">{{ 'MISC.IMAGE_ASSET' | translate }}</h5>
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="imageFileName" class="form-label">File Name</label>
+              <label for="imageFileName" class="form-label">{{ 'MISC.IMAGE_FILE_NAME' | translate }}</label>
               <input
                 type="text"
                 class="form-control"
@@ -747,9 +712,7 @@
               />
             </div>
             <div class="col-md-6 mb-3">
-              <label for="imageAltText" class="form-label"
-                >Alternative Text</label
-              >
+              <label for="imageAltText" class="form-label">{{ 'MISC.ALTERNATIVE_TEXT' | translate }}</label>
               <input
                 type="text"
                 class="form-control"
@@ -762,9 +725,7 @@
 
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="imageThumbnailPath" class="form-label"
-                >Thumbnail Path</label
-              >
+              <label for="imageThumbnailPath" class="form-label">{{ 'MISC.THUMBNAIL_PATH' | translate }}</label>
               <input
                 type="text"
                 class="form-control"
@@ -774,9 +735,7 @@
               />
             </div>
             <div class="col-md-6 mb-3">
-              <label for="imageOriginalPath" class="form-label"
-                >Original Path</label
-              >
+              <label for="imageOriginalPath" class="form-label">{{ 'MISC.ORIGINAL_PATH' | translate }}</label>
               <input
                 type="text"
                 class="form-control"
@@ -787,66 +746,63 @@
             </div>
           </div>
 
-          <h5 class="mt-4">Product Dimensions</h5>
+          <h5 class="mt-4">{{ 'PRODUCTS.DIMENSIONS' | translate }}</h5>
           <div *ngIf="selectedProduct?.dimensions?.length > 0">
             <div
               class="row mb-3"
-              *ngFor="
-                let dimension of selectedProduct.dimensions;
-                let i = index
-              "
+              *ngFor="let dimension of selectedProduct.dimensions; let i = index"
             >
               <div class="col-md-2">
-                <label for="height-{{ i }}" class="form-label">Height</label>
+                <label for="height-{{ i }}" class="form-label">{{ 'PRODUCTS.HEIGHT' | translate }}</label>
                 <input
                   type="number"
                   class="form-control"
                   id="height-{{ i }}"
-                  placeholder="Height"
+                  [placeholder]="'PRODUCTS.HEIGHT' | translate"
                   [(ngModel)]="dimension.height"
                   name="height-{{ i }}"
                 />
               </div>
               <div class="col-md-2">
-                <label for="width-{{ i }}" class="form-label">Width</label>
+                <label for="width-{{ i }}" class="form-label">{{ 'PRODUCTS.WIDTH' | translate }}</label>
                 <input
                   type="number"
                   class="form-control"
                   id="width-{{ i }}"
-                  placeholder="Width"
+                  [placeholder]="'PRODUCTS.WIDTH' | translate"
                   [(ngModel)]="dimension.width"
                   name="width-{{ i }}"
                 />
               </div>
               <div class="col-md-2">
-                <label for="length-{{ i }}" class="form-label">Length</label>
+                <label for="length-{{ i }}" class="form-label">{{ 'PRODUCTS.LENGTH' | translate }}</label>
                 <input
                   type="number"
                   class="form-control"
                   id="length-{{ i }}"
-                  placeholder="Length"
+                  [placeholder]="'PRODUCTS.LENGTH' | translate"
                   [(ngModel)]="dimension.length"
                   name="length-{{ i }}"
                 />
               </div>
               <div class="col-md-2">
-                <label for="weight-{{ i }}" class="form-label">Weight</label>
+                <label for="weight-{{ i }}" class="form-label">{{ 'MISC.WEIGHT' | translate }}</label>
                 <input
                   type="number"
                   class="form-control"
                   id="weight-{{ i }}"
-                  placeholder="Weight"
+                  [placeholder]="'MISC.WEIGHT' | translate"
                   [(ngModel)]="dimension.weight"
                   name="weight-{{ i }}"
                 />
               </div>
               <div class="col-md-2">
-                <label for="price-{{ i }}" class="form-label">Price</label>
+                <label for="price-{{ i }}" class="form-label">{{ 'MISC.PRICE' | translate }}</label>
                 <input
                   type="number"
                   class="form-control"
                   id="price-{{ i }}"
-                  placeholder="Price"
+                  [placeholder]="'MISC.PRICE' | translate"
                   [(ngModel)]="dimension.price"
                   name="price-{{ i }}"
                 />
@@ -857,74 +813,63 @@
                   class="btn btn-danger"
                   (click)="removeDimension(i)"
                 >
-                  &times;
+                  {{ 'MISC.REMOVE' | translate }}
                 </button>
               </div>
             </div>
           </div>
           <div class="mb-3">
-            <button
-              type="button"
-              class="btn btn-success"
-              (click)="addNewDimension()"
-            >
-              Add Dimension
+            <button type="button" class="btn btn-success" (click)="addNewDimension()">
+              {{ 'MISC.ADD_DIMENSION' | translate }}
             </button>
           </div>
 
-          <h5 class="mt-4">Product Translations</h5>
+          <h5 class="mt-4">{{ 'MISC.PRODUCT_TRANSLATIONS' | translate }}</h5>
           <div *ngIf="selectedProduct?.translations?.length > 0">
             <div
               class="row mb-3"
-              *ngFor="
-                let translation of selectedProduct.translations;
-                let i = index
-              "
+              *ngFor="let translation of selectedProduct.translations; let i = index"
             >
               <div class="col-md-3">
-                <label for="language-{{ i }}" class="form-label"
-                  >Language</label
-                >
+                <label for="language-{{ i }}" class="form-label">{{ 'MISC.LANGUAGE' | translate }}</label>
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Language"
-                  [(ngModel)]="translation.language"
                   id="language-{{ i }}"
+                  [placeholder]="'MISC.LANGUAGE' | translate"
+                  [(ngModel)]="translation.language"
                   name="language-{{ i }}"
                 />
               </div>
               <div class="col-md-3">
-                <label for="content-{{ i }}" class="form-label">Content</label>
+                <label for="content-{{ i }}" class="form-label">{{ 'MISC.CONTENT' | translate }}</label>
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Content"
-                  [(ngModel)]="translation.content"
                   id="content-{{ i }}"
+                  [placeholder]="'MISC.CONTENT' | translate"
+                  [(ngModel)]="translation.content"
                   name="content-{{ i }}"
                 />
               </div>
               <div class="col-md-3">
-                <label for="slug-{{ i }}" class="form-label">Slug</label>
+                <label for="slug-{{ i }}" class="form-label">{{ 'MISC.SLUG' | translate }}</label>
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Slug"
-                  [(ngModel)]="translation.slug"
                   id="slug-{{ i }}"
+                  [placeholder]="'MISC.SLUG' | translate"
+                  [(ngModel)]="translation.slug"
                   name="slug-{{ i }}"
                 />
               </div>
               <div class="col-md-2">
-                <label for="description-{{ i }}" class="form-label"
-                  >Description</label
-                >
+                <label for="description-{{ i }}" class="form-label">{{ 'MISC.DESCRIPTION' | translate }}</label>
                 <textarea
                   class="form-control"
-                  placeholder="Description"
-                  [(ngModel)]="translation.description"
                   id="description-{{ i }}"
+                  [placeholder]="'MISC.DESCRIPTION' | translate"
+                  [(ngModel)]="translation.description"
                   name="description-{{ i }}"
                 ></textarea>
               </div>
@@ -935,28 +880,24 @@
                   class="btn btn-danger"
                   (click)="removeTranslation(i)"
                 >
-                  &times;
+                  {{ 'MISC.REMOVE' | translate }}
                 </button>
               </div>
             </div>
           </div>
           <div class="mb-3">
-            <button
-              type="button"
-              class="btn btn-success"
-              (click)="addNewTranslation()"
-            >
-              Add Translation
+            <button type="button" class="btn btn-success" (click)="addNewTranslation()">
+              {{ 'MISC.ADD_TRANSLATION' | translate }}
             </button>
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
+          {{ 'MODAL.CLOSE' | translate }}
         </button>
         <button type="button" class="btn btn-primary" (click)="updateProduct()">
-          Save Changes
+          {{ 'MISC.SAVE_CHANGES' | translate }}
         </button>
       </div>
     </div>
@@ -974,19 +915,14 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <h5 class="modal-title">{{ 'MISC.EDIT_CATEGORY' | translate }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form>
           <!-- Category Title -->
           <div class="mb-3">
-            <label for="categoryTitle" class="form-label">Category Title</label>
+            <label for="categoryTitle" class="form-label">{{ 'MISC.TITLE' | translate }}</label>
             <input
               type="text"
               class="form-control"
@@ -1006,7 +942,9 @@
                 [(ngModel)]="isActive"
                 name="is_active"
               />
-              <label class="form-check-label" for="isActive">Active</label>
+              <label class="form-check-label" for="isActive">
+                {{ 'MISC.ACTIVE' | translate }}
+              </label>
             </div>
           </div>
 
@@ -1020,14 +958,16 @@
                 [(ngModel)]="topCategory"
                 name="top_category"
               />
-              <label class="form-check-label" for="topCategory">Top Category</label>
+              <label class="form-check-label" for="topCategory">
+                {{ 'MISC.TOP_CATEGORY' | translate }}
+              </label>
             </div>
           </div>
 
           <!-- Image Asset Section -->
-          <h5>Image Asset</h5>
+          <h5>{{ 'MISC.IMAGE_ASSET' | translate }}</h5>
           <div class="mb-3">
-            <label for="fileName" class="form-label">File Name</label>
+            <label for="fileName" class="form-label">{{ 'MISC.FILE_NAME' | translate }}</label>
             <input
               type="text"
               class="form-control"
@@ -1037,7 +977,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="altText" class="form-label">Alternative Text</label>
+            <label for="altText" class="form-label">{{ 'MISC.ALTERNATIVE_TEXT' | translate }}</label>
             <input
               type="text"
               class="form-control"
@@ -1047,7 +987,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="thumbnailPath" class="form-label">Thumbnail Path</label>
+            <label for="thumbnailPath" class="form-label">{{ 'MISC.THUMBNAIL_PATH' | translate }}</label>
             <input
               type="text"
               class="form-control"
@@ -1057,7 +997,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="originalPath" class="form-label">Original Path</label>
+            <label for="originalPath" class="form-label">{{ 'MISC.ORIGINAL_PATH' | translate }}</label>
             <input
               type="text"
               class="form-control"
@@ -1070,14 +1010,10 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
+          {{ 'MODAL.CLOSE' | translate }}
         </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="updateCategory()"
-        >
-          Save Changes
+        <button type="button" class="btn btn-primary" (click)="updateCategory()">
+          {{ 'MISC.SAVE_CHANGES' | translate }}
         </button>
       </div>
     </div>

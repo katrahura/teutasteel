@@ -1,27 +1,23 @@
 <section [ngClass]="getGradientClass()">
   <div class="page-wrapper">
-
-
-   <div class="navbar navbar-expand-lg p-2 centered-navbar">
+<!-- Navigation Bar -->
+<div class="navbar navbar-expand-lg p-2 centered-navbar">
   <div class="container-fluid d-flex justify-content-between align-items-center">
-    <!-- Left (Optional Logo or Brand) -->
+    <!-- Left (Language Switcher) -->
     <div class="d-flex align-items-center">
       <div class="language-switcher me-2">
         <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'al'}" (click)="switchLanguage('al')">AL</button>
         <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'en'}" (click)="switchLanguage('en')">EN</button>
       </div>
     </div>
-    <!-- Centered Navigation Links (with logo in the middle) -->
+    <!-- Centered Navigation Links -->
     <div class="center-nav d-flex align-items-center">
-      <a class="nav-link mx-2" [routerLink]="['/']" routerLinkActive="active">Home</a>
-      <a class="nav-link mx-2" [routerLink]="['/products']" routerLinkActive="active">Products</a>
-      <!-- <a class="nav-link mx-2" href="#">
-        <img src="https://picsum.photos/36/36" alt="Logo" class="logo" style="vertical-align: middle;">
-      </a> -->
-      <a class="nav-link mx-2" [routerLink]="['/about']" routerLinkActive="active">About Us</a>
-      <a class="nav-link mx-2" [routerLink]="['/contact']" routerLinkActive="active">Contact</a>
+      <a class="nav-link mx-2" [routerLink]="['/']" routerLinkActive="active">{{ 'NAVBAR.HOME' | translate }}</a>
+      <a class="nav-link mx-2" [routerLink]="['/products']" routerLinkActive="active">{{ 'NAVBAR.PRODUCTS' | translate }}</a>
+      <a class="nav-link mx-2" [routerLink]="['/about']" routerLinkActive="active">{{ 'NAVBAR.ABOUT_US' | translate }}</a>
+      <a class="nav-link mx-2" [routerLink]="['/contact']" routerLinkActive="active">{{ 'NAVBAR.CONTACT' | translate }}</a>
     </div>
-    <!-- Right Side (Language/Login) -->
+    <!-- Right Side (Login) -->
     <div class="d-flex align-items-center">
       <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active">
         <i class="bi bi-person-circle fs-4"></i>
@@ -29,6 +25,7 @@
     </div>
   </div>
 </div>
+
 
     
     

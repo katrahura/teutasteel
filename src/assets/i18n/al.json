@@ -1,4 +1,44 @@
 {
+    "CATEGORY": {
+  "LASER_SHEETS": "Pllaka me prerje lazer",
+  "MOTIFS": "Dekor hekuri",
+  "CONIFER_AND_RIBBED_IRON": "Hekur i gdhendur me brinjë",
+  "PANELS": "Panele dekorative",
+  "BAYONETS": "Shtylla harkuese",
+  "KNUCKLES": "Elemente lidhëse",
+  "TATTOOED_LAMA_AND_SQUARES": "Profil i gdhendur",
+  "FATHER_IRONS": "Shufra të verdha",
+  "RIBBED_PRINTED_IRONS": "Profil me gunga",
+  "LEAFY_PART_MOTIFS": "Dekor me gjethe",
+  "HOT_PRINTS": "Forma të nxehura",
+  "RING_MODELS": "Modele rrethore",
+  "SPEAR": "Majë hekuri",
+  "BUNS": "Topa hekuri",
+  "PART_MOTIFS": "Dekor pjese",
+  "HANDRAILS": "Dorëza shkalle",
+  "LEAVES": "Gjethe dekorative",
+  "ROSETTE": "Rozeta",
+  "DOOR_CORNER_BELLY": "Dekor këndi për derë",
+  "DOOR_SHEETS": "Pllaka dere",
+  "STEEL_DOOR_SHEETS": "Pllaka dere prej çeliku",
+  "PRINTED_SHEET": "Pllakë e stampuar",
+  "DOOR_LOCK_SHEET": "Pllakë për bravë dere",
+  "DOOR_HANDLES": "Doreza hekuri",
+  "HINGES": "Zinjirë dere",
+  "BOLT": "Mbulues bravash",
+  "PULLEY": "Rrotë rrëshqitëse",
+  "BALANCE_REELS": "Rrota balancuese",
+  "FITTINGS": "Mbajtëse",
+  "DOOR_TOPS": "Dekor sipër dere",
+  "STAIRCASE_HEADINGS": "Dekor shkallësh",
+  "SHELF_LEGS": "Mbajtëse rafti",
+  "COFFEE_TABLE_MODELS": "Modele tavoline",
+  "TATTOO_PROFILE": "Profil i gdhendur",
+  "SQUARE_TUBES": "Tuba katrorë",
+  "TEST1234": "test1234",
+  "TEST1234D": "test1234d"
+}
+,
   "NAVBAR": {
     "BRAND": "TeutaSteel",
     "HOME": "Kryefaqja",
@@ -33,16 +73,6 @@
     },
     "CONTACT_BUTTON": "Na Kontaktoni"
   },
-  "CONTACT": {
-    "TITLE": "Na Kontaktoni",
-    "NAME_LABEL": "Emri",
-    "NAME_PLACEHOLDER": "Emri Juaj",
-    "EMAIL_LABEL": "Email",
-    "EMAIL_PLACEHOLDER": "name@example.com",
-    "MESSAGE_LABEL": "Mesazhi",
-    "MESSAGE_PLACEHOLDER": "Shkruani mesazhin tuaj këtu...",
-    "SUBMIT_BUTTON": "Dërgo"
-  },
   "HOME": {
     "HERO_TITLE": "Mirësevini në TeutaSteel",
     "HERO_SUBTITLE": "Produkte çeliku të galvanizuar me cilësi të lartë për çdo nevojë",
@@ -60,7 +90,8 @@
     "CTA_TITLE": "Gati për të Porositur Produktet e Çelikut?",
     "CTA_TEXT": "Na kontaktoni sot për të marrë një ofertë ose për të mësuar më shumë rreth produkteve dhe shërbimeve tona.",
     "CTA_BUTTON": "Na Kontaktoni"
-  },"PRODUCTS": {
+  },
+  "PRODUCTS": {
     "GROUPS_TITLE": "Grupet e Produkteve",
     "VIEW_PRODUCTS_BUTTON": "Shiko Produktet",
     "PRODUCTS_TITLE": "Produkte",
@@ -71,15 +102,97 @@
     "WIDTH": "Gjerësia",
     "CONTACT_WHATSAPP": "Na kontaktoni në WhatsApp"
   },
-  
-    "MODAL": {
-      "CLOSE": "Mbyll",
-      "DIMENSIONS": "Përmasat",
-      "HEIGHT": "Lartësia",
-      "LENGTH": "Gjatësia",
-      "WIDTH": "Gjerësia",
-      "CONTACT_WHATSAPP": "Kontakto në WhatsApp"
-    }
-  
-  
+  "MODAL": {
+    "CLOSE": "Mbyll",
+    "DIMENSIONS": "Përmasat",
+    "HEIGHT": "Lartësia",
+    "LENGTH": "Gjatësia",
+    "WIDTH": "Gjerësia",
+    "CONTACT_WHATSAPP": "Kontakto në WhatsApp"
+  },
+  "CONTACT": {
+    "TITLE": "Na Kontaktoni",
+    "REACH_US": "Na kontaktoni direkt përmes telefonit ose rrjeteve sociale.",
+    "PHONE": "Telefoni",
+    "EMAIL": "Emaili",
+    "AVAILABILITY": "Në dispozicion nga e hëna deri të shtunën, ora 8:00 - 17:00",
+    "CONTACT_US": "Na Kontaktoni",
+    "CONTACT_ON_WHATSAPP": "Na kontaktoni në WhatsApp",
+    "VISIT_US": "Na Vizitoni"
+  },
+  "ADMIN": {
+    "ADMIN_DASHBOARD": "Paneli i Administratorit"
+  },
+  "MISC": {
+    "IMAGE_ASSET": "Imazhi i Produktit",
+    "PRODUCT_TRANSLATIONS": "Përkthimet e Produktit",
+    "YOUR_TRUSTED_PARTNER_IN_STEEL_SOLUTIONS": "Partneri Juaj i Besuar për Zgjidhje Çeliku",
+    "HIGH-QUALITY_GALVANIZED_STEEL_PRODUCTS_AND_PROFESSIONAL_PROCESSING_SERVICES.": "Produkte të cilësisë së lartë të çelikut të galvanizuar dhe shërbime profesionale të përpunimit.",
+    "VIEW_PRODUCTS": "Shiko Produktet",
+    "OUR_TOP_CATEGORIES": "Kategoritë Tona Kryesore",
+    "OUR_SERVICES": "Shërbimet Tona",
+    "CNC_METAL_CUTTING": "Prerje CNC e Çelikut",
+    "PRECISION_CNC_CUTTING_FOR_PLATES_PIPES_AND_PROFILES.": "Prerje të precizionit CNC për pllaka, tuba dhe profile.",
+    "PIPE_BENDING": "Lakur Tubash",
+    "HIGH-QUALITY_BENDING_FOR_VARIOUS_STEEL_PIPES_AND_PROFILES.": "Lakim të cilësisë së lartë për tuba dhe profile të ndryshme çeliku.",
+    "CUSTOM_SOLUTIONS": "Zgjidhje të Personalizuara",
+    "TAILORED_STEEL_SOLUTIONS_FOR_CONSTRUCTION_AND_INDUSTRIAL_NEEDS.": "Zgjidhje të personalizuara çeliku për nevojat e ndërtimit dhe industriale.",
+    "WELCOME_USERNAME_": "Mirësevini, {{ username }}",
+    "ENTER_YOUR_USERNAME": "Shkruani emrin tuaj të përdoruesit",
+    "PASSWORD": "Fjalëkalimi",
+    "ENTER_YOUR_PASSWORD": "Shkruani fjalëkalimin tuaj",
+    "LOGOUT": "Dil",
+    "GO_TO_ADMIN_DASHBOARD": "Shko te Paneli i Administratorit",
+    "GO_TO_USER_DASHBOARD": "Shko te Paneli i Përdoruesit",
+    "CREATE_NEW_CATEGORY": "Krijo Kategori të Re",
+    "TITLE": "Titulli",
+    "IS_ACTIVE": "Është Aktiv",
+    "YES": "Po",
+    "NO": "Jo",
+    "TOP_CATEGORY": "Kategori Kryesore",
+    "IMAGE_FILE_NAME": "Emri i Skedarit të Imazhit",
+    "ALTERNATIVE_TEXT": "Tekst Alternativ",
+    "THUMBNAIL_PATH": "Shtegu i Thumbnail",
+    "ORIGINAL_PATH": "Shtegu Origjinal",
+    "CREATE_NEW_PRODUCT": "Krijo Produkt të Ri",
+    "PRODUCT_CODE": "Kodi i Produktit",
+    "CUT_TYPE": "Lloji i Prerjes",
+    "IMAGE_ALT_TEXT": "Teksti Alternativ i Imazhit",
+    "EDIT": "Ndrysho",
+    "EDIT_CATEGORY": "Ndrysho Kategorinë",
+    "BACK_TO_CATEGORIES": "Kthehu te Kategoritë",
+    "NO_DESCRIPTION_AVAILABLE.": "Nuk ka përshkrim të disponueshëm.",
+    "DIMENSIONS": "Përmasat:",
+    "HEIGHT": "Lartësia:",
+    "WIDTH": "Gjerësia:",
+    "PRICE": "Çmimi:",
+    "EDIT_PRODUCT": "Ndrysho Produktin",
+    "FILE_NAME": "Emri i Skedarit",
+    "NAME": "Emri:",
+    "EMAIL": "Emaili:",
+    "EDIT_PROFILE": "Ndrysho Profilin",
+    "ACTIVE": "Aktiv",
+    "NEW_PRODUCT": "Produkt i Ri",
+    "LANGUAGE": "Gjuha",
+    "CONTENT": "Përmbajtja",
+    "SLUG": "Slug",
+    "DESCRIPTION": "Përshkrimi",
+    "WEIGHT": "Pesha",
+    "CURRENCY": "Valuta",
+    "GENERAL_INFORMATION": "Informacion i Përgjithshëm",
+    "SAVE_CHANGES": "Ruaj Ndryshimet",
+    "ADD_DIMENSION": "Shto Dimension",
+    "ADD_TRANSLATION": "Shto Përkthim",
+    "REMOVE": "Hiq",
+        "PAGE":"Faqja",
+        "OF":"Nga"
+
+  },
+  "LOGIN": {
+    "LOGIN": "Hyrje"
+  },
+  "USER_DASHBOARD": {
+    "USER_NAME": "Emri i Përdoruesit",
+    "USER_DASHBOARD": "Paneli i Përdoruesit"
+  }
 }

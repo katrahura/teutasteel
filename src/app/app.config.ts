@@ -18,11 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes),
     provideClientHydration(),
-    
-    // Add HttpClient to support translation loader
     provideHttpClient(),
-
-    // Add ngx-translate module to the providers
     importProvidersFrom(
       TranslateModule.forRoot({
         loader: {

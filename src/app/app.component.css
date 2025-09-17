@@ -184,4 +184,45 @@ position: absolute;
   box-shadow: 0 2px 24px 4px #00356630;
   padding: 1rem 2rem;
 }
- 
+ .nav-link {
+  color: #222 !important;
+  font-weight: 500;
+  position: relative;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 0.3rem 0.6rem;
+}
+
+.nav-link:hover {
+  color: #007BFF !important;
+}
+
+/* Underline animation on hover */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background-color: #007BFF;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.center-nav .nav-link {
+  margin: 0 1rem;
+}
+
+@media (max-width: 768px) {
+  .center-nav {
+    flex-direction: column;
+  }
+
+  .center-nav .nav-link {
+    margin: 0.5rem 0;
+  }
+}

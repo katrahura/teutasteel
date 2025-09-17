@@ -1,0 +1,180 @@
+/*
+ * Responsive Overrides (mobile-first)
+ * Drop this file AFTER your existing CSS links.
+ * Goal: make the app look professional and comfortable on phone screens.
+ * Created: auto-patch
+ */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) and (max-width: 915px) {
+
+/* fallback minimal content */
+body { font-size: clamp(14px, 1vw, 16px); }
+.container { padding-inline: 1rem; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+
+
+
+/* 1) Consistent box-sizing and fluid media */
+*, *::before, *::after { box-sizing: border-box; }
+html { height:100%; }
+img, svg, video, canvas { max-width: 100%; height: auto; display: block; }
+iframe { max-width: 100%; }
+
+/* 2) Color + spacing scales via CSS variables (adjust to your brand) */
+:root{
+  --radius: 14px;
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --content-max: 1200px;
+
+  /* Fluid type scale */
+  --fs-xs: clamp(11px, .74vw, 12px);
+  --fs-sm: clamp(12px, .85vw, 14px);
+  --fs-md: clamp(14px, 1.0vw, 16px);
+  --fs-lg: clamp(16px, 1.25vw, 18px);
+  --fs-xl: clamp(20px, 2.5vw, 28px);
+  --fs-2xl: clamp(24px, 3.5vw, 36px);
+}
+
+body{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  margin: 0;
+  background: #fff;
+  color: #111;
+}
+
+/* 3) Content container that breathes on mobile */
+.container, .content, main, .page-wrap{
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+/* 4) Cards and panels — softer on mobile */
+.card, .panel, .widget, .tile{
+  border-radius: var(--radius);
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+
+/* 5) Touch-friendly targets */
+button, .button, [role="button"], .btn, input[type="submit"]{
+  min-height: 44px;
+  padding: .6rem 1rem;
+  font-size: var(--fs-md);
+  border-radius: calc(var(--radius) - 6px);
+}
+
+/* 6) Tables: make them scroll instead of squish */
+.table-wrap{ width:100%; overflow-x:auto; -webkit-overflow-scrolling: touch; }
+table { border-collapse: collapse; width: 100%; }
+th, td { padding: .6rem; text-align: left; }
+
+/* 7) Forms: bigger tap area on mobile */
+input[type="text"], input[type="number"], input[type="email"], input[type="search"],
+select, textarea{
+  width: 100%;
+  padding: .6rem .8rem;
+  border-radius: 10px;
+  border: 1px solid #e6e6e6;
+  font-size: var(--fs-md);
+}
+
+/* 8) Grid auto-fit: single column on small screens, grow to tiles on larger */
+.grid, [class*="grid"], .cards, .tiles{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+/* try to detect 2+ column patterns and make them fluid on larger screens */
+@media (min-width: 600px){
+  .grid-2, .cards-2, .tiles-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (min-width: 900px){
+  .grid-3, .cards-3, .tiles-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+@media (min-width: 1200px){
+  .grid-4, .cards-4, .tiles-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+
+/* 9) Split layouts: stack on mobile */
+.sidebar, .aside, .left-col, .right-col{
+  contain: layout;
+}
+.layout, .split, .two-col, .content-with-sidebar{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+@media (min-width: 900px){
+  .layout, .split, .two-col, .content-with-sidebar{
+    grid-template-columns: minmax(0,1fr) 320px; /* content + sidebar */
+    align-items: start;
+  }
+}
+
+/* 10) Navbars: compress to a stacked vertical list on small screens */
+.navbar, nav[role="navigation"]{
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+}
+.navbar .nav-links, nav .nav-links{
+  display: flex; flex-wrap: wrap; gap: var(--space-2);
+}
+@media (max-width: 640px){
+  .navbar .nav-links, nav .nav-links{
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* 11) Hero/media banners: ensure readable text and spacing */
+.hero, .banner, .masthead{
+  padding: clamp(20px, 6vw, 64px) var(--space-4);
+}
+.hero h1, .banner h1{ font-size: var(--fs-2xl); margin: 0 0 var(--space-3); }
+.hero p, .banner p{ font-size: var(--fs-lg); opacity: .9; }
+
+/* 12) Utilities: spacing + visibility helpers */
+.hidden-mobile{ display: none !important; }
+@media (min-width: 640px){
+  .hidden-mobile{ display: revert !important; }
+  .hidden-desktop{ display: none !important; }
+}
+.mt-0{ margin-top:0!important } .mb-0{ margin-bottom:0!important }
+.mt-2{ margin-top:var(--space-2)!important } .mb-2{ margin-bottom:var(--space-2)!important }
+.mt-4{ margin-top:var(--space-4)!important } .mb-4{ margin-bottom:var(--space-4)!important }
+
+/* 13) Dialogs & popovers: full width on phones */
+.modal, .dialog, .drawer{
+  /* max-width: min(560px, 92vw); */
+  width: 100%;
+  margin: 0 auto;
+  border-radius: var(--radius);
+}
+
+/* 14) Prevent layout jank on very narrow screens */
+@media (max-width: 360px){
+  body{ font-size: var(--fs-sm); }
+  .navbar, .hero, .banner{ padding-left: var(--space-3); padding-right: var(--space-3); }
+}
+
+/* 15) High-contrast outline for accessibility on focus */
+:where(a, button, input, select, textarea):focus-visible{
+  outline: 2px solid #555; outline-offset: 2px;
+}
+
+/* 16) Optional: sticky footer patterns */
+.site{ min-height:100dvh; display:flex; flex-direction:column; }
+.site > .site-content{ flex:1 0 auto; }
+.site > .site-footer{ flex:0 0 auto; }}

@@ -13,18 +13,18 @@
     <section id="hero-section" class="hero-section text-center py-5 " 
            >
     <div class="container text-white">
-      <h1 class="display-5">Your Trusted Partner in Steel Solutions</h1>
-      <p class="lead">High-quality galvanized steel products and professional processing services.</p>
+      <h1 class="display-5">{{ 'MISC.YOUR_TRUSTED_PARTNER_IN_STEEL_SOLUTIONS' | translate }}</h1>
+<p class="lead">{{ 'MISC.HIGH-QUALITY_GALVANIZED_STEEL_PRODUCTS_AND_PROFESSIONAL_PROCESSING_SERVICES.' | translate }}</p>
       <div class="d-flex justify-content-center gap-3">
-        <a class="btn btn-secondary btn-lg" routerLink="/products">View Products</a>
-        <a class="btn btn-secondary btn-lg" routerLink="/contact">Contact Us</a>
+        <a class="btn btn-secondary btn-lg" routerLink="/products">{{ 'MISC.VIEW_PRODUCTS' | translate }}</a>
+<a class="btn btn-secondary btn-lg" routerLink="/contact">{{ 'CONTACT.CONTACT_US' | translate }}</a>
       </div>
     </div>
   </section>
 
   <section class="products-section py-5">
     <div class="container">
-      <h2 class="text-center mb-5">Our Top Categories</h2>
+<h2 class="text-center mb-5">{{ 'MISC.OUR_TOP_CATEGORIES' | translate }}</h2>
       <div class="row">
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let category of topCategories">
           <div class="card h-100">
@@ -88,25 +88,25 @@
 <!-- Services Section -->
 <section class="services-section py-5">
   <div class="container">
-    <h2 class="text-center mb-5">Our Services</h2>
+<h2 class="text-center mb-5">{{ 'MISC.OUR_SERVICES' | translate }}</h2>
     <div class="row text-center justify-content-center">
       <!-- CNC Cutting -->
       <div class="col-md-4 d-flex flex-column align-items-center">
         <img src="assets/images/cnc.jpg" alt="CNC Cutting" class="service-img mb-3">
-        <h5>CNC Metal Cutting</h5>
-        <p>Precision CNC cutting for plates, pipes, and profiles.</p>
+<h5>{{ 'MISC.CNC_METAL_CUTTING' | translate }}</h5>
+<p>{{ 'MISC.PRECISION_CNC_CUTTING_FOR_PLATES_PIPES_AND_PROFILES.' | translate }}</p>
       </div>
       <!-- Pipe Bending -->
       <div class="col-md-3 d-flex flex-column align-items-center">
         <img src="assets/images/bend.png" alt="Pipe Bending" class="service-img mb-3">
-        <h5>Pipe Bending</h5>
-        <p>High-quality bending for various steel pipes and profiles.</p>
+<h5>{{ 'MISC.PIPE_BENDING' | translate }}</h5>
+<p>{{ 'MISC.HIGH-QUALITY_BENDING_FOR_VARIOUS_STEEL_PIPES_AND_PROFILES.' | translate }}</p>
       </div>
       <!-- Custom Solutions -->
       <div class="col-md-4 d-flex flex-column align-items-center">
         <img src="assets/images/hyd.png" alt="Custom Solutions" class="service-img mb-3">
-        <h5>Custom Solutions</h5>
-        <p>Tailored steel solutions for construction and industrial needs.</p>
+<h5>{{ 'MISC.CUSTOM_SOLUTIONS' | translate }}</h5>
+<p>{{ 'MISC.TAILORED_STEEL_SOLUTIONS_FOR_CONSTRUCTION_AND_INDUSTRIAL_NEEDS.' | translate }}</p>
       </div>
     </div>
   </div>
@@ -169,7 +169,7 @@
   </section>
 
   <!-- Call-to-Action Section -->
-  <section class="cta-section text-center py-5 bg-primary text-white">
+  <section class="cta-section text-center py-5 bg-primary text-white"style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
     <div class="container">
       <h2>{{ 'HOME.CTA_TITLE' | translate }}</h2>
       <p>{{ 'HOME.CTA_TEXT' | translate }}</p>
