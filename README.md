@@ -159,7 +159,14 @@ Keyboard access is checked the same way, with the same Chrome running:
 node --experimental-websocket tools\keyboard_audit.mjs   # both widths, every page
 node --experimental-websocket tools\drawer_check.mjs     # the mobile menu's behaviour
 node --experimental-websocket tools\icon_check.mjs       # the icons still draw
+node --experimental-websocket tools\link_check.mjs       # every link resolves
 ```
+
+`link_check.mjs` walks the built site and follows every `href` and image `src`: internal links must answer
+200 (and must not be serving the host's 404 page), `mailto:` and `tel:` must be well formed, no link may be
+an empty `href` or a bare `#`, every link needs text or an aria-label, and anything opening in a new tab
+needs `rel="noopener"`. It also lists the external hosts, so a stray link is visible. It reports 0 dead
+links and 0 problems today.
 
 `keyboard_audit.mjs` sends real Tab presses at 390 px and 1280 px wide and fails anything that takes focus
 while invisible, anything focusable with no visible indicator, and anything clickable that cannot be reached
