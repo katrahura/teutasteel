@@ -72,9 +72,19 @@ await send('Page.navigate', { url: 'about:blank' });
 await wait(1200);
 
 let problems = 0;
+let unloaded = 0;
 for (const route of ['/', '/products', '/about', '/contact', '/login']) {
-  await send('Page.navigate', { url: BASE + route });
+  const navigation = await send('Page.navigate', { url: BASE + route });
   await wait(8000);
+  // A failed navigation leaves the previous document in place, and a page that is not there
+  // has no images to complain about, so "0 missing" would mean nothing was checked.
+  const failure = navigation.result && navigation.result.errorText;
+  if (failure) {
+    problems++;
+    unloaded++;
+    console.log(`\n===== ${route} — COULD NOT LOAD (${failure}) =====`);
+    continue;
+  }
   // open a category so its products are on screen too
   if (route === '/products') {
     await evaluate(`(() => {
@@ -91,7 +101,8 @@ for (const route of ['/', '/products', '/about', '/contact', '/login']) {
     console.log(`      ${image.src || '(no src)'}  class=${image.cls}`);
   }
 }
-console.log(`\nSUMMARY: ${problems} image(s) with no alt attribute`);
+console.log(`\nSUMMARY: ${problems} image(s) with no alt attribute`
+            + (unloaded ? `, ${unloaded} page(s) that did not load` : ''));
 console.log(problems === 0 ? 'RESULT: PASS' : 'RESULT: FAIL');
 ws.close();
-process.exit(0);
+process.exit(problems === 0 ? 0 : 1);

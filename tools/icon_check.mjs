@@ -59,8 +59,16 @@ let failures = 0;
 const seen = new Map();
 
 for (const route of ['/contact', '/']) {
-  await send('Page.navigate', { url: BASE + route });
+  const navigation = await send('Page.navigate', { url: BASE + route });
   await wait(8000);
+  // A failed navigation leaves the previous document in place, and a page that is not there
+  // has no icons on it - which used to be reported as a pass.
+  const failure = navigation.result && navigation.result.errorText;
+  if (failure) {
+    failures++;
+    console.log(`\n===== ${route} — COULD NOT LOAD (${failure}) =====`);
+    continue;
+  }
 
   const icons = await evaluate(`(() => {
     const out = [];
@@ -83,6 +91,10 @@ for (const route of ['/contact', '/']) {
   })()`);
 
   console.log(`\n===== ${route} — ${icons.length} icon element(s) =====`);
+  if (icons.length === 0) {
+    failures++;
+    console.log('   no icons found on this page - is the site actually being served?');
+  }
   for (const icon of icons) {
     // icons inside the closed mobile drawer have no box yet by design
     if (!icon.visible) { console.log(`   skip ${icon.name}: hidden right now`); continue; }

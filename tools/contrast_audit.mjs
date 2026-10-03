@@ -96,6 +96,8 @@ const audit = `(() => {
 
   const findings = [];
   const photos = new Set();
+  /** how many pieces of text were actually measured, so "0 failures" cannot mean "0 measured" */
+  let examined = 0;
 
   for (const element of document.querySelectorAll('body *')) {
     // only elements that own text, and only visible ones
@@ -112,6 +114,7 @@ const audit = `(() => {
 
     const foreground = parse(style.color);
     if (!foreground || foreground.a === 0) continue;
+    examined++;
 
     // effective background: first ancestor that is not fully transparent, and if it
     // paints a gradient, every colour stop in it (the worst one decides)
@@ -217,7 +220,7 @@ const audit = `(() => {
     seen.add(key);
     unique.push(finding);
   }
-  return { findings: unique, total: findings.length, photos: [...photos] };
+  return { findings: unique, total: findings.length, examined, photos: [...photos] };
 })()`;
 
 await send('Page.enable');
@@ -230,11 +233,27 @@ await send('Page.navigate', { url: 'about:blank' });
 await wait(1200);
 
 let failures = 0;
+let unloaded = 0;
 for (const route of ROUTES) {
-  await send('Page.navigate', { url: BASE + route });
+  const navigation = await send('Page.navigate', { url: BASE + route });
   await wait(7000);
+  // A failed navigation leaves the previous document in place, so this would measure the
+  // wrong page - and against a server that is not running it measured an empty one and
+  // reported "0 failures". Both are failures now.
+  const failure = navigation.result && navigation.result.errorText;
+  if (failure) {
+    failures++;
+    unloaded++;
+    console.log(`\n${route} — COULD NOT LOAD (${failure})`);
+    continue;
+  }
   const result = await evaluate(audit);
-  console.log(`\n${route} — ${result.total} failing text element(s), ${result.findings.length} distinct`);  for (const finding of result.findings) {
+  console.log(`\n${route} — ${result.total} failing text element(s) of ${result.examined} measured, ${result.findings.length} distinct`);
+  if (!result.examined) {
+    failures++;
+    console.log('   nothing was measured on this page - is the site actually being served?');
+  }
+  for (const finding of result.findings) {
     failures++;
     console.log(`   ${finding.ratio} (needs ${finding.required})  ${finding.element}  ${finding.size}  ${finding.colour} on ${finding.background}`);
     console.log(`      "${finding.text}"`);
@@ -244,7 +263,8 @@ for (const route of ROUTES) {
   }
 }
 
-console.log(`\nSUMMARY: ${failures} distinct contrast failure(s)`);
+console.log(`\nSUMMARY: ${failures} distinct contrast failure(s)`
+            + (unloaded ? `, ${unloaded} page(s) that did not load` : ''));
 console.log(failures === 0 ? 'RESULT: PASS' : 'RESULT: FAIL');
 ws.close();
-process.exit(0);
+process.exit(failures === 0 ? 0 : 1);

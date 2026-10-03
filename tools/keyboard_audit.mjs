@@ -142,8 +142,16 @@ for (const viewport of VIEWPORTS) {
   });
   console.log(`\n############ ${viewport.name} ############`);
   for (const route of ROUTES) {
-    await send('Page.navigate', { url: BASE + route });
+    const navigation = await send('Page.navigate', { url: BASE + route });
     await wait(8000);
+    // A failed navigation leaves the previous document in place, and a page that is not
+    // there has nothing to tab through - either would be reported as "no problems".
+    const failure = navigation.result && navigation.result.errorText;
+    if (failure) {
+      problems++;
+      console.log(`\n${route} — COULD NOT LOAD (${failure})`);
+      continue;
+    }
     await evaluate('document.body.focus()');
     await wait(300);
 
@@ -185,7 +193,11 @@ for (const viewport of VIEWPORTS) {
       console.log('   CLICKABLE BUT NOT FOCUSABLE (cursor: pointer, no tabindex/role):');
       for (const entry of pointer) console.log(`      ${entry}`);
     }
-    if (!invisible.length && !noIndicator.length && !frames.length && !pointer.length) console.log('   (no problems)');
+    if (stops.length === 0) {
+      problems++;
+      console.log('   NOTHING ON THIS PAGE COULD TAKE FOCUS - is it actually being served?');
+    }
+    if (!invisible.length && !noIndicator.length && !frames.length && !pointer.length && stops.length) console.log('   (no problems)');
     if (frames.length) {
       console.log('   frames reached (focus inside another document, checked separately):',
         frames.map((stop) => stop.tag).join(', '));
@@ -196,4 +208,4 @@ for (const viewport of VIEWPORTS) {
 console.log(`\nSUMMARY: ${problems} keyboard/focus problem(s)`);
 console.log(problems === 0 ? 'RESULT: PASS' : 'RESULT: FAIL');
 ws.close();
-process.exit(0);
+process.exit(problems === 0 ? 0 : 1);
