@@ -1,22 +1,58 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { ProductsComponent } from './pages/products/products.component';
-import { ContactComponent } from './pages/contact/contact.component';
-import { AboutComponent } from './pages/about/about.component';
-import { LoginComponent } from './pages/login/login.component';
-import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
-import { UserDashboardComponent } from './pages/user-dashboard/user-dashboard.component';
 import { AuthGuard } from './guards/auth.guard';
 
+/**
+ * The home page is eager: it is the first thing a visitor sees, and making it a
+ * separate chunk would add a round trip before anything painted.
+ *
+ * Everything else is lazy. Before this, all of it sat in one 508 kB main bundle
+ * that every visitor downloaded - including the products page with its admin
+ * dialogs and both dashboards, which a visitor never opens.
+ */
 export const appRoutes: Routes = [
   { path: '', component: HomeComponent, data: { animation: 'HomePage' } },
-  { path: 'products', component: ProductsComponent, data: { animation: 'ProductsPage' } },
-  { path: 'contact', component: ContactComponent, data: { animation: 'ContactPage' } },
+  {
+    path: 'products',
+    loadComponent: () =>
+      import('./pages/products/products.component').then((m) => m.ProductsComponent),
+    data: { animation: 'ProductsPage' },
+  },
+  {
+    path: 'contact',
+    loadComponent: () =>
+      import('./pages/contact/contact.component').then((m) => m.ContactComponent),
+    data: { animation: 'ContactPage' },
+  },
+  {
+    path: 'about',
+    loadComponent: () =>
+      import('./pages/about/about.component').then((m) => m.AboutComponent),
+    data: { animation: 'AboutPage' },
+  },
+  {
+    path: 'admin-dashboard',
+    loadComponent: () =>
+      import('./pages/admin-dashboard/admin-dashboard.component').then(
+        (m) => m.AdminDashboardComponent
+      ),
+    canActivate: [AuthGuard],
+    data: { animation: 'AboutPage' },
+  },
+  {
+    path: 'user-dashboard',
+    loadComponent: () =>
+      import('./pages/user-dashboard/user-dashboard.component').then(
+        (m) => m.UserDashboardComponent
+      ),
+    canActivate: [AuthGuard],
+    data: { animation: 'AboutPage' },
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent),
+    data: { animation: 'LoginPage' },
+  },
 
-  { path: 'about', component: AboutComponent, data: { animation: 'AboutPage' } },
-  { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard], data: { animation: 'AboutPage' } },
-  { path: 'user-dashboard', component: UserDashboardComponent, canActivate: [AuthGuard], data: { animation: 'AboutPage' } },
-  { path: 'login', component: LoginComponent, data: { animation: 'LoginPage' } },
-  
   { path: '**', redirectTo: '', pathMatch: 'full' }  // Catch-all fallback
 ];
