@@ -911,25 +911,25 @@
           <h5>{{ "MISC.GENERAL_INFORMATION" | translate }}</h5>
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="productCode" class="form-label">{{
+              <label for="editProductCode" class="form-label">{{
                 "MISC.PRODUCT_CODE" | translate
               }}</label>
               <input
                 type="text"
                 class="form-control"
-                id="productCode"
+                id="editProductCode"
                 [(ngModel)]="selectedProduct.code"
                 name="code"
               />
             </div>
             <div class="col-md-6 mb-3">
-              <label for="productCutType" class="form-label">{{
+              <label for="editProductCutType" class="form-label">{{
                 "MISC.CUT_TYPE" | translate
               }}</label>
               <input
                 type="number"
                 class="form-control"
-                id="productCutType"
+                id="editProductCutType"
                 [(ngModel)]="selectedProduct.cut_type"
                 name="cut_type"
               />
@@ -942,11 +942,11 @@
                 <input
                   type="checkbox"
                   class="form-check-input"
-                  id="productActive"
+                  id="editProductActive"
                   [(ngModel)]="selectedProduct.is_active"
                   name="is_active"
                 />
-                <label class="form-check-label" for="productActive">
+                <label class="form-check-label" for="editProductActive">
                   {{ "MISC.IS_ACTIVE" | translate }}
                 </label>
               </div>
@@ -970,13 +970,13 @@
           <h5 class="mt-4">{{ "MISC.IMAGE_ASSET" | translate }}</h5>
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="imageFileName" class="form-label">{{
+              <label for="editImageFileName" class="form-label">{{
                 "MISC.IMAGE_FILE_NAME" | translate
               }}</label>
               <input
                 type="text"
                 class="form-control"
-                id="imageFileName"
+                id="editImageFileName"
                 [(ngModel)]="selectedProduct!.image_asset!.file_name!"
                 name="image_file_name"
               />
@@ -1235,13 +1235,13 @@
         <form>
           <!-- Category Title -->
           <div class="mb-3">
-            <label for="categoryTitle" class="form-label">{{
+            <label for="editCategoryTitle" class="form-label">{{
               "MISC.TITLE" | translate
             }}</label>
             <input
               type="text"
               class="form-control"
-              id="categoryTitle"
+              id="editCategoryTitle"
               [(ngModel)]="categoryTitle"
               name="title"
             />
@@ -1312,37 +1312,37 @@
             />
           </div>
           <div class="mb-3">
-            <label for="altText" class="form-label">{{
+            <label for="editAltText" class="form-label">{{
               "MISC.ALTERNATIVE_TEXT" | translate
             }}</label>
             <input
               type="text"
               class="form-control"
-              id="altText"
+              id="editAltText"
               [(ngModel)]="alternativeText"
               name="alternative_text"
             />
           </div>
           <div class="mb-3">
-            <label for="thumbnailPath" class="form-label">{{
+            <label for="editThumbnailPath" class="form-label">{{
               "MISC.THUMBNAIL_PATH" | translate
             }}</label>
             <input
               type="text"
               class="form-control"
-              id="thumbnailPath"
+              id="editThumbnailPath"
               [(ngModel)]="thumbnailPathC"
               name="thumbnail_path"
             />
           </div>
           <div class="mb-3">
-            <label for="originalPath" class="form-label">{{
+            <label for="editOriginalPath" class="form-label">{{
               "MISC.ORIGINAL_PATH" | translate
             }}</label>
             <input
               type="text"
               class="form-control"
-              id="originalPath"
+              id="editOriginalPath"
               [(ngModel)]="originalPathC"
               name="original_path"
             />

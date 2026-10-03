@@ -1,10 +1,16 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 
 import { ProductService } from './product.service';
 import { provideTestConfig } from '../testing/test-providers';
 import { clearToken, setToken } from './token-storage';
 import { environment } from '../../environments/environment';
+
+/** The test backend may hand back the body already parsed. */
+function bodyOf(request: TestRequest): any {
+  const body = request.request.body;
+  return typeof body === 'string' ? JSON.parse(body) : body;
+}
 
 describe('ProductService', () => {
   let service: ProductService;
@@ -86,6 +92,69 @@ describe('ProductService', () => {
     expect(delivered).toBe(
       `${environment.cloudinaryBaseUrl}/category_images/orig.jpg`
     );
+  });
+
+  it('leaves the display-only translation fields out of an update', () => {
+    // Regression: the product returned by the API also carries slug/description/
+    // content for the active language, and sending them back made the API answer
+    // 400 "Unknown field." - no product could be edited at all.
+    service.updateProduct({
+      id: 4,
+      code: 'DS-004',
+      cut_type: 1,
+      is_active: true,
+      slug: 'door-sheet-4',
+      description: 'display only',
+      content: 'display only',
+      dimensions: [
+        {
+          id: 9,
+          height: 1,
+          width: 1,
+          length: 1,
+          weight: 1,
+          price: 5,
+          currency: 'EUR',
+          price_history: [{ price: 5 }],
+        },
+      ],
+      translations: [{ id: 1, language: 'en', slug: 's', description: 'd', content: 'c' }],
+      image_asset: {
+        id: 3,
+        file_name: 'door.jpg',
+        alternative_text: 'a',
+        thumbnail_path: 't.jpg',
+        original_path: 'o.jpg',
+      },
+    } as any).subscribe();
+
+    const request = httpMock.expectOne(`${environment.apiUrl}/product/4`);
+    const payload = bodyOf(request);
+
+    expect(payload.slug).toBeUndefined();
+    expect(payload.description).toBeUndefined();
+    expect(payload.content).toBeUndefined();
+    expect(payload.id).toBeUndefined();
+    expect(payload.dimensions[0].price_history).toBeUndefined();
+    expect(payload.dimensions[0].id).toBe(9);
+    expect(payload.translations[0].description).toBe('d');
+    expect(payload.image_asset.id).toBeUndefined();
+    expect(payload.image_asset.file_name).toBe('door.jpg');
+    request.flush({});
+  });
+
+  it('saves a product that has no image and no dimensions', () => {
+    // Regression: image_asset was destructured unconditionally, which threw
+    // before any request was made, so saving did nothing at all.
+    expect(() => {
+      service.updateProduct({ id: 5, code: 'X', is_active: true } as any).subscribe();
+    }).not.toThrow();
+
+    const request = httpMock.expectOne(`${environment.apiUrl}/product/5`);
+    const payload = bodyOf(request);
+    expect(payload.image_asset).toBeUndefined();
+    expect(payload.dimensions).toEqual([]);
+    request.flush({});
   });
 
   it('drops an image asset that has no paths at all', () => {

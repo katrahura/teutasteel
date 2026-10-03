@@ -165,23 +165,27 @@ export class ProductService {
   
   // Helper function to sanitize the payload
   private sanitizePayload(product: any): any {
-    const { id, ...cleanedProduct } = product; // Remove the top-level id
-    return {
+    // `id` travels in the URL, and slug/description/content are derived from the
+    // active translation for display: sending them back made the API reject the
+    // whole update with "Unknown field." (the real values live in translations).
+    const { id, slug, description, content, ...cleanedProduct } = product;
+
+    const payload: any = {
       ...cleanedProduct,
-      dimensions: product.dimensions.map((dimension: any) => {
+      dimensions: (product.dimensions || []).map((dimension: any) => {
         const { price_history, ...cleanedDimension } = dimension;
-        return {
-          ...cleanedDimension,
-          
-        };
+        return { ...cleanedDimension };
       }),
-    
-      image_asset: (() => {
-        const { id, ...cleanedImageAsset } = product.image_asset;
-        return cleanedImageAsset;
-      })()
     };
-    
+
+    // Only send the image when there is one: destructuring an absent image threw
+    // before the request was made, so saving such a product did nothing at all.
+    if (product.image_asset) {
+      const { id: imageId, ...cleanedImageAsset } = product.image_asset;
+      payload.image_asset = cleanedImageAsset;
+    }
+
+    return payload;
   } 
   updateCategory(category: Category): Observable<Category> {
     const headers = this.getAuthHeaders();
