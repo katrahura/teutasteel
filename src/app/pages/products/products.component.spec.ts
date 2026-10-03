@@ -225,6 +225,24 @@ describe('ProductsComponent', () => {
     expect(() => fixture.detectChanges()).not.toThrow();
   });
 
+  it('says so when a category has no products', () => {
+    // On the day the new site goes up, every category is empty until the owner fills it.
+    // It used to render as blank space, which reads as "broken" rather than "not yet".
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([
+      { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null },
+    ]);
+    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
+
+    component.showProducts({ id: 1, title: 'Doors', is_active: true, top_category: true } as any);
+    httpMock.expectOne((req) => req.url.startsWith(`${environment.apiUrl}/category/1?`))
+      .flush({ id: 1, title: 'Doors', products: [], pagination: {} });
+    fixture.detectChanges();
+
+    // the translation may arrive as the key rather than the sentence in a unit test
+    const text: string = fixture.nativeElement.textContent;
+    expect(/NO_PRODUCTS_IN_CATEGORY|no products/i.test(text)).toBeTrue();
+  });
+
   it('does not offer a "top category" control', () => {
     // It was the legacy flag. The site groups by parent_id, so the control changed nothing
     // about where a category appeared - and the backend now derives the flag from the

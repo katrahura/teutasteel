@@ -137,6 +137,8 @@
     "EDIT": "Edit",
     "BACK_TO_CATEGORIES": "Back to Categories",
     "NO_DESCRIPTION_AVAILABLE.": "No description available.",
+    "NO_SUBCATEGORIES": "No subcategories.",
+    "NO_PRODUCTS_IN_CATEGORY": "No products in this category yet.",
     "DIMENSIONS": "Dimensions:",
     "HEIGHT": "Height:",
     "WIDTH": "Width:",

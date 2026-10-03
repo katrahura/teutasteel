@@ -178,6 +178,8 @@
     "EDIT_CATEGORY": "Ndrysho Kategorinë",
     "BACK_TO_CATEGORIES": "Kthehu te Kategoritë",
     "NO_DESCRIPTION_AVAILABLE.": "Nuk ka përshkrim të disponueshëm.",
+    "NO_SUBCATEGORIES": "Nuk ka nën-kategori.",
+    "NO_PRODUCTS_IN_CATEGORY": "Nuk ka produkte në këtë kategori.",
     "DIMENSIONS": "Përmasat:",
     "HEIGHT": "Lartësia:",
     "WIDTH": "Gjerësia:",

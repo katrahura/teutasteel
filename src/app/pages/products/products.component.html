@@ -131,7 +131,7 @@
                   *ngIf="(childrenMap.get(parent.id!) || []).length === 0"
                   class="text-muted fst-italic"
                 >
-                  No subcategories
+                  {{ "MISC.NO_SUBCATEGORIES" | translate }}
                 </div>
               </div>
             </div>
@@ -706,6 +706,14 @@
       </div>
     </div>
     <div class="products-pagination-container">
+      <!-- A category with nothing in it rendered as blank space. On the day the new site
+           goes up that is every category, so it needs to say so. -->
+      <p
+        *ngIf="!isLoading && selectedCategory && products.length === 0"
+        class="text-muted text-center py-4"
+      >
+        {{ "MISC.NO_PRODUCTS_IN_CATEGORY" | translate }}
+      </p>
       <!-- Product Cards -->
       <div class="row" *ngIf="!isLoading">
         <div class="col-md-3 mb-4" *ngFor="let product of products">
