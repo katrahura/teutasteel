@@ -204,6 +204,27 @@ if (category) {
   ]) {
     await evaluate(fill(id, value));
   }
+
+  // A steel catalogue is mostly a list of sizes, so a product with one row of dimensions
+  // and one translation is the easy case. These two buttons add rows, and neither had ever
+  // been clicked by any check.
+  console.log('   add:', await evaluate(submit('Add Dimension|Shto Përmasa|ADD_DIMENSION')));
+  await wait(1500);
+  for (const [id, value] of [['dimensionHeight_1', 400], ['dimensionWidth_1', 500],
+                             ['dimensionLength_1', 600]]) {
+    const result = await evaluate(fill(id, value));
+    if (result !== 'ok') console.log('   fill:', id, result);
+  }
+  console.log('   add:', await evaluate(submit('Add Translation|Shto Përkthim|ADD_TRANSLATION')));
+  await wait(1500);
+  for (const [id, value] of [['translationLanguage_1', 'al'],
+                             ['translationSlug_1', PRODUCT_CODE.toLowerCase() + '-al'],
+                             ['translationDescription_1', 'produkt nga formulari'],
+                             ['translationContent_1', '<p>përshkrimi i gjatë</p>']]) {
+    const result = await evaluate(fill(id, value));
+    if (result !== 'ok') console.log('   fill:', id, result);
+  }
+
   console.log('   submit:', await evaluate(submit('Create|Save|Krijo|Ruaj')));
   await wait(5000);
   console.log('   after :', JSON.stringify(await evaluate(modalState)));
@@ -220,8 +241,10 @@ if (category) {
            codes.length ? codes.join(', ') : '(that category is empty)');
     record('its translation came through', product.description === 'UI flow product',
            JSON.stringify(product.description));
-    record('its dimension came through', (product.dimensions || []).length === 1,
+    record('both rows of dimensions were saved', (product.dimensions || []).length === 2,
            `${(product.dimensions || []).length} dimension(s)`);
+    record('both translations were saved', (product.translations || []).length === 2,
+           `${(product.translations || []).length} translation(s)`);
   }
 
   // ---- 3. edit the product through the form --------------------------------------
@@ -238,6 +261,24 @@ if (category) {
   const after = await api('/product/');
   const changed = (after.body || []).find((item) => item.code === edited);
   record('the edit was saved', !!changed, changed ? `code now ${changed.code}` : 'not found');
+
+  // ---- 3b. add a size to a product that already exists ---------------------------
+  // "We stock 3000mm now" is an ordinary thing to need, and the edit dialog's add button
+  // had never been clicked either.
+  console.log('\n=== 3b. adding a size to an existing product ===');
+  console.log('   ' + await evaluate(editCard(edited, 'Edit|Ndrysho')));
+  await wait(3000);
+  console.log('   add:', await evaluate(submit('Add Dimension|Shto Përmasa|ADD_DIMENSION')));
+  await wait(1500);
+  for (const [id, value] of [['height-2', 700], ['width-2', 800], ['length-2', 900]]) {
+    const result = await evaluate(fill(id, value));
+    if (result !== 'ok') console.log('   fill:', id, result);
+  }
+  console.log('   submit:', await evaluate(submit('Save|Ruaj')));
+  await wait(5000);
+  const grown = (await api('/product/')).body?.find((item) => item.code === edited);
+  record('the extra size was kept', (grown?.dimensions || []).length === 3,
+         `${(grown?.dimensions || []).length} dimension(s)`);
 
   // ---- 3a. the details modal shows the long description --------------------------
   // The translation's "content" field used to be editable and invisible: the form offered
@@ -257,6 +298,13 @@ if (category) {
   })()`);
   record('the content field is displayed', !!shown && /from the form/.test(shown),
          shown === null ? 'nothing rendered' : JSON.stringify(shown.slice(0, 40)));
+  const modalText = await evaluate(`(() => {
+    const modal = document.querySelector('#productDetailsModal');
+    return modal ? modal.innerText.replace(/\\s+/g, ' ') : '';
+  })()`);
+  record('a customer sees every size, including one added later',
+         /100/.test(modalText) && /400/.test(modalText) && /700/.test(modalText),
+         modalText.replace(/\s+/g, ' ').slice(0, 110));
   await evaluate(`(() => {
     const modal = document.querySelector('#productDetailsModal');
     if (modal) { const instance = window.bootstrap?.Modal?.getInstance(modal); instance?.hide(); }
