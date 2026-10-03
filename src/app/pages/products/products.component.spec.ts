@@ -192,6 +192,39 @@ describe('ProductsComponent', () => {
     clearToken();
   });
 
+  it('shows the translation content, which used to be editable and invisible', () => {
+    // Regression: the form offered a "content" field, the API stored it and nothing
+    // displayed it, so the long description never reached a customer.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+
+    const product = {
+      id: 3, code: 'DS-003', cut_type: 0, category_id: 1, is_active: true, new_product: false,
+      description: 'short', content: '<p>the long description</p>',
+      image_asset: null, dimensions: [], translations: [],
+    } as any;
+    component.selectedProduct = product;
+    fixture.detectChanges();
+
+    const html: string = fixture.nativeElement.innerHTML;
+    expect(html).toContain('the long description');
+  });
+
+  it('renders a product that has no image, whichever dialog opened it', () => {
+    // Regression, and a customer-facing one. The edit dialog is rendered whenever
+    // selectedProduct is set, which the *details* dialog also does, and its image fields
+    // bound straight to selectedProduct.image_asset.file_name. Opening the details view
+    // on a product with no image therefore threw on every change detection:
+    //   TypeError: Cannot read properties of null (reading 'file_name')
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+
+    component.selectedProduct = {
+      id: 3, code: 'DS-003', cut_type: 0, category_id: 1, is_active: true, new_product: false,
+      image_asset: null, dimensions: [], translations: [],
+    } as any;
+
+    expect(() => fixture.detectChanges()).not.toThrow();
+  });
+
   it('does not offer a "top category" control', () => {
     // It was the legacy flag. The site groups by parent_id, so the control changed nothing
     // about where a category appeared - and the backend now derives the flag from the

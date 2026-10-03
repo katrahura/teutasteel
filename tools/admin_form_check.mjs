@@ -238,6 +238,31 @@ if (category) {
   const after = await api('/product/');
   const changed = (after.body || []).find((item) => item.code === edited);
   record('the edit was saved', !!changed, changed ? `code now ${changed.code}` : 'not found');
+
+  // ---- 3a. the details modal shows the long description --------------------------
+  // The translation's "content" field used to be editable and invisible: the form offered
+  // it, the API stored it and no page displayed it. This is the check that would notice.
+  console.log('\n=== 3a. does a customer see the long description? ===');
+  console.log('   ' + await evaluate(`(() => {
+    const card = [...document.querySelectorAll('.card')]
+      .find((c) => (c.innerText || '').includes(${JSON.stringify(edited)}));
+    if (!card) return 'product card not found';
+    card.click();
+    return 'clicked the product card';
+  })()`));
+  await wait(3000);
+  const shown = await evaluate(`(() => {
+    const content = document.querySelector('#productDetailsModal .product-content');
+    return content ? content.innerHTML.trim() : null;
+  })()`);
+  record('the content field is displayed', !!shown && /from the form/.test(shown),
+         shown === null ? 'nothing rendered' : JSON.stringify(shown.slice(0, 40)));
+  await evaluate(`(() => {
+    const modal = document.querySelector('#productDetailsModal');
+    if (modal) { const instance = window.bootstrap?.Modal?.getInstance(modal); instance?.hide(); }
+    return true;
+  })()`);
+  await wait(1500);
 }
 
 // ---- 4. edit a category through the form ----------------------------------------
