@@ -27,3 +27,17 @@ body, h1, h2, h3, p, a, span {
     --glow-color: rgba(255, 255, 255, 0.4); /* Custom glow color for paragraphs */
   }
   /* You can add global styles to this file, and also import other style files */
+
+/* Respect the operating system's "reduce motion" setting. Without this the
+   global transition above (and the route/carousel animations) keep playing for
+   visitors who have explicitly asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
