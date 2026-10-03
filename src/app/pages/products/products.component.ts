@@ -1,6 +1,6 @@
 import {  Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
@@ -45,8 +45,6 @@ type DimensionKey =
   ],
 })
 export class ProductsComponent implements OnInit, OnDestroy {
-  private readonly UPLOAD_BASE = '/uploads'; // or '' if full paths come from backend
-
 topCategories: TopCategory[] = [];
 childrenMap = new Map<number, Category[]>(); // parentId -> children[]
 loadingGroups = false;
@@ -66,16 +64,12 @@ toggleParent(parentId: number) {
     'price',
     'currency',
   ];
-  selectedProductIndex: number = 0;
-  imageWidthPercent = 80;
   categories: Category[] = [];
   selectedCategory: Category | null = null;
   products: Product[] = [];
-  productsCopy: any[] = [];
   selectedProduct: any = null;
   currentPage = 1;
   totalPages = 1;
-  perPage = 10;
   isLoading = true; // Default to loading
   isLoggedIn: boolean = false;
   newCategory: Category = {
@@ -133,32 +127,7 @@ toggleParent(parentId: number) {
     3: 'Type C',
     // Add other mappings as needed
   };
-  changeDetectorRef: any;
-  selectedCategoryId: any;
-
-  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService,private route: ActivatedRoute) {}
-
-  getCategoryThumb(cat: any): string | null {
-  // prefer a thumbnail; fall back to original; support both image_asset and category_images[]
-  const asset =
-    cat?.category_images?.[0] ||
-    cat?.image_asset ||
-    null;
-
-  let path =
-    asset?.thumbnail_path ||
-    asset?.original_path ||
-    null;
-
-  if (!path) return null;
-
-  // if backend returns absolute URL, keep it; else prefix with your API base or uploads path
-  const isAbsolute = /^https?:\/\//i.test(path);
-  if (isAbsolute) return path;
-
-  // adjust if your backend serves files from a different prefix (e.g. /uploads/)
-  return `${this.UPLOAD_BASE}/${path}`.replace(/([^:]\/)\/+/g, '$1');
-}
+  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService) {}
 
   openModal(product: any, event: Event): void {
     event.stopPropagation(); // Stop event propagation
@@ -350,18 +319,6 @@ private loadCategoryGroups(): void {
     }
   });
   this.subscriptions.push(sub);
-}
-addTranslation() {
-  this.newProduct.translations!.push({
-    language: '',
-    slug: '',
-    description: '',
-    content: '' // Add the missing 'content' field
-  });
-}
-
-NremoveTranslation(index: number) {
-  this.newProduct.translations!.splice(index, 1);
 }
 createCategory() {
   this.productService.createCategory(this.newCategory).subscribe(
