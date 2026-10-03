@@ -34,6 +34,12 @@
   [attr.aria-controls]="'children-' + parent.id"
 >
   <span class="fw-semibold">{{ getTranslatedCategoryTitle(parent) }}</span>
+  <!-- A category switched off is hidden from visitors but still listed here, because this
+       is where it gets switched back on. Without this marker it looks like any other. -->
+  <span
+    *ngIf="parent.is_active === false"
+    class="badge bg-secondary ms-2"
+  >{{ "MISC.INACTIVE" | translate }}</span>
   <span class="arrow" [class.rotate-90]="expandedParentId === parent.id">▸</span>
 </button>
 
@@ -112,6 +118,10 @@
                     <div class="card-body py-2">
                       <h5 class="card-title">
                         {{ getTranslatedCategoryTitle(child) }}
+                        <span
+                          *ngIf="child.is_active === false"
+                          class="badge bg-secondary ms-2"
+                        >{{ "MISC.INACTIVE" | translate }}</span>
                       </h5>
                     </div>
                   </div>

@@ -159,6 +159,7 @@
     "CREATE_NEW_CATEGORY": "Krijo Kategori të Re",
     "TITLE": "Titulli",
     "IS_ACTIVE": "Është Aktiv",
+    "INACTIVE": "Jo aktiv",
     "YES": "Po",
     "NO": "Jo",
     "TOP_CATEGORY": "Kategori Kryesore",

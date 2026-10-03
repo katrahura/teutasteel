@@ -119,6 +119,7 @@
     "CREATE_NEW_CATEGORY": "Create New Category",
     "TITLE": "Title",
     "IS_ACTIVE": "Is Active",
+    "INACTIVE": "Inactive",
     "YES": "Yes",
     "NO": "No",
     "TOP_CATEGORY": "Top Category",

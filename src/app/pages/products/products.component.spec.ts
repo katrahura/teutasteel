@@ -171,4 +171,24 @@ describe('ProductsComponent', () => {
     expect(buttons.some((text: string) => /view products|VIEW_PRODUCTS|shiko produkte/i.test(text))).toBeTrue();
     clearToken();
   });
+
+  it('marks a category that is switched off', () => {
+    // A category switched off is hidden from visitors but still listed here, because this
+    // is where it gets switched back on. Without a marker it looks like every other one.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+    setToken('jwt-123');
+
+    const localFixture = TestBed.createComponent(ProductsComponent);
+    localFixture.detectChanges();
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([
+      { id: 1, title: 'Retired', is_active: false, top_category: true, image_asset: null },
+    ]);
+    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
+    localFixture.detectChanges();
+
+    const badges = [...localFixture.nativeElement.querySelectorAll('.badge')]
+      .map((badge: HTMLElement) => (badge.textContent || '').trim());
+    expect(badges.some((text: string) => /inactive|jo aktiv|INACTIVE/i.test(text))).toBeTrue();
+    clearToken();
+  });
 });
