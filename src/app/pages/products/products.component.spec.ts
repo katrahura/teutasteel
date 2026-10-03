@@ -120,4 +120,32 @@ describe('ProductsComponent', () => {
     expect(localFixture.nativeElement.querySelectorAll('.edit-btn').length).toBe(1);
     clearToken();
   });
+
+  it('opens the edit dialog for a product that has no image', () => {
+    // Regression: the dialog binds to selectedProduct.image_asset.file_name, and the
+    // `!` marks in the template are compile-time only. A product with no image threw
+    // "Cannot read properties of null (reading 'file_name')" on every change detection,
+    // so the dialog was unusable for every product created without one.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+
+    const product = {
+      id: 3,
+      code: 'DS-003',
+      cut_type: 0,
+      category_id: 1,
+      is_active: true,
+      new_product: false,
+      image_asset: null,
+      dimensions: [],
+      translations: [],
+    } as any;
+
+    expect(() => component.openEditModal(product)).not.toThrow();
+    expect(component.selectedProduct!.image_asset).toEqual({
+      file_name: '',
+      alternative_text: '',
+      thumbnail_path: '',
+      original_path: '',
+    });
+  });
 });

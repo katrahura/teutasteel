@@ -466,7 +466,21 @@ this.showProducts(this.selectedCategory)
   openEditModal(product: Product): void {
     // Clone the product to avoid direct mutation
     this.selectedProduct = { ...product };
-  
+
+    // The dialog binds straight to selectedProduct.image_asset.file_name and friends.
+    // The `!` marks in the template are compile-time only, so a product with no image
+    // made every change detection throw "Cannot read properties of null (reading
+    // 'file_name')" and the dialog was unusable. An empty asset gives those fields
+    // something to write into, and the save path already skips an all-empty image.
+    if (!this.selectedProduct.image_asset) {
+      this.selectedProduct.image_asset = {
+        file_name: '',
+        alternative_text: '',
+        thumbnail_path: '',
+        original_path: '',
+      } as ImageAsset;
+    }
+
     // Update the paths when the modal is opened
     if (this.selectedProduct?.image_asset) {
       this.originalPath = this.originalPath;
