@@ -319,10 +319,90 @@ if (plain) {
          renamedPlain ? `id ${renamedPlain.id}` : 'title unchanged');
 }
 
+/** selects an option by its visible text, the way ngValue options have to be set */
+const selectByText = (id, text) => `(() => {
+  const el = document.getElementById(${JSON.stringify(id)});
+  if (!el) return 'missing ' + ${JSON.stringify(id)};
+  const options = [...el.options];
+  const index = options.findIndex((o) => new RegExp(${JSON.stringify(text)}, 'i').test((o.textContent || '').trim()));
+  if (index < 0) return 'no option matches; options: ' + options.map((o) => o.textContent.trim()).join(' | ');
+  el.selectedIndex = index;
+  el.dispatchEvent(new Event('change', { bubbles: true }));
+  return 'selected "' + options[index].textContent.trim() + '"';
+})()`;
+
+/** selects by position, for the one option whose label is translated */
+const selectByIndex = (id, index) => `(() => {
+  const el = document.getElementById(${JSON.stringify(id)});
+  if (!el) return 'missing ' + ${JSON.stringify(id)};
+  const options = [...el.options];
+  if (options.length <= ${index}) return 'only ' + options.length + ' options';
+  el.selectedIndex = ${index};
+  el.dispatchEvent(new Event('change', { bubbles: true }));
+  return 'selected option ' + ${index} + ' ("' + options[${index}].textContent.trim() + '")';
+})()`;
+
+// ---- 4c. move a category under a parent, and back -------------------------------
+// This is the first thing the owner does after the deploy: report_category_tree.py lists
+// the categories whose legacy flag says they were nested, and the fix is this dialog. It
+// also exercises the backend rule that the legacy flag follows the parent.
+console.log('\n=== 4c. moving a category under a parent, and back ===');
+if (plain) {
+  const setParent = async (choice) => {
+    await send('Page.navigate', { url: BASE + '/products' });
+    await wait(9000);
+    console.log('   ' + await evaluate(`(() => {
+      // the category may be top level (a .col-12 row) or nested by now (a child .card),
+      // and a nested card is the later of the two in the document
+      const candidates = [...document.querySelectorAll('.col-12, .card')]
+        .filter((el) => el.querySelector('.edit-btn') && (el.innerText || '').includes(${JSON.stringify(noImageName)}));
+      const row = candidates[candidates.length - 1];
+      if (!row) return 'row not found';
+      row.querySelector('.edit-btn').click();
+      return 'opened the edit dialog (' + (row.className || '').split(' ')[0] + ')';
+    })()`));
+    await wait(3000);
+    // "no parent" is the first option and its label is translated ("Asnjë (nivel i sipërm)"
+    // or "None (top level)"), so it is chosen by position; a real parent is chosen by name
+    const chosen = await evaluate(choice === null
+      ? selectByIndex('editCategoryParent', 0)
+      : selectByText('editCategoryParent', choice));
+    console.log('   parent:', chosen);
+    if (!/^selected/.test(chosen)) record('could select the parent option', false, chosen);
+    console.log('   submit:', await evaluate(submit('Save|Ruaj')));
+    await wait(4500);
+  };
+
+  const stateOf = async (id) => {
+    const everything = await api('/category/');
+    return (everything.body || []).find((item) => item.id === id);
+  };
+
+  await setParent('Doors');
+  const nested = await stateOf(plain.id);
+  record('it is nested under the parent', nested?.parent_id === 1,
+         `parent_id ${nested?.parent_id}`);
+  record('the legacy flag followed the parent', nested?.top_category === false,
+         `top_category ${nested?.top_category}`);
+  const children = await api('/category/1/children');
+  record('and the site lists it as a child of that parent',
+         ((children.body || []).some((item) => item.id === plain.id)),
+         (children.body || []).map((item) => item.title).join(', ') || '(none)');
+
+  await setParent(null);
+  const back = await stateOf(plain.id);
+  record('moving it back to the top level worked', back?.parent_id === null,
+         `parent_id ${back?.parent_id}`);
+  record('and the flag followed again', back?.top_category === true,
+         `top_category ${back?.top_category}`);
+}
+
 // ---- 5. tidy up, so the tool can be run again ------------------------------------
 console.log('\n=== 5. removing what this run created ===');
-for (const category of (await api('/category/top')).body || []) {
-  if (category.title.startsWith(CATEGORY_NAME)) {
+// /category/top omits anything nested, which this run deliberately creates, so ask for the
+// whole list. Deleting a category takes its children with it, so a later 404 here is fine.
+for (const category of (await api('/category/')).body || []) {
+  if ((category.title || '').startsWith(CATEGORY_NAME)) {
     const response = await fetch(`${API}/category/${category.id}`,
                                  { method: 'DELETE', headers: { Authorization: `Bearer ${TOKEN}` } });
     console.log(`   deleted "${category.title}" -> ${response.status}`);
