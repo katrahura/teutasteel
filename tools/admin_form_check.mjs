@@ -280,9 +280,10 @@ if (category) {
   record('the extra size was kept', (grown?.dimensions || []).length === 3,
          `${(grown?.dimensions || []).length} dimension(s)`);
 
-  // ---- 3a. the details modal shows the long description --------------------------
   // The translation's "content" field used to be editable and invisible: the form offered
   // it, the API stored it and no page displayed it. This is the check that would notice.
+  // It also runs *before* the photograph step, because opening the details dialog on a
+  // product with no image is what found the null-image crash in round 61.
   console.log('\n=== 3a. does a customer see the long description? ===');
   console.log('   ' + await evaluate(`(() => {
     const card = [...document.querySelectorAll('.card')]
@@ -311,6 +312,43 @@ if (category) {
     return true;
   })()`);
   await wait(1500);
+
+  // ---- 3c. add a photograph to a product that already exists ----------------------
+  // Last of the product steps, because 3a needs this product to have no image. The paths
+  // here sit inside the Cloudinary folders the app prefixes and do not exist there, so this
+  // also checks the fallback directive: the site must show the placeholder, not a broken
+  // image, when a photograph is missing from Cloudinary.
+  console.log('\n=== 3c. adding a photograph through the edit dialog ===');
+  console.log('   ' + await evaluate(editCard(edited, 'Edit|Ndrysho')));
+  await wait(3000);
+  for (const [id, value] of [
+    ['editImageFileName', 'product-photo.jpg'],
+    ['imageAltText', 'photo of the product'],
+    ['imageThumbnailPath', 'product-photo-thumb.jpg'],
+    ['imageOriginalPath', 'product-photo.jpg'],
+  ]) {
+    const result = await evaluate(fill(id, value));
+    if (result !== 'ok') console.log('   fill:', id, result);
+  }
+  console.log('   submit:', await evaluate(submit('Save|Ruaj')));
+  await wait(6000);
+  const withPhoto = (await api('/product/')).body?.find((item) => item.code === edited);
+  const asset = withPhoto?.image_asset || {};
+  record('the photograph details were saved',
+         asset.file_name === 'product-photo.jpg' && !!asset.thumbnail_path,
+         JSON.stringify(asset).slice(0, 90));
+
+  // the card now points at a Cloudinary path that does not exist, so the fallback must fire
+  const pictures = await evaluate(`(() => {
+    const cards = [...document.querySelectorAll('.card')];
+    return cards.map((card) => {
+      const img = card.querySelector('img');
+      return img ? { src: (img.getAttribute('src') || '').slice(-40), width: img.naturalWidth } : null;
+    }).filter(Boolean);
+  })()`);
+  const broken = pictures.filter((item) => item.width === 0);
+  record('no broken image is left on the page', broken.length === 0,
+         broken.length ? JSON.stringify(broken).slice(0, 90) : `${pictures.length} image(s) fine`);
 }
 
 // ---- 4. edit a category through the form ----------------------------------------
