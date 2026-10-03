@@ -113,6 +113,19 @@ Until the API has the newer endpoints deployed (`/category/top`, `/category/<id>
 the catalogue stays empty and the products page shows a translated "catalogue temporarily unavailable"
 message — the rest of the site works.
 
+That state is checked rather than assumed:
+
+```powershell
+# with the built site served locally (it points at the live API)
+node --experimental-websocket tools\frontend_only_check.mjs
+```
+
+It walks all seven routes in both languages against `api.teutasteel.com` and separates the two kinds of
+failure that matter: an **unhandled exception** means the page broke, while a **logged API error** is
+expected — the catalogue is unreachable on purpose and the page is supposed to say so and stay usable. As of
+this writing: 14 route/language combinations, 0 exceptions, 0 broken images, and the notice showing where the
+catalogue should be. Run it after a frontend deploy that lands before the backend one.
+
 ### Verifying a deployment
 
 ```powershell
