@@ -5,6 +5,7 @@ import { fromEvent, Subscription, filter, debounceTime } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedService } from '../../shared.service';
+import { AuthService } from '../../services/auth.service';
 import { setStoredLanguage } from '../language-storage';
 
 @Component({
@@ -16,11 +17,14 @@ import { setStoredLanguage } from '../language-storage';
 })
 export class MobileNavComponent {
   open = false;
+  /** Drives the Login / Logout entry in the sheet. */
+  isLoggedIn = false;
   private subs: Subscription[] = [];
   private isBrowser: boolean;
 
-  constructor(private translate: TranslateService,public shared :SharedService ,private router: Router, @Inject(PLATFORM_ID) platformId: Object) {
+  constructor(private translate: TranslateService,public shared :SharedService ,private router: Router, @Inject(PLATFORM_ID) platformId: Object, private authService: AuthService) {
     this.isBrowser = isPlatformBrowser(platformId);
+    this.isLoggedIn = this.isBrowser && this.authService.isAuthenticated();
   }
 
   ngOnInit() {
@@ -29,11 +33,22 @@ export class MobileNavComponent {
 
     this.subs.push(
       this.router.events.pipe(filter(e => e instanceof NavigationEnd))
-        .subscribe(() => this.close()),
+        .subscribe(() => {
+          this.close();
+          // signing in or out happens on /login
+          this.isLoggedIn = this.authService.isAuthenticated();
+        }),
 
       fromEvent(window, 'resize').pipe(debounceTime(150))
         .subscribe(() => { if (window.innerWidth >= 992) this.close(); })
     );
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.isLoggedIn = false;
+    this.close();
+    this.router.navigate(['/login']);
   }
 
   toggle() {

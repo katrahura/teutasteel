@@ -1,14 +1,19 @@
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { AppComponent } from './app.component';
 import { provideTestConfig } from './testing/test-providers';
+import { clearToken, getToken, setToken } from './services/token-storage';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
+    clearToken();
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [provideTestConfig()],
     }).compileComponents();
   });
+
+  afterEach(() => clearToken());
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
@@ -26,5 +31,39 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('app-mobile-nav')).toBeTruthy();
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
+  });
+
+  it('offers the login control when signed out', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.isLoggedIn).toBeFalse();
+    expect((fixture.nativeElement.querySelector('#nav-login') as HTMLElement).hidden).toBeFalse();
+    expect((fixture.nativeElement.querySelector('#nav-logout') as HTMLElement).hidden).toBeTrue();
+  });
+
+  it('offers the logout control when a token is stored', () => {
+    // Regression: the bar always offered "Login", so a signed-in administrator had
+    // no way to sign out from the navigation.
+    setToken('jwt-123');
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.isLoggedIn).toBeTrue();
+    expect((fixture.nativeElement.querySelector('#nav-login') as HTMLElement).hidden).toBeTrue();
+    expect((fixture.nativeElement.querySelector('#nav-logout') as HTMLElement).hidden).toBeFalse();
+  });
+
+  it('clears the token and returns to the login page on logout', () => {
+    setToken('jwt-123');
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const navigate = spyOn(TestBed.inject(Router), 'navigate');
+
+    fixture.componentInstance.logout();
+
+    expect(getToken()).toBeNull();
+    expect(fixture.componentInstance.isLoggedIn).toBeFalse();
+    expect(navigate).toHaveBeenCalledWith(['/login']);
   });
 });

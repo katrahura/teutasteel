@@ -193,6 +193,13 @@ position: absolute;
   padding: 0.3rem 0.6rem;
 }
 
+/* the logout control is a button, but has to look like the icon link */
+button.nav-link {
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
 .nav-link:hover {
   color: #007BFF !important;
 }

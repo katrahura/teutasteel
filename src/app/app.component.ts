@@ -8,6 +8,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { RouterOutlet } from '@angular/router';
 import { MobileNavComponent } from './shared/mobile-nav/mobile-nav.component';
 import { SharedService } from './shared.service';
+import { AuthService } from './services/auth.service';
 import { getStoredLanguage, setStoredLanguage } from './shared/language-storage';
 
 @Component({
@@ -31,23 +32,36 @@ import { getStoredLanguage, setStoredLanguage } from './shared/language-storage'
 })
 export class AppComponent {
   currentRoute: string = '';
+  /** Drives the Login / Logout control in the navigation bar. */
+  isLoggedIn = false;
+
   prepareRoute(outlet: RouterOutlet) {
     const animationData = outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
     return animationData;
   }
   
-  constructor(private router: Router,private translate: TranslateService,public shared: SharedService) {
+  constructor(private router: Router,private translate: TranslateService,public shared: SharedService,private authService: AuthService) {
     // Detect route changes and update the currentRoute variable
     const language = getStoredLanguage() ?? 'al';
     this.translate.setDefaultLang('al');
     this.translate.use(language); // Make the active language explicit (currentLang was left undefined)
     this.shared.setLang(language);
 
+    this.isLoggedIn = this.authService.isAuthenticated();
+
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       this.currentRoute = event.urlAfterRedirects;
+      // signing in or out happens on /login, so the navigation follows the route
+      this.isLoggedIn = this.authService.isAuthenticated();
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.isLoggedIn = false;
+    this.router.navigate(['/login']);
   }
   title = 'teutasteel-website';
   getGradientClass(): string {

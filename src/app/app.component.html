@@ -17,11 +17,18 @@
       <a class="nav-link mx-2" [routerLink]="['/about']" routerLinkActive="active">{{ 'NAVBAR.ABOUT_US' | translate }}</a>
       <a class="nav-link mx-2" [routerLink]="['/contact']" routerLinkActive="active">{{ 'NAVBAR.CONTACT' | translate }}</a>
     </div>
-    <!-- Right Side (Login) -->
+    <!-- Right Side (Login or Logout). Both controls stay in the DOM and are
+         toggled with [hidden], so hydration only updates an attribute. -->
     <div class="d-flex align-items-center">
-      <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active">
-        <i class="bi bi-person-circle fs-4"></i>
+      <a id="nav-login" class="nav-link" [routerLink]="['/login']" routerLinkActive="active"
+         [hidden]="isLoggedIn" [attr.aria-label]="'NAVBAR.LOGIN' | translate"
+         [title]="'NAVBAR.LOGIN' | translate">
+        <i class="bi bi-person-circle fs-4" aria-hidden="true"></i>
       </a>
+      <button id="nav-logout" type="button" class="nav-link" [hidden]="!isLoggedIn" (click)="logout()"
+              [attr.aria-label]="'MISC.LOGOUT' | translate" [title]="'MISC.LOGOUT' | translate">
+        <i class="bi bi-box-arrow-right fs-4" aria-hidden="true"></i>
+      </button>
     </div>
   </div>
 </div>

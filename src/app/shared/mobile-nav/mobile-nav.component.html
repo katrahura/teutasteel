@@ -61,9 +61,12 @@
         </a>
       </li>
       <li role="none" class="mnav-cta">
-        <a role="menuitem" routerLink="/login" (click)="close()">
-          <i class="bi bi-person-circle fs-5"></i> {{ 'NAVBAR.LOGIN' | translate }}
+        <a role="menuitem" routerLink="/login" (click)="close()" [hidden]="isLoggedIn">
+          <i class="bi bi-person-circle fs-5" aria-hidden="true"></i> {{ 'NAVBAR.LOGIN' | translate }}
         </a>
+        <button type="button" role="menuitem" class="mnav-logout" [hidden]="!isLoggedIn" (click)="logout()">
+          <i class="bi bi-box-arrow-right fs-5" aria-hidden="true"></i> {{ 'MISC.LOGOUT' | translate }}
+        </button>
       </li>
     </ul>
 
