@@ -153,6 +153,18 @@ It reports each of `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy
 `Strict-Transport-Security`, plus the caching on the HTML and on a hashed asset. **The site as it stands today
 sends none of them** — that is the gap this closes, and the tool is how the deploy proves it closed.
 
+CORS preflights are checked by the same principle — a bug that curl cannot see:
+
+```powershell
+python tools\cors_check.py                            # the deployed API
+python tools\cors_check.py --api http://127.0.0.1:5000
+```
+
+The app posts JSON and sends an `Authorization` header, so the browser preflights those calls, and a preflight
+that does not allow `authorization` breaks every authenticated request in the browser while every Python test
+passes. An endpoint that answers 404 is reported as "not deployed yet" rather than a failure, so the same
+command is useful before and after the backend deploy.
+
 Colour contrast is checked separately, because it needs a browser:
 
 ```powershell
