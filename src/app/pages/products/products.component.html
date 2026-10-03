@@ -137,6 +137,12 @@
       >
         {{ "MISC.CREATE_NEW_PRODUCT" | translate }}
       </button>
+
+      <!-- A disabled button fires no events, so a tooltip cannot explain itself:
+           this says in plain text why the button above is not usable yet. -->
+      <p class="text-muted small mt-2 mb-0" *ngIf="!selectedCategory">
+        {{ "MISC.CHOOSE_A_CATEGORY_FIRST" | translate }}
+      </p>
     </div>
   </div>
 </section>

@@ -88,7 +88,7 @@
   },
   "ADMIN": {
     "ADMIN_DASHBOARD": "Admin Dashboard",
-    "HINT": "Users, products and categories are managed here. Product and category editing happens on the products page.",
+    "HINT": "Products and categories are managed on the products page.",
     "EDIT_BUTTON": "Go to products"
   },
   "MISC": {
@@ -129,6 +129,7 @@
     "THUMBNAIL_PATH": "Thumbnail Path",
     "ORIGINAL_PATH": "Original Path",
     "CREATE_NEW_PRODUCT": "Create New Product",
+    "CHOOSE_A_CATEGORY_FIRST": "Choose a category first: a product belongs to one.",
     "PRODUCT_CODE": "Product Code",
     "CUT_TYPE": "Cut Type",
     "IMAGE_ALT_TEXT": "Image Alt Text",

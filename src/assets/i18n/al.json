@@ -128,7 +128,7 @@
   },
   "ADMIN": {
     "ADMIN_DASHBOARD": "Paneli i Administratorit",
-    "HINT": "Përdoruesit, produktet dhe kategoritë menaxhohen këtu. Redaktimi i produkteve dhe kategorive bëhet në faqen e produkteve.",
+    "HINT": "Produktet dhe kategoritë menaxhohen në faqen e produkteve.",
     "EDIT_BUTTON": "Shko te produktet"
   },
   "MISC": {
@@ -169,6 +169,7 @@
     "THUMBNAIL_PATH": "Shtegu i Thumbnail",
     "ORIGINAL_PATH": "Shtegu Origjinal",
     "CREATE_NEW_PRODUCT": "Krijo Produkt të Ri",
+    "CHOOSE_A_CATEGORY_FIRST": "Zgjidhni një kategori fillimisht: produkti i përket një kategorie.",
     "PRODUCT_CODE": "Kodi i Produktit",
     "CUT_TYPE": "Lloji i Prerjes",
     "IMAGE_ALT_TEXT": "Teksti Alternativ i Imazhit",
