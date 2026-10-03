@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { forkJoin, of, switchMap } from 'rxjs';
 
 import { ProductService } from '../../services/product.service';
+import { environment } from '../../../environments/environment';
 import {
   Category,
   CategoryResponse,
@@ -547,7 +548,7 @@ this.showProducts(this.selectedCategory)
   // Generate WhatsApp link
   getWhatsAppLink(product: Product): string {
     const message = `Hi, I'm interested in your product: ${product?.code}. Could you provide more details?`;
-    const whatsappNumber = '+1234567890'; // Replace with your actual number or include it in the product data
+    const whatsappNumber = environment.whatsappNumber;
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
       message
     )}`;

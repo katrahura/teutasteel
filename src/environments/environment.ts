@@ -4,4 +4,7 @@ export const environment = {
   production: false,
   apiUrl: 'http://127.0.0.1:5000',
   cloudinaryBaseUrl: 'https://res.cloudinary.com/dy0idyurz/image/upload',
+  // Contact details live here so they only have to change in one place.
+  whatsappNumber: '38344776650',
+  contactEmail: 'info@teutasteel.com',
 };

@@ -1,5 +1,3 @@
-import { BlobOptions } from "buffer";
-
     export interface ImageAsset {
       file_name: string;
       alternative_text: string;

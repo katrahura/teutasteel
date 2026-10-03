@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { ProductService } from '../../services/product.service';
+import { environment } from '../../../environments/environment';
 import { Product, TopCategory } from '../../models/product.model';
 import { AuthService } from '../../services/auth.service';
 import { SharedService } from '../../shared.service';
@@ -156,7 +157,7 @@ export class HomeComponent implements OnDestroy {
   contactViaWhatsApp(product: Product) {
     if (product && product.code) {
     const message = encodeURIComponent(`Hello, I am interested in your product: ${product.code}`);
-    const whatsappUrl = `https://wa.me/1234567890?text=${message}`;
+    const whatsappUrl = `https://wa.me/${environment.whatsappNumber}?text=${message}`;
     window.open(whatsappUrl, '_blank');
   }
   
