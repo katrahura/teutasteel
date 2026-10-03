@@ -63,6 +63,16 @@ nowhere else.
 The anonymous catalogue reads are intentionally public; the full category list, the product list and
 every mutation require a token.
 
+## Rendering
+
+`npm run build` prerenders `/`, `/products`, `/about`, `/contact` and `/login`, and the browser
+**hydrates** that HTML (`provideClientHydration()` in `app.config.ts`), so the prerendered markup is
+reused rather than thrown away and re-rendered. Verified against the production build: no hydration
+mismatch, and the language switcher plus client-side routing keep working.
+
+Data is fetched in the browser only — components check `isPlatformBrowser` so prerendering never calls
+the API.
+
 ## Language
 
 Albanian is the default and the choice is remembered in local storage, so it survives a page reload.
