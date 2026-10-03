@@ -1,4 +1,4 @@
-import {  Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import {  ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -132,7 +132,7 @@ toggleParent(parentId: number) {
     3: 'Type C',
     // Add other mappings as needed
   };
-  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService) {}
+  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService, private changeDetector: ChangeDetectorRef) {}
 
   openModal(product: any, event: Event): void {
     event.stopPropagation(); // Stop event propagation
@@ -472,11 +472,16 @@ this.showProducts(this.selectedCategory)
       this.thumbnailPath = this.thumbnailPath;
     }
   
-    // Open the Bootstrap modal
+    // The dialog sits behind *ngIf="selectedProduct" (its bindings used to throw on
+    // every change detection while nothing was selected), so render it before
+    // handing the element to Bootstrap: constructing a Modal while the dialog is
+    // still missing leaves it holding a null reference and show() then fails with
+    // "Illegal invocation".
+    this.changeDetector.detectChanges();
     const modalElement = document.getElementById('editProductModal');
     if (modalElement) {
-      const modal = new bootstrap.Modal(modalElement);
-      modal.show();
+      bootstrap.Modal.getInstance(modalElement)?.dispose();
+      bootstrap.Modal.getOrCreateInstance(modalElement).show();
     }
   }
   

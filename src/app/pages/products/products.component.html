@@ -898,7 +898,10 @@
   aria-labelledby="editProductModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-xl">
+  <!-- the bindings below read selectedProduct.*, so the dialog only exists once a
+       product has been chosen; otherwise every change detection threw
+       "Cannot read properties of null" -->
+  <div class="modal-dialog modal-xl" *ngIf="selectedProduct">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{{ "MISC.EDIT_PRODUCT" | translate }}</h5>
