@@ -87,6 +87,14 @@ if check("it references its main bundle", bool(bundle), f"({bundle.group(1) if b
           status == 200 and len(script) < 250_000,
           f"({len(script):,} bytes)")
 
+# the icon used to be Angular's default, and the site being replaced had no
+# /favicon.ico at all (it pointed its icon links at a PNG asset)
+status, favicon, _ = fetch(f"{SITE_URL}/favicon.ico")
+check("the browser icon is served", status == 200 and len(favicon) > 1000, f"({len(favicon):,} bytes)")
+check("the page declares the logo as its icon",
+      bool(re.search(r'<link rel="icon" type="image/svg\+xml"[^>]*logo\.svg', home or ""))
+      and bool(re.search(r'<link rel="icon" type="image/x-icon"[^>]*favicon\.ico', home or "")))
+
 for route in ("products", "about", "contact"):
     status, page, _ = fetch(f"{SITE_URL}/{route}")
     canonical = re.search(r'<link rel="canonical" href="([^"]+)"', page or "")
