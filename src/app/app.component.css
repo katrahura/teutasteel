@@ -146,7 +146,7 @@ footer {
 }
 
 .language-switcher .lang-btn.active {
-  color: #007bff;
+  color: var(--brand-primary);
   text-decoration: underline;
 }
 
@@ -201,7 +201,7 @@ button.nav-link {
 }
 
 .nav-link:hover {
-  color: #007BFF !important;
+  color: var(--brand-primary) !important;
 }
 
 /* Underline animation on hover */
@@ -212,7 +212,7 @@ button.nav-link {
   bottom: -4px;
   width: 0%;
   height: 2px;
-  background-color: #007BFF;
+  background-color: var(--brand-primary);
   transition: width 0.3s ease;
 }
 

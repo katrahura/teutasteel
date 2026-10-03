@@ -8,12 +8,15 @@
 }
 
 .about-us .btn {
-  background-color: #007bff;
+  background-color: var(--brand-primary);
   color: #fff;
 }
 
+/* #555 measured 2.8:1 against the darker end of .about-gradient, below the 4.5:1
+   WCAG AA asks for: the page's gradient darkens towards the bottom right, and the
+   body text sits over it. The standard body colour measures about 6:1 there. */
 .about-us p, .about-us li {
-  color: #555;
+  color: #212529;
 }
 h1, p {
   font-family: 'Montserrat', sans-serif;

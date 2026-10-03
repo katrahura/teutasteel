@@ -28,6 +28,56 @@ body, h1, h2, h3, p, a, span {
   }
   /* You can add global styles to this file, and also import other style files */
 
+/* ---------------------------------------------------------------------------
+   The brand blue, defined once.
+
+   Measured against white, Bootstrap's default primary (#0d6efd) gives a contrast
+   of 4.16:1 and the #007bff the component stylesheets used gives 3.98:1 - both
+   below the 4.5:1 that WCAG AA asks for normal text, which is what most of the
+   body copy on the buttons is. #0a58ca measures 6.4:1 and is visibly the same
+   blue, so the buttons, the "primary" background and the language switcher all
+   use it.
+
+   Bootstrap declares .btn-primary and .btn-outline-primary through per-variant
+   CSS variables, so overriding those is enough - no need to touch the package.
+   --------------------------------------------------------------------------- */
+:root {
+  --brand-primary: #0a58ca;
+  --brand-primary-dark: #084298;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--brand-primary);
+  --bs-btn-border-color: var(--brand-primary);
+  --bs-btn-hover-bg: var(--brand-primary-dark);
+  --bs-btn-hover-border-color: var(--brand-primary-dark);
+  --bs-btn-active-bg: var(--brand-primary-dark);
+  --bs-btn-active-border-color: var(--brand-primary-dark);
+  --bs-btn-disabled-bg: var(--brand-primary);
+  --bs-btn-disabled-border-color: var(--brand-primary);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--brand-primary);
+  --bs-btn-border-color: var(--brand-primary);
+  --bs-btn-hover-bg: var(--brand-primary);
+  --bs-btn-hover-border-color: var(--brand-primary);
+  --bs-btn-active-bg: var(--brand-primary);
+  --bs-btn-active-border-color: var(--brand-primary);
+}
+
+.bg-primary {
+  background-color: var(--brand-primary) !important;
+}
+
+.text-primary {
+  color: var(--brand-primary) !important;
+}
+
+.link-primary {
+  color: var(--brand-primary) !important;
+}
+
 /* Respect the operating system's "reduce motion" setting. Without this the
    global transition above (and the route/carousel animations) keep playing for
    visitors who have explicitly asked for less motion. */

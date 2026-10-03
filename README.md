@@ -119,6 +119,19 @@ the API side `/category/top` exists (which is what proves the backend deploy hap
 
 Point it at a local build with `SITE_URL=http://127.0.0.1:4321 API_URL=http://127.0.0.1:5000`.
 
+Colour contrast is checked separately, because it needs a browser:
+
+```powershell
+python -m http.server 4321 --bind 127.0.0.1    # from dist/teutasteel-website/browser
+& $env:CHROME_BIN --headless=new --remote-debugging-port=9222 --user-data-dir=$env:TEMP\cdp about:blank
+node --experimental-websocket tools\contrast_audit.mjs
+```
+
+`tools/contrast_audit.mjs` visits every page and works out what is actually painted behind each piece of
+text — including the colour a gradient has at that spot, and reporting text over a photograph instead of
+guessing — then fails anything below the WCAG AA threshold (4.5:1, or 3:1 for large text). It should end
+with `0 distinct contrast failure(s)`.
+
 Both hosts are behind Cloudflare, and it answers **403 to any request that does not look like a browser**,
 so the script sends a browser user agent — worth knowing if you write your own check with curl. After a
 deploy, if Cloudflare is caching HTML for the site, purge the cache for the changed files, otherwise

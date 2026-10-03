@@ -92,6 +92,6 @@ body.no-scroll { overflow: hidden; overscroll-behavior: contain; }
 }
 
 .language-switcher .lang-btn.active {
-  color: #007bff;
+  color: var(--brand-primary);
   text-decoration: underline;
 }
