@@ -73,8 +73,8 @@
     </ul>
 
     <div class="mnav-footer">
-      <a href="mailto:info@teutasteel.com" class="link">info&#64;teutasteel.com</a>
-      <a href="tel:+38344133208" class="link">+383 44 133208</a>
+      <a [href]="'mailto:' + email" class="link">{{ email }}</a>
+      <a [href]="'tel:' + phone" class="link">{{ phoneDisplay }}</a>
     </div>
   </div>
 

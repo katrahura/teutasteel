@@ -19,4 +19,17 @@ export class ContactComponent {
    * attribute is what ends up in the prerendered HTML as well.
    */
   readonly location = environment.location;
+
+  /**
+   * The contact details, from the environment rather than written into the markup.
+   *
+   * They used to be hardcoded in four places here and two in the mobile menu, so changing
+   * a number meant finding all six - and the environment comment promising "one place" was
+   * only true for the WhatsApp link on a product card.
+   */
+  readonly phone = environment.phone;
+  readonly phoneDisplay = environment.phoneDisplay;
+  readonly whatsappNumber = environment.whatsappNumber;
+  readonly whatsappDisplay = environment.whatsappDisplay;
+  readonly email = environment.contactEmail;
 }

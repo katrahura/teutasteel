@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SharedService } from '../../shared.service';
 import { AuthService } from '../../services/auth.service';
 import { setStoredLanguage } from '../language-storage';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-mobile-nav',
@@ -19,6 +20,10 @@ export class MobileNavComponent {
   open = false;
   /** Drives the Login / Logout entry in the sheet. */
   isLoggedIn = false;
+  /** The contact details in the sheet's footer, from the environment like the contact page. */
+  readonly phone = environment.phone;
+  readonly phoneDisplay = environment.phoneDisplay;
+  readonly email = environment.contactEmail;
   private subs: Subscription[] = [];
   private isBrowser: boolean;
 

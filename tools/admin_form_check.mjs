@@ -306,6 +306,26 @@ if (category) {
   record('a customer sees every size, including one added later',
          /100/.test(modalText) && /400/.test(modalText) && /700/.test(modalText),
          modalText.replace(/\s+/g, ' ').slice(0, 110));
+
+  // The WhatsApp links are bound, not written in the markup, so the link audit never saw
+  // them: it walks pages without a category selected, where no product cards exist.
+  const whatsapp = await evaluate(`(() => {
+    const pick = (selector) => {
+      const link = document.querySelector(selector);
+      return link ? link.getAttribute('href') : null;
+    };
+    return {
+      card: pick('.products-pagination-container .card a[href^="https://wa.me/"]'),
+      modal: pick('#productDetailsModal a[href^="https://wa.me/"]'),
+    };
+  })()`);
+  const validLink = (href) => !!href && /^https:\/\/wa\.me\/\d{6,}\?text=/.test(href);
+  record('the product card offers WhatsApp with a usable number', validLink(whatsapp.card),
+         (whatsapp.card || '(no card link)').slice(0, 72));
+  const message = validLink(whatsapp.modal) ? decodeURIComponent(whatsapp.modal) : '';
+  record('and the message names the product it is about',
+         !!message && message.includes(edited),
+         message ? message.slice(message.indexOf('text=') + 5, 110) : '(no modal link)');
   await evaluate(`(() => {
     const modal = document.querySelector('#productDetailsModal');
     if (modal) { const instance = window.bootstrap?.Modal?.getInstance(modal); instance?.hide(); }

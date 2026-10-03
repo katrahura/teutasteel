@@ -5,9 +5,9 @@
     <p class="lead">{{ 'CONTACT.REACH_US' | translate }}</p>
 
     <div class="mb-4">
-      <p><strong>{{ 'CONTACT.PHONE' | translate }}:</strong> <a href="tel:+38344133208">+383 44 133 208</a></p>
-      <p><strong>{{ 'CONTACT.PHONE' | translate }}:</strong> <a href="tel:+38344776650">+383 44 776 650</a></p>
-      <p><strong>{{ 'CONTACT.EMAIL' | translate }}:</strong> <a href="mailto:info@teutasteel.com">info&#64;teutasteel.com</a></p>
+      <p><strong>{{ 'CONTACT.PHONE' | translate }}:</strong> <a [href]="'tel:' + phone">{{ phoneDisplay }}</a></p>
+      <p><strong>{{ 'CONTACT.PHONE' | translate }}:</strong> <a [href]="'tel:' + whatsappNumber">{{ whatsappDisplay }}</a></p>
+      <p><strong>{{ 'CONTACT.EMAIL' | translate }}:</strong> <a [href]="'mailto:' + email">{{ email }}</a></p>
       <p>
         <strong>{{ 'CONTACT.ADDRESS' | translate }}:</strong>
         {{ location.street }} {{ location.number }}, {{ location.city }}
@@ -17,7 +17,7 @@
     <div class="d-flex justify-content-center gap-4 mb-5">
       <a href="https://www.facebook.com/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="bi bi-facebook fs-2" aria-hidden="true"></i></a>
       <a href="https://www.instagram.com/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram fs-2" aria-hidden="true"></i></a>
-      <a href="https://wa.me/38344776650" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp fs-2" aria-hidden="true"></i></a>
+      <a [href]="'https://wa.me/' + whatsappNumber" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp fs-2" aria-hidden="true"></i></a>
       <a href="https://www.tiktok.com/@teutasteel" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="bi bi-tiktok fs-2" aria-hidden="true"></i></a>
     </div>
     <div class="map-responsive mt-4">

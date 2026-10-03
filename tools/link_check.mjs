@@ -75,11 +75,23 @@ await wait(1200);
 const seen = new Map();       // href -> { text, pages }
 const problems = [];
 const external = new Set();
+const bare = [];              // routes that produced no links at all
 
 for (const route of ROUTES) {
-  await send('Page.navigate', { url: BASE + route });
+  const navigation = await send('Page.navigate', { url: BASE + route });
   await wait(8000);
+  // A failed navigation leaves whatever page was already loaded in place, so the links
+  // below would be the *previous* page's and the check would pass having tested nothing.
+  const failure = navigation.result && navigation.result.errorText;
+  if (failure) {
+    bare.push(`${route} - ${failure}`);
+    continue;
+  }
   const found = await evaluate(collect);
+  if (found.length === 0) {
+    const text = await evaluate(`document.body.innerText.replace(/\\s+/g, ' ').trim().length`);
+    bare.push(`${route} (${text} characters of text)`);
+  }
   for (const link of found) {
     const key = link.href;
     if (!seen.has(key)) seen.set(key, { text: link.text, pages: [], target: link.target, rel: link.rel });
@@ -126,12 +138,16 @@ for (const [href, info] of internal) {
 }
 
 console.log(`\nexternal hosts referenced (${external.size}): ${[...external].join(', ')}`);
+if (bare.length) {
+  console.log(`\n${bare.length} route(s) could not be loaded from ${BASE}:`);
+  for (const entry of bare) console.log('   ' + entry);
+}
 console.log(`\n${problems.length} link problem(s):`);
 for (const problem of [...new Set(problems)]) console.log('   ' + problem);
 console.log(`${broken.length} dead internal link(s)`);
 for (const entry of broken) console.log('   ' + entry);
 
-const failed = problems.length + broken.length;
+const failed = problems.length + broken.length + bare.length;
 console.log(failed === 0 ? '\nRESULT: PASS' : `\nRESULT: FAIL (${failed})`);
 ws.close();
 process.exit(failed === 0 ? 0 : 1);
