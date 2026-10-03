@@ -1,6 +1,14 @@
 <div class="dashboard py-5 px-3 mb-5 mt-5">
-  <h1 class="h2">{{ 'USER_DASHBOARD.USER_DASHBOARD' | translate }}</h1>
-  <p><strong>{{ 'MISC.NAME' | translate }}</strong> {{ userInfo.name }}</p>
-  <p><strong>{{ 'MISC.EMAIL' | translate }}</strong> {{ userInfo.email }}</p>
-  <button class="btn">{{ 'MISC.EDIT_PROFILE' | translate }}</button>
+  <div class="container">
+    <h1 class="h2">{{ 'USER_DASHBOARD.USER_DASHBOARD' | translate }}</h1>
+
+    <p *ngIf="loading">{{ 'MISC.LOADING' | translate }}…</p>
+
+    <div *ngIf="user">
+      <p><strong>{{ 'MISC.NAME' | translate }}</strong> {{ user.username }}</p>
+      <p><strong>{{ 'MISC.EMAIL' | translate }}</strong> {{ user.email }}</p>
+    </div>
+
+    <p *ngIf="failed" class="text-muted">{{ 'USER_DASHBOARD.UNAVAILABLE' | translate }}</p>
+  </div>
 </div>

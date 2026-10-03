@@ -124,7 +124,9 @@
     "MAP_TITLE": "Harta që tregon vendndodhjen e Teuta Steel"
   },
   "ADMIN": {
-    "ADMIN_DASHBOARD": "Paneli i Administratorit"
+    "ADMIN_DASHBOARD": "Paneli i Administratorit",
+    "HINT": "Përdoruesit, produktet dhe kategoritë menaxhohen këtu. Redaktimi i produkteve dhe kategorive bëhet në faqen e produkteve.",
+    "EDIT_BUTTON": "Shko te produktet"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
@@ -192,7 +194,8 @@
         "NEXT": "Tjetra",
         "PREVIOUS": "E mëparshme",
         "PRODUCT_IMAGE": "Imazhi i Produktit",
-        "TRANSLATIONS": "Përkthimet"
+        "TRANSLATIONS": "Përkthimet",
+        "LOADING": "Duke u ngarkuar"
 
   },
   "LOGIN": {
@@ -200,6 +203,7 @@
   },
   "USER_DASHBOARD": {
     "USER_NAME": "Emri i Përdoruesit",
-    "USER_DASHBOARD": "Paneli i Përdoruesit"
+    "USER_DASHBOARD": "Paneli i Përdoruesit",
+    "UNAVAILABLE": "Profili juaj nuk mund të ngarkohej. Ju lutemi hyni përsëri."
   }
 }

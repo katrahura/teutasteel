@@ -1,8 +1,7 @@
 <div class="dashboard py-5 px-3 mb-5 mt-5">
-  <div class="container ">
-  <h1 class="h2">{{ 'ADMIN.ADMIN_DASHBOARD' | translate }}</h1>
-  <ul>
-    <li *ngFor="let tool of adminTools">{{ tool }}</li>
-  </ul>
+  <div class="container">
+    <h1 class="h2">{{ 'ADMIN.ADMIN_DASHBOARD' | translate }}</h1>
+    <p>{{ 'ADMIN.HINT' | translate }}</p>
+    <a class="btn btn-primary" routerLink="/products">{{ 'ADMIN.EDIT_BUTTON' | translate }}</a>
   </div>
 </div>

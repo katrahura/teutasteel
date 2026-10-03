@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { clearToken, getToken, setToken } from './token-storage';
+import { clearToken, getToken, getTokenUserId, setToken } from './token-storage';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +25,11 @@ export class AuthService {
   // Check Authentication
   isAuthenticated(): boolean {
     return !!getToken();
+  }
+
+  /** Id of the signed-in user, taken from the stored token, or null. */
+  currentUserId(): number | null {
+    return getTokenUserId();
   }
 
   // Logout

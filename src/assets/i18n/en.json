@@ -84,7 +84,9 @@
     "MAP_TITLE": "Map showing the Teuta Steel location"
   },
   "ADMIN": {
-    "ADMIN_DASHBOARD": "Admin Dashboard"
+    "ADMIN_DASHBOARD": "Admin Dashboard",
+    "HINT": "Users, products and categories are managed here. Product and category editing happens on the products page.",
+    "EDIT_BUTTON": "Go to products"
   },
   "MISC": {
         "IMAGE_ASSET": "Image Asset",
@@ -152,13 +154,15 @@
     "REMOVE": "Remove",
     "SAVE_CHANGES": "Save Changes",
     "SLUG": "Slug",
-    "TRANSLATIONS": "Translations"
+    "TRANSLATIONS": "Translations",
+    "LOADING": "Loading"
   },
   "LOGIN": {
     "LOGIN": "Login"
   },
   "USER_DASHBOARD": {
     "USER_NAME": "User Name",
-    "USER_DASHBOARD": "User Dashboard"
+    "USER_DASHBOARD": "User Dashboard",
+    "UNAVAILABLE": "Your profile could not be loaded. Please sign in again."
   }
 }
