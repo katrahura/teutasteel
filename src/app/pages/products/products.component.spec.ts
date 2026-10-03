@@ -3,6 +3,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 
 import { ProductsComponent } from './products.component';
 import { provideTestConfig } from '../../testing/test-providers';
+import { clearToken, setToken } from '../../services/token-storage';
 import { environment } from '../../../environments/environment';
 
 describe('ProductsComponent', () => {
@@ -98,5 +99,26 @@ describe('ProductsComponent', () => {
       .flush('nope', { status: 400, statusText: 'Bad Request' });
 
     expect(component.statusMessage).toBe('PRODUCTS.SAVE_FAILED');
+  });
+
+  it('offers an edit button on top-level categories when signed in', () => {
+    // Regression: the per-parent action area was an empty commented-out block, so
+    // a top-level category (the site's main groups) could not be edited at all.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+    setToken('jwt-123');
+
+    const localFixture = TestBed.createComponent(ProductsComponent);
+    localFixture.detectChanges();
+
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([
+      { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null },
+    ]);
+    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
+    localFixture.detectChanges();
+
+    expect(localFixture.componentInstance.isLoggedIn).toBeTrue();
+    expect(localFixture.nativeElement.querySelectorAll('.parent-toggle').length).toBe(1);
+    expect(localFixture.nativeElement.querySelectorAll('.edit-btn').length).toBe(1);
+    clearToken();
   });
 });
