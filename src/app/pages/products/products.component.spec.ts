@@ -59,13 +59,12 @@ describe('ProductsComponent', () => {
 
   it('stores a translation key when the request fails', () => {
     // Regression: the template used to show the raw English string
-    // "Failed to load categories". getTopCategories retries four times, so the
-    // first attempt plus four retries have to fail.
-    for (let attempt = 0; attempt < 5; attempt++) {
-      httpMock
-        .expectOne((req) => req.url === groupsUrl)
-        .flush('nope', { status: 404, statusText: 'Not Found' });
-    }
+    // "Failed to load categories". A 404 is not retried (it cannot succeed), so
+    // this is the only attempt.
+    httpMock
+      .expectOne((req) => req.url === groupsUrl)
+      .flush('nope', { status: 404, statusText: 'Not Found' });
+    httpMock.expectNone((req) => req.url === groupsUrl);
 
     expect(component.groupsError).toBe('PRODUCTS.LOAD_ERROR');
     expect(component.loadingGroups).toBeFalse();

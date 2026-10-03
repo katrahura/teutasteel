@@ -94,6 +94,52 @@ describe('ProductService', () => {
     );
   });
 
+  it('does not retry a client error', () => {
+    // Regression: retry(4) fired five requests at /category/top even though the
+    // live API answers 404 there, so every visitor paid for five failures.
+    let failed = false;
+    service.getTopCategories().subscribe({ error: () => (failed = true) });
+
+    httpMock
+      .expectOne((req) => req.url === topCategoriesUrl)
+      .flush('nope', { status: 404, statusText: 'Not Found' });
+    httpMock.expectNone((req) => req.url === topCategoriesUrl);
+
+    expect(failed).toBeTrue();
+  });
+
+  it('retries a server error, then gives up', () => {
+    let failed = false;
+    service.getTopCategories().subscribe({ error: () => (failed = true) });
+
+    // the first attempt plus four retries
+    for (let attempt = 0; attempt < 5; attempt++) {
+      httpMock
+        .expectOne((req) => req.url === topCategoriesUrl)
+        .flush('boom', { status: 500, statusText: 'Server Error' });
+    }
+    httpMock.expectNone((req) => req.url === topCategoriesUrl);
+
+    expect(failed).toBeTrue();
+  });
+
+  it('retries a network error', () => {
+    // a request that never reached the server is worth another try
+    let failed = false;
+    service.getTopCategories().subscribe({ error: () => (failed = true) });
+
+    httpMock
+      .expectOne((req) => req.url === topCategoriesUrl)
+      .error(new ProgressEvent('error'));
+    for (let attempt = 0; attempt < 4; attempt++) {
+      httpMock
+        .expectOne((req) => req.url === topCategoriesUrl)
+        .flush('boom', { status: 500, statusText: 'Server Error' });
+    }
+
+    expect(failed).toBeTrue();
+  });
+
   it('leaves the display-only translation fields out of an update', () => {
     // Regression: the product returned by the API also carries slug/description/
     // content for the active language, and sending them back made the API answer

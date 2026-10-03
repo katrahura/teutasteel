@@ -4,7 +4,7 @@ import {
   HttpErrorResponse,
   HttpHeaders,
 } from '@angular/common/http';
-import { catchError, Observable, throwError, map, retry } from 'rxjs';
+import { catchError, mergeMap, Observable, of, retryWhen, throwError, map } from 'rxjs';
 import { Category, CategoryResponse, ImageAsset, Product, TopCategory } from '../models/product.model';
 import { environment } from '../../environments/environment';
 import { getToken } from './token-storage';
@@ -18,13 +18,33 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
+  /**
+   * Retries only the failures that can plausibly succeed on a second attempt:
+   * network errors (status 0) and server errors (5xx).
+   *
+   * A 4xx never will. The live API still answers 404 for /category/top, so with an
+   * unconditional retry(4) every visitor's home page and products page fired five
+   * requests at an endpoint that cannot work, and logged five failures.
+   */
+  private retryTransient<T>(attempts = 4) {
+    return retryWhen<T>((errors) =>
+      errors.pipe(
+        mergeMap((error: HttpErrorResponse, index: number) => {
+          const status = error?.status ?? 0;
+          const worthRetrying = status === 0 || status >= 500;
+          return worthRetrying && index < attempts ? of(error) : throwError(() => error);
+        })
+      )
+    );
+  }
+
   // Method to get all categories
   getCategories(): Observable<Category[]> {
     const url = `${this.apiUrl}/category/`;
     return this.http
       .get<Category[]>(url, { headers: this.getAuthHeaders() })
       .pipe(
-        retry(4),
+        this.retryTransient(),
         map((categories) =>
           this.transformCategories(categories, 'category_images')
         ), // Transform the response
@@ -36,7 +56,7 @@ export class ProductService {
   return this.http
     .get<Category[]>(url, { headers: this.getAuthHeaders() })
     .pipe(
-      retry(4),
+      this.retryTransient(),
       map((cats) => this.transformCategories(cats, 'category_images')),
       catchError(this.handleError)
     );
@@ -45,7 +65,7 @@ export class ProductService {
   getTopCategories(): Observable<TopCategory[]> {
       const url = `${this.apiUrl}/category/top`;    return this.http
       .get<TopCategory[]>(url, { headers: this.getAuthHeaders() })
-      .pipe(retry(4),
+      .pipe(this.retryTransient(),
       map((categories) =>
         this.transformCategories(categories, 'category_images')
       ), // Transform the response
@@ -118,7 +138,7 @@ export class ProductService {
     const url = `${this.apiUrl}/category/${category_id}?page=${page}&per_page=${perPage}&lang=${lang}`;
     return this.http.get<CategoryResponse>(url, { headers: this.getAuthHeaders() })
       .pipe(
-        retry(4),
+        this.retryTransient(),
         map((CategoryResponse) =>
           this.transformProducts(CategoryResponse, 'product_images')
         ),
