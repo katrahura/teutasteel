@@ -101,36 +101,56 @@ for (const route of ['/admin-dashboard', '/user-dashboard']) {
   console.log(`   errors so far: ${errors.length}`);
 }
 
-// try the interactive parts that have bitten before: the modals
+// try the interactive parts that have bitten before: the modals.
+//
+// These used to run on whatever page the walk happened to finish on - the user dashboard -
+// where none of the controls exist, so both steps logged "clicked no button" and the tool
+// exited 0. A check that passes because it found nothing to do is worse than no check.
+await send('Page.navigate', { url: BASE + '/products' });
+await wait(9000);
+
 const modalTries = [
-  ['create category', `(() => {
-     const button = [...document.querySelectorAll('button')].find((b) => /shto|krijo|add|new/i.test(b.textContent || ''));
-     if (!button) return 'no button';
-     button.click();
-     return button.textContent.trim().slice(0, 30);
-   })()`],
-  ['edit first row', `(() => {
-     const button = document.querySelector('table tbody tr button, table tbody tr a');
-     if (!button) return 'no row control';
-     button.click();
-     return button.textContent.trim().slice(0, 30) || '(icon)';
-   })()`],
+  ['create category', /create new category|krijo kategori/i],
+  ['edit a category', /^edit$|^ndrysho$/i],
 ];
 
 errors = [];
-for (const [label, script] of modalTries) {
-  const clicked = await evaluate(script);
+const modalFailures = [];
+for (const [label, pattern] of modalTries) {
+  const clicked = await evaluate(`(() => {
+     const button = [...document.querySelectorAll('button')]
+       .find((b) => ${pattern}.test((b.textContent || '').trim()));
+     if (!button) return 'no button matched ${String(pattern)}';
+     button.click();
+     return button.textContent.trim().slice(0, 30);
+   })()`);
   await wait(2500);
   const after = await evaluate(`(() => ({
-    dialogs: document.querySelectorAll('.modal.show, [role="dialog"]').length,
     visible: [...document.querySelectorAll('.modal')].filter((m) => m.classList.contains('show')).length,
     text: document.body.innerText.replace(/\\s+/g, ' ').slice(0, 120),
   }))()`);
-  console.log(`\n${label}: clicked ${clicked} -> open modals: ${after.visible}`);
+  const opened = after.visible > 0;
+  if (!opened) modalFailures.push(`${label}: ${clicked}`);
+  console.log(`\n${label}: clicked ${clicked} -> open modals: ${after.visible}`
+              + (opened ? '' : '   <-- FAILED'));
   console.log(`   page still readable: ${after.text.slice(0, 90)}`);
+  if (opened) {
+    await evaluate(`(() => {
+       const close = document.querySelector('.modal.show .btn-close, .modal.show [data-bs-dismiss="modal"]');
+       if (close) close.click();
+       return true;
+     })()`);
+    await wait(1500);
+  }
 }
 
 console.log(`\nconsole errors during the walk: ${errors.length}`);
 for (const error of errors.slice(0, 4)) console.log('   ' + error);
+const problems = errors.length + modalFailures.length;
+if (modalFailures.length) {
+  console.log(`\n${modalFailures.length} interactive step(s) did nothing:`);
+  for (const failure of modalFailures) console.log('   ' + failure);
+}
+console.log(problems === 0 ? '\nRESULT: PASS' : `\nRESULT: FAIL (${problems})`);
 ws.close();
-process.exit(0);
+process.exit(problems === 0 ? 0 : 1);
