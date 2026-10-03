@@ -50,6 +50,8 @@
       title: string;
       is_active: boolean;
       top_category:boolean;
+      /** Parent category, or null/absent for a top-level category. */
+      parent_id?: number | null;
       image_asset?: ImageAsset;
       products?: Product[];
       pagination?: Pagination; // Add this line

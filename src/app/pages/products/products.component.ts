@@ -49,6 +49,8 @@ topCategories: TopCategory[] = [];
 childrenMap = new Map<number, Category[]>(); // parentId -> children[]
 loadingGroups = false;
 groupsError: string | null = null;
+/** Holds a translation key for the save confirmation; the template pipes it. */
+statusMessage: string | null = null;
 trackById = (_: number, item: { id?: number }) => item.id!;
 expandedParentId: number | null = null;
 toggleParent(parentId: number) {
@@ -64,7 +66,6 @@ toggleParent(parentId: number) {
     'price',
     'currency',
   ];
-  categories: Category[] = [];
   selectedCategory: Category | null = null;
   products: Product[] = [];
   selectedProduct: any = null;
@@ -72,17 +73,21 @@ toggleParent(parentId: number) {
   totalPages = 1;
   isLoading = true; // Default to loading
   isLoggedIn: boolean = false;
-  newCategory: Category = {
-    title: '',
-    is_active: true,
-    top_category: true,
-    image_asset: {
-      file_name: '',
-      alternative_text: '',
-      thumbnail_path: '',
-      original_path: ''
-    },
-    }
+  newCategory: Category = this.emptyCategory();
+
+  private emptyCategory(): Category {
+    return {
+      title: '',
+      is_active: true,
+      top_category: true,
+      image_asset: {
+        file_name: '',
+        alternative_text: '',
+        thumbnail_path: '',
+        original_path: '',
+      },
+    };
+  }
   getTranslatedCategoryTitle(category: any): string {
     return translateCategoryTitle(this.translate, category);
   }
@@ -321,12 +326,33 @@ private loadCategoryGroups(): void {
   this.subscriptions.push(sub);
 }
 createCategory() {
-  this.productService.createCategory(this.newCategory).subscribe(
-    (response) => {
-      this.loadCategories();
+  this.productService.createCategory(this.newCategory).subscribe({
+    next: () => {
+      this.statusMessage = 'PRODUCTS.SAVED';
+      this.newCategory = this.emptyCategory();
+      this.closeCreateCategoryModal();
+      // The page shows the parent/child groups, so refresh those - reloading
+      // the flat category list changed nothing on screen.
+      this.loadCategoryGroups();
     },
-    (error) => console.error('Error creating category:', error)
-  );
+    error: (error) => {
+      console.error('Error creating category:', error);
+      this.statusMessage = 'PRODUCTS.SAVE_FAILED';
+    },
+  });
+}
+
+closeCreateCategoryModal(): void {
+  const modalElement = document.getElementById('createCategoryModal');
+  if (modalElement) {
+    bootstrap.Modal.getInstance(modalElement)?.hide();
+    setTimeout(() => {
+      document.querySelectorAll('.modal-backdrop').forEach((b) => b.remove());
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('padding-right');
+      document.body.style.removeProperty('overflow');
+    }, 200);
+  }
 }
 NewProdAddTranslation() {
   this.newProduct.translations!.push({
@@ -408,11 +434,13 @@ createProduct() {
 
 
       
+this.statusMessage = 'PRODUCTS.SAVED';
 this.closeProductModals();
 this.showProducts(this.selectedCategory)
-
-
-
+    },
+    error: (error) => {
+      console.error('Error creating product:', error);
+      this.statusMessage = 'PRODUCTS.SAVE_FAILED';
     },
   });
   
@@ -455,11 +483,16 @@ this.showProducts(this.selectedCategory)
 
   updateProduct(): void {
     if (this.selectedProduct) {
-      this.productService.updateProduct(this.selectedProduct).subscribe(() => {
-        alert('Product updated successfully!');
-        this.productService.getCategoryById(this.selectedCategory!.id!, this.currentPage)
-        this.showProducts(this.selectedCategory)
-        this.closeEditModal();
+      this.productService.updateProduct(this.selectedProduct).subscribe({
+        next: () => {
+          this.statusMessage = 'PRODUCTS.SAVED';
+          this.showProducts(this.selectedCategory);
+          this.closeEditModal();
+        },
+        error: (error) => {
+          console.error('Error updating product:', error);
+          this.statusMessage = 'PRODUCTS.SAVE_FAILED';
+        },
       });
     }
   }
@@ -471,24 +504,6 @@ this.showProducts(this.selectedCategory)
       modal.hide();
     }
   }
-  // Load categories from the API
-  loadCategories() {
-    this.isLoading=true;
-    const sub = this.productService.getCategories().subscribe({
-      next: (data) => {
-        this.categories = data;
-        this.isLoading = false; // Turn off loader
-
-      },
-      error: (error) => {
-        console.error('Error occurred while fetching categories:', error);
-      },
-    });
-    this.subscriptions.push(sub);
-  }
-
-  
-
   // Show products for a specific category
   showProducts(category: any) {
     this.selectedCategory = category;
@@ -613,13 +628,13 @@ this.showProducts(this.selectedCategory)
     if (this.selectedCategory) {
       this.productService.updateCategory(this.selectedCategory).subscribe({
         next: () => {
-          alert('Category updated successfully!');
-          this.loadCategories(); // Refresh categories after update
+          this.statusMessage = 'PRODUCTS.SAVED';
+          this.loadCategoryGroups();
           this.closeEditCategoryModal();
         },
         error: (err) => {
           console.error('Error updating category:', err);
-          alert('Failed to update category. Please try again.');
+          this.statusMessage = 'PRODUCTS.SAVE_FAILED';
         },
       });
     }
@@ -662,6 +677,36 @@ this.showProducts(this.selectedCategory)
     if (this.selectedCategory) {
       this.selectedCategory.top_category = value;
     }
+  }
+  
+  /** Parent of the category being edited (null means it is top level). */
+  get parentId(): number | null {
+    return this.selectedCategory?.parent_id ?? null;
+  }
+
+  set parentId(value: number | null) {
+    if (this.selectedCategory) {
+      this.selectedCategory.parent_id = value;
+    }
+  }
+
+  /**
+   * Categories that can be chosen as a parent: the loaded top-level categories
+   * and their children, so the tree can be built from the UI.
+   */
+  get parentOptions(): Category[] {
+    const options: Category[] = [...this.topCategories];
+    this.childrenMap.forEach((children) => options.push(...children));
+    return options;
+  }
+
+  /** Same list, minus the category being edited and its own children (no cycles). */
+  get parentOptionsForEdit(): Category[] {
+    const self = this.selectedCategory?.id;
+    const ownChildren = new Set((this.childrenMap.get(self ?? -1) ?? []).map((c) => c.id));
+    return this.parentOptions.filter(
+      (option) => option.id !== self && !ownChildren.has(option.id)
+    );
   }
   
   get fileName(): string {

@@ -13,6 +13,7 @@
       aria-hidden="true"
     ></div>
     <div *ngIf="groupsError" class="alert alert-danger">{{ groupsError | translate }}</div>
+    <div *ngIf="statusMessage" class="alert alert-success" role="status">{{ statusMessage | translate }}</div>
 
     <!-- ONE PARENT PER ROW -->
     <div class="row g-3" *ngIf="!loadingGroups && !groupsError">
@@ -281,6 +282,23 @@
             >
               <option [value]="true">{{ "MISC.YES" | translate }}</option>
               <option [value]="false">{{ "MISC.NO" | translate }}</option>
+            </select>
+          </div>
+          <!-- Parent category -->
+          <div class="mb-3">
+            <label for="categoryParent" class="form-label">{{
+              "MISC.PARENT_CATEGORY" | translate
+            }}</label>
+            <select
+              id="categoryParent"
+              class="form-select"
+              [(ngModel)]="newCategory.parent_id"
+              name="parent_id"
+            >
+              <option [ngValue]="null">{{ "MISC.NO_PARENT" | translate }}</option>
+              <option *ngFor="let option of parentOptions" [ngValue]="option.id">
+                {{ getTranslatedCategoryTitle(option) }}
+              </option>
             </select>
           </div>
           <!-- Image Asset -->
@@ -641,6 +659,7 @@
     <h1 class="h2 text-center mb-5 mt-5">
       {{ getTranslatedCategoryTitle(selectedCategory) }} {{ "PRODUCTS.PRODUCTS_TITLE" | translate }}
     </h1>
+    <div *ngIf="statusMessage" class="alert alert-success" role="status">{{ statusMessage | translate }}</div>
     <button class="btn btn-secondary mb-1" (click)="goBackToGroups()">
       {{ "PRODUCTS.BACK_TO_GROUPS_BUTTON" | translate }}
     </button>
@@ -1258,6 +1277,24 @@
                 {{ "MISC.TOP_CATEGORY" | translate }}
               </label>
             </div>
+          </div>
+
+          <!-- Parent category -->
+          <div class="mb-3">
+            <label for="editCategoryParent" class="form-label">{{
+              "MISC.PARENT_CATEGORY" | translate
+            }}</label>
+            <select
+              id="editCategoryParent"
+              class="form-select"
+              [(ngModel)]="parentId"
+              name="parent_id"
+            >
+              <option [ngValue]="null">{{ "MISC.NO_PARENT" | translate }}</option>
+              <option *ngFor="let option of parentOptionsForEdit" [ngValue]="option.id">
+                {{ getTranslatedCategoryTitle(option) }}
+              </option>
+            </select>
           </div>
 
           <!-- Image Asset Section -->

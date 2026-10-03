@@ -102,7 +102,9 @@
     "LENGTH": "Gjatësia",
     "WIDTH": "Gjerësia",
     "CONTACT_WHATSAPP": "Na kontaktoni në WhatsApp",
-    "LOAD_ERROR": "Katalogu i produkteve është përkohësisht i padisponueshëm. Ju lutemi provoni përsëri më vonë."
+    "LOAD_ERROR": "Katalogu i produkteve është përkohësisht i padisponueshëm. Ju lutemi provoni përsëri më vonë.",
+    "SAVED": "U ruajt.",
+    "SAVE_FAILED": "Ruajtja dështoi. Ju lutemi provoni përsëri."
   },
   "MODAL": {
     "CLOSE": "Mbyll",
@@ -155,6 +157,8 @@
     "YES": "Po",
     "NO": "Jo",
     "TOP_CATEGORY": "Kategori Kryesore",
+    "PARENT_CATEGORY": "Kategoria prind",
+    "NO_PARENT": "Asnjë (nivel i sipërm)",
     "IMAGE_FILE_NAME": "Emri i Skedarit të Imazhit",
     "ALTERNATIVE_TEXT": "Tekst Alternativ",
     "THUMBNAIL_PATH": "Shtegu i Thumbnail",

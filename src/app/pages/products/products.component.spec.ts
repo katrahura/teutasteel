@@ -11,6 +11,22 @@ describe('ProductsComponent', () => {
   let httpMock: HttpTestingController;
 
   const groupsUrl = `${environment.apiUrl}/category/top`;
+  const createCategoryUrl = `${environment.apiUrl}/category/create`;
+
+  beforeAll(() => {
+    // The component drives Bootstrap modals; the test runner does not load that
+    // bundle, so provide the small surface the component touches.
+    (window as unknown as { bootstrap: unknown }).bootstrap = {
+      Modal: class {
+        static getInstance(): { hide: () => void } {
+          return { hide: () => undefined };
+        }
+        constructor() {}
+        show(): void {}
+        hide(): void {}
+      },
+    };
+  });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -52,5 +68,35 @@ describe('ProductsComponent', () => {
 
     expect(component.groupsError).toBe('PRODUCTS.LOAD_ERROR');
     expect(component.loadingGroups).toBeFalse();
+  });
+
+  it('refreshes the visible category groups after creating a category', () => {
+    // the initial load from ngOnInit has to settle first
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+
+    component.newCategory.title = 'New group';
+    component.createCategory();
+    httpMock
+      .expectOne(createCategoryUrl)
+      .flush({ id: 99, title: 'New group', is_active: true, top_category: true });
+
+    // Regression: the success handler reloaded the flat category list, which the
+    // page does not render, so a newly created category never appeared.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+
+    expect(component.statusMessage).toBe('PRODUCTS.SAVED');
+    expect(component.newCategory.title).toBe('');
+  });
+
+  it('reports a failed save instead of failing silently', () => {
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+
+    component.newCategory.title = 'New group';
+    component.createCategory();
+    httpMock
+      .expectOne(createCategoryUrl)
+      .flush('nope', { status: 400, statusText: 'Bad Request' });
+
+    expect(component.statusMessage).toBe('PRODUCTS.SAVE_FAILED');
   });
 });

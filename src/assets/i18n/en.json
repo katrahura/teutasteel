@@ -62,7 +62,9 @@
     "LENGTH": "Length",
     "WIDTH": "Width",
     "CONTACT_WHATSAPP": "Contact on WhatsApp",
-    "LOAD_ERROR": "The product catalogue is temporarily unavailable. Please try again later."
+    "LOAD_ERROR": "The product catalogue is temporarily unavailable. Please try again later.",
+    "SAVED": "Saved.",
+    "SAVE_FAILED": "Could not save. Please try again."
   },
   "MODAL": {
     "CLOSE": "Close",
@@ -115,6 +117,8 @@
     "YES": "Yes",
     "NO": "No",
     "TOP_CATEGORY": "Top Category",
+    "PARENT_CATEGORY": "Parent category",
+    "NO_PARENT": "None (top level)",
     "IMAGE_FILE_NAME": "Image File Name",
     "ALTERNATIVE_TEXT": "Alternative Text",
     "THUMBNAIL_PATH": "Thumbnail Path",
