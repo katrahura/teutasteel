@@ -140,6 +140,19 @@ the API side `/category/top` exists (which is what proves the backend deploy hap
 
 Point it at a local build with `SITE_URL=http://127.0.0.1:4321 API_URL=http://127.0.0.1:5000`.
 
+Security and caching headers are checked separately, because they come from the `.htaccess` in the release
+archive and only exist once Apache is serving the new files — a local static server ignores `.htaccess`
+entirely:
+
+```powershell
+python tools\headers_check.py            # against the live site, after a deploy
+python tools\headers_check.py --site http://127.0.0.1:4321
+```
+
+It reports each of `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` and
+`Strict-Transport-Security`, plus the caching on the HTML and on a hashed asset. **The site as it stands today
+sends none of them** — that is the gap this closes, and the tool is how the deploy proves it closed.
+
 Colour contrast is checked separately, because it needs a browser:
 
 ```powershell

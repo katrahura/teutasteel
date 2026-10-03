@@ -49,7 +49,31 @@ AddType font/woff2 .woff2
   <FilesMatch "\\.(html|json|xml|txt)$">
     Header set Cache-Control "public, max-age=0, must-revalidate"
   </FilesMatch>
+
+  # The site as it stands today sends none of these. They cost nothing and close easy
+  # doors: sniffing, framing, and leaking the full URL of every page to wherever a
+  # visitor clicks through to.
   Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # HSTS, without includeSubDomains: this host is HTTPS-only behind Cloudflare, but
+  # other subdomains (mail, cpanel) may not be, and the header is cached by browsers for
+  # a year - it cannot be taken back. Add includeSubDomains later via Cloudflare's own
+  # HSTS setting, once every subdomain is known to be HTTPS.
+  Header always set Strict-Transport-Security "max-age=31536000"
+
+  # A Content-Security-Policy is deliberately NOT set here. Cloudflare injects its own
+  # scripts into the page, so a policy strict enough to be worth having must allow them,
+  # and it can only be tested against the deployed site. The sources this app needs are:
+  #   script-src   'self' https://static.cloudflareinsights.com
+  #   style-src    'self' 'unsafe-inline'      (Angular writes inline styles)
+  #   img-src      'self' data: https://res.cloudinary.com
+  #   font-src     'self' https://fonts.gstatic.com
+  #   frame-src    https://www.google.com      (the map on /contact)
+  #   connect-src  'self' https://api.teutasteel.com
+  # Turn it on in report-only mode first and watch the browser console.
 </IfModule>
 
 <IfModule mod_expires.c>
@@ -78,13 +102,27 @@ longer used by anything and can be deleted once the new site is live:
     assets/bootstrap/    assets/css/    assets/fonts/    assets/img/    assets/js/
     manifest.json (this archive replaces it)
 
+The .htaccess
+-------------
+
+It turns off MultiViews, declares the WebP and woff2 types, compresses text, and sets
+caching (a year for the hashed assets, revalidate for the HTML) plus five security
+headers - nosniff, SAMEORIGIN, a referrer policy, a permissions policy and HSTS.
+
+IF THE SITE RETURNS 500 AFTER UPLOADING, DELETE .htaccess. That file is the only thing
+here that can take the whole site down: a directive Apache cannot parse fails every
+request. Everything else in this archive works without it, and you lose nothing but the
+headers and the caching. Try re-uploading it afterwards, or send it to be checked.
+
 After uploading:
 
 1. Check https://www.teutasteel.com/ in a browser, then /products, /about and
    /contact.
-2. Run tools/smoke_test.py from the development machine; it checks 28 things and
-   tells you which ones failed.
-3. If Cloudflare has a caching rule for HTML, purge it, or visitors can keep an old
+2. Run tools/headers_check.py from the development machine; it checks the security and
+   caching headers and prints what is missing.
+3. Run tools/smoke_test.py; it checks 28 things about the site and the API and tells
+   you which ones failed.
+4. If Cloudflare has a caching rule for HTML, purge it, or visitors can keep an old
    index.html that points at asset names which no longer exist.
 
 The API is deployed separately (a git push to 160.153.129.39, then flask db
