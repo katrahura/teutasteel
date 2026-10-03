@@ -7,13 +7,14 @@ import { ProductService } from '../../services/product.service';
 import { TopCategory } from '../../models/product.model';
 import { SharedService } from '../../shared.service';
 import { translateCategoryTitle } from '../../shared/translate-category-title';
+import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterModule, CommonModule, TranslateModule],
+  imports: [RouterModule, CommonModule, TranslateModule, ImageFallbackDirective],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

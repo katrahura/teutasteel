@@ -30,6 +30,7 @@
           <div class="card h-100">
             <div class="image-container">
               <img
+                        appImageFallback="assets/images/placeholder_category.jpg"
                 [src]="category.image_asset?.original_path || 'assets/images/placeholder_category.jpg'"
                 [alt]="category.image_asset?.alternative_text || categoryTitle(category)"
               >
@@ -84,6 +85,7 @@
                   <span *ngIf="product.title" class="badge bg-primary position-absolute top-0 start-0">{{ 'HOME.NEW_BADGE' | translate }}</span>
                   <div class="image-container">
                   <img
+                        appImageFallback="assets/images/placeholder_category.jpg"
                     [src]="product.image_asset?.original_path || 'assets/images/placeholder_category.jpg'"
                     class="image-container"
                     [alt]="product.image_asset?.alternative_text || categoryTitle(product)"

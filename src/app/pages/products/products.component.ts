@@ -8,6 +8,7 @@ import { forkJoin, of, switchMap } from 'rxjs';
 
 import { ProductService } from '../../services/product.service';
 import { translateCategoryTitle } from '../../shared/translate-category-title';
+import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
 import { environment } from '../../../environments/environment';
 import {
   Category,
@@ -31,7 +32,7 @@ type DimensionKey =
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ImageFallbackDirective],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
   animations: [

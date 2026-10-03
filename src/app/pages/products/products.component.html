@@ -69,6 +69,7 @@
                     <!-- ✅ use same structure as old HTML -->
                     <div class="category-image-container">
                       <img
+                        appImageFallback="assets/images/placeholder_category.jpg"
                         [src]="
                           child.image_asset?.thumbnail_path ||
                           child.image_asset?.original_path ||
@@ -171,6 +172,7 @@
 <!-- Category Image -->
 <!-- <div class="category-image-container">
             <img
+                        appImageFallback="assets/images/placeholder_category.jpg"
               [src]="
                 category.image_asset?.thumbnail_path ||
                 'assets/images/placeholder_category.jpg'
@@ -706,6 +708,7 @@
             <!-- Product Image -->
             <div class="image-container">
               <img
+                        appImageFallback="assets/images/placeholder_product.jpg"
                 [src]="
                   product.image_asset?.thumbnail_path ||
                   'assets/images/placeholder_product.jpg'
@@ -808,6 +811,7 @@
         <!-- Left Section -->
         <div class="image-container">
           <img
+                        appImageFallback="assets/images/placeholder_product.jpg"
             [src]="
               selectedProduct?.image_asset?.thumbnail_path ||
               'assets/images/placeholder_product.jpg'
