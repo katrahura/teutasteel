@@ -29,7 +29,10 @@
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let category of topCategories">
           <div class="card h-100">
             <div class="image-container">
-              <img [src]="category.image_asset?.original_path" alt="{{ category.image_asset?.alternative_text }}">
+              <img
+                [src]="category.image_asset?.original_path || 'assets/images/placeholder_category.jpg'"
+                [alt]="category.image_asset?.alternative_text || categoryTitle(category)"
+              >
             </div>
             <div class="card-body">
               <h5 class="card-title">{{ categoryTitle(category) }}</h5>
@@ -93,7 +96,12 @@
                   
                   <span *ngIf="product.title" class="badge bg-primary position-absolute top-0 start-0">{{ 'HOME.NEW_BADGE' | translate }}</span>
                   <div class="image-container">
-                  <img [src]="product.image_asset?.original_path" class="image-container" alt="{{product.image_asset?.alternative_text}}" loading="lazy">
+                  <img
+                    [src]="product.image_asset?.original_path || 'assets/images/placeholder_category.jpg'"
+                    class="image-container"
+                    [alt]="product.image_asset?.alternative_text || categoryTitle(product)"
+                    loading="lazy"
+                  >
                   </div>
                   <div class="card-body text-center">
                     <h5 class="card-title">{{ categoryTitle(product) }}</h5>

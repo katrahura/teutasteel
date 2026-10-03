@@ -8,6 +8,8 @@ import { TopCategory } from '../../models/product.model';
 import { SharedService } from '../../shared.service';
 import { translateCategoryTitle } from '../../shared/translate-category-title';
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -35,12 +37,33 @@ export class HomeComponent implements OnDestroy {
     const sub = this.productService.getTopCategories().subscribe({
       next: (data) => {
         this.topCategories = data;
+        // after the *ngIf has rendered the slides
+        setTimeout(() => this.startCarousel(), 0);
       },
       error: (error) => {
         console.error('Error occurred while fetching categories:', error);
       },
     });
     this.subscriptions.add(sub);
+  }
+
+  /**
+   * Starts the featured-products carousel.
+   *
+   * The carousel sits behind *ngIf="topCategories.length", so its element only
+   * reaches the DOM after the categories arrive - by which time Bootstrap has
+   * already run the DOMContentLoaded pass that turns data-bs-ride into a running
+   * carousel. Without this the first slide was the only one ever shown.
+   */
+  private startCarousel(): void {
+    if (typeof bootstrap === 'undefined') {
+      return;
+    }
+    const element = document.getElementById('featuredProductsCarousel');
+    if (!element) {
+      return;
+    }
+    bootstrap.Carousel.getOrCreateInstance(element, { interval: 3000 }).cycle();
   }
 
   ngOnDestroy(): void {
