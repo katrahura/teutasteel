@@ -170,7 +170,8 @@
   },
   "LOGIN": {
     "LOGIN": "Login",
-    "INVALID": "Invalid username or password."
+    "INVALID": "Invalid username or password.",
+    "SESSION_EXPIRED": "Your session has expired. Please sign in again."
   },
   "MOBILE_MENU": {
     "OPEN": "Open menu",

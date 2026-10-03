@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
@@ -25,7 +25,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private users: UserService
+    private users: UserService,
+    private route: ActivatedRoute
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -35,6 +36,13 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isAuthenticated();
+
+    // The interceptor sends the user here with ?expired=1 when the API rejected the token,
+    // so the page can say why they are back instead of looking like nothing happened.
+    if (this.route.snapshot.queryParamMap.get('expired')) {
+      this.errorMessage = 'LOGIN.SESSION_EXPIRED';
+    }
+
     if (this.isLoggedIn) {
       // Already signed in (for example after a reload): find out which
       // dashboard belongs to this account.

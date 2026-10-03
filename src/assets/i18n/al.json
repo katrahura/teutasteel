@@ -211,7 +211,8 @@
   },
   "LOGIN": {
     "LOGIN": "Hyrje",
-    "INVALID": "Emri i përdoruesit ose fjalëkalimi është i gabuar."
+    "INVALID": "Emri i përdoruesit ose fjalëkalimi është i gabuar.",
+    "SESSION_EXPIRED": "Sesioni skadoi. Ju lutemi hyni përsëri."
   },
   "MOBILE_MENU": {
     "OPEN": "Hap menunë",
