@@ -87,4 +87,56 @@ describe('ProductService', () => {
       `${environment.cloudinaryBaseUrl}/category_images/orig.jpg`
     );
   });
+
+  it('drops an image asset that has no paths at all', () => {
+    // Regression: the admin form used to make the API store a row with empty
+    // paths, and this turned it into a Cloudinary URL pointing at nothing
+    // instead of letting the template fall back to the placeholder.
+    let asset: unknown = 'not set';
+    service.getTopCategories().subscribe((categories) => {
+      asset = categories[0].image_asset;
+    });
+
+    httpMock.expectOne((req) => req.url === topCategoriesUrl).flush([
+      {
+        id: 1,
+        title: 'Doors',
+        is_active: true,
+        top_category: true,
+        image_asset: {
+          file_name: '',
+          alternative_text: '',
+          thumbnail_path: '',
+          original_path: '',
+        },
+      },
+    ]);
+
+    expect(asset).toBeUndefined();
+  });
+
+  it('leaves empty paths empty when the asset has some content', () => {
+    let asset: { original_path?: string; thumbnail_path?: string } | undefined;
+    service.getTopCategories().subscribe((categories) => {
+      asset = categories[0].image_asset;
+    });
+
+    httpMock.expectOne((req) => req.url === topCategoriesUrl).flush([
+      {
+        id: 1,
+        title: 'Doors',
+        is_active: true,
+        top_category: true,
+        image_asset: {
+          file_name: 'door.jpg',
+          alternative_text: 'Door',
+          thumbnail_path: '',
+          original_path: '',
+        },
+      },
+    ]);
+
+    expect(asset?.original_path).toBe('');
+    expect(asset?.thumbnail_path).toBe('');
+  });
 });

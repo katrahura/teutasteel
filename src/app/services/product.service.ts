@@ -82,22 +82,34 @@ export class ProductService {
    * Returns a copy carrying the Cloudinary delivery URLs. The response objects
    * used to be mutated in place, so anything holding the same object saw the
    * prefix applied twice.
+   *
+   * Empty paths stay empty: an image row with no paths (which the admin form
+   * used to create for every new product) must fall through to the placeholder
+   * instead of becoming a URL that points at nothing.
    */
   private withDeliveredImage<T extends { image_asset?: ImageAsset }>(
     item: T,
     folder: string
   ): T {
-    if (!item.image_asset) {
+    const asset = item.image_asset;
+    if (!asset) {
       return item;
     }
-    return {
-      ...item,
-      image_asset: {
-        ...item.image_asset,
-        original_path: `${this.cloudinaryBaseUrl}/${folder}/${item.image_asset.original_path}`,
-        thumbnail_path: `${this.cloudinaryBaseUrl}/${folder}/${item.image_asset.thumbnail_path}`,
-      },
-    };
+
+    const delivered: ImageAsset = { ...asset };
+    if (asset.original_path) {
+      delivered.original_path = `${this.cloudinaryBaseUrl}/${folder}/${asset.original_path}`;
+    }
+    if (asset.thumbnail_path) {
+      delivered.thumbnail_path = `${this.cloudinaryBaseUrl}/${folder}/${asset.thumbnail_path}`;
+    }
+
+    const hasImage = !!(
+      asset.file_name ||
+      asset.original_path ||
+      asset.thumbnail_path
+    );
+    return { ...item, image_asset: hasImage ? delivered : undefined };
   }
   // Method to get a single category by ID, including its products
 
