@@ -90,3 +90,22 @@ Add new strings to both `al.json` and `en.json`; `en.json` is the fallback.
 Until the API has the newer endpoints deployed (`/category/top`, `/category/<id>/children`, `/category/tree`),
 the catalogue stays empty and the products page shows a translated "catalogue temporarily unavailable"
 message — the rest of the site works.
+
+### Verifying a deployment
+
+```powershell
+python tools\smoke_test.py
+```
+
+Checks the live site and its API from the outside and exits non-zero if anything is wrong: the home page
+answers and is the Angular application, the main bundle is the slim (lazy-loading) one, `/products`,
+`/about` and `/contact` answer with their own canonical, `robots.txt` and the sitemap are served, and on
+the API side `/category/top` exists (which is what proves the backend deploy happened), categories carry
+`parent_id`, `/category/` refuses an anonymous caller and login rejects wrong credentials.
+
+Point it at a local build with `SITE_URL=http://127.0.0.1:4321 API_URL=http://127.0.0.1:5000`.
+
+Both hosts are behind Cloudflare, and it answers **403 to any request that does not look like a browser**,
+so the script sends a browser user agent — worth knowing if you write your own check with curl. After a
+deploy, if Cloudflare is caching HTML for the site, purge the cache for the changed files, otherwise
+visitors can keep getting an old `index.html` that points at asset names which no longer exist.
