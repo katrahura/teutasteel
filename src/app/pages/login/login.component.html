@@ -2,6 +2,7 @@
   <div class="login-container">
 <h1 class="h2" *ngIf="!isLoggedIn">{{ 'LOGIN.LOGIN' | translate }}</h1>
 <h1 class="h2" *ngIf="isLoggedIn">{{ 'MISC.WELCOME_USERNAME_' | translate: { username: username } }}</h1>
+
 <form [formGroup]="loginForm" *ngIf="!isLoggedIn" (ngSubmit)="onSubmit()">
   <label for="username">{{ 'USER_DASHBOARD.USER_NAME' | translate }}</label>
   <input id="username" type="text" formControlName="username" placeholder="{{ 'MISC.ENTER_YOUR_USERNAME' | translate }}" required />
@@ -11,12 +12,16 @@
 
   <button type="submit" class="btn">{{ 'LOGIN.LOGIN' | translate }}</button>
 </form>
+
+<p *ngIf="errorMessage" class="error-message" role="alert">{{ errorMessage | translate }}</p>
+
 <div *ngIf="isLoggedIn">
   <button (click)="onLogout()" class="btn">{{ 'MISC.LOGOUT' | translate }}</button>
 </div>
 <div *ngIf="isLoggedIn" class="mt-3">
-  <button *ngIf="role !== 'admin'" class="btn" (click)="goToAdmin()">{{ 'MISC.GO_TO_ADMIN_DASHBOARD' | translate }}</button>
-  <button *ngIf="role !== 'user'" class="btn" (click)="goToUser()">{{ 'MISC.GO_TO_USER_DASHBOARD' | translate }}</button>
+  <button class="btn" (click)="goToDashboard()">
+    {{ (role === 'admin' ? 'MISC.GO_TO_ADMIN_DASHBOARD' : 'MISC.GO_TO_USER_DASHBOARD') | translate }}
+  </button>
 </div>
 
 

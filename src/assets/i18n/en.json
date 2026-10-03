@@ -158,7 +158,8 @@
     "LOADING": "Loading"
   },
   "LOGIN": {
-    "LOGIN": "Login"
+    "LOGIN": "Login",
+    "INVALID": "Invalid username or password."
   },
   "USER_DASHBOARD": {
     "USER_NAME": "User Name",

@@ -199,7 +199,8 @@
 
   },
   "LOGIN": {
-    "LOGIN": "Hyrje"
+    "LOGIN": "Hyrje",
+    "INVALID": "Emri i përdoruesit ose fjalëkalimi është i gabuar."
   },
   "USER_DASHBOARD": {
     "USER_NAME": "Emri i Përdoruesit",
