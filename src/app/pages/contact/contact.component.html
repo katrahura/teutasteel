@@ -8,6 +8,10 @@
       <p><strong>{{ 'CONTACT.PHONE' | translate }}:</strong> <a href="tel:+38344133208">+383 44 133 208</a></p>
       <p><strong>{{ 'CONTACT.PHONE' | translate }}:</strong> <a href="tel:+38344776650">+383 44 776 650</a></p>
       <p><strong>{{ 'CONTACT.EMAIL' | translate }}:</strong> <a href="mailto:info@teutasteel.com">info&#64;teutasteel.com</a></p>
+      <p>
+        <strong>{{ 'CONTACT.ADDRESS' | translate }}:</strong>
+        {{ location.street }} {{ location.number }}, {{ location.city }}
+      </p>
     </div>
 
     <div class="d-flex justify-content-center gap-4 mb-5">
@@ -19,8 +23,11 @@
     <div class="map-responsive mt-4">
       <h5 class="mt-5">{{ 'CONTACT.VISIT_US' | translate }}</h5>
 
+  <!-- The pin is the pair the old site used and the place OpenStreetMap knows as
+       "Teuta Steel"; this embed used to point 221 m away, at a different street.
+       The same coordinates are in index.html's structured data. -->
   <iframe 
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2943.7287863947968!2d21.460686675099144!3d42.45478637118422!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x13548d776db55d4f%3A0xc75185c520a7df3c!2sTeuta%20Steel!5e0!3m2!1sen!2s!4v1752134095854!5m2!1sen!2s" 
+    src="https://www.google.com/maps?q=42.454842,21.463374&z=17&hl=sq&output=embed"
     width="100%" 
     height="350" 
     style="border:0;" 

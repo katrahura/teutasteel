@@ -8,4 +8,9 @@ export const environment = {
   // Contact details live here so they only have to change in one place.
   whatsappNumber: '38344776650',
   contactEmail: 'info@teutasteel.com',
+  location: {
+    city: 'Gjilan',
+    street: 'Rruga Idriz Seferi',
+    number: '26',
+  },
 };

@@ -103,6 +103,15 @@ status, sitemap, _ = fetch(f"{SITE_URL}/sitemap.xml")
 check("the sitemap is served", status == 200 and "</urlset>" in sitemap,
       f"({len(re.findall(r'<loc>', sitemap or ''))} urls)")
 
+status, contact, _ = fetch(f"{SITE_URL}/contact")
+check("the contact page answers", status == 200, f"(status {status})")
+check("it shows the address", "Rruga Idriz Seferi" in contact)
+map_src = re.search(r'<iframe[^>]*src="([^"]*google\.com/maps[^"]*)"', contact)
+# the pin this page used to carry was 221 m away, on a different street
+check("its map points at the business",
+      bool(map_src) and "42.454842" in map_src.group(1) and "21.463374" in map_src.group(1),
+      f"({map_src.group(1)[:64] if map_src else 'no map iframe'})")
+
 status, manifest_text, _ = fetch(f"{SITE_URL}/manifest.json")
 manifest = as_json(manifest_text) if status == 200 else None
 check("the web app manifest is served", status == 200 and isinstance(manifest, dict),

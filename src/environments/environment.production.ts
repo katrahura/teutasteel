@@ -9,4 +9,12 @@ export const environment = {
   // Contact details live here so they only have to change in one place.
   whatsappNumber: '38344776650',
   contactEmail: 'info@teutasteel.com',
+  // The address shown on the contact page. The map pin that goes with it is a
+  // static src in contact.component.html (Angular refuses a bound iframe src), and
+  // the same coordinates are in index.html's structured data.
+  location: {
+    city: 'Gjilan',
+    street: 'Rruga Idriz Seferi',
+    number: '26',
+  },
 };
