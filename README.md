@@ -165,6 +165,27 @@ that does not allow `authorization` breaks every authenticated request in the br
 passes. An endpoint that answers 404 is reported as "not deployed yet" rather than a failure, so the same
 command is useful before and after the backend deploy.
 
+### Checking the thing you upload
+
+Every browser check above runs against `dist/teutasteel-website/browser`, which is what the archive is made
+from — but not what gets uploaded. Before uploading, check the archive itself:
+
+```powershell
+python tools\verify_release.py
+```
+
+It compares the archive's entries with the build file by file (nothing missing, nothing extra), checks that
+the `.htaccess` still carries all eight of its directives, and unpacks the archive to a temporary directory.
+Point the browser checks at that copy to test the real article:
+
+```powershell
+cd "$env:TEMP\teuta-release-check"
+python -m http.server 4321
+# in another shell
+node --experimental-websocket tools\frontend_only_check.mjs
+node --experimental-websocket tools\link_check.mjs
+```
+
 Colour contrast is checked separately, because it needs a browser:
 
 ```powershell
