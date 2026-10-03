@@ -39,7 +39,16 @@ input {
 
 input:focus {
   border-color: var(--brand-primary);
-  outline: none;
+  /* the outline used to be removed here, leaving keyboard users only a 1px border
+     colour change to tell them which field they were in */
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 1px;
+}
+
+/* the same for the submit button: as a bare .btn it gets no ring from Bootstrap */
+button.btn:focus-visible {
+  outline: 2px solid var(--brand-primary-dark);
+  outline-offset: 2px;
 }
 
 button.btn {

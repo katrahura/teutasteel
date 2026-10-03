@@ -27,8 +27,17 @@
 }
 
 .contact-form button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: var(--brand-primary-dark); /* Darker blue on hover */
   transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+/* The map can be reached with the keyboard and operated from inside, so it has to
+   show when it has focus. The ring is drawn on the wrapper rather than the frame:
+   once focus is inside a cross-origin document, the frame's own outline is the
+   browser's, and not something this stylesheet controls. */
+.map-responsive:focus-within {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
 }
 
 h2 {

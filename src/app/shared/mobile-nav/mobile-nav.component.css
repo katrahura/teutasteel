@@ -37,9 +37,13 @@ body.no-scroll { overflow: hidden; overscroll-behavior: contain; }
 .mnav-toggle:focus-visible{ outline:2px solid #555; outline-offset:2px; }
 .mnav-bar{ display:block; width:20px; height:2px; background:#111; margin:3px 0; border-radius:2px; }
 
-/* Off-canvas sheet */
+/* Off-canvas sheet
+   `transform` moves the closed drawer off-screen but leaves its links in the tab
+   order: without the visibility below, a keyboard user steps through eight
+   controls they cannot see before reaching the page. */
 .mnav-sheet{
   position: fixed; inset: 0; z-index: 999; pointer-events: none;
+  visibility: hidden; transition: visibility 0s linear .3s;
 }
 .mnav-sheet .mnav-scrim{
   position: absolute; inset: 0; background: rgba(0,0,0,0.32);
@@ -52,7 +56,7 @@ body.no-scroll { overflow: hidden; overscroll-behavior: contain; }
   display:flex; flex-direction:column; padding: 16px; gap: 8px;
   padding-top: calc(env(safe-area-inset-top) + 16px);
 }
-.mnav-sheet.open{ pointer-events: auto; }
+.mnav-sheet.open{ pointer-events: auto; visibility: visible; transition-delay: 0s; }
 .mnav-sheet.open .mnav-scrim{ opacity: 1; }
 .mnav-sheet.open .mnav-panel{ transform: translateX(0); }
 

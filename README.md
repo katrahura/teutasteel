@@ -132,6 +132,19 @@ text — including the colour a gradient has at that spot, and reporting text ov
 guessing — then fails anything below the WCAG AA threshold (4.5:1, or 3:1 for large text). It should end
 with `0 distinct contrast failure(s)`.
 
+Keyboard access is checked the same way, with the same Chrome running:
+
+```powershell
+node --experimental-websocket tools\keyboard_audit.mjs   # both widths, every page
+node --experimental-websocket tools\drawer_check.mjs     # the mobile menu's behaviour
+```
+
+`keyboard_audit.mjs` sends real Tab presses at 390 px and 1280 px wide and fails anything that takes focus
+while invisible, anything focusable with no visible indicator, and anything clickable that cannot be reached
+from the keyboard. It should end with `0 keyboard/focus problem(s)`; controls whose focus moves into another
+document (the map) are listed rather than judged. `drawer_check.mjs` asserts the closed menu is out of the
+tab order, that opening it moves focus inside, and that Escape closes it and hands focus back.
+
 Both hosts are behind Cloudflare, and it answers **403 to any request that does not look like a browser**,
 so the script sends a browser user agent — worth knowing if you write your own check with curl. After a
 deploy, if Cloudflare is caching HTML for the site, purge the cache for the changed files, otherwise
