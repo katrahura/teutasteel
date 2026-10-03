@@ -4,7 +4,8 @@
     "HOME": "Home",
     "PRODUCTS": "Products",
     "ABOUT_US": "About Us",
-    "CONTACT": "Contact"
+    "CONTACT": "Contact",
+    "LOGIN": "Login"
   },
   "FOOTER": {
     "COPYRIGHT": "© 2024 TeutaSteel. All rights reserved."
@@ -132,7 +133,24 @@
     "EMAIL": "Email:",
     "EDIT_PROFILE": "Edit Profile",
     "PAGE":"Page",
-    "OF":"Of"
+    "OF":"Of",
+    "ACTIVE": "Active",
+    "ADD_DIMENSION": "Add Dimension",
+    "ADD_TRANSLATION": "Add Translation",
+    "CONTENT": "Content",
+    "CURRENCY": "Currency",
+    "DESCRIPTION": "Description",
+    "EDIT_CATEGORY": "Edit Category",
+    "GENERAL_INFORMATION": "General Information",
+    "LANGUAGE": "Language",
+    "NEW_PRODUCT": "New Product",
+    "NEXT": "Next",
+    "PREVIOUS": "Previous",
+    "PRODUCT_IMAGE": "Product Image",
+    "REMOVE": "Remove",
+    "SAVE_CHANGES": "Save Changes",
+    "SLUG": "Slug",
+    "TRANSLATIONS": "Translations"
   },
   "LOGIN": {
     "LOGIN": "Login"

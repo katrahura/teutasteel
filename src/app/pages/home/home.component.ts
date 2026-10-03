@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Renderer2, Inject, PLATFORM_ID  } from '@angular/core';
+import { Component, ElementRef, Renderer2, Inject, PLATFORM_ID, OnDestroy  } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { ProductService } from '../../services/product.service';
 import { Product, TopCategory } from '../../models/product.model';
 import { AuthService } from '../../services/auth.service';
@@ -16,8 +17,8 @@ import { SharedService } from '../../shared.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })  
-export class HomeComponent {
-  subscriptions: any;
+export class HomeComponent implements OnDestroy {
+  private subscriptions = new Subscription();
   constructor(private sharedService: SharedService,private router: Router,@Inject(PLATFORM_ID) private platformId: Object, private el: ElementRef, private renderer: Renderer2,private productService: ProductService,private authService: AuthService) {}
   selectedCategory: any = null;
   topCategories: TopCategory[] = [];
@@ -45,7 +46,10 @@ export class HomeComponent {
     }
   }
   ngOnInit():void{
-    this.productService.getTopCategories()
+    // Only the browser fetches data: prerendering/SSR must not call the API.
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     const sub = this.productService.getTopCategories().subscribe({
       next: (data) => {
         this.topCategories = data;
@@ -56,8 +60,11 @@ export class HomeComponent {
         console.error('Error occurred while fetching categories:', error);
       },
     });
-    this.subscriptions.push(sub);
+    this.subscriptions.add(sub);
 
+  }
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
   navigateToProducts(category: any): void {
    
@@ -85,7 +92,6 @@ export class HomeComponent {
   
       // Calculate appropriate text color (black or white) based on background brightness`
       const textColor = this.getTextColorForBackground(rgb);
-      console.log(textColor);
       // Apply the text color to the content
       const dynamicDiv = this.el.nativeElement.querySelector('#dynamictxtcolor');
       if (dynamicDiv) {

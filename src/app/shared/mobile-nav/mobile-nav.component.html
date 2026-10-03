@@ -2,8 +2,8 @@
 <header class="mnav-header" role="banner">
   <!-- Left: Language Switcher -->
   <div class="language-switcher d-flex align-items-center">
-    <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'al'}" (click)="switchLanguage('al')">AL</button>
-    <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'en'}" (click)="switchLanguage('en')">EN</button>
+    <button class="lang-btn" [ngClass]="{'active': this.shared.lang === 'al'}" (click)="switchLanguage('al')">AL</button>
+    <button class="lang-btn" [ngClass]="{'active': this.shared.lang==='en'}" (click)="switchLanguage('en')">EN</button>
   </div>
 
   <!-- Brand (centered logo/name) -->

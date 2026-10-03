@@ -1,16 +1,18 @@
 import {  Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
+import { forkJoin, of, switchMap } from 'rxjs';
 
 import { ProductService } from '../../services/product.service';
 import {
   Category,
   CategoryResponse,
   Product,
-  ImageAsset
+  ImageAsset,
+  TopCategory            
 } from '../../models/product.model';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -41,7 +43,17 @@ type DimensionKey =
   ],
 })
 export class ProductsComponent implements OnInit, OnDestroy {
+  private readonly UPLOAD_BASE = '/uploads'; // or '' if full paths come from backend
 
+topCategories: TopCategory[] = [];
+childrenMap = new Map<number, Category[]>(); // parentId -> children[]
+loadingGroups = false;
+groupsError: string | null = null;
+trackById = (_: number, item: { id?: number }) => item.id!;
+expandedParentId: number | null = null;
+toggleParent(parentId: number) {
+  this.expandedParentId = (this.expandedParentId === parentId) ? null : parentId;
+}
   subscriptions: Subscription[] = [];
   showingGroups = true;
   dimensionKeys: DimensionKey[] = [
@@ -76,7 +88,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
     },
     }
     getTranslatedCategoryTitle(category: any): string {
-  if (    this.translate.currentLang === 'al') {
+  const lang = this.translate.currentLang || this.translate.getDefaultLang();
+  if (lang === 'al') {
     const key = 'CATEGORY.' + category.title.toUpperCase().replace(/ /g, '_');
     return this.translate.instant(key);
   }
@@ -126,7 +139,29 @@ export class ProductsComponent implements OnInit, OnDestroy {
   changeDetectorRef: any;
   selectedCategoryId: any;
 
-  constructor(private translate: TranslateService ,private sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService,private route: ActivatedRoute) {}
+  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService,private route: ActivatedRoute) {}
+
+  getCategoryThumb(cat: any): string | null {
+  // prefer a thumbnail; fall back to original; support both image_asset and category_images[]
+  const asset =
+    cat?.category_images?.[0] ||
+    cat?.image_asset ||
+    null;
+
+  let path =
+    asset?.thumbnail_path ||
+    asset?.original_path ||
+    null;
+
+  if (!path) return null;
+
+  // if backend returns absolute URL, keep it; else prefix with your API base or uploads path
+  const isAbsolute = /^https?:\/\//i.test(path);
+  if (isAbsolute) return path;
+
+  // adjust if your backend serves files from a different prefix (e.g. /uploads/)
+  return `${this.UPLOAD_BASE}/${path}`.replace(/([^:]\/)\/+/g, '$1');
+}
 
   openModal(product: any, event: Event): void {
     event.stopPropagation(); // Stop event propagation
@@ -256,7 +291,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
   
   
   ngOnInit(): void {
-    this.loadCategories();
+      // Only the browser fetches data: prerendering/SSR must not call the API.
+      if (isPlatformBrowser(this.platformId)) {
+        this.loadCategoryGroups();
+      }
+    // this.loadCategories();
     this.isLoggedIn= this.authService.isAuthenticated();
 // Get the navigation object
 const navigation = this.router.getCurrentNavigation();
@@ -269,6 +308,39 @@ const navigation = this.router.getCurrentNavigation();
  }
 
 
+}
+private loadCategoryGroups(): void {
+  this.loadingGroups = true;
+  this.groupsError = null;
+
+  const sub = this.productService.getTopCategories().pipe(
+    switchMap((parents) => {
+      this.topCategories = parents || [];
+      if (!parents || parents.length === 0) {
+        return of([]); // nothing to fetch
+      }
+      // Fetch children for each parent in parallel
+      const calls = parents.map(p =>
+        this.productService.getCategoryChildren(p.id!)
+      );
+      return forkJoin(calls);
+    })
+  ).subscribe({
+    next: (childrenArrays) => {
+      // childrenArrays is an array aligned with topCategories
+      this.childrenMap.clear();
+      this.topCategories.forEach((p, idx) => {
+        this.childrenMap.set(p.id!, childrenArrays[idx] || []);
+      });
+      this.loadingGroups = false;
+      this.showingGroups = true; // ensure group view
+    },
+    error: (err) => {
+      this.groupsError = err?.error?.message || 'Failed to load categories';
+      this.loadingGroups = false;
+    }
+  });
+  this.subscriptions.push(sub);
 }
 addTranslation() {
   this.newProduct.translations!.push({
@@ -285,8 +357,7 @@ NremoveTranslation(index: number) {
 createCategory() {
   this.productService.createCategory(this.newCategory).subscribe(
     (response) => {
-      console.log('Category Created:', response);
-
+      this.loadCategories();
     },
     (error) => console.error('Error creating category:', error)
   );
@@ -326,15 +397,12 @@ createProduct() {
     return;
   }
   
-debugger;
   // Attach the categoryId
   this.newProduct.category_id = this.selectedCategory.id!;
 
   // POST the product
   this.productService.createProduct(this.newProduct).subscribe({
     next: (response) => {
-        this.productService.getCategoryById(this.selectedCategory!.id!, this.currentPage)
-
       // Reset the form
       this.newProduct = {
         code: '',
@@ -511,7 +579,7 @@ this.showProducts(this.selectedCategory)
     this.isLoading=true;
     const sub = this.productService.getCategoryById(category_id, page).subscribe({
       next: (categoryResponse: CategoryResponse) => {
-        this.products = this.selectedProduct = categoryResponse.products || [];
+        this.products = categoryResponse.products || [];
         this.currentPage = categoryResponse.pagination.page;
         this.totalPages = categoryResponse.pagination.total_pages;
         this.isLoading = false; // Turn off loader
@@ -561,7 +629,6 @@ this.showProducts(this.selectedCategory)
           this.originalPathC = this.getFileNameFromPath(this.selectedCategory.image_asset.original_path);
           this.thumbnailPathC = this.getFileNameFromPath(this.selectedCategory.image_asset.thumbnail_path);
         }
-        console.log(this.originalPath)
     const modalElement = document.getElementById('editCategoryModal');
     if (modalElement) {
       const modalInstance = new bootstrap.Modal(modalElement);

@@ -44,7 +44,8 @@
     "HOME": "Kryefaqja",
     "PRODUCTS": "Produkte",
     "ABOUT_US": "Rreth Nesh",
-    "CONTACT": "Kontaktoni"
+    "CONTACT": "Kontaktoni",
+    "LOGIN": "Hyrje"
   },
   "FOOTER": {
     "COPYRIGHT": "© 2024 TeutaSteel. Të gjitha të drejtat janë të rezervuara."
@@ -185,7 +186,11 @@
     "ADD_TRANSLATION": "Shto Përkthim",
     "REMOVE": "Hiq",
         "PAGE":"Faqja",
-        "OF":"Nga"
+        "OF":"Nga",
+        "NEXT": "Tjetra",
+        "PREVIOUS": "E mëparshme",
+        "PRODUCT_IMAGE": "Imazhi i Produktit",
+        "TRANSLATIONS": "Përkthimet"
 
   },
   "LOGIN": {

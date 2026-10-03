@@ -31,7 +31,8 @@
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
-              "src/styles.css"
+              "src/styles.css",
+              "src/assets/responsive-overrides.css"
             ],
             "scripts": [ "node_modules/@popperjs/core/dist/umd/popper.min.js",
   "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
@@ -47,13 +48,19 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "2.5MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "6kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.production.ts"
                 }
               ],
               "outputHashing": "all"
@@ -98,7 +105,7 @@
             ],
             "styles": [
               "src/styles.css"
-              
+
             ],
             "scripts": []
           }

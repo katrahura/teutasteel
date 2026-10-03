@@ -1,7 +1,7 @@
 <section class="py-5 px-3 mb-5 mt-5">
   <div class="login-container">
 <h2 *ngIf="!isLoggedIn">{{ 'LOGIN.LOGIN' | translate }}</h2>
-<h2 *ngIf="isLoggedIn">{{ 'MISC.WELCOME_USERNAME_' | translate }}</h2>
+<h2 *ngIf="isLoggedIn">{{ 'MISC.WELCOME_USERNAME_' | translate: { username: username } }}</h2>
 <form [formGroup]="loginForm" *ngIf="!isLoggedIn" (ngSubmit)="onSubmit()">
   <label for="username">{{ 'USER_DASHBOARD.USER_NAME' | translate }}</label>
   <input id="username" type="text" formControlName="username" placeholder="{{ 'MISC.ENTER_YOUR_USERNAME' | translate }}" required />

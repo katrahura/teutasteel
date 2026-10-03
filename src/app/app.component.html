@@ -6,8 +6,8 @@
     <!-- Left (Language Switcher) -->
     <div class="d-flex align-items-center">
       <div class="language-switcher me-2">
-        <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'al'}" (click)="switchLanguage('al')">AL</button>
-        <button class="lang-btn" [ngClass]="{'active': currentLanguage === 'en'}" (click)="switchLanguage('en')">EN</button>
+        <button class="lang-btn" [ngClass]="{'active': this.shared.lang === 'al'}" (click)="switchLanguage('al')">AL</button>
+        <button class="lang-btn" [ngClass]="{'active': this.shared.lang=== 'en'}" (click)="switchLanguage('en')">EN</button>
       </div>
     </div>
     <!-- Centered Navigation Links -->

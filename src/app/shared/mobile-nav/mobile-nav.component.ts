@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/ro
 import { fromEvent, Subscription, filter, debounceTime } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { SharedService } from '../../shared.service';
 
 @Component({
   selector: 'app-mobile-nav',
@@ -16,13 +17,13 @@ export class MobileNavComponent {
   open = false;
   private subs: Subscription[] = [];
   private isBrowser: boolean;
-    currentLanguage: string | undefined;
 
-  constructor(private translate: TranslateService,private router: Router, @Inject(PLATFORM_ID) platformId: Object) {
+  constructor(private translate: TranslateService,public shared :SharedService ,private router: Router, @Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
   ngOnInit() {
+   
     if (!this.isBrowser) return;
 
     this.subs.push(
@@ -50,8 +51,10 @@ export class MobileNavComponent {
   ngOnDestroy() {
     this.subs.forEach(s => s.unsubscribe());
     if (this.isBrowser) document.body.classList.remove('no-scroll');
-  }  switchLanguage(language: string) {
-    this.currentLanguage = language;
+  }  
+  
+  switchLanguage(language: string) {
+    this.shared.setLang(language);
     this.translate.use(language); // Switch the language in ngx-translate
   }
 }

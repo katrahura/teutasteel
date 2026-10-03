@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="TeutaSteel">
+  <rect width="64" height="64" rx="12" fill="#111827"/>
+  <path d="M14 20h36v7H36.5v25h-9V27H14z" fill="#f9fafb"/>
+  <path d="M42 34.5c3.9.6 6.4 2.6 6.4 6.2 0 4.3-3.4 7-9.1 7-3.6 0-6.6-.9-9.2-2.6l3.1-5.2c1.8 1.2 3.9 1.9 6 1.9 1.7 0 2.7-.6 2.7-1.6 0-.9-.7-1.4-3.2-1.8z" fill="#f59e0b"/>
+</svg>

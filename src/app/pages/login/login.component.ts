@@ -41,8 +41,8 @@ export class LoginComponent implements OnInit {
 
     this.authService.login({ username, password }).subscribe({
       next: (response) => {
-        // ✅ Save token
-        localStorage.setItem('token', response.access_token);
+        // Save the JWT through the shared, SSR-safe helper
+        this.authService.storeToken(response.access_token);
         
         this.username = username;
         this.isLoggedIn = true;

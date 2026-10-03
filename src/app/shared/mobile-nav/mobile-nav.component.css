@@ -1,5 +1,6 @@
-/* Show only on phones/tablets ≤900px */
-@media (min-width: 900px) {
+/* Show only below Bootstrap's lg breakpoint, so the mobile header and the
+   desktop navbar (d-none d-lg-block) always hand over at the same width. */
+@media (min-width: 992px) {
   .mnav-header, .mnav-sheet { display: none !important; }
 }
 

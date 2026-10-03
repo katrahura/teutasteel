@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { clearToken, getToken, setToken } from './token-storage';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  // private baseUrl = 'https://api.teutasteel.com/auth/login'; // Replace with your backend URL
-  private baseUrl = 'http://127.0.0.1:5000'; // Replace with your backend URL
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -16,14 +17,18 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/auth/login`, credentials);
   }
 
+  // Persist the JWT (SSR-safe: no direct localStorage access here)
+  storeToken(token: string): void {
+    setToken(token);
+  }
+
   // Check Authentication
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('token');
-    return !!token; // Return true if the token exists
+    return !!getToken();
   }
 
   // Logout
   logout(): void {
-    localStorage.removeItem('token');
+    clearToken();
   }
 }

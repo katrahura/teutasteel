@@ -4,15 +4,15 @@ import { RouterModule,NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { RouterOutlet } from '@angular/router';
 import { MobileNavComponent } from './shared/mobile-nav/mobile-nav.component';
+import { SharedService } from './shared.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule,CommonModule,TranslateModule,NgbDropdownModule,MobileNavComponent],  // Import RouterModule to enable routerLink
+  imports: [RouterModule,CommonModule,TranslateModule,MobileNavComponent],  // Import RouterModule to enable routerLink
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   animations: [
@@ -30,15 +30,16 @@ import { MobileNavComponent } from './shared/mobile-nav/mobile-nav.component';
 })
 export class AppComponent {
   currentRoute: string = '';
-  currentLanguage = 'al'; // Default language is English
   prepareRoute(outlet: RouterOutlet) {
     const animationData = outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
     return animationData;
   }
   
-  constructor(private router: Router,private translate: TranslateService) {
+  constructor(private router: Router,private translate: TranslateService,public shared: SharedService) {
     // Detect route changes and update the currentRoute variable
     this.translate.setDefaultLang('al');
+    this.translate.use('al'); // Make the default language the active one (currentLang was left undefined)
+    this.shared.setLang("al");
 
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -59,7 +60,7 @@ export class AppComponent {
     }
   }
   switchLanguage(language: string) {
-    this.currentLanguage = language;
+    this.shared.setLang(language);
     this.translate.use(language); // Switch the language in ngx-translate
   }
 

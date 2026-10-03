@@ -1,23 +1,21 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { getToken } from './token-storage';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('token');
-    if (token) {
-      req = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-    return next.handle(req);
+/**
+ * Attaches the JWT to outgoing API calls.
+ *
+ * This is a functional interceptor, registered through
+ * `provideHttpClient(withInterceptors([authInterceptor]))` in app.config.ts.
+ * The previous class-based version did nothing at all: it was bound to the
+ * legacy HTTP_INTERCEPTORS token, which `provideHttpClient()` does not honour
+ * unless `withInterceptorsFromDi()` is also used.
+ */
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const token = getToken();
+  if (!token) {
+    return next(req);
   }
-}
+  return next(
+    req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+  );
+};

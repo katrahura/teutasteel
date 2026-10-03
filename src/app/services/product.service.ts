@@ -6,12 +6,14 @@ import {
 } from '@angular/common/http';
 import { catchError, Observable, throwError, map, retry } from 'rxjs';
 import { Category, CategoryResponse, Product, TopCategory } from '../models/product.model';
+import { environment } from '../../environments/environment';
+import { getToken } from './token-storage';
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  private apiUrl = 'http://127.0.0.1:5000'; // Replace with your actual API base URL
-  private cloudinaryBaseUrl = 'https://res.cloudinary.com/dy0idyurz/image/upload';
+  private apiUrl = environment.apiUrl;
+  private cloudinaryBaseUrl = environment.cloudinaryBaseUrl;
 
 
   constructor(private http: HttpClient) {}
@@ -29,9 +31,19 @@ export class ProductService {
         catchError(this.handleError)
       );
   }
+  getCategoryChildren(parentId: number): Observable<Category[]> {
+  const url = `${this.apiUrl}/category/${parentId}/children`;
+  return this.http
+    .get<Category[]>(url, { headers: this.getAuthHeaders() })
+    .pipe(
+      retry(4),
+      map((cats) => this.transformCategories(cats, 'category_images')),
+      catchError(this.handleError)
+    );
+}
+
   getTopCategories(): Observable<TopCategory[]> {
-    const url = `${this.apiUrl}/category/top_categories/`;
-    return this.http
+      const url = `${this.apiUrl}/category/top`;    return this.http
       .get<TopCategory[]>(url, { headers: this.getAuthHeaders() })
       .pipe(retry(4),
       map((categories) =>
@@ -91,10 +103,11 @@ export class ProductService {
 
   // Helper method to get authorization headers
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token'); // Retrieve token from localStorage
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`, // Add Authorization header
-    });
+    const token = getToken();
+    if (!token) {
+      return new HttpHeaders();
+    }
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
   private handleError(error: HttpErrorResponse) {
