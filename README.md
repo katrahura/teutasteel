@@ -160,13 +160,27 @@ python tools\cors_check.py                            # the deployed API
 python tools\cors_check.py --api http://127.0.0.1:5000
 ```
 
+The API's side of the contract is checked too: every call this app makes, with the parameters it sends, and
+the fields its templates read.
+
+```powershell
+python tools\api_contract_check.py                    # signs in, calls everything, tidies up
+python tools\api_contract_check.py --api http://127.0.0.1:5000 --token <jwt>
+```
+
+It lists the endpoints and where they come from (`product.service.ts`, `auth.service.ts`, `user.service.ts`),
+then asserts the response shape: a product must carry `code`, `dimensions`, `translations`, `is_active` and
+`cut_type` with the right types, a category listing must carry `products`, and the login response must carry
+`access_token`. It creates a category and a product, edits both and deletes them again, so it can be run
+against a database that matters. A field quietly dropped from a schema breaks a page without failing a single
+backend test; this is what notices.
+
 The app posts JSON and sends an `Authorization` header, so the browser preflights those calls, and a preflight
 that does not allow `authorization` breaks every authenticated request in the browser while every Python test
 passes. An endpoint that answers 404 is reported as "not deployed yet" rather than a failure, so the same
 command is useful before and after the backend deploy.
 
 ### Checking the thing you upload
-
 Every browser check above runs against `dist/teutasteel-website/browser`, which is what the archive is made
 from — but not what gets uploaded. Before uploading, check the archive itself:
 
