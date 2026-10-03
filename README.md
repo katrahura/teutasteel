@@ -81,11 +81,19 @@ Add new strings to both `al.json` and `en.json`; `en.json` is the fallback.
 ## Deploying
 
 1. `npm run build`
-2. upload the contents of `dist/teutasteel-website/browser/` to the web root (the `server/` folder is
-   only needed on a Node host that runs the SSR entry)
-3. prerendered pages exist for `/`, `/products`, `/about`, `/contact` and `/login`; the host must serve
-   `<path>/index.html` for those and fall back to `/index.html` for anything else
-4. `robots.txt`, `sitemap.xml`, `manifest.json` and `icons/` are copied from `public/` into the build
+2. `python tools/make_release.py` — writes `dist/release/teutasteel-frontend-<date>.zip`: the contents of
+   `dist/teutasteel-website/browser/`, plus an `.htaccess` (caching, compression, the WebP MIME type) and a
+   short README for whoever uploads it. It refuses to package a build older than the sources, and checks
+   that the pages, robots, sitemap, manifest and icons are all present before writing anything.
+3. upload the contents of that archive to the web root (the `server/` folder is only needed on a Node host
+   that runs the SSR entry, and is not in the archive)
+4. prerendered pages exist for `/`, `/products`, `/about`, `/contact`, `/login`, `/admin-dashboard` and
+   `/user-dashboard`; the host must serve `<path>/index.html` for those
+5. `robots.txt`, `sitemap.xml`, `manifest.json` and `icons/` are copied from `public/` into the build
+
+The site being replaced is a Bootstrap Studio export whose folders are still on the server
+(`assets/css/`, `assets/img/`, …). Nothing in this build overwrites them; they are unused once the new site
+is live, and the release README says so.
 
 The site sits behind Cloudflare, and two of its behaviours are worth knowing:
 
