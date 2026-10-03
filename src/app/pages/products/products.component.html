@@ -47,6 +47,18 @@
                 >
                   {{ "MISC.EDIT" | translate }}
                 </button>
+                <!-- A top-level category can hold products of its own, and the button
+                     that chooses a category for a new product only existed on the child
+                     cards. On a catalogue where nothing has a parent yet - which is the
+                     state after the parent_id migration - that made creating a product
+                     impossible. -->
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-sm"
+                  (click)="showProducts(parent)"
+                >
+                  {{ "PRODUCTS.VIEW_PRODUCTS_BUTTON" | translate }}
+                </button>
               </div>
             </div>
 

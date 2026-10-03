@@ -148,4 +148,27 @@ describe('ProductsComponent', () => {
       original_path: '',
     });
   });
+
+  it('offers a way to see the products of a top-level category', () => {
+    // Regression: the button that chooses the category a new product goes into existed
+    // only on child cards, so a top-level category could never be selected. After the
+    // parent_id migration every category is top-level, which made creating a product
+    // impossible from the interface.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+    setToken('jwt-123');
+
+    const localFixture = TestBed.createComponent(ProductsComponent);
+    localFixture.detectChanges();
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([
+      { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null },
+    ]);
+    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
+    localFixture.detectChanges();
+
+    // the translation may arrive as the key rather than the sentence in a unit test
+    const buttons = [...localFixture.nativeElement.querySelectorAll('button')]
+      .map((button: HTMLButtonElement) => (button.textContent || '').trim());
+    expect(buttons.some((text: string) => /view products|VIEW_PRODUCTS|shiko produkte/i.test(text))).toBeTrue();
+    clearToken();
+  });
 });

@@ -170,19 +170,27 @@ record('the category exists', !!category, category ? `id ${category.id}` : '');
 // ---- 2. create a product inside it ----------------------------------------------
 console.log(`\n=== 2. create the product ${PRODUCT_CODE} in it ===`);
 if (category) {
-  await evaluate(`(() => {
-    const toggle = [...document.querySelectorAll('.parent-toggle')]
-      .find((t) => t.textContent.includes(${JSON.stringify(CATEGORY_NAME)}));
+  // Scope the click to the new category's own card. Clicking the first "View Products"
+  // on the page selected a *child* of another category instead, so the product was
+  // created somewhere else - the assertions below now check where it landed.
+  console.log('   ' + await evaluate(`(() => {
+    const card = [...document.querySelectorAll('.col-12')]
+      .find((el) => el.querySelector('.parent-toggle') && (el.innerText || '').includes(${JSON.stringify(CATEGORY_NAME)}));
+    if (!card) return 'the new category has no card';
+    const toggle = card.querySelector('.parent-toggle');
     if (toggle) toggle.click();
-    return !!toggle;
-  })()`);
+    return 'expanded ${CATEGORY_NAME}';
+  })()`));
   await wait(3000);
-  await evaluate(`(() => {
-    const view = [...document.querySelectorAll('button, a')]
-      .find((el) => /View Products|Shiko Produktet/i.test(el.textContent || ''));
-    if (view) view.click();
-    return !!view;
-  })()`);
+  console.log('   ' + await evaluate(`(() => {
+    const card = [...document.querySelectorAll('.col-12')]
+      .find((el) => (el.innerText || '').includes(${JSON.stringify(CATEGORY_NAME)}));
+    const view = card ? [...card.querySelectorAll('button, a')]
+      .find((el) => /View Products|Shiko Produktet/i.test(el.textContent || '')) : null;
+    if (!view) return 'no View Products button in the new category';
+    view.click();
+    return 'clicked View Products';
+  })()`));
   await wait(4500);
 
   await evaluate(openModal('Create New Product|Krijo Produkt'));
@@ -204,6 +212,12 @@ if (category) {
   const product = (all.body || []).find((item) => item.code === PRODUCT_CODE);
   record('the product exists', !!product, product ? `id ${product.id}` : '');
   if (product) {
+    // ProductSchema excludes category_id, so the only honest way to ask where it landed
+    // is to list the category's products and look for it there.
+    const listing = await api(`/category/${category.id}?per_page=50&lang=en`);
+    const codes = ((listing.body || {}).products || []).map((item) => item.code);
+    record('it is in the category it was created from', codes.includes(PRODUCT_CODE),
+           codes.length ? codes.join(', ') : '(that category is empty)');
     record('its translation came through', product.description === 'UI flow product',
            JSON.stringify(product.description));
     record('its dimension came through', (product.dimensions || []).length === 1,
@@ -224,6 +238,77 @@ if (category) {
   const after = await api('/product/');
   const changed = (after.body || []).find((item) => item.code === edited);
   record('the edit was saved', !!changed, changed ? `code now ${changed.code}` : 'not found');
+}
+
+// ---- 4. edit a category through the form ----------------------------------------
+// Two cases: the category created above (which has an image), and a second one created
+// with no image at all - the dialog binds to plain component fields rather than into
+// selectedCategory.image_asset, so it should be safe, and this is how that gets checked
+// rather than assumed.
+console.log('\n=== 4. edit a category ===');
+const noImageName = `${CATEGORY_NAME} noimg`;
+
+async function editCategory(marker, newTitle) {
+  await send('Page.navigate', { url: BASE + '/products' });
+  await wait(9000);
+  console.log('   ' + await evaluate(`(() => {
+    const rows = [...document.querySelectorAll('.parent-row, .category-group, .card, .group-card, div')]
+      .filter((el) => el.querySelector('.edit-btn') && (el.innerText || '').includes(${JSON.stringify(marker)}));
+    const row = rows[rows.length - 1];
+    if (!row) return 'row with an edit button not found';
+    const button = row.querySelector('.edit-btn');
+    button.click();
+    return 'clicked ' + (button.textContent || '').trim().slice(0, 20);
+  })()`));
+  await wait(3000);
+  console.log('   modal:', JSON.stringify(await evaluate(modalState)));
+  await evaluate(fill('editCategoryTitle', newTitle));
+  console.log('   submit:', await evaluate(submit('Save|Ruaj')));
+  await wait(4500);
+  console.log('   after :', JSON.stringify(await evaluate(modalState)));
+
+  const listed = await api('/category/top');
+  return (listed.body || []).find((item) => item.title === newTitle);
+}
+
+// 4a: the category created in step 1, which has an image
+const renamed = await editCategory(CATEGORY_NAME, `${CATEGORY_NAME} edited`);
+record('editing a category with an image was saved', !!renamed,
+       renamed ? `id ${renamed.id}` : 'title unchanged');
+
+// 4b: a category with no image at all
+await send('Page.navigate', { url: BASE + '/products' });
+await wait(9000);
+await evaluate(openModal('Create New Category|Krijo Kategori'));
+await wait(2500);
+await evaluate(fill('categoryTitle', noImageName));
+console.log(`\n   --- created "${noImageName}" with no image ---`);
+console.log('   submit:', await evaluate(submit('Create|Save|Krijo|Ruaj')));
+await wait(4000);
+const plain = (await api('/category/top')).body?.find((item) => item.title === noImageName);
+record('a category with no image can be created', !!plain, plain ? `id ${plain.id}` : '');
+
+if (plain) {
+  const renamedPlain = await editCategory(noImageName, `${noImageName} edited`);
+  record('editing a category with no image was saved', !!renamedPlain,
+         renamedPlain ? `id ${renamedPlain.id}` : 'title unchanged');
+}
+
+// ---- 5. tidy up, so the tool can be run again ------------------------------------
+console.log('\n=== 5. removing what this run created ===');
+for (const category of (await api('/category/top')).body || []) {
+  if (category.title.startsWith(CATEGORY_NAME)) {
+    const response = await fetch(`${API}/category/${category.id}`,
+                                 { method: 'DELETE', headers: { Authorization: `Bearer ${TOKEN}` } });
+    console.log(`   deleted "${category.title}" -> ${response.status}`);
+  }
+}
+for (const product of (await api('/product/')).body || []) {
+  if ((product.code || '').startsWith('UI-')) {
+    const response = await fetch(`${API}/product/delete/${product.id}`,
+                                 { method: 'DELETE', headers: { Authorization: `Bearer ${TOKEN}` } });
+    console.log(`   deleted product ${product.code} -> ${response.status}`);
+  }
 }
 
 console.log(`\nconsole errors: ${errors.length}`);
