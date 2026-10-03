@@ -206,6 +206,11 @@
     "LOGIN": "Hyrje",
     "INVALID": "Emri i përdoruesit ose fjalëkalimi është i gabuar."
   },
+  "MOBILE_MENU": {
+    "OPEN": "Hap menunë",
+    "CLOSE": "Mbyll menunë",
+    "NAVIGATION": "Navigimi për celular"
+  },
   "SEO": {
     "HOME_TITLE": "TeutaSteel | Produkte Çeliku të Galvanizuar dhe Përpunim CNC",
     "HOME_DESCRIPTION": "TeutaSteel ofron produkte çeliku të galvanizuar dhe shërbime profesionale përpunimi — prerje CNC, lakim tubash dhe zgjidhje të personalizuara. Kontaktoni për një ofertë.",

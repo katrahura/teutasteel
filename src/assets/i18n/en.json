@@ -165,6 +165,11 @@
     "LOGIN": "Login",
     "INVALID": "Invalid username or password."
   },
+  "MOBILE_MENU": {
+    "OPEN": "Open menu",
+    "CLOSE": "Close menu",
+    "NAVIGATION": "Mobile navigation"
+  },
   "SEO": {
     "HOME_TITLE": "TeutaSteel | Galvanized Steel Products and CNC Processing",
     "HOME_DESCRIPTION": "TeutaSteel supplies galvanized steel products and professional processing — CNC cutting, pipe bending and custom steel solutions. Contact us for a quote.",

@@ -7,7 +7,7 @@
   </div>
 
   <!-- Brand (centered logo/name) -->
-  <a class="brand" routerLink="/" aria-label="Home">
+  <a class="brand" routerLink="/" [attr.aria-label]="'NAVBAR.HOME' | translate">
     <!-- <img class="brand-logo" src="assets/logo.svg" alt="YourBrand logo" /> -->
     <span class="brand-name">Teuta Steel</span>
   </a>
@@ -19,7 +19,7 @@
     (click)="toggle()"
     [attr.aria-expanded]="open"
     aria-controls="mnav-sheet"
-    aria-label="Open menu"
+    [attr.aria-label]="'MOBILE_MENU.OPEN' | translate"
   >
     <span class="sr-only">Menu</span>
     <span class="mnav-bar"></span>
@@ -29,14 +29,14 @@
 </header>
 
 <!-- Off-canvas drawer -->
-<nav id="mnav-sheet" class="mnav-sheet" [class.open]="open" aria-label="Mobile navigation">
+<nav id="mnav-sheet" class="mnav-sheet" [class.open]="open" [attr.aria-label]="'MOBILE_MENU.NAVIGATION' | translate">
   <div class="mnav-panel" role="dialog" aria-modal="true" aria-labelledby="mnav-title">
     <div class="mnav-top">
       <a class="brand small" routerLink="/" (click)="close()">
         <img class="brand-logo" src="assets/logo.svg" alt="" />
         <span id="mnav-title" class="brand-name">Teuta Steel</span>
       </a>
-      <button class="mnav-close" type="button" (click)="close()" aria-label="Close menu">✕</button>
+      <button class="mnav-close" type="button" (click)="close()" [attr.aria-label]="'MOBILE_MENU.CLOSE' | translate">✕</button>
     </div>
 
     <ul class="mnav-links" role="menu">
