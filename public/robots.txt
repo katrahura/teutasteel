@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Private pages (they are also behind the login guard)
+Disallow: /admin-dashboard
+Disallow: /user-dashboard
+Disallow: /login
+
+Sitemap: https://www.teutasteel.com/sitemap.xml
