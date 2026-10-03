@@ -342,7 +342,10 @@ private loadCategoryGroups(): void {
       this.showingGroups = true; // ensure group view
     },
     error: (err) => {
-      this.groupsError = err?.error?.message || 'Failed to load categories';
+      // Store the translation key, not a resolved string: instant() runs before
+      // the language file has finished loading and would render the raw key.
+      console.error('Error occurred while fetching category groups:', err);
+      this.groupsError = 'PRODUCTS.LOAD_ERROR';
       this.loadingGroups = false;
     }
   });

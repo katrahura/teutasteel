@@ -101,7 +101,8 @@
     "HEIGHT": "Lartësia",
     "LENGTH": "Gjatësia",
     "WIDTH": "Gjerësia",
-    "CONTACT_WHATSAPP": "Na kontaktoni në WhatsApp"
+    "CONTACT_WHATSAPP": "Na kontaktoni në WhatsApp",
+    "LOAD_ERROR": "Katalogu i produkteve është përkohësisht i padisponueshëm. Ju lutemi provoni përsëri më vonë."
   },
   "MODAL": {
     "CLOSE": "Mbyll",

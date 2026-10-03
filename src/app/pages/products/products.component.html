@@ -12,7 +12,7 @@
       style="height: 120px; margin-bottom: 12px"
       aria-hidden="true"
     ></div>
-    <div *ngIf="groupsError" class="alert alert-danger">{{ groupsError }}</div>
+    <div *ngIf="groupsError" class="alert alert-danger">{{ groupsError | translate }}</div>
 
     <!-- ONE PARENT PER ROW -->
     <div class="row g-3" *ngIf="!loadingGroups && !groupsError">

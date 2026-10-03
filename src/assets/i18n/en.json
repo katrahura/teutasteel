@@ -61,7 +61,8 @@
     "HEIGHT": "Height",
     "LENGTH": "Length",
     "WIDTH": "Width",
-    "CONTACT_WHATSAPP": "Contact on WhatsApp"
+    "CONTACT_WHATSAPP": "Contact on WhatsApp",
+    "LOAD_ERROR": "The product catalogue is temporarily unavailable. Please try again later."
   },
   "MODAL": {
     "CLOSE": "Close",
