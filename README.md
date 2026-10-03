@@ -85,7 +85,21 @@ Add new strings to both `al.json` and `en.json`; `en.json` is the fallback.
    only needed on a Node host that runs the SSR entry)
 3. prerendered pages exist for `/`, `/products`, `/about`, `/contact` and `/login`; the host must serve
    `<path>/index.html` for those and fall back to `/index.html` for anything else
-4. `robots.txt` and `sitemap.xml` are copied from `public/` into the build
+4. `robots.txt`, `sitemap.xml`, `manifest.json` and `icons/` are copied from `public/` into the build
+
+The site sits behind Cloudflare, and two of its behaviours are worth knowing:
+
+- it **injects a "content signals" policy into `robots.txt`** (a rights reservation about AI crawling).
+  The API host proves this is Cloudflare's, not a file: `api.teutasteel.com/robots.txt` returns the same
+  text even though that app has no such route. So don't be surprised by it, and don't try to remove it —
+  the `robots.txt` in `public/` is served alongside it.
+- HTML is reported as `DYNAMIC` (not cached), and the build's asset names are content-hashed, so a deploy
+  does not need a cache purge. If a caching rule for HTML is ever added, purge after deploying, or visitors
+  keep an old `index.html` that points at asset names which no longer exist.
+
+The web app manifest keeps the site installable on a phone, as the previous site's `manifest.json` did. Its
+icons are rendered from `assets/logo.svg` into `public/icons/icon-192.png` and `icon-512.png` (the old
+manifest pointed at `assets/img/final.png`, an image this build does not contain).
 
 Until the API has the newer endpoints deployed (`/category/top`, `/category/<id>/children`, `/category/tree`),
 the catalogue stays empty and the products page shows a translated "catalogue temporarily unavailable"

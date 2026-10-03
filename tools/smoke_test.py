@@ -96,11 +96,23 @@ for route in ("products", "about", "contact"):
           f"({canonical.group(1) if canonical else 'no canonical'})")
 
 status, robots, _ = fetch(f"{SITE_URL}/robots.txt")
-check("robots.txt is served", status == 200 and "Sitemap:" in robots)
+check("robots.txt is served", status == 200 and "Sitemap:" in robots,
+      "(Cloudflare also injects its content-signals policy into this file)")
 
 status, sitemap, _ = fetch(f"{SITE_URL}/sitemap.xml")
 check("the sitemap is served", status == 200 and "</urlset>" in sitemap,
       f"({len(re.findall(r'<loc>', sitemap or ''))} urls)")
+
+status, manifest_text, _ = fetch(f"{SITE_URL}/manifest.json")
+manifest = as_json(manifest_text) if status == 200 else None
+check("the web app manifest is served", status == 200 and isinstance(manifest, dict),
+      f"(status {status})")
+if isinstance(manifest, dict):
+    icons = manifest.get("icons") or []
+    check("it declares icons", len(icons) >= 2, f"({len(icons)})")
+    for icon in icons[:2]:
+        icon_status, _, _ = fetch(f"{SITE_URL}/{icon['src'].lstrip('/')}")
+        check(f"the icon {icon['src']} is served", icon_status == 200, f"(status {icon_status})")
 
 print("\nthe api")
 status, body, _ = fetch(f"{API_URL}/category/top")
