@@ -5,6 +5,7 @@ import { fromEvent, Subscription, filter, debounceTime } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedService } from '../../shared.service';
+import { setStoredLanguage } from '../language-storage';
 
 @Component({
   selector: 'app-mobile-nav',
@@ -31,7 +32,7 @@ export class MobileNavComponent {
         .subscribe(() => this.close()),
 
       fromEvent(window, 'resize').pipe(debounceTime(150))
-        .subscribe(() => { if (window.innerWidth >= 900) this.close(); })
+        .subscribe(() => { if (window.innerWidth >= 992) this.close(); })
     );
   }
 
@@ -54,6 +55,7 @@ export class MobileNavComponent {
   }  
   
   switchLanguage(language: string) {
+    setStoredLanguage(language);
     this.shared.setLang(language);
     this.translate.use(language); // Switch the language in ngx-translate
   }

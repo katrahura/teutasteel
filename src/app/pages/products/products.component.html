@@ -32,7 +32,7 @@
   [attr.aria-expanded]="expandedParentId === parent.id"
   [attr.aria-controls]="'children-' + parent.id"
 >
-  <span class="fw-semibold">{{ parent.title }}</span>
+  <span class="fw-semibold">{{ getTranslatedCategoryTitle(parent) }}</span>
   <span class="arrow" [class.rotate-90]="expandedParentId === parent.id">▸</span>
 </button>
 
@@ -72,7 +72,7 @@
                         "
                         class="category-image"
                         [alt]="
-                          child.image_asset?.alternative_text || child.title
+                          child.image_asset?.alternative_text || getTranslatedCategoryTitle(child)
                         "
                         loading="lazy"
                       />
@@ -172,7 +172,7 @@
                 'assets/images/placeholder_category.jpg'
               "
               class="category-image"
-              [alt]="category.image_asset?.alternative_text || category.title"
+              [alt]="category.image_asset?.alternative_text || getTranslatedCategoryTitle(category)"
             />
           </div> -->
 <!-- Category Details -->

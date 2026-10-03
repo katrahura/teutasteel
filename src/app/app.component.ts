@@ -8,6 +8,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { RouterOutlet } from '@angular/router';
 import { MobileNavComponent } from './shared/mobile-nav/mobile-nav.component';
 import { SharedService } from './shared.service';
+import { getStoredLanguage, setStoredLanguage } from './shared/language-storage';
 
 @Component({
   selector: 'app-root',
@@ -37,9 +38,10 @@ export class AppComponent {
   
   constructor(private router: Router,private translate: TranslateService,public shared: SharedService) {
     // Detect route changes and update the currentRoute variable
+    const language = getStoredLanguage() ?? 'al';
     this.translate.setDefaultLang('al');
-    this.translate.use('al'); // Make the default language the active one (currentLang was left undefined)
-    this.shared.setLang("al");
+    this.translate.use(language); // Make the active language explicit (currentLang was left undefined)
+    this.shared.setLang(language);
 
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -60,6 +62,7 @@ export class AppComponent {
     }
   }
   switchLanguage(language: string) {
+    setStoredLanguage(language);
     this.shared.setLang(language);
     this.translate.use(language); // Switch the language in ngx-translate
   }
