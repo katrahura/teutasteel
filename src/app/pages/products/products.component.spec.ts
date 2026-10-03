@@ -191,4 +191,25 @@ describe('ProductsComponent', () => {
     expect(badges.some((text: string) => /inactive|jo aktiv|INACTIVE/i.test(text))).toBeTrue();
     clearToken();
   });
+
+  it('does not offer a "top category" control', () => {
+    // It was the legacy flag. The site groups by parent_id, so the control changed nothing
+    // about where a category appeared - and the backend now derives the flag from the
+    // parent, so a control would be overwritten anyway. "Parent category: none" is what
+    // makes a category top level.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+    setToken('jwt-123');
+
+    const localFixture = TestBed.createComponent(ProductsComponent);
+    localFixture.detectChanges();
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([
+      { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null },
+    ]);
+    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
+    localFixture.detectChanges();
+
+    expect(localFixture.nativeElement.querySelector('#categoryTop')).toBeNull();
+    expect(localFixture.nativeElement.querySelector('#topCategory')).toBeNull();
+    clearToken();
+  });
 });

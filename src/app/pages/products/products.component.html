@@ -302,21 +302,10 @@
               <option [value]="false">{{ "MISC.NO" | translate }}</option>
             </select>
           </div>
-          <!-- Top Category -->
-          <div class="mb-3">
-            <label for="categoryTop" class="form-label">{{
-              "MISC.TOP_CATEGORY" | translate
-            }}</label>
-            <select
-              id="categoryTop"
-              class="form-select"
-              [(ngModel)]="newCategory.top_category"
-              name="top_category"
-            >
-              <option [value]="true">{{ "MISC.YES" | translate }}</option>
-              <option [value]="false">{{ "MISC.NO" | translate }}</option>
-            </select>
-          </div>
+          <!-- No "top category" switch here. It was the legacy flag, and the site groups
+               by the parent below - so the switch was ignored, and a category could be
+               filed as a subcategory by its parent and as a main group by the flag.
+               "Parent category: none" is what makes a category top level. -->
           <!-- Parent category -->
           <div class="mb-3">
             <label for="categoryParent" class="form-label">{{
@@ -1301,22 +1290,8 @@
             </div>
           </div>
 
-          <!-- Top Category -->
-          <div class="mb-3">
-            <div class="form-check">
-              <input
-                type="checkbox"
-                class="form-check-input"
-                id="topCategory"
-                [(ngModel)]="topCategory"
-                name="top_category"
-              />
-              <label class="form-check-label" for="topCategory">
-                {{ "MISC.TOP_CATEGORY" | translate }}
-              </label>
-            </div>
-          </div>
-
+          <!-- No "top category" checkbox here either: the parent below is what decides,
+               and the backend keeps the legacy flag in step with it. -->
           <!-- Parent category -->
           <div class="mb-3">
             <label for="editCategoryParent" class="form-label">{{

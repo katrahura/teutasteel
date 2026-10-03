@@ -49,7 +49,9 @@
       id?: number;
       title: string;
       is_active: boolean;
-      top_category:boolean;
+      /** Legacy flag. The API returns it and keeps it in step with parent_id; the client
+       *  never sends it, because the parent is what decides the grouping. */
+      top_category?: boolean;
       /** Parent category, or null/absent for a top-level category. */
       parent_id?: number | null;
       image_asset?: ImageAsset;
@@ -60,7 +62,7 @@
       id?: number;
       title: string;
       is_active: boolean;
-      top_category:boolean;
+      top_category?: boolean;
       image_asset?: ImageAsset;
     }
     

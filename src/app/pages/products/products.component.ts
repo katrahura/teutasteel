@@ -80,7 +80,8 @@ toggleParent(parentId: number) {
     return {
       title: '',
       is_active: true,
-      top_category: true,
+      // top_category is not sent: the backend derives it from the parent, so that the
+      // legacy flag and the grouping can never disagree.
       image_asset: {
         file_name: '',
         alternative_text: '',
@@ -686,16 +687,6 @@ this.showProducts(this.selectedCategory)
   set isActive(value: boolean) {
     if (this.selectedCategory) {
       this.selectedCategory.is_active = value;
-    }
-  }
-  
-  get topCategory(): boolean {
-    return !!this.selectedCategory?.top_category;
-  }
-  
-  set topCategory(value: boolean) {
-    if (this.selectedCategory) {
-      this.selectedCategory.top_category = value;
     }
   }
   
