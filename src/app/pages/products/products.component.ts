@@ -295,6 +295,15 @@ toggleParent(parentId: number) {
       // Only the browser fetches data: prerendering/SSR must not call the API.
       if (isPlatformBrowser(this.platformId)) {
         this.loadCategoryGroups();
+        // Product descriptions come from the API per language, so reload the
+        // open product list when the visitor switches language.
+        this.subscriptions.push(
+          this.translate.onLangChange.subscribe(() => {
+            if (this.selectedCategory?.id) {
+              this.loadCategoryWithProducts(this.selectedCategory.id, this.currentPage);
+            }
+          })
+        );
       }
     // this.loadCategories();
     this.isLoggedIn= this.authService.isAuthenticated();
@@ -578,7 +587,10 @@ this.showProducts(this.selectedCategory)
   }
   loadCategoryWithProducts(category_id: number, page: number = 1) {
     this.isLoading=true;
-    const sub = this.productService.getCategoryById(category_id, page).subscribe({
+    // Product text (description/slug) is stored per language in the API, so the
+    // requested language has to travel with the request.
+    const lang = this.currentLanguage();
+    const sub = this.productService.getCategoryById(category_id, page, 8, lang).subscribe({
       next: (categoryResponse: CategoryResponse) => {
         this.products = categoryResponse.products || [];
         this.currentPage = categoryResponse.pagination.page;
@@ -591,6 +603,10 @@ this.showProducts(this.selectedCategory)
       },
     });
     this.subscriptions.push(sub);
+  }
+
+  private currentLanguage(): string {
+    return this.translate.currentLang || this.translate.getDefaultLang() || 'en';
   }
 
   loadNextPage() {

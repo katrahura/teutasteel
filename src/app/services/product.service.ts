@@ -88,8 +88,8 @@ export class ProductService {
   // Method to get a single category by ID, including its products
 
 
-  getCategoryById(category_id: number, page: number = 1, perPage: number = 8): Observable<CategoryResponse> {
-    const url = `${this.apiUrl}/category/${category_id}?page=${page}&per_page=${perPage}`;
+  getCategoryById(category_id: number, page: number = 1, perPage: number = 8, lang: string = 'en'): Observable<CategoryResponse> {
+    const url = `${this.apiUrl}/category/${category_id}?page=${page}&per_page=${perPage}&lang=${lang}`;
     return this.http.get<CategoryResponse>(url, { headers: this.getAuthHeaders() })
       .pipe(
         retry(4),
