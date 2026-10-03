@@ -1,9 +1,9 @@
 <!-- CATEGORY GROUPS VIEW -->
 <section *ngIf="showingGroups" class="groups-section py-5" @fadeInOut>
   <div class="container">
-    <h2 class="text-center mb-5 mt-5">
+    <h1 class="h2 text-center mb-5 mt-5">
       {{ "PRODUCTS.GROUPS_TITLE" | translate }}
-    </h2>
+    </h1>
 
     <!-- Loading / Error -->
     <div
@@ -638,9 +638,9 @@
   *ngIf="!showingGroups && selectedCategory"
 >
   <div class="container">
-    <h2 class="text-center mb-5 mt-5">
-      {{ selectedCategory.title }} {{ "PRODUCTS.PRODUCTS_TITLE" | translate }}
-    </h2>
+    <h1 class="h2 text-center mb-5 mt-5">
+      {{ getTranslatedCategoryTitle(selectedCategory) }} {{ "PRODUCTS.PRODUCTS_TITLE" | translate }}
+    </h1>
     <button class="btn btn-secondary mb-1" (click)="goBackToGroups()">
       {{ "PRODUCTS.BACK_TO_GROUPS_BUTTON" | translate }}
     </button>
