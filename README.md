@@ -137,6 +137,7 @@ Keyboard access is checked the same way, with the same Chrome running:
 ```powershell
 node --experimental-websocket tools\keyboard_audit.mjs   # both widths, every page
 node --experimental-websocket tools\drawer_check.mjs     # the mobile menu's behaviour
+node --experimental-websocket tools\icon_check.mjs       # the icons still draw
 ```
 
 `keyboard_audit.mjs` sends real Tab presses at 390 px and 1280 px wide and fails anything that takes focus

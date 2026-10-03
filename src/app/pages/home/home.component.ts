@@ -29,10 +29,10 @@ export class HomeComponent implements OnDestroy {
    */
   readonly services = [
     { image: 'assets/images/cnc.jpg', titleKey: 'MISC.CNC_METAL_CUTTING', textKey: 'MISC.SERVICE_CNC_DESC' },
-    { image: 'assets/images/hyd.png', titleKey: 'MISC.SHEET_METAL_CUTTING', textKey: 'MISC.SERVICE_PLATES_DESC' },
+    { image: 'assets/images/hyd.webp', titleKey: 'MISC.SHEET_METAL_CUTTING', textKey: 'MISC.SERVICE_PLATES_DESC' },
     { image: 'assets/images/profiles.jpg', titleKey: 'MISC.PROFILE_AND_PIPE_CUTTING', textKey: 'MISC.SERVICE_PROFILES_DESC' },
-    { image: 'assets/images/bend.png', titleKey: 'MISC.PIPE_BENDING', textKey: 'MISC.SERVICE_BENDING_DESC' },
-    { image: 'assets/images/decor.png', titleKey: 'MISC.PIPE_DECORATION', textKey: 'MISC.SERVICE_DECORATION_DESC' },
+    { image: 'assets/images/bend.webp', titleKey: 'MISC.PIPE_BENDING', textKey: 'MISC.SERVICE_BENDING_DESC' },
+    { image: 'assets/images/decor.webp', titleKey: 'MISC.PIPE_DECORATION', textKey: 'MISC.SERVICE_DECORATION_DESC' },
   ];
 
   constructor(
