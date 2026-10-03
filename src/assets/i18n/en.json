@@ -165,6 +165,18 @@
     "LOGIN": "Login",
     "INVALID": "Invalid username or password."
   },
+  "SEO": {
+    "HOME_TITLE": "TeutaSteel | Galvanized Steel Products and CNC Processing",
+    "HOME_DESCRIPTION": "TeutaSteel supplies galvanized steel products and professional processing — CNC cutting, pipe bending and custom steel solutions. Contact us for a quote.",
+    "PRODUCTS_TITLE": "Products | TeutaSteel",
+    "PRODUCTS_DESCRIPTION": "Our steel catalogue: door sheets, door tops and square tubes, with dimensions and prices for each product.",
+    "ABOUT_TITLE": "About Us | TeutaSteel",
+    "ABOUT_DESCRIPTION": "Who we are, what we work with and how we deliver steel products and processing services.",
+    "CONTACT_TITLE": "Contact | TeutaSteel",
+    "CONTACT_DESCRIPTION": "Address, phone, email and WhatsApp — get in touch with TeutaSteel for steel products and processing.",
+    "PRIVATE_TITLE": "TeutaSteel",
+    "PRIVATE_DESCRIPTION": "TeutaSteel steel products and processing."
+  },
   "USER_DASHBOARD": {
     "USER_NAME": "User Name",
     "USER_DASHBOARD": "User Dashboard",

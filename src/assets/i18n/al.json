@@ -206,6 +206,18 @@
     "LOGIN": "Hyrje",
     "INVALID": "Emri i përdoruesit ose fjalëkalimi është i gabuar."
   },
+  "SEO": {
+    "HOME_TITLE": "TeutaSteel | Produkte Çeliku të Galvanizuar dhe Përpunim CNC",
+    "HOME_DESCRIPTION": "TeutaSteel ofron produkte çeliku të galvanizuar dhe shërbime profesionale përpunimi — prerje CNC, lakim tubash dhe zgjidhje të personalizuara. Kontaktoni për një ofertë.",
+    "PRODUCTS_TITLE": "Produkte | TeutaSteel",
+    "PRODUCTS_DESCRIPTION": "Katalogu i produkteve: pllaka dere, dekor sipër dere dhe tuba katrorë, me përmasat dhe çmimet e secilit produkt.",
+    "ABOUT_TITLE": "Rreth Nesh | TeutaSteel",
+    "ABOUT_DESCRIPTION": "Kush jemi, me çfarë punojmë dhe si i dorëzojmë produktet dhe shërbimet e përpunimit të çelikut.",
+    "CONTACT_TITLE": "Kontakt | TeutaSteel",
+    "CONTACT_DESCRIPTION": "Adresa, telefoni, emaili dhe WhatsApp — kontaktoni TeutaSteel për produkte çeliku dhe përpunim.",
+    "PRIVATE_TITLE": "TeutaSteel",
+    "PRIVATE_DESCRIPTION": "Produkte çeliku dhe përpunim nga TeutaSteel."
+  },
   "USER_DASHBOARD": {
     "USER_NAME": "Emri i Përdoruesit",
     "USER_DASHBOARD": "Paneli i Përdoruesit",

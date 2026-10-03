@@ -9,6 +9,7 @@ import { RouterOutlet } from '@angular/router';
 import { MobileNavComponent } from './shared/mobile-nav/mobile-nav.component';
 import { SharedService } from './shared.service';
 import { AuthService } from './services/auth.service';
+import { SeoService } from './shared/seo.service';
 import { getStoredLanguage, setStoredLanguage } from './shared/language-storage';
 
 @Component({
@@ -40,12 +41,16 @@ export class AppComponent {
     return animationData;
   }
   
-  constructor(private router: Router,private translate: TranslateService,public shared: SharedService,private authService: AuthService) {
+  constructor(private router: Router,private translate: TranslateService,public shared: SharedService,private authService: AuthService, seo: SeoService) {
     // Detect route changes and update the currentRoute variable
     const language = getStoredLanguage() ?? 'al';
     this.translate.setDefaultLang('al');
     this.translate.use(language); // Make the active language explicit (currentLang was left undefined)
     this.shared.setLang(language);
+
+    // Constructed here so it is always running: it follows the route and the
+    // language and keeps the title, canonical and <html lang> up to date.
+    void seo;
 
     this.isLoggedIn = this.authService.isAuthenticated();
 
