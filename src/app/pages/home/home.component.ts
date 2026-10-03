@@ -21,6 +21,20 @@ export class HomeComponent implements OnDestroy {
   private subscriptions = new Subscription();
   topCategories: TopCategory[] = [];
 
+  /**
+   * The services the company advertises. The wording and the photographs are the
+   * ones from the site this application replaces ("Shërbimet tona"): an earlier
+   * version of this page listed only three of them, and the third card showed the
+   * hydraulic shear under the heading "Custom Solutions".
+   */
+  readonly services = [
+    { image: 'assets/images/cnc.jpg', titleKey: 'MISC.CNC_METAL_CUTTING', textKey: 'MISC.SERVICE_CNC_DESC' },
+    { image: 'assets/images/hyd.png', titleKey: 'MISC.SHEET_METAL_CUTTING', textKey: 'MISC.SERVICE_PLATES_DESC' },
+    { image: 'assets/images/profiles.jpg', titleKey: 'MISC.PROFILE_AND_PIPE_CUTTING', textKey: 'MISC.SERVICE_PROFILES_DESC' },
+    { image: 'assets/images/bend.png', titleKey: 'MISC.PIPE_BENDING', textKey: 'MISC.SERVICE_BENDING_DESC' },
+    { image: 'assets/images/decor.png', titleKey: 'MISC.PIPE_DECORATION', textKey: 'MISC.SERVICE_DECORATION_DESC' },
+  ];
+
   constructor(
     private sharedService: SharedService,
     private router: Router,

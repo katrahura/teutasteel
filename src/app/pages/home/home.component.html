@@ -58,23 +58,10 @@
   <div class="container">
 <h2 class="text-center mb-5">{{ 'MISC.OUR_SERVICES' | translate }}</h2>
     <div class="row text-center justify-content-center">
-      <!-- CNC Cutting -->
-      <div class="col-md-4 d-flex flex-column align-items-center">
-        <img src="assets/images/cnc.jpg" [alt]="'MISC.CNC_METAL_CUTTING' | translate" class="service-img mb-3">
-<h5>{{ 'MISC.CNC_METAL_CUTTING' | translate }}</h5>
-<p>{{ 'MISC.PRECISION_CNC_CUTTING_FOR_PLATES_PIPES_AND_PROFILES.' | translate }}</p>
-      </div>
-      <!-- Pipe Bending -->
-      <div class="col-md-3 d-flex flex-column align-items-center">
-        <img src="assets/images/bend.png" [alt]="'MISC.PIPE_BENDING' | translate" class="service-img mb-3">
-<h5>{{ 'MISC.PIPE_BENDING' | translate }}</h5>
-<p>{{ 'MISC.HIGH-QUALITY_BENDING_FOR_VARIOUS_STEEL_PIPES_AND_PROFILES.' | translate }}</p>
-      </div>
-      <!-- Custom Solutions -->
-      <div class="col-md-4 d-flex flex-column align-items-center">
-        <img src="assets/images/hyd.png" [alt]="'MISC.CUSTOM_SOLUTIONS' | translate" class="service-img mb-3">
-<h5>{{ 'MISC.CUSTOM_SOLUTIONS' | translate }}</h5>
-<p>{{ 'MISC.TAILORED_STEEL_SOLUTIONS_FOR_CONSTRUCTION_AND_INDUSTRIAL_NEEDS.' | translate }}</p>
+      <div class="col-md-4 d-flex flex-column align-items-center mb-4" *ngFor="let service of services">
+        <img [src]="service.image" [alt]="service.titleKey | translate" class="service-img mb-3" loading="lazy">
+        <h5>{{ service.titleKey | translate }}</h5>
+        <p>{{ service.textKey | translate }}</p>
       </div>
     </div>
   </div>
@@ -127,20 +114,23 @@
     </div>
   </section>
 
-  <!-- Testimonials Section -->
-  <section class="testimonials py-5 bg-light" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
-    <div class="container">
-      <h2 class="text-center mb-5">{{ 'HOME.TESTIMONIALS_TITLE' | translate }}</h2>
-      <div class="row">
-        <div class="col-md-4">
-          <blockquote class="blockquote">
-            <p>{{ 'HOME.TESTIMONIAL_1_TEXT' | translate }}</p>
-            <footer class="blockquote-footer">{{ 'HOME.TESTIMONIAL_1_AUTHOR' | translate }}</footer>
-          </blockquote>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Testimonials Section
+       Removed: the only quote was invented ("We've used their products for years
+       and are very satisfied.") and attributed to "John Doe, Industrial
+       Contractor". Fabricated reviews are a banned commercial practice under the
+       EU Omnibus Directive, and the previous site carried no testimonials at all.
+       Put this section back when there is a real quote and a name to attach to it:
+
+       <section class="testimonials py-5 bg-light">
+         <div class="container">
+           <h2 class="text-center mb-5">{{ 'HOME.TESTIMONIALS_TITLE' | translate }}</h2>
+           <blockquote class="blockquote">
+             <p>{{ 'HOME.TESTIMONIAL_1_TEXT' | translate }}</p>
+             <footer class="blockquote-footer">{{ 'HOME.TESTIMONIAL_1_AUTHOR' | translate }}</footer>
+           </blockquote>
+         </div>
+       </section>
+  -->
 
   <!-- Call-to-Action Section -->
   <section class="cta-section text-center py-5 bg-primary text-white"style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
