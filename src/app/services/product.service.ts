@@ -5,7 +5,7 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import { catchError, Observable, throwError, map, retry } from 'rxjs';
-import { Category, CategoryResponse, Product, TopCategory } from '../models/product.model';
+import { Category, CategoryResponse, ImageAsset, Product, TopCategory } from '../models/product.model';
 import { environment } from '../../environments/environment';
 import { getToken } from './token-storage';
 @Injectable({
@@ -66,24 +66,38 @@ export class ProductService {
     categories: Category[],
     folder: string
   ): Category[] {
-    return categories.map((category) => {
-      if (category.image_asset) {
-        category.image_asset.original_path = `${this.cloudinaryBaseUrl}/${folder}/${category.image_asset.original_path}`;
-        category.image_asset.thumbnail_path = `${this.cloudinaryBaseUrl}/${folder}/${category.image_asset.thumbnail_path}`;
-      }
-      return category;
-    });
+    return categories.map((category) => this.withDeliveredImage(category, folder));
   }
+
   private transformProducts(category: CategoryResponse, folder: string): CategoryResponse {
-    if (category.products) {
-      category.products.forEach((product) => {
-        if (product.image_asset) {
-          product.image_asset.original_path = `${this.cloudinaryBaseUrl}/${folder}/${product.image_asset.original_path}`;
-          product.image_asset.thumbnail_path = `${this.cloudinaryBaseUrl}/${folder}/${product.image_asset.thumbnail_path}`;
-        }
-      });
+    return {
+      ...category,
+      products: (category.products || []).map((product) =>
+        this.withDeliveredImage(product, folder)
+      ),
+    };
+  }
+
+  /**
+   * Returns a copy carrying the Cloudinary delivery URLs. The response objects
+   * used to be mutated in place, so anything holding the same object saw the
+   * prefix applied twice.
+   */
+  private withDeliveredImage<T extends { image_asset?: ImageAsset }>(
+    item: T,
+    folder: string
+  ): T {
+    if (!item.image_asset) {
+      return item;
     }
-    return category;
+    return {
+      ...item,
+      image_asset: {
+        ...item.image_asset,
+        original_path: `${this.cloudinaryBaseUrl}/${folder}/${item.image_asset.original_path}`,
+        thumbnail_path: `${this.cloudinaryBaseUrl}/${folder}/${item.image_asset.thumbnail_path}`,
+      },
+    };
   }
   // Method to get a single category by ID, including its products
 
