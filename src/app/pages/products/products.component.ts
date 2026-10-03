@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { forkJoin, of, switchMap } from 'rxjs';
 
 import { ProductService } from '../../services/product.service';
+import { translateCategoryTitle } from '../../shared/translate-category-title';
 import { environment } from '../../../environments/environment';
 import {
   Category,
@@ -88,14 +89,9 @@ toggleParent(parentId: number) {
       original_path: ''
     },
     }
-    getTranslatedCategoryTitle(category: any): string {
-  const lang = this.translate.currentLang || this.translate.getDefaultLang();
-  if (lang === 'al') {
-    const key = 'CATEGORY.' + category.title.toUpperCase().replace(/ /g, '_');
-    return this.translate.instant(key);
+  getTranslatedCategoryTitle(category: any): string {
+    return translateCategoryTitle(this.translate, category);
   }
-  return category.title;
-}
 
     newProduct: Product = {
       code: '',
