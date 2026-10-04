@@ -1247,6 +1247,19 @@
                 />
               </div>
               <div class="col-md-2">
+                <label for="thickness-{{ i }}" class="form-label">{{
+                  "PRODUCTS.THICKNESS" | translate
+                }}</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="thickness-{{ i }}"
+                  [placeholder]="'PRODUCTS.THICKNESS' | translate"
+                  [(ngModel)]="dimension.thickness"
+                  name="thickness-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
                 <label for="weight-{{ i }}" class="form-label">{{
                   "MISC.WEIGHT" | translate
                 }}</label>
