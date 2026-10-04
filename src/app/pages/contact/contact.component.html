@@ -6,8 +6,11 @@
 
     <div class="mb-4">
       <p><strong>{{ 'CONTACT.PHONE' | translate }}:</strong> <a [href]="'tel:' + phone">{{ phoneDisplay }}</a></p>
-      <p><strong>{{ 'CONTACT.PHONE' | translate }}:</strong> <a [href]="'tel:' + whatsappNumber">{{ whatsappDisplay }}</a></p>
-      <p><strong>{{ 'CONTACT.EMAIL' | translate }}:</strong> <a [href]="'mailto:' + email">{{ email }}</a></p>
+      <!-- Both of these were labelled "Telefoni", and this one's link was built from the
+           digits-only WhatsApp value, so it had no + and would not dial internationally. -->
+      <p><strong>{{ 'CONTACT.WHATSAPP' | translate }}:</strong> <a [href]="'tel:+' + whatsappNumber">{{ whatsappDisplay }}</a></p>
+      <p><strong>{{ 'CONTACT.EMAIL' | translate }}:</strong> <a [href]="'mailto:' + email">{{ email }}</a>
+        <span class="text-muted small">{{ 'CONTACT.EMAIL_FOR_DRAWINGS' | translate }}</span></p>
       <p>
         <strong>{{ 'CONTACT.ADDRESS' | translate }}:</strong>
         {{ location.street }} {{ location.number }}, {{ location.city }}
@@ -66,8 +69,10 @@
     </div>
 
     <div class="d-flex justify-content-center gap-4 mb-5">
-      <a href="https://www.facebook.com/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="bi bi-facebook fs-2" aria-hidden="true"></i></a>
-      <a href="https://www.instagram.com/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram fs-2" aria-hidden="true"></i></a>
+      <!-- These pointed at the profile pages, which is a dead end: a visitor lands on the page and
+           has to find the message button themselves. m.me and ig.me open a conversation. -->
+      <a href="https://m.me/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Messenger"><i class="bi bi-facebook fs-2" aria-hidden="true"></i></a>
+      <a href="https://ig.me/m/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram fs-2" aria-hidden="true"></i></a>
       <a [href]="'https://wa.me/' + whatsappNumber" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp fs-2" aria-hidden="true"></i></a>
       <a href="https://www.tiktok.com/@teutasteel" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="bi bi-tiktok fs-2" aria-hidden="true"></i></a>
     </div>

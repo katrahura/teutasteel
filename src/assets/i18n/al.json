@@ -138,7 +138,9 @@
     "CONTACT_US": "Na Kontaktoni",
     "CONTACT_ON_WHATSAPP": "Na kontaktoni në WhatsApp",
     "VISIT_US": "Na Vizitoni",
-    "MAP_TITLE": "Harta që tregon vendndodhjen e Teuta Steel"
+    "MAP_TITLE": "Harta që tregon vendndodhjen e Teuta Steel",
+    "WHATSAPP": "WhatsApp",
+    "EMAIL_FOR_DRAWINGS": "Për vizatime dhe DXF"
   },
   "ADMIN": {
     "ADMIN_DASHBOARD": "Paneli i Administratorit",
