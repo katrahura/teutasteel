@@ -58,6 +58,7 @@
     "PRODUCTS_TITLE": "Products",
     "BACK_TO_GROUPS_BUTTON": "Back to Groups",
     "DIMENSIONS": "Dimensions",
+    "CHOOSE_THICKNESS": "Choose the thickness you need.",
     "HEIGHT": "Height",
     "DIAMETER": "Diameter",
     "LENGTH": "Length",
@@ -71,6 +72,7 @@
   "MODAL": {
     "CLOSE": "Close",
     "DIMENSIONS": "Dimensions",
+    "CHOOSE_THICKNESS": "Choose the thickness you need.",
     "HEIGHT": "Height",
     "DIAMETER": "Diameter",
     "LENGTH": "Length",

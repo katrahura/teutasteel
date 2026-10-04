@@ -920,46 +920,110 @@
             [innerHTML]="selectedProduct!.content"
           ></div>
           <h6>{{ "PRODUCTS.DIMENSIONS" | translate }}:</h6>
+
+          <!-- What every thickness of this product shares, said once. -->
+          <div
+            class="mb-2"
+            *ngIf="
+              sharedDimensionValue('height') !== null ||
+              sharedDimensionValue('width') !== null ||
+              sharedDimensionValue('length') !== null ||
+              sharedDimensionValue('weight') !== null
+            "
+          >
+            <div *ngIf="sharedDimensionValue('height') !== null">
+              <strong>{{
+                (isRound(selectedProduct) ? "PRODUCTS.DIAMETER" : "PRODUCTS.HEIGHT")
+                  | translate
+              }}:</strong>
+              {{ sharedDimensionValue("height") }} mm
+            </div>
+            <div *ngIf="sharedDimensionValue('width') !== null">
+              <strong>{{ "PRODUCTS.WIDTH" | translate }}:</strong>
+              {{ sharedDimensionValue("width") }} mm
+            </div>
+            <div *ngIf="sharedDimensionValue('length') !== null">
+              <strong>{{ "PRODUCTS.LENGTH" | translate }}:</strong>
+              {{ formatLength(sharedDimensionValue("length")) }}
+            </div>
+            <div *ngIf="sharedDimensionValue('weight') !== null">
+              <strong>{{ "MISC.WEIGHT" | translate }}:</strong>
+              {{ formatWeight(sharedDimensionValue("weight")) }}
+            </div>
+          </div>
+
           <ul
             *ngIf="
               selectedProduct?.dimensions && selectedProduct.dimensions.length
             "
           >
-            <li *ngFor="let dimension of selectedProduct.dimensions">
-              <div *ngIf="showsValue(dimension.height)">
+            <li *ngFor="let dimension of selectedProduct.dimensions; let i = index">
+              <!-- only what differs for this one; a shared block cannot say it -->
+              <div
+                *ngIf="sharedDimensionValue('height') === null && showsValue(dimension.height)"
+              >
                 <strong>{{
                   (isRound(selectedProduct) ? "PRODUCTS.DIAMETER" : "PRODUCTS.HEIGHT")
                     | translate
                 }}:</strong>
                 {{ dimension.height }} mm
               </div>
-              <div *ngIf="showsValue(dimension.width)">
+              <div
+                *ngIf="sharedDimensionValue('width') === null && showsValue(dimension.width)"
+              >
                 <strong>{{ "PRODUCTS.WIDTH" | translate }}:</strong>
                 {{ dimension.width }} mm
               </div>
-              <div *ngIf="showsValue(dimension.thickness)">
-                <strong>{{ "PRODUCTS.THICKNESS" | translate }}:</strong>
-                {{ dimension.thickness }} mm
-              </div>
-              <div *ngIf="showsValue(dimension.length)">
+              <div
+                *ngIf="sharedDimensionValue('length') === null && showsValue(dimension.length)"
+              >
                 <strong>{{ "PRODUCTS.LENGTH" | translate }}:</strong>
                 {{ formatLength(dimension.length) }}
               </div>
-              <div *ngIf="showsValue(dimension.weight)">
+              <div
+                *ngIf="sharedDimensionValue('weight') === null && showsValue(dimension.weight)"
+              >
                 <strong>{{ "MISC.WEIGHT" | translate }}:</strong>
                 {{ formatWeight(dimension.weight) }}
               </div>
-              <div *ngIf="showsValue(dimension.price)">
-                <strong>{{ "MISC.PRICE" | translate }}:</strong>
-                {{ dimension.price }}
-                {{ dimension.currency || "" }}
-              </div>
+              <label
+                class="d-flex align-items-center gap-2 mb-2"
+                *ngIf="showsValue(dimension.thickness) || showsValue(dimension.price)"
+              >
+                <input
+                  type="checkbox"
+                  class="form-check-input mt-0"
+                  [checked]="isChosen(i)"
+                  (change)="toggleDimension(i)"
+                />
+                <span>
+                  <ng-container *ngIf="showsValue(dimension.thickness)">
+                    <strong>{{ "PRODUCTS.THICKNESS" | translate }}:</strong>
+                    {{ dimension.thickness }} mm
+                  </ng-container>
+                  <ng-container *ngIf="showsValue(dimension.price)">
+                    <ng-container *ngIf="showsValue(dimension.thickness)">
+                      &middot;
+                    </ng-container>
+                    <strong>{{ "MISC.PRICE" | translate }}:</strong>
+                    {{ dimension.price }}
+                    {{ dimension.currency || "" }}
+                  </ng-container>
+                </span>
+              </label>
             </li>
           </ul>
+
+          <p class="text-muted small mb-2" *ngIf="!anyChosen()">
+            {{ "PRODUCTS.CHOOSE_THICKNESS" | translate }}
+          </p>
 
           <a
             [href]="getWhatsAppLink(selectedProduct)"
             class="btn btn-success mt-2"
+            [class.disabled]="!anyChosen()"
+            [attr.aria-disabled]="!anyChosen()"
+            (click)="anyChosen() || $event.preventDefault()"
             target="_blank"
             rel="noopener noreferrer"
           >

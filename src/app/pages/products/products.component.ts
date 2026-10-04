@@ -14,6 +14,7 @@ import {
   Category,
   CategoryResponse,
   Product,
+  ProductDimension,
   ImageAsset,
   TopCategory            
 } from '../../models/product.model';
@@ -140,6 +141,7 @@ toggleParent(parentId: number) {
   openModal(product: any, event: Event): void {
     event.stopPropagation(); // Stop event propagation
     this.selectedProduct = product;
+    this.clearChoices();
 
     // Ensure Angular detects the change
 
@@ -605,7 +607,23 @@ this.showProducts(this.selectedCategory)
 
   // Generate WhatsApp link
   getWhatsAppLink(product: Product): string {
-    const message = `Hi, I'm interested in your product: ${product?.code}. Could you provide more details?`;
+    // Say which thickness, or the enquiry is "tell me about 100x100" with no idea which wall.
+    const wanted = ((product?.dimensions || []) as ProductDimension[])
+      .map((dimension: ProductDimension, index: number) => ({ dimension, index }))
+      .filter(({ index }: { index: number }) => this.isChosen(index))
+      .map(({ dimension }: { dimension: ProductDimension }) => {
+        const parts = [];
+        if (dimension.thickness) {
+          parts.push(`thickness ${dimension.thickness} mm`);
+        }
+        if (dimension.price) {
+          parts.push(`${dimension.price} ${dimension.currency || ''}`.trim());
+        }
+        return parts.join(' - ');
+      })
+      .filter(Boolean);
+    const which = wanted.length ? ` I would like: ${wanted.join('; ')}.` : '';
+    const message = `Hi, I'm interested in your product: ${product?.code}.${which} Could you provide more details?`;
     const whatsappNumber = environment.whatsappNumber;
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
       message
@@ -687,6 +705,55 @@ this.showProducts(this.selectedCategory)
   
     const newIndex = (currentIndex + direction + this.products.length) % this.products.length;
     this.selectedProduct = this.products[newIndex];
+    this.clearChoices();
+  }
+
+  /**
+   * Which thicknesses the customer has ticked, by position in the list.
+   *
+   * A product can be several thicknesses of the same size, and those differ only in thickness
+   * and price. The customer ticks the one (or ones) they want, and the WhatsApp message says
+   * which - otherwise the enquiry is "tell me about 100x100" with no idea which wall.
+   */
+  chosenDimensions: { [index: number]: boolean } = {};
+
+  private clearChoices(): void {
+    this.chosenDimensions = {};
+  }
+
+  isChosen(index: number): boolean {
+    return this.chosenDimensions[index] === true;
+  }
+
+  toggleDimension(index: number): void {
+    this.chosenDimensions = {
+      ...this.chosenDimensions,
+      [index]: !this.chosenDimensions[index],
+    };
+  }
+
+  anyChosen(): boolean {
+    return Object.values(this.chosenDimensions).some(Boolean);
+  }
+
+  /**
+   * The value every dimension of this product shares, or null when they differ.
+   *
+   * '20x20, wall 0.9 / 1.3 / 1.5 / 1.8 mm' is one size in four walls, so the size is worth
+   * saying once instead of repeating "Lartësia: 20 mm" four times. Only for products with more
+   * than one dimension: a single one reads better in full, as it always did.
+   */
+  sharedDimensionValue(key: DimensionKey): number | string | null {
+    const dimensions: ProductDimension[] = this.selectedProduct?.dimensions || [];
+    if (dimensions.length < 2) {
+      return null;
+    }
+    const values = dimensions.map((dimension: ProductDimension) => dimension[key]);
+    const first = values[0];
+    const allTheSame = values.every(
+      (value: unknown) => String(value ?? '') === String(first ?? '')
+    );
+    return allTheSame && first !== undefined && first !== null ? first : null;
   }
   editCategory(category: Category): void {
     this.selectedCategory = { ...category }; // Clone to avoid direct mutation

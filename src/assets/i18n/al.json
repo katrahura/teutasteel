@@ -98,6 +98,7 @@
     "PRODUCTS_TITLE": "Produkte",
     "BACK_TO_GROUPS_BUTTON": "Kthehu te Grupet",
     "DIMENSIONS": "Përmasat",
+    "CHOOSE_THICKNESS": "Zgjidhni trashësinë që ju nevojitet.",
     "HEIGHT": "Lartësia",
     "DIAMETER": "Diametri",
     "LENGTH": "Gjatësia",
@@ -111,6 +112,7 @@
   "MODAL": {
     "CLOSE": "Mbyll",
     "DIMENSIONS": "Përmasat",
+    "CHOOSE_THICKNESS": "Zgjidhni trashësinë që ju nevojitet.",
     "HEIGHT": "Lartësia",
     "DIAMETER": "Diametri",
     "LENGTH": "Gjatësia",
