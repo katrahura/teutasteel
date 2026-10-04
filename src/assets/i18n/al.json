@@ -44,7 +44,8 @@
     "PRODUCTS": "Produkte",
     "ABOUT_US": "Rreth Nesh",
     "CONTACT": "Kontaktoni",
-    "LOGIN": "Hyrje"
+    "LOGIN": "Hyrje",
+    "SERVICES": "Shërbimet"
   },
   "FOOTER": {
     "COPYRIGHT": "© 2024 TeutaSteel. Të gjitha të drejtat janë të rezervuara."
@@ -261,5 +262,12 @@
     "SEND": "Dërgo kërkesën në WhatsApp",
     "REQUIRED": "Plotësoni emrin, telefonin dhe produktin që ju nevojitet.",
     "MESSAGE_INTRO": "Përshëndetje, dua një ofertë:"
+  },
+  "SERVICES": {
+    "TITLE": "Shërbimet Tona",
+    "INTRO": "Presim, lakim dhe dekorojmë metal sipas vizatimit tuaj.",
+    "ASK": "Kërko ofertë",
+    "DRAWING_TITLE": "Dërgoni vizatimin",
+    "DRAWING_TEXT": "Nëse keni vizatim, DXF ose foto, shtypni bashkangjit në WhatsApp dhe dërgoni atë. DXF-i është më i saktë sesa fotografia, sepse shkon drejt në makinë."
   }
 }

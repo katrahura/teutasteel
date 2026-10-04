@@ -1,0 +1,36 @@
+<section class="py-5 px-3">
+  <div class="container">
+    <!-- 90px: this header is position absolute, so content starts underneath it. -->
+    <h1 class="h2 text-center mb-3" style="margin-top: 90px">
+      {{ "SERVICES.TITLE" | translate }}
+    </h1>
+    <p class="lead text-center mb-5">{{ "SERVICES.INTRO" | translate }}</p>
+
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-6 col-lg-4" *ngFor="let service of services">
+        <div class="card h-100 shadow-sm">
+          <img
+            [src]="service.image"
+            [alt]="service.titleKey | translate"
+            loading="lazy"
+            style="height: 210px; object-fit: cover"
+          />
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ service.titleKey | translate }}</h5>
+            <p class="card-text flex-grow-1">{{ service.textKey | translate }}</p>
+            <a
+              class="btn btn-success mt-2"
+              [routerLink]="['/contact']"
+              [queryParams]="{ service: service.id }"
+            >{{ "SERVICES.ASK" | translate }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-light border mt-4">
+      <strong>{{ "SERVICES.DRAWING_TITLE" | translate }}</strong>
+      <p class="mb-0">{{ "SERVICES.DRAWING_TEXT" | translate }}</p>
+    </div>
+  </div>
+</section>

@@ -5,7 +5,8 @@
     "PRODUCTS": "Products",
     "ABOUT_US": "About Us",
     "CONTACT": "Contact",
-    "LOGIN": "Login"
+    "LOGIN": "Login",
+    "SERVICES": "Services"
   },
   "FOOTER": {
     "COPYRIGHT": "© 2024 TeutaSteel. All rights reserved."
@@ -222,5 +223,12 @@
     "SEND": "Send the request on WhatsApp",
     "REQUIRED": "Please fill in your name, phone and what you need.",
     "MESSAGE_INTRO": "Hello, I would like a quote:"
+  },
+  "SERVICES": {
+    "TITLE": "Our Services",
+    "INTRO": "We cut, bend and decorate metal to your drawing.",
+    "ASK": "Request a quote",
+    "DRAWING_TITLE": "Send your drawing",
+    "DRAWING_TEXT": "If you have a drawing, a DXF or a photograph, tap attach in WhatsApp and send it. The DXF is more accurate than a photograph, because it goes straight to the machine."
   }
 }
