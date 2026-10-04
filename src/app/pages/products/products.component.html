@@ -1,3 +1,36 @@
+<!-- Search. Outside both views on purpose: it has to be there whether the visitor is looking at
+     the groups or at a set of results, which is exactly what it was not when it lived inside
+     *ngIf="showingGroups" - it disappeared the moment the search hid the groups. -->
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <label class="form-label visually-hidden" for="catalogueSearch">
+        {{ "PRODUCTS.SEARCH" | translate }}
+      </label>
+      <div class="input-group">
+        <span class="input-group-text" aria-hidden="true">🔍</span>
+        <input
+          id="catalogueSearch"
+          type="search"
+          class="form-control"
+          autocomplete="off"
+          [placeholder]="'PRODUCTS.SEARCH_PLACEHOLDER' | translate"
+          [(ngModel)]="searchQuery"
+          (input)="onSearchInput()"
+          (keydown.enter)="runSearch()"
+          name="catalogueSearch"
+        />
+        <button
+          class="btn btn-outline-secondary"
+          type="button"
+          *ngIf="searchTerm"
+          (click)="clearSearch()"
+        >{{ "PRODUCTS.SEARCH_CLEAR" | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- CATEGORY GROUPS VIEW -->
 <section *ngIf="showingGroups" class="groups-section py-5" @fadeInOut>
   <div class="container">
@@ -721,16 +754,22 @@
 <!-- Products Section -->
 <section
   class="products-section py-5"
-  *ngIf="!showingGroups && selectedCategory"
+  *ngIf="!showingGroups && (selectedCategory || searchTerm)"
 >
   <div class="container">
-    <h1 class="h2 text-center mb-5 mt-5">
+    <h1 class="h2 text-center mb-5 mt-5" *ngIf="searchTerm">
+      {{ "PRODUCTS.SEARCH_RESULTS_FOR" | translate }} &ldquo;{{ searchTerm }}&rdquo;
+    </h1>
+    <h1 class="h2 text-center mb-5 mt-5" *ngIf="!searchTerm">
       {{ getTranslatedCategoryTitle(selectedCategory) }} {{ "PRODUCTS.PRODUCTS_TITLE" | translate }}
     </h1>
     <div *ngIf="statusMessage" class="alert alert-success" role="status">{{ statusMessage | translate }}</div>
-    <button class="btn btn-secondary mb-1" (click)="goBackToGroups()">
+    <button class="btn btn-secondary mb-1" (click)="clearSearch()">
       {{ "PRODUCTS.BACK_TO_GROUPS_BUTTON" | translate }}
     </button>
+    <div class="text-center text-muted my-5" *ngIf="searchTerm && !searching && products.length === 0">
+      {{ "PRODUCTS.NO_RESULTS" | translate }}
+    </div>
     <div class="container" *ngIf="!showingGroups && isLoading">
       <div class="row">
         <div class="col-md-3 mb-4" *ngFor="let _ of [1, 2, 3, 4]">

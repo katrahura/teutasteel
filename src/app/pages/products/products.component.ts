@@ -71,6 +71,12 @@ toggleParent(parentId: number) {
   ];
   selectedCategory: Category | null = null;
 
+  /** The search box: what is typed, what was searched, and whether a search is in flight. */
+  searchQuery = '';
+  searchTerm = '';
+  searching = false;
+  private searchTimer: any = null;
+
   /** The group to scroll to once the list has rendered, when the visitor arrived from a card. */
   private scrollToGroupId: number | null = null;
   products: Product[] = [];
@@ -674,7 +680,59 @@ this.showProducts(this.selectedCategory)
     this.showingGroups = true;
     this.selectedCategory = null;
     this.expandedParentId = null;
+    this.searchTerm = '';
     this.products = [];
+  }
+
+  /**
+   * Search the catalogue as the visitor types.
+   *
+   * The catalogue is called by its codes, so this is how someone who knows what they want -
+   * "IPE 100", "15x15" - finds it without guessing which group it was filed under.
+   */
+  onSearchInput(): void {
+    if (this.searchTimer) {
+      clearTimeout(this.searchTimer);
+    }
+    this.searchTimer = setTimeout(() => this.runSearch(), 350);
+  }
+
+  runSearch(): void {
+    const term = this.searchQuery.trim();
+    if (term.length < 2) {
+      return;
+    }
+    this.searching = true;
+    // The skeleton cards are for a category loading. A search that finds eight results would
+    // otherwise sit behind eight placeholders, because this flag was left true by the group load.
+    this.isLoading = false;
+    const sub = this.productService
+      .searchProducts(term, this.translate.currentLang || 'al')
+      .subscribe({
+        next: (results) => {
+          this.products = results;
+          this.searchTerm = term;
+          this.selectedCategory = null;
+          this.showingGroups = false;
+          this.searching = false;
+        },
+        error: () => {
+          // The service has already logged it; show the empty state rather than a stale list.
+          this.products = [];
+          this.searchTerm = term;
+          this.selectedCategory = null;
+          this.showingGroups = false;
+          this.searching = false;
+        },
+      });
+    this.subscriptions.push(sub);
+  }
+
+  /** Leave the search results and go back to the groups. */
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.searchTerm = '';
+    this.goBackToGroups();
   }
 
   // Generate WhatsApp link

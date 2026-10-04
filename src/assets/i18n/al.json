@@ -109,7 +109,12 @@
     "SAVE_FAILED": "Ruajtja dështoi. Ju lutemi provoni përsëri.",
     "WHATSAPP_INTRO": "Përshëndetje, jam i interesuar për produktin:",
     "WHATSAPP_WANT": "Dëshiroj:",
-    "WHATSAPP_ASK": "A mund të më jepni më shumë detaje?"
+    "WHATSAPP_ASK": "A mund të më jepni më shumë detaje?",
+    "SEARCH": "Kërko produkt",
+    "SEARCH_PLACEHOLDER": "Kërko me kod ose emër, p.sh. IPE 100",
+    "SEARCH_RESULTS_FOR": "Rezultatet për",
+    "SEARCH_CLEAR": "Pastro",
+    "NO_RESULTS": "Asnjë produkt nuk u gjet. Provoni kodin, p.sh. IPE 100, ose shkruani në WhatsApp."
   },
   "MODAL": {
     "CLOSE": "Mbyll",

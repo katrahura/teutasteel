@@ -147,6 +147,23 @@ export class ProductService {
   }
   // product.service.ts
 
+  /**
+   * Search the catalogue by code, or by words in a product's or its category's name.
+   *
+   * The endpoint is open, like the category pages the catalogue is otherwise read through, so a
+   * visitor can search without an account.
+   */
+  searchProducts(term: string, lang: string = 'en', limit: number = 40): Observable<Product[]> {
+    const url = `${this.apiUrl}/product/search?q=${encodeURIComponent(term)}&lang=${lang}&limit=${limit}`;
+    return this.http.get<Product[]>(url).pipe(
+      this.retryTransient(),
+      map((products) =>
+        (products || []).map((product) => this.withDeliveredImage(product, 'product_images'))
+      ),
+      catchError(this.handleError)
+    );
+  }
+
   // Helper method to get authorization headers
   private getAuthHeaders(): HttpHeaders {
     const token = getToken();

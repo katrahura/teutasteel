@@ -70,7 +70,12 @@
     "SAVE_FAILED": "Could not save. Please try again.",
     "WHATSAPP_INTRO": "Hi, I'm interested in your product:",
     "WHATSAPP_WANT": "I would like:",
-    "WHATSAPP_ASK": "Could you provide more details?"
+    "WHATSAPP_ASK": "Could you provide more details?",
+    "SEARCH": "Search products",
+    "SEARCH_PLACEHOLDER": "Search by code or name, e.g. IPE 100",
+    "SEARCH_RESULTS_FOR": "Results for",
+    "SEARCH_CLEAR": "Clear",
+    "NO_RESULTS": "No products found. Try the code, e.g. IPE 100, or ask on WhatsApp."
   },
   "MODAL": {
     "CLOSE": "Close",
