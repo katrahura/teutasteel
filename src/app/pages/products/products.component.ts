@@ -70,9 +70,6 @@ toggleParent(parentId: number) {
     'currency',
   ];
   selectedCategory: Category | null = null;
-
-  /** The group the visitor pressed on the home page, shown first in the list. */
-  requestedGroupId: number | null = null;
   products: Product[] = [];
   selectedProduct: any = null;
   currentPage = 1;
@@ -378,9 +375,9 @@ const navigation = this.router.getCurrentNavigation();
     // A top-level group holds no products of its own - the catalogue stores them on the
     // subcategories - so opening one used to land on an empty page. Show the groups instead,
     // with the one that was pressed at the top, and its subcategories one click away.
-    this.requestedGroupId = requested.id ?? null;
-    // Open it as well: pressing "Decorative metal" should show the list of decorative metal,
-    // not the same row collapsed among the six others.
+    // Open it, without hiding the others: pressing "Decorative metal" should show all the groups
+    // with Decorative metal expanded. expandedParentId holds one group at a time by design, so
+    // the rest arrive closed.
     this.expandedParentId = requested.id ?? null;
     this.showingGroups = true;
   } else {
@@ -644,19 +641,10 @@ this.showProducts(this.selectedCategory)
     }
   }
 
-  /** The groups to list: all of them, or only the one the visitor pressed, opened. */
-  get visibleGroups(): TopCategory[] {
-    if (this.requestedGroupId === null) {
-      return this.topCategories;
-    }
-    return this.topCategories.filter((c) => c.id === this.requestedGroupId);
-  }
-
   // Go back to showing categories
   goBackToGroups() {
     this.showingGroups = true;
     this.selectedCategory = null;
-    this.requestedGroupId = null;
     this.expandedParentId = null;
     this.products = [];
   }
