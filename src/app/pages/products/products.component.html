@@ -450,6 +450,24 @@
             </div>
           </div>
 
+          <!-- OPTIONAL: mark it a new arrival, which until now only the edit form could do -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="form-check mt-4">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="productNew"
+                  [(ngModel)]="newProduct.new_product"
+                  name="new_product"
+                />
+                <label class="form-check-label" for="productNew">
+                  {{ "MISC.NEW_PRODUCT" | translate }}
+                </label>
+              </div>
+            </div>
+          </div>
+
           <!-- OPTIONAL: Is Active -->
           <div class="row">
             <div class="col-md-6 mb-3">
@@ -643,6 +661,17 @@
                 [(ngModel)]="dimension.thickness"
                 name="dimension_thickness_{{ i }}"
                 [placeholder]="'PRODUCTS.THICKNESS' | translate"
+              />
+              <label for="dimensionWeight_{{ i }}" class="form-label">{{
+                "MISC.WEIGHT" | translate
+              }}</label>
+              <input
+                type="number"
+                class="form-control mb-2"
+                id="dimensionWeight_{{ i }}"
+                [(ngModel)]="dimension.weight"
+                name="dimension_weight_{{ i }}"
+                [placeholder]="'MISC.WEIGHT' | translate"
               />
               <label for="dimensionPrice_{{ i }}" class="form-label">{{
                 "MISC.PRICE" | translate
@@ -1283,6 +1312,19 @@
                   [placeholder]="'MISC.PRICE' | translate"
                   [(ngModel)]="dimension.price"
                   name="price-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="currency-{{ i }}" class="form-label">{{
+                  "MISC.CURRENCY" | translate
+                }}</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="currency-{{ i }}"
+                  [placeholder]="'MISC.CURRENCY' | translate"
+                  [(ngModel)]="dimension.currency"
+                  name="currency-{{ i }}"
                 />
               </div>
               <div class="col-md-1">
