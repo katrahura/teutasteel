@@ -9,8 +9,11 @@
       height?: number;
       width?: number;
       length?: number;
+      /** Wall, sheet or web thickness in millimetres. */
+      thickness?: number | string | null;
       weight?: number;
-      price?: number;
+      /** The API sends decimals as strings ("3.80"), so these are not plain numbers. */
+      price?: number | string;
       currency?: string;
       price_history?: PriceHistory[]; // Adjust the type as needed
     }

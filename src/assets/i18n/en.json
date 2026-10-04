@@ -61,6 +61,7 @@
     "HEIGHT": "Height",
     "LENGTH": "Length",
     "WIDTH": "Width",
+    "THICKNESS": "Thickness",
     "CONTACT_WHATSAPP": "Contact on WhatsApp",
     "LOAD_ERROR": "The product catalogue is temporarily unavailable. Please try again later.",
     "SAVED": "Saved.",
@@ -72,6 +73,7 @@
     "HEIGHT": "Height",
     "LENGTH": "Length",
     "WIDTH": "Width",
+    "THICKNESS": "Thickness",
     "CONTACT_WHATSAPP": "Contact via WhatsApp"
   },
   "CONTACT": {

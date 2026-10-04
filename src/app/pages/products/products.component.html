@@ -627,6 +627,18 @@
                 name="dimension_length_{{ i }}"
                 [placeholder]="'PRODUCTS.LENGTH' | translate"
               />
+              <label for="dimensionThickness_{{ i }}" class="form-label">{{
+                "PRODUCTS.THICKNESS" | translate
+              }}</label>
+              <input
+                type="number"
+                step="0.1"
+                class="form-control mb-2"
+                id="dimensionThickness_{{ i }}"
+                [(ngModel)]="dimension.thickness"
+                name="dimension_thickness_{{ i }}"
+                [placeholder]="'PRODUCTS.THICKNESS' | translate"
+              />
               <label for="dimensionPrice_{{ i }}" class="form-label">{{
                 "MISC.PRICE" | translate
               }}</label>
@@ -750,14 +762,33 @@
                     ("MISC.NO_DESCRIPTION_AVAILABLE." | translate)
                 }}
               </p>
-              <p class="card-text">
+              <p
+                class="card-text"
+                *ngIf="hasAnyDimension(product.dimensions ? product.dimensions[0] : null)"
+              >
                 <strong>{{ "PRODUCTS.DIMENSIONS" | translate }}:</strong><br />
-                {{ "PRODUCTS.HEIGHT" | translate }}:
-                {{ getProductDimension(product, "height") }} mm<br />
-                {{ "PRODUCTS.WIDTH" | translate }}:
-                {{ getProductDimension(product, "width") }} mm
+                <ng-container *ngIf="showsValue(getProductDimension(product, 'height'))">
+                  {{ "PRODUCTS.HEIGHT" | translate }}:
+                  {{ getProductDimension(product, "height") }} mm<br />
+                </ng-container>
+                <ng-container *ngIf="showsValue(getProductDimension(product, 'width'))">
+                  {{ "PRODUCTS.WIDTH" | translate }}:
+                  {{ getProductDimension(product, "width") }} mm<br />
+                </ng-container>
+                <ng-container *ngIf="showsValue(getProductDimension(product, 'thickness'))">
+                  {{ "PRODUCTS.THICKNESS" | translate }}:
+                  {{ getProductDimension(product, "thickness") }} mm<br />
+                </ng-container>
+                <ng-container *ngIf="showsValue(getProductDimension(product, 'length'))">
+                  {{ "PRODUCTS.LENGTH" | translate }}:
+                  {{ formatLength(getProductDimension(product, "length")) }}<br />
+                </ng-container>
+                <ng-container *ngIf="showsValue(getProductDimension(product, 'weight'))">
+                  {{ "MISC.WEIGHT" | translate }}:
+                  {{ formatWeight(getProductDimension(product, "weight")) }}
+                </ng-container>
               </p>
-              <p class="card-text">
+              <p class="card-text" *ngIf="showsValue(getProductDimension(product, 'price'))">
                 <strong>{{ "MISC.PRICE" | translate }}:</strong>
                 {{ getProductDimension(product, "price") }}
                 {{ getProductDimension(product, "currency") }}
@@ -888,23 +919,27 @@
             "
           >
             <li *ngFor="let dimension of selectedProduct.dimensions">
-              <div *ngIf="isNumericAndNotZero(dimension.height)">
+              <div *ngIf="showsValue(dimension.height)">
                 <strong>{{ "PRODUCTS.HEIGHT" | translate }}:</strong>
                 {{ dimension.height }} mm
               </div>
-              <div *ngIf="isNumericAndNotZero(dimension.width)">
+              <div *ngIf="showsValue(dimension.width)">
                 <strong>{{ "PRODUCTS.WIDTH" | translate }}:</strong>
                 {{ dimension.width }} mm
               </div>
-              <div *ngIf="isNumericAndNotZero(dimension.length)">
+              <div *ngIf="showsValue(dimension.thickness)">
+                <strong>{{ "PRODUCTS.THICKNESS" | translate }}:</strong>
+                {{ dimension.thickness }} mm
+              </div>
+              <div *ngIf="showsValue(dimension.length)">
                 <strong>{{ "PRODUCTS.LENGTH" | translate }}:</strong>
-                {{ dimension.length }} mm
+                {{ formatLength(dimension.length) }}
               </div>
-              <div *ngIf="isNumericAndNotZero(dimension.weight)">
+              <div *ngIf="showsValue(dimension.weight)">
                 <strong>{{ "MISC.WEIGHT" | translate }}:</strong>
-                {{ dimension.weight }} g
+                {{ formatWeight(dimension.weight) }}
               </div>
-              <div *ngIf="isNumericAndNotZero(dimension.price)">
+              <div *ngIf="showsValue(dimension.price)">
                 <strong>{{ "MISC.PRICE" | translate }}:</strong>
                 {{ dimension.price }}
                 {{ dimension.currency || "" }}

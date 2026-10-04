@@ -24,6 +24,7 @@ type DimensionKey =
   | 'height'
   | 'width'
   | 'length'
+  | 'thickness'
   | 'weight'
   | 'price'
   | 'currency';
@@ -198,8 +199,50 @@ toggleParent(parentId: number) {
   navigateRight(): void {
     this.navigateProduct(1);
   }
-  isNumericAndNotZero(value: any): boolean {
-    return typeof value === 'number' && !isNaN(value) && value !== 0;
+  /**
+   * Whether a dimension value is worth showing.
+   *
+   * Accepts numeric strings, because the API sends decimals as strings - "3.80" is a real price
+   * and the old check, `typeof value === 'number'`, threw it away. Rejects null, undefined, an
+   * empty string, "N/A", and zero: a customer should never be shown "Weight: 0 g".
+   */
+  showsValue(value: any): boolean {
+    if (value === null || value === undefined) {
+      return false;
+    }
+    const text = String(value).trim();
+    if (text === '' || /^(n\/?a|none|null|-)$/i.test(text)) {
+      return false;
+    }
+    const number = Number(text);
+    return !isNaN(number) && number !== 0;
+  }
+
+  /** 6000 mm reads better to a steel buyer as 6 m. */
+  formatLength(millimetres: any): string {
+    const value = Number(millimetres);
+    if (isNaN(value)) {
+      return String(millimetres);
+    }
+    return value >= 1000 && value % 100 === 0
+      ? `${value / 1000} m`
+      : `${value} mm`;
+  }
+
+  /** Weights are stored in grams; kilograms is what people say. */
+  formatWeight(grams: any): string {
+    const value = Number(grams);
+    if (isNaN(value)) {
+      return String(grams);
+    }
+    return value >= 1000 ? `${+(value / 1000).toFixed(3)} kg` : `${value} g`;
+  }
+
+  /** True when the dimension has anything at all worth printing. */
+  hasAnyDimension(dimension: any): boolean {
+    return ['height', 'width', 'length', 'thickness', 'weight', 'price'].some((key) =>
+      this.showsValue(dimension ? dimension[key] : null)
+    );
   }
   
   addNewDimension(): void {
