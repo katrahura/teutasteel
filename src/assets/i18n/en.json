@@ -205,5 +205,17 @@
     "USER_NAME": "User Name",
     "USER_DASHBOARD": "User Dashboard",
     "UNAVAILABLE": "Your profile could not be loaded. Please sign in again."
+  },
+  "QUOTE": {
+    "TITLE": "Request a quote",
+    "INTRO": "Fill this in and the enquiry opens in WhatsApp, ready to send.",
+    "NAME": "Name",
+    "PHONE": "Phone",
+    "PRODUCT": "Product or what you need",
+    "QUANTITY": "Quantity",
+    "NOTES": "Notes",
+    "SEND": "Send the request on WhatsApp",
+    "REQUIRED": "Please fill in your name, phone and what you need.",
+    "MESSAGE_INTRO": "Hello, I would like a quote:"
   }
 }

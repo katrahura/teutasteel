@@ -14,6 +14,57 @@
       </p>
     </div>
 
+    <!-- The quote form. The site had no way to ask for anything: no cart, no quote, and this
+         page had no inputs at all. It hands the enquiry to WhatsApp the way the product cards
+         do, so nothing has to be checked anywhere else. -->
+    <div class="card mx-auto my-4 text-start" style="max-width: 640px">
+      <div class="card-body">
+        <h5 class="card-title">{{ 'QUOTE.TITLE' | translate }}</h5>
+        <p class="text-muted small">{{ 'QUOTE.INTRO' | translate }}</p>
+
+        <div class="row g-2">
+          <div class="col-md-6">
+            <label class="form-label" for="quoteName">{{ 'QUOTE.NAME' | translate }} *</label>
+            <input id="quoteName" class="form-control" type="text"
+                   [(ngModel)]="quote.name" name="quoteName" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="quotePhone">{{ 'QUOTE.PHONE' | translate }} *</label>
+            <input id="quotePhone" class="form-control" type="tel"
+                   [(ngModel)]="quote.phone" name="quotePhone" />
+          </div>
+          <div class="col-md-8">
+            <label class="form-label" for="quoteProduct">{{ 'QUOTE.PRODUCT' | translate }} *</label>
+            <input id="quoteProduct" class="form-control" type="text"
+                   [(ngModel)]="quote.product" name="quoteProduct" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="quoteQuantity">{{ 'QUOTE.QUANTITY' | translate }}</label>
+            <input id="quoteQuantity" class="form-control" type="text"
+                   [(ngModel)]="quote.quantity" name="quoteQuantity" />
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="quoteNotes">{{ 'QUOTE.NOTES' | translate }}</label>
+            <textarea id="quoteNotes" class="form-control" rows="2"
+                      [(ngModel)]="quote.notes" name="quoteNotes"></textarea>
+          </div>
+        </div>
+
+        <p class="text-muted small mt-3 mb-2" *ngIf="!isQuoteValid()">
+          {{ 'QUOTE.REQUIRED' | translate }}
+        </p>
+        <a
+          class="btn btn-success"
+          [href]="getQuoteLink()"
+          target="_blank"
+          rel="noopener noreferrer"
+          [class.disabled]="!isQuoteValid()"
+          [attr.aria-disabled]="!isQuoteValid()"
+          (click)="isQuoteValid() || $event.preventDefault()"
+        >{{ 'QUOTE.SEND' | translate }}</a>
+      </div>
+    </div>
+
     <div class="d-flex justify-content-center gap-4 mb-5">
       <a href="https://www.facebook.com/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="bi bi-facebook fs-2" aria-hidden="true"></i></a>
       <a href="https://www.instagram.com/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram fs-2" aria-hidden="true"></i></a>

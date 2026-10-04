@@ -244,5 +244,17 @@
     "USER_NAME": "Emri i Përdoruesit",
     "USER_DASHBOARD": "Paneli i Përdoruesit",
     "UNAVAILABLE": "Profili juaj nuk mund të ngarkohej. Ju lutemi hyni përsëri."
+  },
+  "QUOTE": {
+    "TITLE": "Kërko ofertë",
+    "INTRO": "Plotësoni të dhënat dhe kërkesa hapet në WhatsApp, gati për t'u dërguar.",
+    "NAME": "Emri",
+    "PHONE": "Telefoni",
+    "PRODUCT": "Produkti ose çka ju nevojitet",
+    "QUANTITY": "Sasia",
+    "NOTES": "Shënime",
+    "SEND": "Dërgo kërkesën në WhatsApp",
+    "REQUIRED": "Plotësoni emrin, telefonin dhe produktin që ju nevojitet.",
+    "MESSAGE_INTRO": "Përshëndetje, dua një ofertë:"
   }
 }
