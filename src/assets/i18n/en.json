@@ -67,7 +67,10 @@
     "CONTACT_WHATSAPP": "Contact on WhatsApp",
     "LOAD_ERROR": "The product catalogue is temporarily unavailable. Please try again later.",
     "SAVED": "Saved.",
-    "SAVE_FAILED": "Could not save. Please try again."
+    "SAVE_FAILED": "Could not save. Please try again.",
+    "WHATSAPP_INTRO": "Hi, I'm interested in your product:",
+    "WHATSAPP_WANT": "I would like:",
+    "WHATSAPP_ASK": "Could you provide more details?"
   },
   "MODAL": {
     "CLOSE": "Close",
@@ -98,7 +101,7 @@
     "EDIT_BUTTON": "Go to products"
   },
   "MISC": {
-        "IMAGE_ASSET": "Image Asset",
+    "IMAGE_ASSET": "Image Asset",
     "PRODUCT_TRANSLATIONS": "Product Translations",
     "YOUR_TRUSTED_PARTNER_IN_STEEL_SOLUTIONS": "Your Trusted Partner in Steel Solutions",
     "HIGH-QUALITY_GALVANIZED_STEEL_PRODUCTS_AND_PROFESSIONAL_PROCESSING_SERVICES.": "High-quality galvanized steel products and professional processing services.",
@@ -155,8 +158,8 @@
     "NAME": "Name:",
     "EMAIL": "Email:",
     "EDIT_PROFILE": "Edit Profile",
-    "PAGE":"Page",
-    "OF":"Of",
+    "PAGE": "Page",
+    "OF": "Of",
     "ACTIVE": "Active",
     "ADD_DIMENSION": "Add Dimension",
     "ADD_TRANSLATION": "Add Translation",

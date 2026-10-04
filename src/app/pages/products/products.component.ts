@@ -646,12 +646,16 @@ this.showProducts(this.selectedCategory)
       .map(({ dimension }: { dimension: ProductDimension }) => {
         const parts = [];
         if (dimension.thickness) {
-          parts.push(`thickness ${dimension.thickness} mm`);
+          parts.push(
+            `${this.translate.instant("PRODUCTS.THICKNESS")} ${dimension.thickness} mm`
+          );
         } else if (dimension.height) {
           parts.push(`${dimension.height}${dimension.width ? 'x' + dimension.width : ''} mm`);
         }
         if (dimension.length) {
-          parts.push(`length ${this.formatLength(dimension.length)}`);
+          parts.push(
+            `${this.translate.instant("PRODUCTS.LENGTH")} ${this.formatLength(dimension.length)}`
+          );
         }
         if (dimension.price) {
           parts.push(`${dimension.price} ${dimension.currency || ''}`.trim());
@@ -659,8 +663,14 @@ this.showProducts(this.selectedCategory)
         return parts.join(' - ');
       })
       .filter(Boolean);
-    const which = wanted.length ? ` I would like: ${wanted.join('; ')}.` : '';
-    const message = `Hi, I'm interested in your product: ${product?.code}.${which} Could you provide more details?`;
+    // Written in the customer's language: the page was Albanian and the message went out in
+    // English, which is no way to open an enquiry.
+    const intro = `${this.translate.instant("PRODUCTS.WHATSAPP_INTRO")} ${product?.code}.`;
+    const want = wanted.length
+      ? ` ${this.translate.instant("PRODUCTS.WHATSAPP_WANT")} ${wanted.join("; ")}.`
+      : "";
+    const ask = ` ${this.translate.instant("PRODUCTS.WHATSAPP_ASK")}`;
+    const message = `${intro}${want}${ask}`;
     const whatsappNumber = environment.whatsappNumber;
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
       message
