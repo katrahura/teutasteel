@@ -19,6 +19,7 @@
     <div class="row g-3" *ngIf="!loadingGroups && !groupsError">
       <div
         class="col-12"
+        [id]="'group-' + parent.id"
         *ngFor="let parent of topCategories; trackBy: trackById"
       >
         <div class="card h-100 shadow-sm">

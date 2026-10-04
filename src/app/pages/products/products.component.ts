@@ -70,6 +70,9 @@ toggleParent(parentId: number) {
     'currency',
   ];
   selectedCategory: Category | null = null;
+
+  /** The group to scroll to once the list has rendered, when the visitor arrived from a card. */
+  private scrollToGroupId: number | null = null;
   products: Product[] = [];
   selectedProduct: any = null;
   currentPage = 1;
@@ -379,6 +382,7 @@ const navigation = this.router.getCurrentNavigation();
     // with Decorative metal expanded. expandedParentId holds one group at a time by design, so
     // the rest arrive closed.
     this.expandedParentId = requested.id ?? null;
+    this.scrollToGroupId = requested.id ?? null;
     this.showingGroups = true;
   } else {
     this.selectedCategory = requested;
@@ -418,6 +422,7 @@ private loadCategoryGroups(): void {
       if (!this.selectedCategory) {
         this.showingGroups = true; // ensure group view
       }
+      this.scrollToRequestedGroup();
     },
     error: (err) => {
       // Store the translation key, not a resolved string: instant() runs before
@@ -639,6 +644,29 @@ this.showProducts(this.selectedCategory)
       // Fetch the category data including products
       this.loadCategoryWithProducts(category.id, 1);
     }
+  }
+
+  /**
+   * Bring the group the visitor pressed into view.
+   *
+   * Opening it is not enough when it sits below the fold - the whole point of pressing a card is
+   * to be taken to that group. The offset leaves room for the sticky header, which would otherwise
+   * cover the title it scrolled to.
+   */
+  private scrollToRequestedGroup(): void {
+    const id = this.scrollToGroupId;
+    if (id === null || !isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    this.scrollToGroupId = null;
+    setTimeout(() => {
+      const element = document.getElementById('group-' + id);
+      if (!element) {
+        return;
+      }
+      const top = element.getBoundingClientRect().top + window.scrollY - 110;
+      window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+    }, 150);
   }
 
   // Go back to showing categories
