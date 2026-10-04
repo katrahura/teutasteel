@@ -1,7 +1,9 @@
 <!-- Search. Outside both views on purpose: it has to be there whether the visitor is looking at
      the groups or at a set of results, which is exactly what it was not when it lived inside
      *ngIf="showingGroups" - it disappeared the moment the search hid the groups. -->
-<div class="container mt-5">
+<!-- 90px, not mt-5's 48: the navigation bar is 62px tall and overlays the page, so 48 put the box
+     14px underneath it. -->
+<div class="container" style="margin-top: 90px">
   <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8">
       <label class="form-label visually-hidden" for="catalogueSearch">
