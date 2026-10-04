@@ -379,6 +379,9 @@ const navigation = this.router.getCurrentNavigation();
     // subcategories - so opening one used to land on an empty page. Show the groups instead,
     // with the one that was pressed at the top, and its subcategories one click away.
     this.requestedGroupId = requested.id ?? null;
+    // Open it as well: pressing "Decorative metal" should show the list of decorative metal,
+    // not the same row collapsed among the six others.
+    this.expandedParentId = requested.id ?? null;
     this.showingGroups = true;
   } else {
     this.selectedCategory = requested;
@@ -641,14 +644,12 @@ this.showProducts(this.selectedCategory)
     }
   }
 
-  /** The groups to list: all of them, or the one the visitor pressed first. */
+  /** The groups to list: all of them, or only the one the visitor pressed, opened. */
   get visibleGroups(): TopCategory[] {
     if (this.requestedGroupId === null) {
       return this.topCategories;
     }
-    const pressed = this.topCategories.filter((c) => c.id === this.requestedGroupId);
-    const rest = this.topCategories.filter((c) => c.id !== this.requestedGroupId);
-    return [...pressed, ...rest];
+    return this.topCategories.filter((c) => c.id === this.requestedGroupId);
   }
 
   // Go back to showing categories
@@ -656,6 +657,7 @@ this.showProducts(this.selectedCategory)
     this.showingGroups = true;
     this.selectedCategory = null;
     this.requestedGroupId = null;
+    this.expandedParentId = null;
     this.products = [];
   }
 
