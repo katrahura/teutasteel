@@ -200,6 +200,20 @@ toggleParent(parentId: number) {
     this.navigateProduct(1);
   }
   /**
+   * Whether this product is round, so the first measurement should read "Diameter" rather than
+   * "Height". Tubes, solid round bar, pipes, bends, bearings and cylinders all say Ø in their
+   * code; every round item in the catalogue has one, and the square and rectangular ones do not.
+   * The category is not a safe signal - "Solid round and square bar" holds both.
+   *
+   * The field itself is untouched: `height` still holds the number, because it is the right name
+   * for a square tube or a beam.
+   */
+  isRound(product: any): boolean {
+    const code = product ? String(product.code || '') : '';
+    return code.includes('Ø') || code.includes('ø');
+  }
+
+  /**
    * Whether a dimension value is worth showing.
    *
    * Accepts numeric strings, because the API sends decimals as strings - "3.80" is a real price
