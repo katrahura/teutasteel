@@ -70,6 +70,9 @@ toggleParent(parentId: number) {
     'currency',
   ];
   selectedCategory: Category | null = null;
+
+  /** The group the visitor pressed on the home page, shown first in the list. */
+  requestedGroupId: number | null = null;
   products: Product[] = [];
   selectedProduct: any = null;
   currentPage = 1;
@@ -369,9 +372,18 @@ const navigation = this.router.getCurrentNavigation();
 
 // Check if the navigation contains a state
  if (this.sharedService.getCategory()){
-  this.selectedCategory = this.sharedService.getCategory();
-  this.showProducts(this.selectedCategory);
+  const requested = this.sharedService.getCategory();
   this.sharedService.setCategory(null);
+  if (requested.parent_id === null || requested.parent_id === undefined) {
+    // A top-level group holds no products of its own - the catalogue stores them on the
+    // subcategories - so opening one used to land on an empty page. Show the groups instead,
+    // with the one that was pressed at the top, and its subcategories one click away.
+    this.requestedGroupId = requested.id ?? null;
+    this.showingGroups = true;
+  } else {
+    this.selectedCategory = requested;
+    this.showProducts(requested);
+  }
  }
 
 
@@ -400,7 +412,12 @@ private loadCategoryGroups(): void {
         this.childrenMap.set(p.id!, childrenArrays[idx] || []);
       });
       this.loadingGroups = false;
-      this.showingGroups = true; // ensure group view
+      // Do not force the group view back on when the visitor arrived asking for a particular
+      // category: ngOnInit already applied it, and this callback arrives afterwards, so setting
+      // it unconditionally threw the request away and showed the groups list instead.
+      if (!this.selectedCategory) {
+        this.showingGroups = true; // ensure group view
+      }
     },
     error: (err) => {
       // Store the translation key, not a resolved string: instant() runs before
@@ -624,10 +641,21 @@ this.showProducts(this.selectedCategory)
     }
   }
 
+  /** The groups to list: all of them, or the one the visitor pressed first. */
+  get visibleGroups(): TopCategory[] {
+    if (this.requestedGroupId === null) {
+      return this.topCategories;
+    }
+    const pressed = this.topCategories.filter((c) => c.id === this.requestedGroupId);
+    const rest = this.topCategories.filter((c) => c.id !== this.requestedGroupId);
+    return [...pressed, ...rest];
+  }
+
   // Go back to showing categories
   goBackToGroups() {
     this.showingGroups = true;
     this.selectedCategory = null;
+    this.requestedGroupId = null;
     this.products = [];
   }
 

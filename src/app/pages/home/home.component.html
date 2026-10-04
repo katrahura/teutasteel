@@ -80,7 +80,16 @@
           <div class="carousel-item" *ngFor="let product of topCategories; let i = index" [class.active]="i === 0">
             <div class="row justify-content-center">
               <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                <div class="card h-100 position-relative">
+                <!-- The card did nothing when pressed: there was no click handler here at all,
+                     so the whole "featured" row was inert. -->
+                <div
+                  class="card h-100 position-relative"
+                  role="button"
+                  tabindex="0"
+                  style="cursor: pointer"
+                  (click)="navigateToProducts(product)"
+                  (keydown.enter)="navigateToProducts(product)"
+                >
                   
                   <span *ngIf="product.title" class="badge bg-primary position-absolute top-0 start-0">{{ 'HOME.NEW_BADGE' | translate }}</span>
                   <div class="image-container">
