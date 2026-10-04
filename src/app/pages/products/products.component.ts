@@ -255,10 +255,36 @@ toggleParent(parentId: number) {
   }
 
   /** True when the dimension has anything at all worth printing. */
+  /**
+   * Whether a dimension actually says what it is - its size, its thickness, its weight.
+   *
+   * Deliberately does not count the price. A price on its own says nothing: 54.00 for what? A
+   * dimension carrying only a price is not shown, and neither is its price.
+   */
   hasAnyDimension(dimension: any): boolean {
-    return ['height', 'width', 'length', 'thickness', 'weight', 'price'].some((key) =>
+    return ['height', 'width', 'length', 'thickness', 'weight'].some((key) =>
       this.showsValue(dimension ? dimension[key] : null)
     );
+  }
+
+  /** True when the customer has something to choose between. One dimension is not a choice. */
+  needsChoice(): boolean {
+    return (this.selectedProduct?.dimensions || []).length > 1;
+  }
+
+  /**
+   * Whether this product has any real dimension to show. A price on its own is not one, so a
+   * product that carries only a price has nothing to print - not even the heading.
+   */
+  hasAnythingToShow(): boolean {
+    return ((this.selectedProduct?.dimensions || []) as ProductDimension[]).some(
+      (dimension: ProductDimension) => this.hasAnyDimension(dimension)
+    );
+  }
+
+  /** The customer may make contact when they have chosen, or when there was nothing to choose. */
+  canContact(): boolean {
+    return !this.needsChoice() || this.anyChosen();
   }
   
   addNewDimension(): void {
@@ -608,13 +634,24 @@ this.showProducts(this.selectedCategory)
   // Generate WhatsApp link
   getWhatsAppLink(product: Product): string {
     // Say which thickness, or the enquiry is "tell me about 100x100" with no idea which wall.
-    const wanted = ((product?.dimensions || []) as ProductDimension[])
-      .map((dimension: ProductDimension, index: number) => ({ dimension, index }))
-      .filter(({ index }: { index: number }) => this.isChosen(index))
+    // When a product has only one dimension there is nothing to tick, so that one is what the
+    // customer means.
+    const dimensions = (product?.dimensions || []) as ProductDimension[];
+    const chosen = dimensions.length === 1
+      ? [{ dimension: dimensions[0] }]
+      : dimensions
+          .map((dimension: ProductDimension, index: number) => ({ dimension, index }))
+          .filter(({ index }: { index: number }) => this.isChosen(index));
+    const wanted = chosen
       .map(({ dimension }: { dimension: ProductDimension }) => {
         const parts = [];
         if (dimension.thickness) {
           parts.push(`thickness ${dimension.thickness} mm`);
+        } else if (dimension.height) {
+          parts.push(`${dimension.height}${dimension.width ? 'x' + dimension.width : ''} mm`);
+        }
+        if (dimension.length) {
+          parts.push(`length ${this.formatLength(dimension.length)}`);
         }
         if (dimension.price) {
           parts.push(`${dimension.price} ${dimension.currency || ''}`.trim());

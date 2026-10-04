@@ -795,7 +795,13 @@
                   {{ formatWeight(getProductDimension(product, "weight")) }}
                 </ng-container>
               </p>
-              <p class="card-text" *ngIf="showsValue(getProductDimension(product, 'price'))">
+              <p
+                class="card-text"
+                *ngIf="
+                  showsValue(getProductDimension(product, 'price')) &&
+                  hasAnyDimension(product.dimensions ? product.dimensions[0] : null)
+                "
+              >
                 <strong>{{ "MISC.PRICE" | translate }}:</strong>
                 {{ getProductDimension(product, "price") }}
                 {{ getProductDimension(product, "currency") }}
@@ -919,7 +925,9 @@
             class="product-content"
             [innerHTML]="selectedProduct!.content"
           ></div>
-          <h6>{{ "PRODUCTS.DIMENSIONS" | translate }}:</h6>
+          <h6 *ngIf="hasAnythingToShow()">
+            {{ "PRODUCTS.DIMENSIONS" | translate }}:
+          </h6>
 
           <!-- What every thickness of this product shares, said once. -->
           <div
@@ -991,6 +999,7 @@
                 *ngIf="showsValue(dimension.thickness) || showsValue(dimension.price)"
               >
                 <input
+                  *ngIf="needsChoice()"
                   type="checkbox"
                   class="form-check-input mt-0"
                   [checked]="isChosen(i)"
@@ -1001,7 +1010,9 @@
                     <strong>{{ "PRODUCTS.THICKNESS" | translate }}:</strong>
                     {{ dimension.thickness }} mm
                   </ng-container>
-                  <ng-container *ngIf="showsValue(dimension.price)">
+                  <ng-container
+                    *ngIf="showsValue(dimension.price) && hasAnyDimension(dimension)"
+                  >
                     <ng-container *ngIf="showsValue(dimension.thickness)">
                       &middot;
                     </ng-container>
@@ -1014,16 +1025,16 @@
             </li>
           </ul>
 
-          <p class="text-muted small mb-2" *ngIf="!anyChosen()">
+          <p class="text-muted small mb-2" *ngIf="needsChoice() && !anyChosen()">
             {{ "PRODUCTS.CHOOSE_THICKNESS" | translate }}
           </p>
 
           <a
             [href]="getWhatsAppLink(selectedProduct)"
             class="btn btn-success mt-2"
-            [class.disabled]="!anyChosen()"
-            [attr.aria-disabled]="!anyChosen()"
-            (click)="anyChosen() || $event.preventDefault()"
+            [class.disabled]="!canContact()"
+            [attr.aria-disabled]="!canContact()"
+            (click)="canContact() || $event.preventDefault()"
             target="_blank"
             rel="noopener noreferrer"
           >
