@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +8,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [RouterModule, TranslateModule, FormsModule],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.css'
 })
