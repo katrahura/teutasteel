@@ -40,6 +40,20 @@ export const SERVICES: ServiceOffering[] = [
     image: 'assets/images/bend.webp',
   },
   {
+    // A press brake is a different machine from the pipe roller above: it folds sheet and plate to
+    // an angle, which is a service of its own and was missing from this list entirely.
+    id: 'pressbrake',
+    titleKey: 'MISC.PRESS_BRAKE_BENDING',
+    textKey: 'MISC.SERVICE_PRESS_BRAKE_DESC',
+    image: '',
+  },
+  {
+    id: 'complex',
+    titleKey: 'MISC.COMPLEX_FABRICATION',
+    textKey: 'MISC.SERVICE_COMPLEX_DESC',
+    image: '',
+  },
+  {
     id: 'decoration',
     titleKey: 'MISC.PIPE_DECORATION',
     textKey: 'MISC.SERVICE_DECORATION_DESC',

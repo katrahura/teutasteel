@@ -224,7 +224,11 @@
     "PREVIOUS": "E mëparshme",
     "PRODUCT_IMAGE": "Imazhi i Produktit",
     "TRANSLATIONS": "Përkthimet",
-    "LOADING": "Duke u ngarkuar"
+    "LOADING": "Duke u ngarkuar",
+    "PRESS_BRAKE_BENDING": "Përkulje me Presë (Llamarinë)",
+    "SERVICE_PRESS_BRAKE_DESC": "Përkulje llamarinash me presë hidraulike sipas këndit dhe vizatimit tuaj. Na tregoni trashësinë dhe gjatësinë.",
+    "COMPLEX_FABRICATION": "Punime Komplekse",
+    "SERVICE_COMPLEX_DESC": "Punime të ndërlikuara sipas vizatimit tuaj, që nuk i gjeni gati. Dërgoni vizatimin ose foton dhe e shohim."
   },
   "LOGIN": {
     "LOGIN": "Hyrje",

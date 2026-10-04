@@ -8,6 +8,7 @@ import { TopCategory } from '../../models/product.model';
 import { SharedService } from '../../shared.service';
 import { translateCategoryTitle } from '../../shared/translate-category-title';
 import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
+import { SERVICES } from '../../shared/services';
 
 declare var bootstrap: any;
 
@@ -23,18 +24,12 @@ export class HomeComponent implements OnDestroy {
   topCategories: TopCategory[] = [];
 
   /**
-   * The services the company advertises. The wording and the photographs are the
-   * ones from the site this application replaces ("Shërbimet tona"): an earlier
-   * version of this page listed only three of them, and the third card showed the
-   * hydraulic shear under the heading "Custom Solutions".
+   * The services the company advertises, from shared/services.ts.
+   *
+   * That list is the one the services page and the quote form use too. Keeping a second copy here
+   * is how the home page came to show five services while the services page showed seven.
    */
-  readonly services = [
-    { image: 'assets/images/cnc.jpg', titleKey: 'MISC.CNC_METAL_CUTTING', textKey: 'MISC.SERVICE_CNC_DESC' },
-    { image: 'assets/images/hyd.webp', titleKey: 'MISC.SHEET_METAL_CUTTING', textKey: 'MISC.SERVICE_PLATES_DESC' },
-    { image: 'assets/images/profiles.jpg', titleKey: 'MISC.PROFILE_AND_PIPE_CUTTING', textKey: 'MISC.SERVICE_PROFILES_DESC' },
-    { image: 'assets/images/bend.webp', titleKey: 'MISC.PIPE_BENDING', textKey: 'MISC.SERVICE_BENDING_DESC' },
-    { image: 'assets/images/decor.webp', titleKey: 'MISC.PIPE_DECORATION', textKey: 'MISC.SERVICE_DECORATION_DESC' },
-  ];
+  readonly services = SERVICES;
 
   constructor(
     private sharedService: SharedService,

@@ -185,7 +185,11 @@
     "SAVE_CHANGES": "Save Changes",
     "SLUG": "Slug",
     "TRANSLATIONS": "Translations",
-    "LOADING": "Loading"
+    "LOADING": "Loading",
+    "PRESS_BRAKE_BENDING": "Press Brake Bending (Sheet)",
+    "SERVICE_PRESS_BRAKE_DESC": "Folding sheet and plate on a hydraulic press brake to your angle and drawing. Tell us the thickness and the length.",
+    "COMPLEX_FABRICATION": "Complex Fabrication",
+    "SERVICE_COMPLEX_DESC": "Awkward jobs to your own drawing, the ones you cannot buy off a shelf. Send the drawing or a photograph and we will look."
   },
   "LOGIN": {
     "LOGIN": "Login",
