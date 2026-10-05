@@ -21,6 +21,20 @@
 .card.h-100 .card-title { font-weight: 700; letter-spacing: -.01em; }
 .card.h-100 .btn { border-radius: 8px; font-weight: 700; }
 
+/* The add-to-request button, in the shop's amber rather than Bootstrap's green. Green stays on the
+   WhatsApp button, because that is WhatsApp's own colour and people look for it; this button
+   belongs to the shop. .card.h-100 carries more weight than .btn-outline-success, so this wins. */
+.card.h-100 .btn-outline-success {
+  color: #b45309;
+  border-color: var(--accent, #f59e0b);
+  background: #fff;
+}
+.card.h-100 .btn-outline-success:hover {
+  background: var(--accent, #f59e0b);
+  border-color: var(--accent, #f59e0b);
+  color: #111827;
+}
+
 /* Global card styling */
 .card, .product-modal .card {
   border-radius: 10px;
