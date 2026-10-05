@@ -22,6 +22,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { SharedService } from '../../shared.service';
 import { QuoteListService } from '../../shared/quote-list.service';
+import { describeWeight, shapeForCategory } from '../../shared/steel-weight';
 type DimensionKey =
   | 'height'
   | 'width'
@@ -197,6 +198,27 @@ toggleParent(parentId: number) {
       parts.push(`${dimension.price} ${dimension.currency || ''}`.trim());
     }
     return parts.join(' — ');
+  }
+
+  /**
+   * What one dimension of this product weighs, or null when it cannot be worked out.
+   *
+   * Steel is bought by weight and the catalogue stores almost none of it, so this is worked out from
+   * the section: a round tube is an annulus, a rectangular one is its perimeter at the wall, a flat
+   * bar is width times thickness. Sheets are weighed whole. Anything the shape is not known for gets
+   * nothing rather than a number that would be wrong.
+   */
+  weightFor(product: Product, dimension: ProductDimension): string | null {
+    // The category listing does not carry each product's category, and the page already knows which
+    // one is open - so fall back to that rather than losing the weight for want of a label.
+    const category = (product as any)?.category || (this as any).selectedCategory;
+    const shape = shapeForCategory(category ? category.title : null);
+    return describeWeight(shape, {
+      height: dimension?.height,
+      width: dimension?.width,
+      thickness: dimension?.thickness,
+      length: dimension?.length,
+    });
   }
 
   /** The dimensions the customer ticked, or the only one there is. */

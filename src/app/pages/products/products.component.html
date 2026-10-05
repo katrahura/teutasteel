@@ -1095,6 +1095,12 @@
                 <strong>{{ "MISC.WEIGHT" | translate }}:</strong>
                 {{ formatWeight(dimension.weight) }}
               </div>
+              <!-- The weight the catalogue does not store, worked out from the section. "Calculated"
+                   because a mill's table allows for rounded corners and this cannot know them. -->
+              <div *ngIf="weightFor(selectedProduct, dimension) as weight">
+                <strong>{{ "PRODUCTS.WEIGHT_CALCULATED" | translate }}:</strong>
+                {{ weight }}
+              </div>
               <label
                 class="d-flex align-items-center gap-2 mb-2"
                 *ngIf="showsValue(dimension.thickness) || showsValue(dimension.price)"

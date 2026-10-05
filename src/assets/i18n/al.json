@@ -123,7 +123,8 @@
     "REQUEST_TITLE": "Artikujt e kërkuar",
     "REQUEST_EMPTY": "Nuk keni shtuar artikuj. Kthehuni te produktet dhe shtypni “Shto në kërkesë”.",
     "REQUEST_REMOVE": "Hiq",
-    "REQUEST_CLEAR": "Pastro listën"
+    "REQUEST_CLEAR": "Pastro listën",
+    "WEIGHT_CALCULATED": "Pesha (llogaritur)"
   },
   "MODAL": {
     "CLOSE": "Mbyll",

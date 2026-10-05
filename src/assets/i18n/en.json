@@ -84,7 +84,8 @@
     "REQUEST_TITLE": "Your requested items",
     "REQUEST_EMPTY": "You have not added anything yet. Go back to the products and press “Add to request”.",
     "REQUEST_REMOVE": "Remove",
-    "REQUEST_CLEAR": "Clear the list"
+    "REQUEST_CLEAR": "Clear the list",
+    "WEIGHT_CALCULATED": "Weight (calculated)"
   },
   "MODAL": {
     "CLOSE": "Close",
