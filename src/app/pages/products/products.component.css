@@ -1,3 +1,33 @@
+/* ---- The page's own chrome, so it stops looking like a different site.
+
+   The container carried margin-top: 90px to clear the old navbar, which was position: absolute and
+   sat over the content. The shell's navigation is sticky, so that margin is now a gap of empty page
+   under the header. ---- */
+.container[style] { margin-top: 0 !important; }
+
+/* Bootstrap's secondary grey (#6c757d) reads as a disabled control. These are ordinary buttons. */
+.btn-secondary {
+  background: #fff;
+  color: var(--ink, #111827);
+  border: 1px solid var(--line, #e5e7eb);
+  border-radius: 8px;
+  font-weight: 600;
+}
+.btn-secondary:hover, .btn-secondary:focus {
+  background: #f5f7f9;
+  color: var(--ink, #111827);
+  border-color: var(--accent, #f59e0b);
+}
+.btn-secondary:disabled { background: #f5f7f9; color: #9ca3af; }
+
+/* The page heading, matching the home page's section headings. */
+.container > h2.text-center {
+  text-align: left !important;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  margin: 0 0 26px !important;
+}
+
 /* ---- The product cards, to mockups/redesign-2026.html.
 
    Scoped with .card.h-100 rather than .card because the rules further down this file set the card
