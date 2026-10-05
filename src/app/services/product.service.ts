@@ -72,6 +72,24 @@ export class ProductService {
       catchError(this.handleError)
     );
   }
+
+  /**
+   * The same six groups, each with its children and their product counts.
+   *
+   * A separate method from getTopCategories on purpose: that one is called all over the app and its
+   * endpoint is relied on, but /category/top carries no children - and the products live in the
+   * children, not the groups. Decorative metal holds none of its own, so asking its id for products
+   * returns nothing. Only the tree can answer "what is actually in this group".
+   */
+  getCategoryTree(): Observable<TopCategory[]> {
+    const url = `${this.apiUrl}/category/tree`;
+    return this.http
+      .get<TopCategory[]>(url, { headers: this.getAuthHeaders() })
+      .pipe(this.retryTransient(),
+        map((categories) => this.transformCategories(categories, 'category_images')),
+        catchError(this.handleError)
+      );
+  }
   createCategory(category: Category): Observable<Category> {
     const headers = this.getAuthHeaders(); // Get authorization headers
     return this.http.post<Category>(`${this.apiUrl}/category/create`, category, { headers });

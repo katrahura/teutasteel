@@ -84,7 +84,10 @@
     "QUOTE_TITLE": "Not finding what you need?",
     "QUOTE_TEXT": "Send us your list and get one quote with the price and the lead time.",
     "QUOTE_WHATSAPP": "Send the list on WhatsApp",
-    "QUOTE_FORM": "Fill in the form"
+    "QUOTE_FORM": "Fill in the form",
+    "FEATURED_TITLE": "Most asked for",
+    "FEATURED_SUBTITLE": "Priced products, with the photographed ones first.",
+    "ALL_PRODUCTS": "All products"
   },
   "PRODUCTS": {
     "GROUPS_TITLE": "Product Groups",

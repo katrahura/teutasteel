@@ -123,7 +123,10 @@
     "QUOTE_TITLE": "Nuk e gjeni atë që kërkoni?",
     "QUOTE_TEXT": "Dërgoni listën tuaj dhe merrni një ofertë të vetme me çmim dhe afat.",
     "QUOTE_WHATSAPP": "Dërgo listën në WhatsApp",
-    "QUOTE_FORM": "Plotëso formularin"
+    "QUOTE_FORM": "Plotëso formularin",
+    "FEATURED_TITLE": "Më të kërkuarat",
+    "FEATURED_SUBTITLE": "Produkte me çmim, me foton përpara.",
+    "ALL_PRODUCTS": "Të gjitha produktet"
   },
   "PRODUCTS": {
     "GROUPS_TITLE": "Grupet e Produkteve",

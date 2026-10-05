@@ -112,6 +112,41 @@
     </div>
   </section>
 
+  <!-- Featured: priced products, photographs sorted first. Hidden rather than shown empty when
+       nothing qualifies, and each card links to a search for its own code so the customer lands on
+       the product. -->
+  <section class="featured" *ngIf="featured.length">
+    <div class="shell">
+      <div class="sec-head">
+        <div>
+          <h2>{{ 'HOME.FEATURED_TITLE' | translate }}</h2>
+          <p class="muted">{{ 'HOME.FEATURED_SUBTITLE' | translate }}</p>
+        </div>
+        <a class="btn btn-outline btn-sm" routerLink="/products">{{ 'HOME.ALL_PRODUCTS' | translate }} &rarr;</a>
+      </div>
+      <div class="cards">
+        <a class="pcard" *ngFor="let product of featured"
+           [routerLink]="['/products']" [queryParams]="{ q: product.code }">
+          <span class="pcard-photo">
+            <img *ngIf="product.image_asset?.original_path"
+                 [src]="product.image_asset?.original_path"
+                 [alt]="product.image_asset?.alternative_text || product.code"
+                 appImageFallback="assets/images/placeholder_category.jpg"
+                 loading="lazy">
+            <span class="pcard-none" *ngIf="!product.image_asset?.original_path"
+                  aria-hidden="true">&#9638;</span>
+          </span>
+          <span class="pcard-body">
+            <span class="pcard-code">{{ product.code }}</span>
+            <span class="pcard-desc" *ngIf="product.translations?.length">
+              {{ product.translations[0].description }}
+            </span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- Quote band -->
   <div class="quote">
     <div class="shell">

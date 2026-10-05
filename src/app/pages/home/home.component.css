@@ -78,6 +78,23 @@ section.services-wrap { background: #f5f7f9; border-top: 1px solid var(--line, #
 .quote h2 { font-size: 30px; margin: 0; font-weight: 800; }
 .quote p { margin: 10px 0 0; font-weight: 600; }
 
+/* Featured products: the same card language as the products page, smaller. */
+.featured { padding: 62px 0; }
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.pcard {
+  border: 1px solid var(--line, #e5e7eb); border-radius: 10px; overflow: hidden; background: #fff;
+  text-decoration: none; color: inherit; display: flex; flex-direction: column;
+  box-shadow: 0 1px 2px rgba(16, 21, 27, .05), 0 8px 24px rgba(16, 21, 27, .06);
+  transition: transform .18s ease, border-color .18s ease;
+}
+.pcard:hover { transform: translateY(-2px); border-color: var(--accent, #f59e0b); }
+.pcard-photo { height: 132px; background: #f5f7f9; display: grid; place-items: center; }
+.pcard-photo img { width: 100%; height: 132px; object-fit: cover; }
+.pcard-none { color: #9ca3af; font-size: 26px; }
+.pcard-body { padding: 14px 16px 18px; }
+.pcard-code { display: block; font-weight: 800; font-size: 16px; letter-spacing: -.01em; }
+.pcard-desc { display: block; margin-top: 6px; font-size: 13.5px; color: var(--ink-soft, #4b5563); }
+
 @media (max-width: 980px) {
   .hero .grid, .quote .shell { grid-template-columns: 1fr; }
   .tiles, .services { grid-template-columns: repeat(2, 1fr); }

@@ -10,7 +10,7 @@ describe('HomeComponent', () => {
   let fixture: ComponentFixture<HomeComponent>;
   let httpMock: HttpTestingController;
 
-  const categoriesUrl = `${environment.apiUrl}/category/top`;
+  const categoriesUrl = `${environment.apiUrl}/category/tree`;
   const categories = [
     { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null, product_count: 12 },
     {
