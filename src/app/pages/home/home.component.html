@@ -138,6 +138,7 @@
           </span>
           <span class="pcard-body">
             <span class="pcard-code">{{ product.code }}</span>
+            <span class="pcard-price" *ngIf="priceOf(product)">{{ priceOf(product) }}</span>
             <span class="pcard-desc" *ngIf="product.translations?.length">
               {{ product.translations[0].description }}
             </span>

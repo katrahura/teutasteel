@@ -93,6 +93,7 @@ section.services-wrap { background: #f5f7f9; border-top: 1px solid var(--line, #
 .pcard-none { color: #9ca3af; font-size: 26px; }
 .pcard-body { padding: 14px 16px 18px; }
 .pcard-code { display: block; font-weight: 800; font-size: 16px; letter-spacing: -.01em; }
+.pcard-price { display: block; margin-top: 6px; font-weight: 800; font-size: 19px; }
 .pcard-desc { display: block; margin-top: 6px; font-size: 13.5px; color: var(--ink-soft, #4b5563); }
 
 @media (max-width: 980px) {

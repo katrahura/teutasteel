@@ -148,6 +148,22 @@ export class HomeComponent implements OnDestroy {
     return (product.dimensions || []).some((dimension: any) => Number(dimension.price) > 0);
   }
 
+  /**
+   * The first price the product carries, with its currency, for the featured card.
+   *
+   * The unit - per sheet, per tube, per bar - is already in the description underneath, because
+   * every description written for this catalogue ends by saying what the price buys.
+   */
+  priceOf(product: Product): string | null {
+    const priced = (product.dimensions || []).find(
+      (dimension: any) => Number(dimension.price) > 0
+    ) as any;
+    if (!priced) {
+      return null;
+    }
+    return `${priced.price} ${priced.currency || 'Eur'}`;
+  }
+
   /** How many photographs a product has, for sorting: 1 if it has one, 0 if not. */
   private photographs(product: Product): number {
     const asset = (product as any).image_asset;
