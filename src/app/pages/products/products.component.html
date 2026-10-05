@@ -866,12 +866,16 @@
                 <strong>{{ "PRODUCTS.DIMENSIONS" | translate }}:</strong><br />
                 <ng-container *ngIf="showsValue(getProductDimension(product, 'height'))">
                   {{
-                    (isRound(product) ? "PRODUCTS.DIAMETER" : "PRODUCTS.HEIGHT")
+                    (isRound(product) || isTipla(product) ? "PRODUCTS.DIAMETER" : "PRODUCTS.HEIGHT")
                       | translate
                   }}:
                   {{ getProductDimension(product, "height") }} mm<br />
                 </ng-container>
-                <ng-container *ngIf="showsValue(getProductDimension(product, 'width'))">
+                <!-- A TIPLLA's second number is a length, not a width: "10x120" is 10 mm across and
+                     120 mm long. It is shown below as the length instead. -->
+                <ng-container
+                  *ngIf="showsValue(getProductDimension(product, 'width')) && !isTipla(product)"
+                >
                   {{ "PRODUCTS.WIDTH" | translate }}:
                   {{ getProductDimension(product, "width") }} mm<br />
                 </ng-container>
@@ -879,9 +883,11 @@
                   {{ "PRODUCTS.THICKNESS" | translate }}:
                   {{ getProductDimension(product, "thickness") }} mm<br />
                 </ng-container>
-                <ng-container *ngIf="showsValue(getProductDimension(product, 'length'))">
+                <ng-container
+                  *ngIf="showsValue(shownLength(product, product.dimensions ? product.dimensions[0] : null))"
+                >
                   {{ "PRODUCTS.LENGTH" | translate }}:
-                  {{ formatLength(getProductDimension(product, "length")) }}<br />
+                  {{ formatLength(shownLength(product, product.dimensions ? product.dimensions[0] : null)) }}<br />
                 </ng-container>
                 <ng-container *ngIf="showsValue(getProductDimension(product, 'weight'))">
                   {{ "MISC.WEIGHT" | translate }}:

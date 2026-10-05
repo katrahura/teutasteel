@@ -331,6 +331,38 @@ toggleParent(parentId: number) {
   }
 
   /**
+   * Whether this product is a TIPLLA, whose two numbers are a diameter and a length.
+   *
+   * The owner's reading: "10x120" is Ø10 mm and 120 mm long - not a height and a width. The importer
+   * had nowhere else to put the 120 than `width`, so the card has to read it back as a length.
+   *
+   * Matched on the category rather than the code, because the codes carry no marker: a TIPLLA is
+   * "8X80" and nothing in those digits says which number is which.
+   */
+  isTipla(product: any): boolean {
+    const open = (this as any).selectedCategory;
+    const parts = [
+      product && product.category ? product.category.title : '',
+      open ? open.title : '',
+    ];
+    return parts.some((title: any) => String(title || '').toUpperCase().indexOf('TIPLLA') >= 0);
+  }
+
+  /**
+   * The length to show. A TIPLLA keeps it in `width`, because that is where the importer put it;
+   * every other product keeps it in `length`.
+   */
+  shownLength(product: any, dimension: any): any {
+    if (!dimension) {
+      return null;
+    }
+    if (this.isTipla(product) && !this.showsValue(dimension.length)) {
+      return dimension.width;
+    }
+    return dimension.length;
+  }
+
+  /**
    * Whether a dimension value is worth showing.
    *
    * Accepts numeric strings, because the API sends decimals as strings - "3.80" is a real price
