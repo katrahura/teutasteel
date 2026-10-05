@@ -1136,6 +1136,28 @@
                   </ng-container>
                 </span>
               </label>
+              <!-- One quantity per ticked thickness, because twenty of 2 mm and five of 3 mm are two
+                   orders and become two lines in the enquiry. -->
+              <div
+                class="d-flex align-items-center gap-2 mb-2 ms-4"
+                *ngIf="needsChoice() && isChosen(i)"
+              >
+                <label class="small text-muted mb-0" [attr.for]="'qty-' + i">
+                  {{ "PRODUCTS.QUANTITY" | translate }}
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  class="form-control form-control-sm"
+                  style="max-width: 90px"
+                  [id]="'qty-' + i"
+                  [ngModel]="quantities[i]"
+                  (ngModelChange)="setQuantity(i, $event)"
+                  name="quantity-{{ i }}"
+                />
+                <span class="small text-muted">{{ "PRODUCTS.PIECES" | translate }}</span>
+              </div>
             </li>
           </ul>
 
@@ -1146,9 +1168,9 @@
           <button
             type="button"
             class="btn btn-outline-success mt-2 me-2"
-            [class.disabled]="!canContact()"
-            [attr.aria-disabled]="!canContact()"
-            (click)="canContact() && addToQuote(selectedProduct, tickedDimensions(selectedProduct))"
+            [class.disabled]="!canContact() || !canAddTicked()"
+            [attr.aria-disabled]="!canContact() || !canAddTicked()"
+            (click)="canContact() && canAddTicked() && addToQuote(selectedProduct, tickedDimensions(selectedProduct))"
           >
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
             {{ "PRODUCTS.ADD_TO_REQUEST" | translate }}

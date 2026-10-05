@@ -164,7 +164,9 @@
     "UNIT_SHEET": "për pllakë",
     "UNIT_TUBE": "për gyp",
     "UNIT_METRE": "për metër",
-    "UNIT_BAR": "për shufër"
+    "UNIT_BAR": "për shufër",
+    "QUANTITY": "Sasia",
+    "PIECES": "copë"
   },
   "MODAL": {
     "CLOSE": "Mbyll",

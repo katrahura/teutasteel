@@ -179,7 +179,7 @@ toggleParent(parentId: number) {
         productId: product.id || 0,
         code: product.code,
         detail: this.describeDimension(dimension),
-        quantity: 1,
+        quantity: this.quantityFor(product, dimension),
       });
     }
     this.quoteCount = this.quoteList.count();
@@ -1006,6 +1006,41 @@ this.showProducts(this.selectedCategory)
    */
   chosenDimensions: { [index: number]: boolean } = {};
 
+  /**
+   * How many of each ticked thickness the customer wants.
+   *
+   * Twenty of 2 mm and five of 3 mm is the ordinary order, and they are two lines, not one - which
+   * is why the quantity belongs to the dimension and not to the product.
+   */
+  quantities: { [index: number]: number } = {};
+
+  /** The quantity chosen for a dimension, or 1 when none was - the card has no field of its own. */
+  quantityFor(product: Product, dimension: ProductDimension): number {
+    const index = (product.dimensions || []).indexOf(dimension);
+    const chosen = this.quantities[index];
+    return typeof chosen === 'number' && chosen > 0 ? chosen : 1;
+  }
+
+  /** True when every ticked thickness has a quantity of at least one. */
+  canAddTicked(): boolean {
+    const indexes = Object.keys(this.chosenDimensions).filter(
+      (key) => this.chosenDimensions[Number(key)]
+    );
+    return indexes.length > 0 && indexes.every((key) => {
+      const quantity = this.quantities[Number(key)];
+      return typeof quantity === 'number' && quantity > 0;
+    });
+  }
+
+  /** Keeps a quantity in step with the ticks, and never lets one fall below zero. */
+  setQuantity(index: number, value: any): void {
+    const number = Number(value);
+    this.quantities = {
+      ...this.quantities,
+      [index]: Number.isFinite(number) && number > 0 ? Math.floor(number) : 0,
+    };
+  }
+
   private clearChoices(): void {
     this.chosenDimensions = {};
   }
@@ -1015,10 +1050,16 @@ this.showProducts(this.selectedCategory)
   }
 
   toggleDimension(index: number): void {
+    const nowChosen = !this.chosenDimensions[index];
     this.chosenDimensions = {
       ...this.chosenDimensions,
-      [index]: !this.chosenDimensions[index],
+      [index]: nowChosen,
     };
+    // A ticked thickness starts at one. The commonest order is a single piece, and a field that
+    // begins empty makes the customer do arithmetic before they can add anything at all.
+    if (nowChosen && !this.quantities[index]) {
+      this.quantities = { ...this.quantities, [index]: 1 };
+    }
   }
 
   anyChosen(): boolean {

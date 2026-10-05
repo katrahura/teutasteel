@@ -125,7 +125,9 @@
     "UNIT_SHEET": "per sheet",
     "UNIT_TUBE": "per tube",
     "UNIT_METRE": "per metre",
-    "UNIT_BAR": "per bar"
+    "UNIT_BAR": "per bar",
+    "QUANTITY": "Quantity",
+    "PIECES": "pieces"
   },
   "MODAL": {
     "CLOSE": "Close",
