@@ -584,13 +584,17 @@
                 <label for="translationLanguage_{{ i }}" class="form-label">{{
                   "MISC.LANGUAGE" | translate
                 }}</label>
-                <input
-                  type="text"
+                <!-- A list, not a free-text box: typing "alb" or "Sq" quietly created a third
+                     language that nothing on the site ever asked for. -->
+                <select
                   id="translationLanguage_{{ i }}"
-                  class="form-control"
+                  class="form-select"
                   [(ngModel)]="translation.language"
                   name="translation_language_{{ i }}"
-                />
+                >
+                  <option value="al">Shqip</option>
+                  <option value="en">English</option>
+                </select>
               </div>
               <div class="mb-2">
                 <label for="translationContent_{{ i }}" class="form-label">{{
@@ -1402,14 +1406,15 @@
                 <label for="language-{{ i }}" class="form-label">{{
                   "MISC.LANGUAGE" | translate
                 }}</label>
-                <input
-                  type="text"
-                  class="form-control"
+                <select
+                  class="form-select"
                   id="language-{{ i }}"
-                  [placeholder]="'MISC.LANGUAGE' | translate"
                   [(ngModel)]="translation.language"
                   name="language-{{ i }}"
-                />
+                >
+                  <option value="al">Shqip</option>
+                  <option value="en">English</option>
+                </select>
               </div>
               <div class="col-md-3">
                 <label for="content-{{ i }}" class="form-label">{{
