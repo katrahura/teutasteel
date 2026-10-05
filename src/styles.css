@@ -5,13 +5,17 @@
 }
 
 
-/* Apply glow effect globally for all text elements */
-body, h1, h2, h3, p, a, span {
-    --text-color: rgb(0, 0, 0); /* Default text color */
-    --glow-color: rgba(255, 255, 255, 0); /* Default glow color */
-    color: var(--text-color);
-    text-shadow: 0.01em 0.01em 0.1em var(--glow-color);
-  }
+/* A rule stood here - body, h1, h2, h3, p, a, span with color: var(--text-color) and a white glow -
+   which set the colour on the most common tags in the site and so overrode inheritance for all of
+   them. Anything light on a dark surface came out black: the opening hours in the top bar, the
+   shop's name in the footer and the paragraph beneath it were all invisible, because those elements
+   took the body's black rather than the colour of the bar they sit in.
+
+   Text inherits normally now, and each surface states its own colour. */
+body {
+  color: #111827;
+  background: #fff;
+}
   
   /* Specific style for headings if needed */
   h2 {
