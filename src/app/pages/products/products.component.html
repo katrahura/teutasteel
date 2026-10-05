@@ -898,6 +898,7 @@
                 <strong>{{ "MISC.PRICE" | translate }}:</strong>
                 {{ getProductDimension(product, "price") }}
                 {{ getProductDimension(product, "currency") }}
+                <span class="price-unit" *ngIf="priceUnit(product)">/ {{ priceUnit(product) }}</span>
               </p>
               <button
                 type="button"

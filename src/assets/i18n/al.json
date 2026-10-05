@@ -157,7 +157,11 @@
     "REQUEST_EMPTY": "Nuk keni shtuar artikuj. Kthehuni te produktet dhe shtypni “Shto në kërkesë”.",
     "REQUEST_REMOVE": "Hiq",
     "REQUEST_CLEAR": "Pastro listën",
-    "WEIGHT_CALCULATED": "Pesha (llogaritur)"
+    "WEIGHT_CALCULATED": "Pesha (llogaritur)",
+    "UNIT_SHEET": "për pllakë",
+    "UNIT_TUBE": "për gyp",
+    "UNIT_METRE": "për metër",
+    "UNIT_BAR": "për shufër"
   },
   "MODAL": {
     "CLOSE": "Mbyll",

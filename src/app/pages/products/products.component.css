@@ -1,3 +1,26 @@
+/* ---- The product cards, to mockups/redesign-2026.html.
+
+   Scoped with .card.h-100 rather than .card because the rules further down this file set the card
+   to #f8f9fa with a 20% black shadow, and at equal specificity the later rule wins. The shell
+   defines --ink, --accent and --line, and the tokens cascade in, so a card wears the same slate and
+   amber as the rest of the site. ---- */
+.price-unit { color: #4b5563; font-size: .85em; font-weight: 600; white-space: nowrap; }
+
+.card.h-100 {
+  background: #fff;
+  border: 1px solid var(--line, #e5e7eb);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(16, 21, 27, .05), 0 8px 24px rgba(16, 21, 27, .06);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card.h-100:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent, #f59e0b);
+  box-shadow: 0 2px 4px rgba(16, 21, 27, .06), 0 14px 32px rgba(16, 21, 27, .10);
+}
+.card.h-100 .card-title { font-weight: 700; letter-spacing: -.01em; }
+.card.h-100 .btn { border-radius: 8px; font-weight: 700; }
+
 /* Global card styling */
 .card, .product-modal .card {
   border-radius: 10px;

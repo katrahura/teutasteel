@@ -118,7 +118,11 @@
     "REQUEST_EMPTY": "You have not added anything yet. Go back to the products and press “Add to request”.",
     "REQUEST_REMOVE": "Remove",
     "REQUEST_CLEAR": "Clear the list",
-    "WEIGHT_CALCULATED": "Weight (calculated)"
+    "WEIGHT_CALCULATED": "Weight (calculated)",
+    "UNIT_SHEET": "per sheet",
+    "UNIT_TUBE": "per tube",
+    "UNIT_METRE": "per metre",
+    "UNIT_BAR": "per bar"
   },
   "MODAL": {
     "CLOSE": "Close",

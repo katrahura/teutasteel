@@ -221,6 +221,27 @@ toggleParent(parentId: number) {
     });
   }
 
+  /**
+   * What a price is for, in the shortest words that fit on a card: per sheet, per tube, per bar.
+   *
+   * Worked out from the section shape, which comes from the category - the same source the weight
+   * calculator uses. The audit's complaint was that no price on the site said what it bought; the
+   * descriptions now carry it in prose, and this is the version a card can show beside the number.
+   */
+  priceUnit(product: Product): string {
+    const category = (product as any)?.category || (this as any).selectedCategory;
+    const shape = shapeForCategory(category ? category.title : null);
+    const keys: { [key: string]: string } = {
+      sheet: 'PRODUCTS.UNIT_SHEET',
+      round: 'PRODUCTS.UNIT_TUBE',
+      rectangular: 'PRODUCTS.UNIT_TUBE',
+      flat: 'PRODUCTS.UNIT_METRE',
+      angle: 'PRODUCTS.UNIT_BAR',
+    };
+    const key = keys[shape];
+    return key ? this.translate.instant(key) : '';
+  }
+
   /** The dimensions the customer ticked, or the only one there is. */
   tickedDimensions(product: Product): ProductDimension[] {
     const dimensions = (product?.dimensions || []) as ProductDimension[];
