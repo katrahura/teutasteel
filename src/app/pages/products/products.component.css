@@ -20,8 +20,11 @@
 }
 .btn-secondary:disabled { background: #f5f7f9; color: #9ca3af; }
 
-/* The page heading, matching the home page's section headings. */
-.container > h2.text-center {
+/* The page headings, matching the home page's section headings. There are three of them: the groups
+   view uses h2, the category view uses h1.h2 (with one for a search and one without), and the main
+   heading is an h1.h2 too. The first version of this rule named h2 alone, so it styled the heading
+   nobody was looking at. */
+h1.text-center, h2.text-center {
   text-align: left !important;
   font-weight: 800;
   letter-spacing: -.02em;
