@@ -115,7 +115,15 @@
     "SEARCH_PLACEHOLDER": "Kërko me kod ose emër, p.sh. IPE 100",
     "SEARCH_RESULTS_FOR": "Rezultatet për",
     "SEARCH_CLEAR": "Pastro",
-    "NO_RESULTS": "Asnjë produkt nuk u gjet. Provoni kodin, p.sh. IPE 100, ose shkruani në WhatsApp."
+    "NO_RESULTS": "Asnjë produkt nuk u gjet. Provoni kodin, p.sh. IPE 100, ose shkruani në WhatsApp.",
+    "ADD_TO_REQUEST": "Shto në kërkesë",
+    "REQUEST_COUNT": "Artikuj në kërkesë",
+    "REQUEST_ADDED": "U shtua",
+    "REQUEST_OPEN": "Shiko kërkesën",
+    "REQUEST_TITLE": "Artikujt e kërkuar",
+    "REQUEST_EMPTY": "Nuk keni shtuar artikuj. Kthehuni te produktet dhe shtypni “Shto në kërkesë”.",
+    "REQUEST_REMOVE": "Hiq",
+    "REQUEST_CLEAR": "Pastro listën"
   },
   "MODAL": {
     "CLOSE": "Mbyll",

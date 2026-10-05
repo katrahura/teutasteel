@@ -31,6 +31,24 @@
       </div>
     </div>
   </div>
+
+  <!-- What is on the request list. A customer building an order of a tube, its bends and a sheet
+       needs to see that it is being collected, and a way to send it. -->
+  <div
+    class="alert alert-success mt-3 mb-0 d-flex align-items-center gap-2"
+    *ngIf="quoteCount > 0"
+  >
+    <i class="bi bi-list-check" aria-hidden="true"></i>
+    <span>
+      {{ "PRODUCTS.REQUEST_COUNT" | translate }}: <strong>{{ quoteCount }}</strong>
+      <span class="text-muted" *ngIf="quoteNotice">
+        &middot; {{ "PRODUCTS.REQUEST_ADDED" | translate }} {{ quoteNotice }}
+      </span>
+    </span>
+    <a class="btn btn-sm btn-success ms-auto" [routerLink]="['/contact']">
+      {{ "PRODUCTS.REQUEST_OPEN" | translate }}
+    </a>
+  </div>
 </div>
 
 <!-- CATEGORY GROUPS VIEW -->
@@ -881,6 +899,14 @@
                 {{ getProductDimension(product, "price") }}
                 {{ getProductDimension(product, "currency") }}
               </p>
+              <button
+                type="button"
+                class="btn btn-outline-success mt-2 me-2"
+                (click)="addToQuote(product); $event.stopPropagation()"
+              >
+                <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                {{ "PRODUCTS.ADD_TO_REQUEST" | translate }}
+              </button>
               <a
                 [href]="getWhatsAppLink(product)"
                 class="btn btn-success mt-2"
@@ -1103,6 +1129,17 @@
           <p class="text-muted small mb-2" *ngIf="needsChoice() && !anyChosen()">
             {{ "PRODUCTS.CHOOSE_THICKNESS" | translate }}
           </p>
+
+          <button
+            type="button"
+            class="btn btn-outline-success mt-2 me-2"
+            [class.disabled]="!canContact()"
+            [attr.aria-disabled]="!canContact()"
+            (click)="canContact() && addToQuote(selectedProduct, tickedDimensions(selectedProduct))"
+          >
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            {{ "PRODUCTS.ADD_TO_REQUEST" | translate }}
+          </button>
 
           <a
             [href]="getWhatsAppLink(selectedProduct)"

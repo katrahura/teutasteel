@@ -21,6 +21,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { SharedService } from '../../shared.service';
+import { QuoteListService } from '../../shared/quote-list.service';
 type DimensionKey =
   | 'height'
   | 'width'
@@ -145,7 +146,69 @@ toggleParent(parentId: number) {
     3: 'Type C',
     // Add other mappings as needed
   };
-  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService, private changeDetector: ChangeDetectorRef) {}
+  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService, private changeDetector: ChangeDetectorRef, private quoteList: QuoteListService) {
+    // Read once on construction; the service guards its storage, so the prerender is safe here.
+    this.quoteCount = this.quoteList.count();
+  }
+
+  /** How many items are on the request list, for the bar above the products. */
+  quoteCount = 0;
+
+  /** The last product added, so the page can acknowledge it. */
+  quoteNotice = '';
+
+  /**
+   * Put a product on the request list.
+   *
+   * A card has no thickness picker - that lives in the detail dialog - so it adds the product with
+   * the dimension it is showing. The dialog passes the thicknesses the customer ticked, and each
+   * becomes its own line so the shop can price them separately.
+   */
+  addToQuote(product: Product, dimensions?: ProductDimension[]): void {
+    // With nothing passed - the card, which has no picker - add the dimension it is showing rather
+    // than every thickness the product carries, which for a merged sheet would be fourteen lines.
+    const chosen = dimensions && dimensions.length
+      ? dimensions
+      : (product.dimensions || []).slice(0, 1);
+    if (!chosen.length) {
+      return;
+    }
+    for (const dimension of chosen) {
+      this.quoteList.add({
+        productId: product.id || 0,
+        code: product.code,
+        detail: this.describeDimension(dimension),
+        quantity: 1,
+      });
+    }
+    this.quoteCount = this.quoteList.count();
+    this.quoteNotice = product.code;
+  }
+
+  /** "Trashësia 1.5 mm — 4.80 Eur", or as much of that as the dimension knows. */
+  private describeDimension(dimension: ProductDimension): string {
+    const parts: string[] = [];
+    if (this.showsValue(dimension.thickness)) {
+      parts.push(`${this.translate.instant('PRODUCTS.THICKNESS')} ${dimension.thickness} mm`);
+    } else if (this.showsValue(dimension.height)) {
+      parts.push(`${dimension.height}${dimension.width ? ' × ' + dimension.width : ''} mm`);
+    }
+    if (this.showsValue(dimension.price)) {
+      parts.push(`${dimension.price} ${dimension.currency || ''}`.trim());
+    }
+    return parts.join(' — ');
+  }
+
+  /** The dimensions the customer ticked, or the only one there is. */
+  tickedDimensions(product: Product): ProductDimension[] {
+    const dimensions = (product?.dimensions || []) as ProductDimension[];
+    if (dimensions.length <= 1) {
+      return dimensions;
+    }
+    return dimensions.filter((_dimension: ProductDimension, index: number) =>
+      this.isChosen(index)
+    );
+  }
 
   openModal(product: any, event: Event): void {
     event.stopPropagation(); // Stop event propagation

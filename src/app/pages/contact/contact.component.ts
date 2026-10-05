@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
+import { QuoteListService, QuoteItem } from '../../shared/quote-list.service';
 
 @Component({
   selector: 'app-contact',
@@ -14,6 +15,20 @@ import { environment } from '../../../environments/environment';
 })
 export class ContactComponent {
   private translate = inject(TranslateService);
+  private quoteList = inject(QuoteListService);
+
+  /** What the visitor added while browsing. Read fresh, so it cannot go stale. */
+  get requested(): QuoteItem[] {
+    return this.quoteList.items();
+  }
+
+  removeRequested(productId: number): void {
+    this.quoteList.remove(productId);
+  }
+
+  clearRequested(): void {
+    this.quoteList.clear();
+  }
 
   /**
    * Address comes from the environment, next to the other contact details.
@@ -40,9 +55,11 @@ export class ContactComponent {
   /** What the visitor types into the quote form. */
   quote = { name: '', phone: '', product: '', quantity: '', notes: '' };
 
-  /** The shop cannot answer without these three, so the send button waits for them. */
+  /** The shop cannot answer without a name, a phone, and something to quote for. */
   isQuoteValid(): boolean {
-    return !!(this.quote.name.trim() && this.quote.phone.trim() && this.quote.product.trim());
+    const essentials = this.quote.name.trim() && this.quote.phone.trim();
+    // Either they described what they need, or they added it from the catalogue while browsing.
+    return !!(essentials && (this.quote.product.trim() || this.requested.length));
   }
 
   /**
@@ -57,13 +74,28 @@ export class ContactComponent {
       this.translate.instant('QUOTE.MESSAGE_INTRO'),
       `${this.translate.instant('QUOTE.NAME')}: ${this.quote.name.trim()}`,
       `${this.translate.instant('QUOTE.PHONE')}: ${this.quote.phone.trim()}`,
-      `${this.translate.instant('QUOTE.PRODUCT')}: ${this.quote.product.trim()}`,
     ];
+    // Only if they wrote something: with a request list, this box is often left empty, and an empty
+    // label in the message reads as a mistake.
+    if (this.quote.product.trim()) {
+      lines.push(`${this.translate.instant('QUOTE.PRODUCT')}: ${this.quote.product.trim()}`);
+    }
     if (this.quote.quantity.trim()) {
       lines.push(`${this.translate.instant('QUOTE.QUANTITY')}: ${this.quote.quantity.trim()}`);
     }
     if (this.quote.notes.trim()) {
       lines.push(`${this.translate.instant('QUOTE.NOTES')}: ${this.quote.notes.trim()}`);
+    }
+    // What they added while browsing. This is the point of the request list: a tube, its bends, a
+    // sheet - one enquiry instead of four messages.
+    const items = this.requested;
+    if (items.length) {
+      lines.push('');
+      lines.push(`${this.translate.instant('PRODUCTS.REQUEST_TITLE')}:`);
+      items.forEach((item, index) => {
+        const detail = item.detail ? ` — ${item.detail}` : '';
+        lines.push(`${index + 1}. ${item.code}${detail} (${item.quantity})`);
+      });
     }
     return `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent(lines.join('\n'))}`;
   }

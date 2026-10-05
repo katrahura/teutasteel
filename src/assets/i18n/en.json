@@ -76,7 +76,15 @@
     "SEARCH_PLACEHOLDER": "Search by code or name, e.g. IPE 100",
     "SEARCH_RESULTS_FOR": "Results for",
     "SEARCH_CLEAR": "Clear",
-    "NO_RESULTS": "No products found. Try the code, e.g. IPE 100, or ask on WhatsApp."
+    "NO_RESULTS": "No products found. Try the code, e.g. IPE 100, or ask on WhatsApp.",
+    "ADD_TO_REQUEST": "Add to request",
+    "REQUEST_COUNT": "Items in your request",
+    "REQUEST_ADDED": "Added",
+    "REQUEST_OPEN": "Open the request",
+    "REQUEST_TITLE": "Your requested items",
+    "REQUEST_EMPTY": "You have not added anything yet. Go back to the products and press “Add to request”.",
+    "REQUEST_REMOVE": "Remove",
+    "REQUEST_CLEAR": "Clear the list"
   },
   "MODAL": {
     "CLOSE": "Close",
