@@ -67,6 +67,12 @@
       is_active: boolean;
       top_category?: boolean;
       image_asset?: ImageAsset;
+      /**
+       * Products reachable in this group and everything under it, counted by the API and active
+       * branches only. The home page's tiles state it; nothing stores it.
+       */
+      product_count?: number;
+      children?: TopCategory[];
     }
     
   // models/pagination.model.ts

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
 
 import { HomeComponent } from './home.component';
@@ -12,8 +12,12 @@ describe('HomeComponent', () => {
 
   const categoriesUrl = `${environment.apiUrl}/category/top`;
   const categories = [
-    { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null },
-    { id: 2, title: 'Profiles', is_active: true, top_category: true, image_asset: null },
+    { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null, product_count: 12 },
+    {
+      id: 2, title: 'Profiles', is_active: true, top_category: true,
+      image_asset: { original_path: '/uploads/profiles.jpg', alternative_text: 'Profiles' },
+      product_count: 30,
+    },
   ];
 
   beforeEach(async () => {
@@ -29,46 +33,43 @@ describe('HomeComponent', () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    delete (window as unknown as { bootstrap?: unknown }).bootstrap;
-  });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('shows the placeholder image when a category has no image', () => {
-    // Regression: the binding had no fallback, so an empty src was rendered - a
-    // wasted request for the page itself and no image.
+  it('states the number of products each group holds', () => {
+    // The figure comes from the API's product_count, which counts active branches only, so the tile
+    // cannot promise products in a sub-category that is switched off.
     httpMock.expectOne((req) => req.url === categoriesUrl).flush(categories);
     fixture.detectChanges();
 
-    const images = [...fixture.nativeElement.querySelectorAll('img')] as HTMLImageElement[];
-    const categoryImages = images.filter((img) => img.getAttribute('src')?.includes('placeholder_category'));
-    expect(categoryImages.length).toBeGreaterThan(0);
-    expect(images.every((img) => !!img.getAttribute('src'))).toBeTrue();
+    const text = (fixture.nativeElement as HTMLElement).textContent || '';
+    expect(text).toContain('12');
+    expect(text).toContain('30');
   });
 
-  it('starts the carousel once the slides exist', fakeAsync(() => {
-    // Regression: the carousel lives behind *ngIf, so Bootstrap's DOMContentLoaded
-    // auto-initialisation never saw it and data-bs-ride did nothing - the second
-    // slide was never shown.
-    const cycle = jasmine.createSpy('cycle');
-    let options: unknown;
-    (window as unknown as { bootstrap: unknown }).bootstrap = {
-      Carousel: {
-        getOrCreateInstance: (_element: unknown, config: unknown) => {
-          options = config;
-          return { cycle };
-        },
-      },
-    };
-
+  it('sums the reachable products for the trust strip', () => {
     httpMock.expectOne((req) => req.url === categoriesUrl).flush(categories);
     fixture.detectChanges();
-    tick(1);
 
-    expect(cycle).toHaveBeenCalled();
-    expect(options).toEqual({ interval: 3000 });
-  }));
+    expect(component.catalogueTotal).toBe(42);
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('42');
+  });
+
+  it('shows a photograph where a category has one, and an icon where it does not', () => {
+    // Regression: the binding had no fallback, so an empty src was rendered - a wasted request for
+    // the page itself and no image. Now a category without a photograph gets an icon instead, and
+    // no img element at all.
+    httpMock.expectOne((req) => req.url === categoriesUrl).flush(categories);
+    fixture.detectChanges();
+
+    // Scoped to the group tiles: the services below them have photographs of their own, and
+    // counting every img on the page made this fail on the four service images.
+    const tiles = (fixture.nativeElement as HTMLElement).querySelector('.tiles') as HTMLElement;
+    const images = Array.from(tiles.querySelectorAll('img')) as HTMLImageElement[];
+    expect(images.length).toBe(1);
+    expect(images[0].getAttribute('src')).toContain('profiles.jpg');
+    expect(images.every((img) => !!img.getAttribute('src'))).toBeTrue();
+    expect(tiles.querySelectorAll('.ico').length).toBe(1);
+  });
 });

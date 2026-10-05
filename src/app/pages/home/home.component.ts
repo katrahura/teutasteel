@@ -9,8 +9,7 @@ import { SharedService } from '../../shared.service';
 import { translateCategoryTitle } from '../../shared/translate-category-title';
 import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
 import { SERVICES } from '../../shared/services';
-
-declare var bootstrap: any;
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -31,6 +30,30 @@ export class HomeComponent implements OnDestroy {
    */
   readonly services = SERVICES;
 
+  /** Contact details from the environment, so a changed number is changed in one place. */
+  readonly phone = environment.phone;
+  readonly whatsappLink = 'https://wa.me/' + environment.whatsappNumber;
+
+  /**
+   * The hero card's claims, as translation keys.
+   *
+   * Every one of them is something the shop demonstrably does - the same services the services page
+   * lists, the request list built into the catalogue, the units printed on every price. The mockup's
+   * card said "Prerje në masë, pa minimum" and I do not know whether there is a minimum, so it is
+   * not claimed.
+   */
+  readonly whyPoints = ['HOME.WHY_1', 'HOME.WHY_2', 'HOME.WHY_3', 'HOME.WHY_4'];
+
+  /**
+   * What a visitor can actually reach, across every group. Summed rather than stored, and each
+   * group's figure comes from the API's product_count, which counts active branches only.
+   */
+  get catalogueTotal(): number {
+    return (this.topCategories || []).reduce(
+      (sum, category: any) => sum + (category.product_count || 0), 0
+    );
+  }
+
   constructor(
     private sharedService: SharedService,
     private router: Router,
@@ -45,35 +68,12 @@ export class HomeComponent implements OnDestroy {
       return;
     }
     const sub = this.productService.getTopCategories().subscribe({
-      next: (data) => {
-        this.topCategories = data;
-        // after the *ngIf has rendered the slides
-        setTimeout(() => this.startCarousel(), 0);
-      },
+      next: (data) => { this.topCategories = data; },
       error: (error) => {
         console.error('Error occurred while fetching categories:', error);
       },
     });
     this.subscriptions.add(sub);
-  }
-
-  /**
-   * Starts the featured-products carousel.
-   *
-   * The carousel sits behind *ngIf="topCategories.length", so its element only
-   * reaches the DOM after the categories arrive - by which time Bootstrap has
-   * already run the DOMContentLoaded pass that turns data-bs-ride into a running
-   * carousel. Without this the first slide was the only one ever shown.
-   */
-  private startCarousel(): void {
-    if (typeof bootstrap === 'undefined') {
-      return;
-    }
-    const element = document.getElementById('featuredProductsCarousel');
-    if (!element) {
-      return;
-    }
-    bootstrap.Carousel.getOrCreateInstance(element, { interval: 3000 }).cycle();
   }
 
   ngOnDestroy(): void {
@@ -88,5 +88,12 @@ export class HomeComponent implements OnDestroy {
   /** Category names are stored in one language; translate them for display. */
   categoryTitle(category: any): string {
     return translateCategoryTitle(this.translate, category);
+  }
+
+  /** The hero's search box hands its term to the products page, which owns the searching. */
+  goToSearch(event: Event, term: string): void {
+    event.preventDefault();
+    const query = (term || '').trim();
+    this.router.navigate(['/products'], query ? { queryParams: { q: query } } : {});
   }
 }

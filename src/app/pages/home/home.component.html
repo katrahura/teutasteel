@@ -1,156 +1,131 @@
-<section class="px-3 mb-5 mt-5">
+<!-- The home page, to the design in mockups/redesign-2026.html.
 
-  <!-- Hero Section -->
-  <!-- <section  id="backgroundImage" class="hero-section text-center py-5" 
-           style="background-image: url('https://picsum.photos/300/200'); background-size: cover;">
-    <div id="dynamictxtcolor" class="container">
-      <h1  class="display-4">{{ 'HOME.HERO_TITLE' | translate }}</h1>
-      <p  class="lead">{{ 'HOME.HERO_SUBTITLE' | translate }}</p>
-      <a class="btn btn-primary btn-lg" routerLink="/products">{{ 'HOME.HERO_BUTTON' | translate }}</a>
-    </div>
-  </section> -->
+     Two things are deliberately not from the mockup:
+       - the group tiles read their counts from the API's `product_count`, so "118 products" is a
+         fact rather than a sentence typed into a template. Only active branches count, so nobody is
+         promised products they cannot reach;
+       - the trust strip states only what is certainly true. The mockup's "25+ vite", "3 m" and
+         "48 h" were invented, and invented facts do not belong on a shop's front page.
 
-    <section id="hero-section" class="hero-section text-center py-5 " 
-           >
-    <div class="container text-white">
-      <h1 class="display-5">{{ 'MISC.YOUR_TRUSTED_PARTNER_IN_STEEL_SOLUTIONS' | translate }}</h1>
-<p class="lead">{{ 'MISC.HIGH-QUALITY_GALVANIZED_STEEL_PRODUCTS_AND_PROFESSIONAL_PROCESSING_SERVICES.' | translate }}</p>
-      <div class="d-flex justify-content-center gap-3">
-        <a class="btn btn-secondary btn-lg" routerLink="/products">{{ 'MISC.VIEW_PRODUCTS' | translate }}</a>
-<a class="btn btn-secondary btn-lg" routerLink="/contact">{{ 'CONTACT.CONTACT_US' | translate }}</a>
-      </div>
-    </div>
-  </section>
+     The featured-products carousel that used to sit here showed the six categories, not products,
+     with a "new" badge on every one. It is gone until there is something real to feature. -->
+<section class="home">
 
-  <section class="products-section py-5" *ngIf="topCategories.length">
-    <div class="container">
-<h2 class="text-center mb-5">{{ 'MISC.OUR_TOP_CATEGORIES' | translate }}</h2>
-      <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let category of topCategories">
-          <div class="card h-100">
-            <div class="image-container">
-              <img
-                        appImageFallback="assets/images/placeholder_category.jpg"
-                [src]="category.image_asset?.original_path || 'assets/images/placeholder_category.jpg'"
-                [alt]="category.image_asset?.alternative_text || categoryTitle(category)"
-              >
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">{{ categoryTitle(category) }}</h5>
-              <!-- <p class="card-text">{{ category.description! }}</p> -->
-              <div class="text-center mt-3">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  (click)="navigateToProducts(category)"
-                >
-                  {{ 'MISC.VIEW_PRODUCTS' | translate }}
-                </button>
-              </div>
-            </div>
-          </div>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="shell grid">
+      <div>
+        <span class="kicker">{{ 'HOME.KICKER' | translate }}</span>
+        <h1>{{ 'HOME.HERO_TITLE' | translate }}</h1>
+        <p class="lead">{{ 'HOME.HERO_SUBTITLE' | translate }}</p>
+        <div class="cta-row">
+          <a class="btn btn-accent" [href]="'tel:' + phone">
+            <span aria-hidden="true">&#9990;</span> {{ 'HOME.CALL' | translate }}
+          </a>
+          <a class="btn btn-ghost" [href]="whatsappLink" target="_blank" rel="noopener noreferrer">
+            WhatsApp
+          </a>
         </div>
+        <form class="hero-search" (submit)="goToSearch($event, heroSearch.value)">
+          <input #heroSearch type="search" name="heroSearch"
+                 [placeholder]="'SHELL.SEARCH_PLACEHOLDER' | translate"
+                 [attr.aria-label]="'SHELL.SEARCH_PLACEHOLDER' | translate">
+          <button class="btn btn-accent" type="submit">{{ 'HOME.SEARCH_BUTTON' | translate }}</button>
+        </form>
       </div>
-    </div>
-  </section>
-
-<!-- Services Section -->
-<section class="services-section py-5">
-  <div class="container">
-<h2 class="text-center mb-5">{{ 'MISC.OUR_SERVICES' | translate }}</h2>
-    <div class="row text-center justify-content-center">
-      <div class="col-md-4 d-flex flex-column align-items-center mb-4" *ngFor="let service of services">
-        <!-- Optional: two services have no photograph yet, and an empty src asks the browser for
-             the page itself. -->
-        <img *ngIf="service.image" [src]="service.image" [alt]="service.titleKey | translate" class="service-img mb-3" loading="lazy">
-        <h5>{{ service.titleKey | translate }}</h5>
-        <p>{{ service.textKey | translate }}</p>
+      <div class="hero-card">
+        <h3>{{ 'HOME.WHY_TITLE' | translate }}</h3>
+        <ul>
+          <li *ngFor="let key of whyPoints">
+            <span class="tick" aria-hidden="true">&#10003;</span> {{ key | translate }}
+          </li>
+        </ul>
       </div>
     </div>
   </div>
-</section>
 
-
-
-  <!-- Featured Products Section -->
-  <section class="featured-products py-5" *ngIf="topCategories.length">
-    <div class="container">
-      <h2 class="text-center mb-4">{{ 'HOME.FEATURED_PRODUCTS_TITLE' | translate }}</h2>
-      <div id="featuredProductsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-        <div class="carousel-inner">
-          <!-- the literal "active" class made every slide active at once -->
-          <div class="carousel-item" *ngFor="let product of topCategories; let i = index" [class.active]="i === 0">
-            <div class="row justify-content-center">
-              <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                <!-- The card did nothing when pressed: there was no click handler here at all,
-                     so the whole "featured" row was inert. -->
-                <div
-                  class="card h-100 position-relative"
-                  role="button"
-                  tabindex="0"
-                  style="cursor: pointer"
-                  (click)="navigateToProducts(product)"
-                  (keydown.enter)="navigateToProducts(product)"
-                >
-                  
-                  <span *ngIf="product.title" class="badge bg-primary position-absolute top-0 start-0">{{ 'HOME.NEW_BADGE' | translate }}</span>
-                  <div class="image-container">
-                  <img
-                        appImageFallback="assets/images/placeholder_category.jpg"
-                    [src]="product.image_asset?.original_path || 'assets/images/placeholder_category.jpg'"
-                    class="image-container"
-                    [alt]="product.image_asset?.alternative_text || categoryTitle(product)"
-                    loading="lazy"
-                  >
-                  </div>
-                  <div class="card-body text-center">
-                    <h5 class="card-title">{{ categoryTitle(product) }}</h5>
-                    <!-- <p class="card-text">{{product.description}}</p> -->
-                    <!-- <button class="btn btn-success" (click)="contactViaWhatsApp(product)">{{ 'HOME.CONTACT_BUTTON' | translate }}</button> -->
-                  </div>
-                </div>
-              </div>  
-            </div>
-          </div>
+  <!-- The six groups, with what each really holds -->
+  <section class="groups" *ngIf="topCategories.length">
+    <div class="shell">
+      <div class="sec-head">
+        <div>
+          <h2>{{ 'HOME.GROUPS_TITLE' | translate }}</h2>
+          <p class="muted">{{ 'HOME.GROUPS_SUBTITLE' | translate }}</p>
         </div>
-
-        <!-- Carousel controls -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#featuredProductsCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">{{ 'HOME.PREVIOUS_BUTTON' | translate }}</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#featuredProductsCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">{{ 'HOME.NEXT_BUTTON' | translate }}</span>
-        </button>
+        <a class="btn btn-outline btn-sm" routerLink="/products">{{ 'HOME.ALL_GROUPS' | translate }} &rarr;</a>
+      </div>
+      <div class="tiles">
+        <a class="tile" *ngFor="let category of topCategories"
+           [routerLink]="['/products']" (click)="navigateToProducts(category)">
+          <img *ngIf="category.image_asset?.original_path"
+               [src]="category.image_asset?.original_path"
+               [alt]="category.image_asset?.alternative_text || categoryTitle(category)"
+               appImageFallback="assets/images/placeholder_category.jpg"
+               loading="lazy" class="tile-img">
+          <span class="ico" *ngIf="!category.image_asset?.original_path" aria-hidden="true">&#9638;</span>
+          <span class="tile-text">
+            <h3>{{ categoryTitle(category) }}</h3>
+            <span class="n">{{ category.product_count || 0 }} {{ 'HOME.PRODUCTS_UNIT' | translate }}</span>
+          </span>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- Testimonials Section
-       Removed: the only quote was invented ("We've used their products for years
-       and are very satisfied.") and attributed to "John Doe, Industrial
-       Contractor". Fabricated reviews are a banned commercial practice under the
-       EU Omnibus Directive, and the previous site carried no testimonials at all.
-       Put this section back when there is a real quote and a name to attach to it:
+  <!-- What is certainly true -->
+  <div class="trust">
+    <div class="shell">
+      <div class="item">
+        <b>{{ catalogueTotal }}</b><span>{{ 'HOME.TRUST_PRODUCTS' | translate }}</span>
+      </div>
+      <div class="item">
+        <b>{{ topCategories.length }}</b><span>{{ 'HOME.TRUST_GROUPS' | translate }}</span>
+      </div>
+      <div class="item">
+        <b>{{ 'HOME.TRUST_CUT_SHORT' | translate }}</b><span>{{ 'HOME.TRUST_CUT' | translate }}</span>
+      </div>
+      <div class="item">
+        <b>{{ 'HOME.TRUST_QUOTE_SHORT' | translate }}</b><span>{{ 'HOME.TRUST_QUOTE' | translate }}</span>
+      </div>
+    </div>
+  </div>
 
-       <section class="testimonials py-5 bg-light">
-         <div class="container">
-           <h2 class="text-center mb-5">{{ 'HOME.TESTIMONIALS_TITLE' | translate }}</h2>
-           <blockquote class="blockquote">
-             <p>{{ 'HOME.TESTIMONIAL_1_TEXT' | translate }}</p>
-             <footer class="blockquote-footer">{{ 'HOME.TESTIMONIAL_1_AUTHOR' | translate }}</footer>
-           </blockquote>
-         </div>
-       </section>
-  -->
-
-  <!-- Call-to-Action Section -->
-  <section class="cta-section text-center py-5 bg-primary text-white"style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
-    <div class="container">
-      <h2>{{ 'HOME.CTA_TITLE' | translate }}</h2>
-      <p>{{ 'HOME.CTA_TEXT' | translate }}</p>
-      <a class="btn btn-lg btn-light" routerLink="/contact">{{ 'HOME.CTA_BUTTON' | translate }}</a>
+  <!-- Services -->
+  <section class="services-wrap">
+    <div class="shell">
+      <div class="sec-head">
+        <div>
+          <h2>{{ 'HOME.SERVICES_TITLE' | translate }}</h2>
+          <p class="muted">{{ 'HOME.SERVICES_SUBTITLE' | translate }}</p>
+        </div>
+        <a class="btn btn-outline btn-sm" routerLink="/services">{{ 'HOME.ALL_SERVICES' | translate }} &rarr;</a>
+      </div>
+      <div class="services">
+        <div class="service" *ngFor="let service of services">
+          <img *ngIf="service.image" [src]="service.image" [alt]="service.titleKey | translate"
+               class="service-img" loading="lazy">
+          <span class="ico" *ngIf="!service.image" aria-hidden="true">&#9873;</span>
+          <h3>{{ service.titleKey | translate }}</h3>
+          <p>{{ service.textKey | translate }}</p>
+        </div>
+      </div>
     </div>
   </section>
+
+  <!-- Quote band -->
+  <div class="quote">
+    <div class="shell">
+      <div>
+        <h2>{{ 'HOME.QUOTE_TITLE' | translate }}</h2>
+        <p>{{ 'HOME.QUOTE_TEXT' | translate }}</p>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-dark" [href]="whatsappLink" target="_blank" rel="noopener noreferrer">
+          {{ 'HOME.QUOTE_WHATSAPP' | translate }}
+        </a>
+        <a class="btn btn-light" routerLink="/contact">{{ 'HOME.QUOTE_FORM' | translate }}</a>
+      </div>
+    </div>
+  </div>
+
 </section>
