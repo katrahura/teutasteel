@@ -18,10 +18,10 @@ body, h1, h2, h3, p, a, span {
     --text-color: #000000; /* Example custom text color for headings */
     --glow-color: rgba(255, 255, 255, 0.4); /* Example custom glow color */
   }
-  h1 {
-    --text-color: #ffffff; /* Example custom text color for headings */
-    --glow-color: rgba(255, 255, 255, 0.4); /* Example custom glow color */
-  }
+  /* An h1 rule stood here forcing every h1 to #ffffff, with a white glow. That made the products
+     page's category heading - an h1 carrying the h2 class - white on white, and the home page's
+     hero the only place it happened to look right, because that one sits on a dark background.
+     Headings now take the body's colour, and the hero sets its own white where it needs it. */
   /* You can also override glow color for other specific elements */
   p {
     --glow-color: rgba(255, 255, 255, 0.4); /* Custom glow color for paragraphs */

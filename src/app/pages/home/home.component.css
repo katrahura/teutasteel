@@ -10,7 +10,7 @@
   display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .12em;
   text-transform: uppercase; color: var(--accent, #f59e0b); margin-bottom: 16px;
 }
-.hero h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.02em; font-weight: 800; margin: 0; }
+.hero h1 { font-size: 46px; line-height: 1.1; letter-spacing: -.02em; font-weight: 800; margin: 0; color: #fff; }
 .hero p.lead { font-size: 19px; color: #c3ced9; margin: 18px 0 28px; max-width: 42ch; }
 .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
 
