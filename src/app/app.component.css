@@ -1,6 +1,106 @@
 
  
-  footer {
+/* ---- The shell, from mockups/redesign-2026.html, in the shop's own colours: the slate #111827 and
+   amber #f59e0b of assets/logo.svg, which is also the theme-color. Buttons keep --brand-primary,
+   chosen for its contrast. Nothing here is a new brand - it was already the logo's. ---- */
+:host {
+  --ink: #111827;
+  --ink-soft: #4b5563;
+  --line: #e5e7eb;
+  --paper-soft: #f5f7f9;
+  --accent: #f59e0b;
+  --accent-dark: #b45309;
+  --shell-w: 1180px;
+  background: #fff;
+  display: block;
+}
+
+.shell {
+  max-width: var(--shell-w);
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.shell.cols { display: grid; }
+
+/* top bar */
+.topbar { background: var(--ink); color: #cbd5e1; font-size: 14px; }
+.topbar .shell { height: 40px; }
+.topbar .muted { color: #94a3b8; }
+.topbar a { color: #cbd5e1; }
+.topbar a:hover b { color: var(--accent); }
+.topbar b { color: #fff; font-weight: 600; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+.langs { display: flex; gap: 4px; }
+.lang-btn {
+  background: none; border: 0; color: #94a3b8; cursor: pointer; font: inherit;
+  padding: 3px 7px; border-radius: 5px;
+}
+.lang-btn.active { background: var(--accent); color: #111827; font-weight: 700; }
+
+/* navigation */
+header.nav {
+  position: sticky; top: 0; z-index: 60; background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+header.nav .shell { height: 72px; }
+.logo {
+  display: flex; align-items: center; gap: 10px; font-weight: 900;
+  font-size: 20px; letter-spacing: -.03em; color: var(--ink); text-decoration: none; white-space: nowrap;
+}
+.logo img { border-radius: 8px; }
+.logo.on-dark { color: #fff; }
+
+nav.links { display: flex; gap: 20px; font-weight: 600; font-size: 15px; }
+nav.links a { color: var(--ink); text-decoration: none; padding: 4px 0; border-bottom: 2px solid transparent; }
+nav.links a:hover { color: var(--accent-dark); }
+nav.links a.active { border-bottom-color: var(--accent); }
+
+.nav-tools { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.search-mini {
+  display: flex; align-items: center; gap: 8px; background: var(--paper-soft);
+  border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; min-width: 220px;
+  color: var(--ink-soft);
+}
+.search-mini:focus-within { border-color: var(--accent); }
+.search-mini input { border: 0; background: none; outline: none; font: inherit; width: 100%; color: var(--ink); }
+.basket {
+  display: flex; align-items: center; gap: 8px; border: 1px solid var(--line);
+  border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 14px;
+  color: var(--ink); text-decoration: none; white-space: nowrap;
+}
+.basket:hover { border-color: var(--accent); }
+.basket .count { background: var(--accent); color: #111827; border-radius: 999px; padding: 1px 8px; font-size: 13px; }
+.icon-link { background: none; border: 0; color: var(--ink); padding: 4px; line-height: 1; }
+
+/* footer */
+footer.site-footer { background: var(--ink); color: #b6c2cf; padding: 52px 0 26px; font-size: 15px; }
+footer.site-footer .cols { grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 30px; align-items: start; }
+footer.site-footer h4 {
+  color: #fff; margin: 0 0 14px; text-transform: uppercase; letter-spacing: .06em; font-size: 12.5px;
+}
+footer.site-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+footer.site-footer a { color: #b6c2cf; text-decoration: none; }
+footer.site-footer a:hover { color: var(--accent); }
+footer.site-footer .about { margin: 14px 0 0; max-width: 34ch; }
+footer.site-footer .fine {
+  border-top: 1px solid rgba(255, 255, 255, .12); margin-top: 36px; padding-top: 18px;
+  display: flex; justify-content: space-between; font-size: 13.5px;
+}
+
+@media (max-width: 980px) {
+  nav.links, .search-mini { display: none; }
+  header.nav .shell { height: 62px; }
+  footer.site-footer .cols { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 620px) {
+  .topbar .shell { height: auto; padding: 8px 20px; flex-wrap: wrap; gap: 8px; }
+  footer.site-footer .cols { grid-template-columns: 1fr; }
+}
+
+footer {
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
     overflow: hidden; /* Ensures no content overflows outside the rounded corners */
@@ -124,11 +224,9 @@ footer {
   
 }
 
-.logo {
-  height: 40px;
-  max-width: 80px;
-  display: block;
-}
+/* The old `.logo { height: 40px; max-width: 80px; display: block }` used to live here. It won the
+   cascade over the shell's `.logo` and squashed it to 80px, so "Teuta Steel" overflowed and printed
+   itself across "Kryefaqja". The shell's rule at the top of this file is the only one now. */
 
 /* Right-Side Items */
 .navbar-nav.ms-auto {
@@ -159,10 +257,6 @@ footer {
 @media screen and (max-width: 768px) {
   .navbar-nav.mx-auto {
     flex-direction: column; /* Stack items vertically on smaller screens */
-  }
-
-  .logo {
-    height: 30px; /* Adjust logo size for mobile */
   }
 }
 

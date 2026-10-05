@@ -11,6 +11,8 @@ import { SharedService } from './shared.service';
 import { AuthService } from './services/auth.service';
 import { SeoService } from './shared/seo.service';
 import { getStoredLanguage, setStoredLanguage } from './shared/language-storage';
+import { QuoteListService } from './shared/quote-list.service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -36,12 +38,21 @@ export class AppComponent {
   /** Drives the Login / Logout control in the navigation bar. */
   isLoggedIn = false;
 
+  /** Contact details come from the environment, so a changed number is changed in one place. */
+  readonly phone = environment.phone;
+  readonly phoneDisplay = environment.phoneDisplay;
+  readonly email = environment.contactEmail;
+  readonly whatsappLink = 'https://wa.me/' + environment.whatsappNumber;
+
+  /** How many items are on the request list, shown in the navigation. */
+  quoteCount = 0;
+
   prepareRoute(outlet: RouterOutlet) {
     const animationData = outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
     return animationData;
   }
   
-  constructor(private router: Router,private translate: TranslateService,public shared: SharedService,private authService: AuthService, seo: SeoService) {
+  constructor(private router: Router,private translate: TranslateService,public shared: SharedService,private authService: AuthService, seo: SeoService, private quoteList: QuoteListService) {
     // Detect route changes and update the currentRoute variable
     const language = getStoredLanguage() ?? 'al';
     this.translate.setDefaultLang('al');
@@ -60,6 +71,8 @@ export class AppComponent {
       this.currentRoute = event.urlAfterRedirects;
       // signing in or out happens on /login, so the navigation follows the route
       this.isLoggedIn = this.authService.isAuthenticated();
+      // and the request count, which changes while the visitor is on the products page
+      this.quoteCount = this.quoteList.count();
     });
   }
 
@@ -84,6 +97,16 @@ export class AppComponent {
     setStoredLanguage(language);
     this.shared.setLang(language);
     this.translate.use(language); // Switch the language in ngx-translate
+  }
+
+  /**
+   * The navigation's search box hands its term to the products page, which owns the searching - one
+   * implementation rather than two that drift apart.
+   */
+  goToSearch(event: Event, term: string): void {
+    event.preventDefault();
+    const query = (term || '').trim();
+    this.router.navigate(['/products'], query ? { queryParams: { q: query } } : {});
   }
 
   

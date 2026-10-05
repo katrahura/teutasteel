@@ -9,7 +9,15 @@
     "SERVICES": "Services"
   },
   "FOOTER": {
-    "COPYRIGHT": "© 2024 TeutaSteel. All rights reserved."
+    "COPYRIGHT": "© 2024 TeutaSteel. All rights reserved.",
+    "ABOUT": "Steel supply and fabrication for construction, industry and trade.",
+    "PRODUCTS_TITLE": "Products",
+    "GROUP_SHEETS": "Sheets & Plates",
+    "GROUP_TUBES": "Hollow Sections & Tubes",
+    "GROUP_PROFILES": "Structural Steel Profiles",
+    "GROUP_DECOR": "Decorative metal",
+    "SERVICES_TITLE": "Services",
+    "CONTACT_TITLE": "Contact"
   },
   "ABOUT": {
     "TITLE": "About Us",
@@ -245,5 +253,12 @@
     "ASK": "Request a quote",
     "DRAWING_TITLE": "Send your drawing",
     "DRAWING_TEXT": "If you have a drawing, a DXF or a photograph, tap attach in WhatsApp and send it. The DXF is more accurate than a photograph, because it goes straight to the machine."
+  },
+  "SHELL": {
+    "HOURS": "Mon–Sat 08:00–17:00",
+    "HOURS_SHORT": "Mon–Sat 08:00–17:00",
+    "TEL": "Tel",
+    "SEARCH_PLACEHOLDER": "Search by code or size…",
+    "REQUEST": "Request"
   }
 }

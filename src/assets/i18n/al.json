@@ -48,7 +48,15 @@
     "SERVICES": "Shërbimet"
   },
   "FOOTER": {
-    "COPYRIGHT": "© 2024 TeutaSteel. Të gjitha të drejtat janë të rezervuara."
+    "COPYRIGHT": "© 2024 TeutaSteel. Të gjitha të drejtat janë të rezervuara.",
+    "ABOUT": "Furnizim dhe përpunim çeliku për ndërtim, industri dhe zeje.",
+    "PRODUCTS_TITLE": "Produktet",
+    "GROUP_SHEETS": "Fletë & Pllaka",
+    "GROUP_TUBES": "Gypa & Profile Hollow",
+    "GROUP_PROFILES": "Profile Strukturore",
+    "GROUP_DECOR": "Metal Dekorativ",
+    "SERVICES_TITLE": "Shërbimet",
+    "CONTACT_TITLE": "Kontakt"
   },
   "ABOUT": {
     "TITLE": "Rreth Nesh",
@@ -284,5 +292,12 @@
     "ASK": "Kërko ofertë",
     "DRAWING_TITLE": "Dërgoni vizatimin",
     "DRAWING_TEXT": "Nëse keni vizatim, DXF ose foto, shtypni bashkangjit në WhatsApp dhe dërgoni atë. DXF-i është më i saktë sesa fotografia, sepse shkon drejt në makinë."
+  },
+  "SHELL": {
+    "HOURS": "Hën–Sht 08:00–17:00",
+    "HOURS_SHORT": "Hën–Sht 08:00–17:00",
+    "TEL": "Tel",
+    "SEARCH_PLACEHOLDER": "Kërko me kod ose masë…",
+    "REQUEST": "Kërkesa"
   }
 }
