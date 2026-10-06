@@ -112,8 +112,13 @@ export class QuoteListService {
     return this.save(items);
   }
 
-  clear(): void {
+  clear(): QuoteItem[] {
     this.storage()?.removeItem(this.key);
+    // Tell the navigation, the way every other change does. Without this the counter kept the old
+    // number after the list was emptied, and only corrected itself when a route change happened to
+    // refresh it - which is why it looked stuck until a page load.
+    this.changes.next([]);
+    return [];
   }
 
   private save(items: QuoteItem[]): QuoteItem[] {
