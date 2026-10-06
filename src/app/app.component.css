@@ -91,8 +91,35 @@ footer.site-footer .fine {
 }
 
 @media (max-width: 980px) {
-  nav.links, .search-mini { display: none; }
-  header.nav .shell { height: 62px; }
+  /* The links and the search used to be hidden here and handed to a second navigation bar
+     (app-mobile-nav) which repeated the brand, the language switch and a search box of its own. On a
+     phone that spent the top of every page on duplicated chrome. They stay in this header instead:
+     the links scroll sideways, which every phone understands, and the search keeps its place. */
+  header.nav .shell {
+    height: auto;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    min-width: 0;
+  }
+  nav.links {
+    order: 3;
+    width: 100%;
+    /* Without this the five nowrap links set the page's minimum width and the layout viewport grew to
+       444px on a 390px phone, which is a scrollbar on every page. min-width: 0 lets the row shrink
+       and scroll its own contents instead. */
+    min-width: 0;
+    overflow-x: auto;
+    gap: 16px;
+    padding-bottom: 2px;
+  }
+  nav.links a { white-space: nowrap; }
+  /* The search box is hidden here rather than stretched: with `width: 100%` inside a row that sizes
+     itself to its content, it made the page's layout viewport 444px wide on a 390px phone, which is
+     a horizontal scrollbar on every page. The catalogue's own search sits at the top of the products
+     page, full width, where it is easier to use than a cramped box in the header. */
+  .search-mini { display: none; }
+  .nav-tools { min-width: 0; }
   footer.site-footer .cols { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 620px) {

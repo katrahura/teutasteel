@@ -29,7 +29,11 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('app-mobile-nav')).toBeTruthy();
+    // One header, not two. This used to assert app-mobile-nav, a second bar that repeated the brand,
+    // the language switch and a search box on every phone screen; the links live in this header now,
+    // so the check follows them here rather than being deleted.
+    expect(compiled.querySelector('header.nav nav.links')).toBeTruthy();
+    expect(compiled.querySelectorAll('header.nav nav.links a').length).toBe(5);
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 

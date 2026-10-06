@@ -67,7 +67,10 @@
       </div>
     </header>
 
-    <app-mobile-nav></app-mobile-nav>
+    <!-- The second navigation bar that stood here (app-mobile-nav) is gone. It repeated the brand,
+         the language switch and a search box on every phone screen, because this header used to hide
+         its own links below 980px and hand the job over. Those links live here now, scrolling
+         sideways, so there is one header rather than two. -->
 
     <!-- Main Content -->
     <main [@routeAnimations]="prepareRoute(outlet)">
