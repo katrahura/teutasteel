@@ -909,7 +909,7 @@
               <button
                 type="button"
                 class="btn btn-outline-success mt-2 me-2"
-                (click)="addToQuote(product); $event.stopPropagation()"
+                (click)="addOrOpen(product, $event)"
               >
                 <i class="bi bi-plus-lg" aria-hidden="true"></i>
                 {{ "PRODUCTS.ADD_TO_REQUEST" | translate }}

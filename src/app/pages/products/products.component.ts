@@ -243,6 +243,22 @@ toggleParent(parentId: number) {
   }
 
   /** The dimensions the customer ticked, or the only one there is. */
+  /**
+   * What a card's add button does.
+   *
+   * A product with one dimension has nothing to choose, so it goes straight in. A product with
+   * several has a thickness to pick and a quantity per thickness, and only the dialog can ask for
+   * both - so the card opens it rather than guessing at either.
+   */
+  addOrOpen(product: Product, event: Event): void {
+    event.stopPropagation();
+    if ((product.dimensions || []).length > 1) {
+      this.openModal(product, event);
+      return;
+    }
+    this.addToQuote(product);
+  }
+
   tickedDimensions(product: Product): ProductDimension[] {
     const dimensions = (product?.dimensions || []) as ProductDimension[];
     if (dimensions.length <= 1) {
