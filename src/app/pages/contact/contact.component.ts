@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import { QuoteListService, QuoteItem } from '../../shared/quote-list.service';
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.css'
 })
-export class ContactComponent {
+export class ContactComponent implements OnInit {
   private translate = inject(TranslateService);
   private quoteList = inject(QuoteListService);
 
@@ -57,6 +57,19 @@ export class ContactComponent {
       (running, item) => running + (this.priceOf(item) || 0) * (item.quantity || 1), 0
     );
     this.pricedTotal = Math.round(sum * 100) / 100;
+  }
+
+  /**
+   * Fill the two halves when the page opens.
+   *
+   * `split` ran only inside the setter, so a visitor arriving with items already in the list - the
+   * normal case, they added them on the products page - got an empty page. `requested` held the
+   * items; the groups the template actually renders, pricedItems and unpricedItems, held none.
+   * Nothing threw and the console stayed empty, which is why this needed measuring rather than
+   * reading.
+   */
+  ngOnInit(): void {
+    this.split();
   }
 
   /** The price inside a line - "Trashesia 1.3 mm - 4.20 Eur" is 4.20 - or null when there is none. */
