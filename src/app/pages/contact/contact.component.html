@@ -89,7 +89,7 @@
                   style="max-width: 78px"
                   [ngModel]="item.quantity"
                   (ngModelChange)="setRequestedQuantity(item, $event)"
-                  name="quantity-{{ i }}"
+                  [name]="'quantity-' + i"
                 />
                 <button
                   type="button"
