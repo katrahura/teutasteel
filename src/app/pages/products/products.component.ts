@@ -165,6 +165,52 @@ toggleParent(parentId: number) {
    * the dimension it is showing. The dialog passes the thicknesses the customer ticked, and each
    * becomes its own line so the shop can price them separately.
    */
+  /** Lines of the open product that are already on the request list, keyed by their description. */
+  onList: { [detail: string]: number } = {};
+
+  /** What the last add put in, shown under the thicknesses. */
+  justAdded = '';
+
+  /** Which lines of this product are on the request list. Built once, never read per pass. */
+  private linesOnList(product: Product): { [detail: string]: number } {
+    const map: { [detail: string]: number } = {};
+    this.quoteList.items().forEach((item) => {
+      if (item.productId === (product.id || 0)) {
+        map[item.detail || ''] = item.quantity;
+      }
+    });
+    return map;
+  }
+
+  /** How many of this thickness are already on the request list, for the badge beside it. */
+  onListQuantity(dimension: ProductDimension): number {
+    return this.onList[this.describeDimension(dimension)] || 0;
+  }
+
+  /**
+   * When the dialog opens, show what the customer already asked for.
+   *
+   * The thicknesses they have already added come back ticked, with their quantities in the fields
+   * and a badge beside each line. Opening a product that is already in the request should look like
+   * their order, not like a blank form - and it is how they change a quantity rather than adding
+   * the same thing twice.
+   */
+  private seedFromRequestList(product: Product): void {
+    this.onList = this.linesOnList(product);
+    this.justAdded = '';
+    const chosen: { [index: number]: boolean } = {};
+    const quantities: { [index: number]: number } = {};
+    (product.dimensions || []).forEach((dimension, index) => {
+      const quantity = this.onList[this.describeDimension(dimension)];
+      if (quantity) {
+        chosen[index] = true;
+        quantities[index] = quantity;
+      }
+    });
+    this.chosenDimensions = chosen;
+    this.quantities = quantities;
+  }
+
   addToQuote(product: Product, dimensions?: ProductDimension[]): void {
     // With nothing passed - the card, which has no picker - add the dimension it is showing rather
     // than every thickness the product carries, which for a merged sheet would be fourteen lines.
@@ -184,6 +230,14 @@ toggleParent(parentId: number) {
     }
     this.quoteCount = this.quoteList.count();
     this.quoteNotice = product.code;
+    // Say what went in, then clear the choices so the dialog is ready for the next one. The
+    // quantities are read before the clear, because they are about to disappear.
+    this.justAdded = chosen
+      .map((dimension) => `${this.quantityFor(product, dimension)} × ${this.describeDimension(dimension)}`)
+      .join(' · ');
+    this.chosenDimensions = {};
+    this.quantities = {};
+    this.onList = this.linesOnList(product);
   }
 
   /** "Trashësia 1.5 mm — 4.80 Eur", or as much of that as the dimension knows. */
@@ -300,12 +354,20 @@ toggleParent(parentId: number) {
       return;
     }
     this.openModal(product, event);
+    // After openModal, not before: opening a product clears the ticks, so seeding first was wiped
+    // - the badges survived because openModal does not know about them, and that asymmetry is what
+    // pointed at the order.
+    this.seedFromRequestList(product);
   }
 
   addOrOpen(product: Product, event: Event): void {
     event.stopPropagation();
     if ((product.dimensions || []).length > 1) {
       this.openModal(product, event);
+    // After openModal, not before: opening a product clears the ticks, so seeding first was wiped
+    // - the badges survived because openModal does not know about them, and that asymmetry is what
+    // pointed at the order.
+    this.seedFromRequestList(product);
       return;
     }
     this.addCardToQuote(product);

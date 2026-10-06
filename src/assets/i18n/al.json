@@ -170,7 +170,9 @@
     "REQUEST_PRICED": "Artikuj me çmim",
     "REQUEST_TOTAL": "Totali",
     "REQUEST_UNPRICED": "Artikuj pa çmim",
-    "REQUEST_UNPRICED_NOTE": "Për këta çmimin e llogarisim ne dhe ju kthejmë përgjigje me ofertën."
+    "REQUEST_UNPRICED_NOTE": "Për këta çmimin e llogarisim ne dhe ju kthejmë përgjigje me ofertën.",
+    "ON_REQUEST": "në kërkesë",
+    "JUST_ADDED": "U shtua në kërkesë"
   },
   "MODAL": {
     "CLOSE": "Mbyll",

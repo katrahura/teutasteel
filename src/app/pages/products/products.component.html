@@ -1146,6 +1146,11 @@
                     {{ dimension.price }}
                     {{ dimension.currency || "" }}
                   </ng-container>
+                  <!-- What is already on the request list for this thickness. -->
+                  <span
+                    class="badge bg-warning text-dark ms-2"
+                    *ngIf="onListQuantity(dimension) > 0"
+                  >{{ "PRODUCTS.ON_REQUEST" | translate }}: {{ onListQuantity(dimension) }}</span>
                 </span>
               </label>
               <!-- One quantity per ticked thickness, because twenty of 2 mm and five of 3 mm are two
@@ -1176,6 +1181,12 @@
           <p class="text-muted small mb-2" *ngIf="needsChoice() && !anyChosen()">
             {{ "PRODUCTS.CHOOSE_THICKNESS" | translate }}
           </p>
+
+          <!-- What the last click put in. The ticks clear themselves, so without this the dialog
+               would look as though nothing had happened. -->
+          <div class="alert alert-success py-1 px-2 small mb-2" *ngIf="justAdded">
+            <strong>{{ "PRODUCTS.JUST_ADDED" | translate }}:</strong> {{ justAdded }}
+          </div>
 
           <button
             type="button"

@@ -131,7 +131,9 @@
     "REQUEST_PRICED": "Items with a price",
     "REQUEST_TOTAL": "Total",
     "REQUEST_UNPRICED": "Items without a price",
-    "REQUEST_UNPRICED_NOTE": "We will work these out ourselves and come back to you with the quote."
+    "REQUEST_UNPRICED_NOTE": "We will work these out ourselves and come back to you with the quote.",
+    "ON_REQUEST": "in the request",
+    "JUST_ADDED": "Added to the request"
   },
   "MODAL": {
     "CLOSE": "Close",
