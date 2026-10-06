@@ -220,14 +220,20 @@ toggleParent(parentId: number) {
     if (!chosen.length) {
       return;
     }
-    for (const dimension of chosen) {
-      this.quoteList.add({
-        productId: product.id || 0,
-        code: product.code,
-        detail: this.describeDimension(dimension),
-        quantity: this.quantityFor(product, dimension),
-      });
-    }
+    // Replace, do not add. The dialog shows the customer's order as it stands - the ticks and the
+    // numbers came from the list - so lowering twenty to fifteen has to mean fifteen. Adding would
+    // make it thirty-five, which is how this was wrong before. A thickness they have unticked is
+    // taken off; one they left ticked keeps its new number.
+    const ticked = chosen.map((dimension) => this.describeDimension(dimension));
+    (product.dimensions || []).forEach((dimension) => {
+      const detail = this.describeDimension(dimension);
+      const item = { productId: product.id || 0, code: product.code, detail, quantity: 0 };
+      if (ticked.indexOf(detail) >= 0) {
+        this.quoteList.setQuantity(item, this.quantityFor(product, dimension));
+      } else if (this.onList[detail]) {
+        this.quoteList.setQuantity(item, 0);
+      }
+    });
     this.quoteCount = this.quoteList.count();
     this.quoteNotice = product.code;
     // Say what went in, then clear the choices so the dialog is ready for the next one. The
