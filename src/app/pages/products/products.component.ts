@@ -1,6 +1,6 @@
 import {  ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
@@ -147,7 +147,7 @@ toggleParent(parentId: number) {
     3: 'Type C',
     // Add other mappings as needed
   };
-  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService, private changeDetector: ChangeDetectorRef, private quoteList: QuoteListService) {
+  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private route: ActivatedRoute,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService, private changeDetector: ChangeDetectorRef, private quoteList: QuoteListService) {
     // Read once on construction; the service guards its storage, so the prerender is safe here.
     this.quoteCount = this.quoteList.count();
   }
@@ -511,6 +511,20 @@ toggleParent(parentId: number) {
       }
     // this.loadCategories();
     this.isLoggedIn= this.authService.isAuthenticated();
+// A search handed over from the header, the hero or a featured product's card arrives as ?q=.
+// A subscription, not a snapshot: the header's box is used while already on the products page,
+// where this component is reused and ngOnInit never runs again. The snapshot worked from the home
+// page's hero, which is a different route, and silently did nothing from the navigation.
+this.subscriptions.push(
+  this.route.queryParamMap.subscribe((params) => {
+    const asked = (params.get('q') || '').trim();
+    if (asked) {
+      this.searchQuery = asked;
+      this.runSearch();
+    }
+  })
+);
+
 // Get the navigation object
 const navigation = this.router.getCurrentNavigation();
 

@@ -39,6 +39,10 @@ export function provideTestConfig(): (Provider | EnvironmentProviders)[] {
         },
         params: of({}),
         queryParams: of({}),
+        // The products page subscribes to queryParamMap to pick up a search term handed over as
+        // ?q=. The stub had the snapshot's version but not the observable, so the subscription hit
+        // undefined and thirteen specs failed.
+        queryParamMap: of(convertToParamMap({})),
       },
     },
     importProvidersFrom(
