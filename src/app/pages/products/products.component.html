@@ -932,6 +932,12 @@
                   [name]="'card-qty-' + product.id"
                 />
                 <span class="small text-muted">{{ "PRODUCTS.PIECES" | translate }}</span>
+                <!-- The same information the dialog gives for a product with several thicknesses:
+                     what is already on the request list, and how much of it. -->
+                <span
+                  class="badge bg-warning text-dark"
+                  *ngIf="onListByProduct[product.id || 0]"
+                >{{ "PRODUCTS.ON_REQUEST" | translate }}: {{ onListByProduct[product.id || 0] }}</span>
               </div>
               <button
                 type="button"

@@ -312,9 +312,27 @@ toggleParent(parentId: number) {
    */
   cardQuantities: { [productId: number]: number } = {};
 
+  /** productId -> how many are already on the request list, for the single-dimension cards. */
+  onListByProduct: { [productId: number]: number } = {};
+
+  /** Rebuild that map. Called when a page of products arrives and after every card add. */
+  private refreshCardList(): void {
+    const map: { [productId: number]: number } = {};
+    this.quoteList.items().forEach((item) => {
+      map[item.productId] = (map[item.productId] || 0) + (item.quantity || 0);
+    });
+    this.onListByProduct = map;
+  }
+
   cardQuantity(product: Product): number {
-    const chosen = this.cardQuantities[product.id || 0];
-    return typeof chosen === 'number' && chosen > 0 ? chosen : 1;
+    const id = product.id || 0;
+    const typed = this.cardQuantities[id];
+    if (typeof typed === 'number' && typed > 0) {
+      return typed;
+    }
+    // Nothing typed yet: show what is already ordered rather than a blind one, so the card reads
+    // the same as the dialog does for a product with several thicknesses.
+    return this.onListByProduct[id] || 1;
   }
 
   setCardQuantity(product: Product, value: any): void {
@@ -331,14 +349,20 @@ toggleParent(parentId: number) {
     if (!dimension) {
       return;
     }
-    this.quoteList.add({
-      productId: product.id || 0,
-      code: product.code,
-      detail: this.describeDimension(dimension),
-      quantity: this.cardQuantity(product),
-    });
+    // Replace, like the dialog. The field shows what is already ordered, so adding would double it:
+    // a card reading 20 and pressed twice would mean 40.
+    this.quoteList.setQuantity(
+      {
+        productId: product.id || 0,
+        code: product.code,
+        detail: this.describeDimension(dimension),
+        quantity: 0,
+      },
+      this.cardQuantity(product)
+    );
     this.quoteCount = this.quoteList.count();
     this.quoteNotice = product.code;
+    this.refreshCardList();
   }
 
   /**
@@ -1111,6 +1135,8 @@ this.showProducts(this.selectedCategory)
     const sub = this.productService.getCategoryById(category_id, page, 8, lang).subscribe({
       next: (categoryResponse: CategoryResponse) => {
         this.products = categoryResponse.products || [];
+        // Which of these are already on the request list, so the cards can say so.
+        this.refreshCardList();
         this.currentPage = categoryResponse.pagination.page;
         this.totalPages = categoryResponse.pagination.total_pages;
         this.isLoading = false; // Turn off loader
