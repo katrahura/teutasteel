@@ -92,10 +92,21 @@ export class QuoteListService {
    */
   setQuantity(item: QuoteItem, quantity: number): QuoteItem[] {
     const wanted = Math.floor(Number(quantity));
-    const items = this.items().filter((other) =>
-      !(other.productId === item.productId && (other.detail || '') === (item.detail || ''))
+    const items = this.items();
+    const at = items.findIndex(
+      (other) => other.productId === item.productId && (other.detail || '') === (item.detail || '')
     );
-    if (Number.isFinite(wanted) && wanted >= 1) {
+    if (!Number.isFinite(wanted) || wanted < 1) {
+      // Zero takes that line off and leaves its neighbours where they are.
+      return this.save(at >= 0 ? items.filter((_other, index) => index !== at) : items);
+    }
+    if (at >= 0) {
+      // Changed where it stands. This used to remove the line and push it to the end, which quietly
+      // reordered the list every time a quantity was edited: the customer typed a new number against
+      // their first item and found it at the bottom. The list reads in the order things went in, and
+      // editing one must not move it.
+      items[at] = { ...items[at], quantity: wanted };
+    } else {
       items.push({ ...item, quantity: wanted });
     }
     return this.save(items);
