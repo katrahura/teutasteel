@@ -375,6 +375,19 @@ h1.text-center, h2.text-center {
   gap: 20px;
 }
 
+/**
+ * The grid must fill the container, whatever is in it.
+ *
+ * This container is a column flexbox, and `align-items: center` above applies to the *horizontal*
+ * axis in a column - so every child shrinks to the width of its own content. With a page full of
+ * products the content pushed the grid out to its full 1320px and nothing looked wrong; with one
+ * product the grid collapsed to 430px and the card to 84px, wrapped one letter per line. The
+ * pagination is meant to be centred, so the fix is aimed at the grid rather than at the container.
+ */
+.products-pagination-container > .row {
+  width: 100%;
+}
+
 .pagination-controls {
   display: flex;
   align-items: center;
