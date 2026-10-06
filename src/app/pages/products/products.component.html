@@ -112,7 +112,12 @@
                      cards. On a catalogue where nothing has a parent yet - which is the
                      state after the parent_id migration - that made creating a product
                      impossible. -->
+                <!-- The owner's rule: this button is only for a group with no active sub-category.
+                     Where there are sub-categories, they are the way in - a single list of 876
+                     decorative products serves nobody - and keeping it there would leave a group
+                     whose sub-categories are all switched off with no route to its products. -->
                 <button
+                  *ngIf="!hasActiveChildren(parent)"
                   type="button"
                   class="btn btn-secondary btn-sm"
                   (click)="showProducts(parent)"

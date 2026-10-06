@@ -366,6 +366,18 @@ toggleParent(parentId: number) {
     this.seedFromRequestList(product);
   }
 
+  /**
+   * Whether a group has any active sub-category to drill into.
+   *
+   * The groups list comes from /category/top, which carries no children - this page fetches them
+   * separately into childrenMap. Reading the row's own `children` would have found nothing and left
+   * the button on every row, a change that looks like it worked and did not.
+   */
+  hasActiveChildren(category: any): boolean {
+    const children = this.childrenMap.get(category?.id) || [];
+    return children.some((child: any) => child.is_active !== false);
+  }
+
   addOrOpen(product: Product, event: Event): void {
     event.stopPropagation();
     if ((product.dimensions || []).length > 1) {
