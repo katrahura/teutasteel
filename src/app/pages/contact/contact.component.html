@@ -64,15 +64,43 @@
             >{{ "PRODUCTS.REQUEST_CLEAR" | translate }}</button>
           </div>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex align-items-center px-0" *ngFor="let item of requested">
+            <li
+              class="list-group-item d-flex align-items-center px-0"
+              *ngFor="let item of requested; let i = index"
+            >
               <span>
                 <strong>{{ item.code }}</strong>
                 <span class="text-muted small" *ngIf="item.detail"> — {{ item.detail }}</span>
-                <span class="badge bg-secondary ms-2">{{ item.quantity }}</span>
+              </span>
+              <!-- Adjusting here, not back at the product: the customer adds twenty, then sees a
+                   50x50 and wants thirty of those too. -->
+              <span class="d-flex align-items-center gap-1 ms-auto me-2">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  [attr.aria-label]="'PRODUCTS.QUANTITY' | translate"
+                  (click)="bumpRequested(item, -1)"
+                >&minus;</button>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  class="form-control form-control-sm text-center"
+                  style="max-width: 78px"
+                  [ngModel]="item.quantity"
+                  (ngModelChange)="setRequestedQuantity(item, $event)"
+                  name="quantity-{{ i }}"
+                />
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  [attr.aria-label]="'PRODUCTS.QUANTITY' | translate"
+                  (click)="bumpRequested(item, 1)"
+                >+</button>
               </span>
               <button
                 type="button"
-                class="btn btn-sm btn-outline-danger ms-auto"
+                class="btn btn-sm btn-outline-danger"
                 (click)="removeRequested(item.productId)"
               >{{ "PRODUCTS.REQUEST_REMOVE" | translate }}</button>
             </li>

@@ -82,6 +82,24 @@ export class QuoteListService {
     return this.save(this.items().filter((item) => item.productId !== productId));
   }
 
+  /**
+   * Sets the quantity of one line.
+   *
+   * Matched on the product *and* the dimension, like `add`, because 15x15 in 1.3 mm and 15x15 in
+   * 1.5 mm are two lines - and a − beside the wrong one must not touch the other. Dropping to zero
+   * removes that line and leaves its neighbour alone.
+   */
+  setQuantity(item: QuoteItem, quantity: number): QuoteItem[] {
+    const wanted = Math.floor(Number(quantity));
+    const items = this.items().filter((other) =>
+      !(other.productId === item.productId && (other.detail || '') === (item.detail || ''))
+    );
+    if (Number.isFinite(wanted) && wanted >= 1) {
+      items.push({ ...item, quantity: wanted });
+    }
+    return this.save(items);
+  }
+
   clear(): void {
     this.storage()?.removeItem(this.key);
   }

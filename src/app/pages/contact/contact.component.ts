@@ -26,6 +26,16 @@ export class ContactComponent {
     this.quoteList.remove(productId);
   }
 
+  /** One more or one fewer of a line, without leaving the page. */
+  bumpRequested(item: QuoteItem, delta: number): void {
+    this.quoteList.setQuantity(item, (item.quantity || 1) + delta);
+  }
+
+  /** A typed quantity. Zero removes the line. */
+  setRequestedQuantity(item: QuoteItem, value: any): void {
+    this.quoteList.setQuantity(item, Number(value));
+  }
+
   clearRequested(): void {
     this.quoteList.clear();
   }
