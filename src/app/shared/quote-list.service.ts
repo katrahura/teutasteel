@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 export interface QuoteItem {
   /** The product it came from, so the same one is not added twice. */
@@ -106,6 +107,12 @@ export class QuoteListService {
 
   private save(items: QuoteItem[]): QuoteItem[] {
     this.storage()?.setItem(this.key, JSON.stringify(items));
+    // Tell anyone listening. The navigation's counter used to refresh only on a route change, so
+    // adding from a card - which does not navigate - left it showing the old number.
+    this.changes.next(items);
     return items;
   }
+
+  /** Emits the list whenever it changes. */
+  readonly changes = new BehaviorSubject<QuoteItem[]>([]);
 }
