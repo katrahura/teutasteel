@@ -1182,7 +1182,7 @@
                   [id]="'qty-' + i"
                   [ngModel]="quantities[i]"
                   (ngModelChange)="setQuantity(i, $event)"
-                  name="quantity-{{ i }}"
+                  [name]="'quantity-' + i"
                 />
                 <span class="small text-muted">{{ "PRODUCTS.PIECES" | translate }}</span>
               </div>
