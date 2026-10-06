@@ -17,27 +17,35 @@ export class ContactComponent {
   private translate = inject(TranslateService);
   private quoteList = inject(QuoteListService);
 
-  /** What the visitor added while browsing. Read fresh, so it cannot go stale. */
-  get requested(): QuoteItem[] {
-    return this.quoteList.items();
-  }
+  /**
+   * What the visitor added while browsing.
+   *
+   * A plain field, not a getter. It was a getter returning `quoteList.items()`, which builds a new
+   * array on every call - and Angular calls it on every change-detection pass. With the quantity
+   * fields bound to it, each pass produced a new array identity, which scheduled another pass, and
+   * the renderer locked up: the route stopped replying altogether rather than throwing. The three
+   * actions below assign the array the service returns, so the reference only changes when the list
+   * actually does.
+   */
+  requested: QuoteItem[] = this.quoteList.items();
 
-  removeRequested(productId: number): void {
-    this.quoteList.remove(productId);
+  removeRequested(item: QuoteItem): void {
+    this.requested = this.quoteList.setQuantity(item, 0);
   }
 
   /** One more or one fewer of a line, without leaving the page. */
   bumpRequested(item: QuoteItem, delta: number): void {
-    this.quoteList.setQuantity(item, (item.quantity || 1) + delta);
+    this.requested = this.quoteList.setQuantity(item, (item.quantity || 1) + delta);
   }
 
   /** A typed quantity. Zero removes the line. */
   setRequestedQuantity(item: QuoteItem, value: any): void {
-    this.quoteList.setQuantity(item, Number(value));
+    this.requested = this.quoteList.setQuantity(item, Number(value));
   }
 
   clearRequested(): void {
     this.quoteList.clear();
+    this.requested = [];
   }
 
   /**
