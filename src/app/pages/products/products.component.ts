@@ -244,11 +244,49 @@ toggleParent(parentId: number) {
 
   /** The dimensions the customer ticked, or the only one there is. */
   /**
+   * The quantity typed on a card, for products with a single dimension.
+   *
+   * The owner's design: the field is always there, starting at one, and the button records whatever
+   * number it holds. Nothing to open, nothing to guess, and the twenty-piece order is typed before
+   * the click rather than after it.
+   */
+  cardQuantities: { [productId: number]: number } = {};
+
+  cardQuantity(product: Product): number {
+    const chosen = this.cardQuantities[product.id || 0];
+    return typeof chosen === 'number' && chosen > 0 ? chosen : 1;
+  }
+
+  setCardQuantity(product: Product, value: any): void {
+    const number = Number(value);
+    this.cardQuantities = {
+      ...this.cardQuantities,
+      [product.id || 0]: Number.isFinite(number) && number > 0 ? Math.floor(number) : 1,
+    };
+  }
+
+  /** A card's add for a single-dimension product: the dimension it shows, and the typed quantity. */
+  addCardToQuote(product: Product): void {
+    const dimension = (product.dimensions || [])[0];
+    if (!dimension) {
+      return;
+    }
+    this.quoteList.add({
+      productId: product.id || 0,
+      code: product.code,
+      detail: this.describeDimension(dimension),
+      quantity: this.cardQuantity(product),
+    });
+    this.quoteCount = this.quoteList.count();
+    this.quoteNotice = product.code;
+  }
+
+  /**
    * What a card's add button does.
    *
-   * A product with one dimension has nothing to choose, so it goes straight in. A product with
-   * several has a thickness to pick and a quantity per thickness, and only the dialog can ask for
-   * both - so the card opens it rather than guessing at either.
+   * A product with one dimension has nothing to choose, so the card adds it with the quantity shown
+   * beside the button. A product with several has a thickness to pick and a quantity per thickness,
+   * and only the dialog can ask for both - so the card opens it rather than guessing at either.
    */
   addOrOpen(product: Product, event: Event): void {
     event.stopPropagation();
@@ -256,7 +294,7 @@ toggleParent(parentId: number) {
       this.openModal(product, event);
       return;
     }
-    this.addToQuote(product);
+    this.addCardToQuote(product);
   }
 
   tickedDimensions(product: Product): ProductDimension[] {

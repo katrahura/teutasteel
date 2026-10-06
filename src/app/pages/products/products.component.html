@@ -906,6 +906,28 @@
                 {{ getProductDimension(product, "currency") }}
                 <span class="price-unit" *ngIf="priceUnit(product)">/ {{ priceUnit(product) }}</span>
               </p>
+              <!-- One dimension: nothing to choose, so the quantity sits on the card itself. Several:
+                   the button opens the dialog instead, where a thickness and its quantity live. -->
+              <div
+                class="d-flex align-items-center gap-2 mb-2"
+                *ngIf="(product.dimensions || []).length <= 1"
+              >
+                <label class="small text-muted mb-0" [attr.for]="'card-qty-' + product.id">
+                  {{ "PRODUCTS.QUANTITY" | translate }}
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  class="form-control form-control-sm"
+                  style="max-width: 84px"
+                  [id]="'card-qty-' + product.id"
+                  [ngModel]="cardQuantity(product)"
+                  (ngModelChange)="setCardQuantity(product, $event)"
+                  [name]="'card-qty-' + product.id"
+                />
+                <span class="small text-muted">{{ "PRODUCTS.PIECES" | translate }}</span>
+              </div>
               <button
                 type="button"
                 class="btn btn-outline-success mt-2 me-2"
