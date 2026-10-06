@@ -36,24 +36,19 @@
             <input id="quotePhone" class="form-control" type="tel"
                    [(ngModel)]="quote.phone" name="quotePhone" />
           </div>
-          <div class="col-md-8">
-            <label class="form-label" for="quoteProduct">{{ 'QUOTE.PRODUCT' | translate }} *</label>
-            <input id="quoteProduct" class="form-control" type="text"
-                   [(ngModel)]="quote.product" name="quoteProduct" />
-          </div>
-          <div class="col-md-4">
-            <label class="form-label" for="quoteQuantity">{{ 'QUOTE.QUANTITY' | translate }}</label>
-            <input id="quoteQuantity" class="form-control" type="text"
-                   [(ngModel)]="quote.quantity" name="quoteQuantity" />
-          </div>
+          <!-- The product and quantity boxes are gone. With the request list carrying both - a line
+               per product, with its size and its quantity - they asked the customer to type again
+               what the site already knew, and the asterisk told them it was compulsory. -->
           <div class="col-12">
             <label class="form-label" for="quoteNotes">{{ 'QUOTE.NOTES' | translate }}</label>
-            <textarea id="quoteNotes" class="form-control" rows="2"
+            <textarea id="quoteNotes" class="form-control" rows="3"
                       [(ngModel)]="quote.notes" name="quoteNotes"></textarea>
           </div>
         </div>
 
-        <!-- What they added while browsing the catalogue. -->
+        <!-- What they added while browsing, in the two groups the owner asked for: what we can
+             price, with a total, and what we will price ourselves. A single total that quietly left
+             the unpriced lines out would be worse than no total. -->
         <div class="mt-3" *ngIf="requested.length">
           <div class="d-flex align-items-center">
             <strong>{{ "PRODUCTS.REQUEST_TITLE" | translate }}</strong>
@@ -63,17 +58,13 @@
               (click)="clearRequested()"
             >{{ "PRODUCTS.REQUEST_CLEAR" | translate }}</button>
           </div>
-          <ul class="list-group list-group-flush">
-            <li
-              class="list-group-item d-flex align-items-center px-0"
-              *ngFor="let item of requested; let i = index"
-            >
+
+          <ng-template #requestRow let-item let-i="i">
+            <li class="list-group-item d-flex align-items-center px-0">
               <span>
                 <strong>{{ item.code }}</strong>
                 <span class="text-muted small" *ngIf="item.detail"> — {{ item.detail }}</span>
               </span>
-              <!-- Adjusting here, not back at the product: the customer adds twenty, then sees a
-                   50x50 and wants thirty of those too. -->
               <span class="d-flex align-items-center gap-1 ms-auto me-2">
                 <button
                   type="button"
@@ -104,7 +95,38 @@
                 (click)="removeRequested(item)"
               >{{ "PRODUCTS.REQUEST_REMOVE" | translate }}</button>
             </li>
-          </ul>
+          </ng-template>
+
+          <div *ngIf="pricedItems.length">
+            <div class="small text-uppercase text-muted mt-3 mb-1">
+              {{ "PRODUCTS.REQUEST_PRICED" | translate }}
+            </div>
+            <ul class="list-group list-group-flush">
+              <ng-container
+                *ngFor="let item of pricedItems; let i = index"
+                [ngTemplateOutlet]="requestRow"
+                [ngTemplateOutletContext]="{ $implicit: item, i: i }"
+              ></ng-container>
+            </ul>
+            <div class="d-flex align-items-center border-top pt-2 mt-1">
+              <strong>{{ "PRODUCTS.REQUEST_TOTAL" | translate }}</strong>
+              <strong class="ms-auto">{{ pricedTotal }} Eur</strong>
+            </div>
+          </div>
+
+          <div *ngIf="unpricedItems.length">
+            <div class="small text-uppercase text-muted mt-4 mb-1">
+              {{ "PRODUCTS.REQUEST_UNPRICED" | translate }}
+            </div>
+            <ul class="list-group list-group-flush">
+              <ng-container
+                *ngFor="let item of unpricedItems; let i = index"
+                [ngTemplateOutlet]="requestRow"
+                [ngTemplateOutletContext]="{ $implicit: item, i: 100 + i }"
+              ></ng-container>
+            </ul>
+            <p class="small text-muted mb-0">{{ "PRODUCTS.REQUEST_UNPRICED_NOTE" | translate }}</p>
+          </div>
         </div>
 
         <p class="text-muted small mt-3 mb-2" *ngIf="!isQuoteValid()">

@@ -166,7 +166,11 @@
     "UNIT_METRE": "për metër",
     "UNIT_BAR": "për shufër",
     "QUANTITY": "Sasia",
-    "PIECES": "copë"
+    "PIECES": "copë",
+    "REQUEST_PRICED": "Artikuj me çmim",
+    "REQUEST_TOTAL": "Totali",
+    "REQUEST_UNPRICED": "Artikuj pa çmim",
+    "REQUEST_UNPRICED_NOTE": "Për këta çmimin e llogarisim ne dhe ju kthejmë përgjigje me ofertën."
   },
   "MODAL": {
     "CLOSE": "Mbyll",

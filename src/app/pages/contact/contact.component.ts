@@ -27,7 +27,47 @@ export class ContactComponent {
    * actions below assign the array the service returns, so the reference only changes when the list
    * actually does.
    */
-  requested: QuoteItem[] = this.quoteList.items();
+  private items: QuoteItem[] = this.quoteList.items();
+
+  /**
+   * The list, and the two halves the owner asked for.
+   *
+   * A price in the line means we know what it costs; anything else is for the shop to price, and
+   * those are separated because a total that silently leaves them out would be misleading. Set
+   * through the setter below, so the halves can never drift from the list.
+   */
+  get requested(): QuoteItem[] {
+    return this.items;
+  }
+
+  set requested(value: QuoteItem[]) {
+    this.items = value;
+    this.split();
+  }
+
+  pricedItems: QuoteItem[] = [];
+  unpricedItems: QuoteItem[] = [];
+  /** What the priced half comes to. The rest is quoted by the shop. */
+  pricedTotal = 0;
+
+  private split(): void {
+    this.pricedItems = this.items.filter((item) => this.priceOf(item) !== null);
+    this.unpricedItems = this.items.filter((item) => this.priceOf(item) === null);
+    const sum = this.pricedItems.reduce(
+      (running, item) => running + (this.priceOf(item) || 0) * (item.quantity || 1), 0
+    );
+    this.pricedTotal = Math.round(sum * 100) / 100;
+  }
+
+  /** The price inside a line - "Trashesia 1.3 mm - 4.20 Eur" is 4.20 - or null when there is none. */
+  private priceOf(item: QuoteItem): number | null {
+    const found = /([\d.]+)\s*(?:Eur|EUR|\u20ac)/.exec(item.detail || '');
+    if (!found) {
+      return null;
+    }
+    const value = Number(found[1]);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
 
   removeRequested(item: QuoteItem): void {
     this.requested = this.quoteList.setQuantity(item, 0);
@@ -73,11 +113,15 @@ export class ContactComponent {
   /** What the visitor types into the quote form. */
   quote = { name: '', phone: '', product: '', quantity: '', notes: '' };
 
-  /** The shop cannot answer without a name, a phone, and something to quote for. */
+  /**
+   * The shop cannot answer without a name and a phone.
+   *
+   * It used to insist on a product as well. Now that the request list carries the products and
+   * their quantities, the free-text box behind that rule has gone - and a customer who has browsed
+   * nothing, wanting a general quote, would have been stuck behind it. Name and phone are enough.
+   */
   isQuoteValid(): boolean {
-    const essentials = this.quote.name.trim() && this.quote.phone.trim();
-    // Either they described what they need, or they added it from the catalogue while browsing.
-    return !!(essentials && (this.quote.product.trim() || this.requested.length));
+    return !!(this.quote.name.trim() && this.quote.phone.trim());
   }
 
   /**
