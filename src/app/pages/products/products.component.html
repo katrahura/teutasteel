@@ -828,8 +828,8 @@
         <div class="col-md-3 mb-4" *ngFor="let product of products">
           <div
             class="card h-100"
-            (click)="openModal(product, $event)"
-            style="cursor: pointer"
+            (click)="openDetail(product, $event)"
+            [style.cursor]="(product.dimensions || []).length > 1 ? 'pointer' : 'default'"
           >
             <div class="position-relative">
               <!-- Badges -->
@@ -1022,20 +1022,10 @@
             class="product-image"
           />
         </div>
-        <button
-          class="btn btn-light nav-btn prev-btn"
-          (click)="navigateLeft()"
-          [attr.aria-label]="'MISC.PREVIOUS' | translate"
-        >
-          <i class="bi bi-chevron-left"></i>
-        </button>
-        <button
-          class="btn btn-light nav-btn next-btn"
-          (click)="navigateRight()"
-          [attr.aria-label]="'MISC.NEXT' | translate"
-        >
-          <i class="bi bi-chevron-right"></i>
-        </button>
+        <!-- The prev/next buttons that used to sit here jumped from product to product without
+             leaving the dialog. The owner asked for them gone: a dialog is opened to look at the
+             thing you clicked, and moving to a neighbour from inside it is how you lose your place
+             in a catalogue of two thousand. To see another product, close this one and click it. -->
 
         <!-- Right Section -->
         <div class="info-container">

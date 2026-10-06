@@ -288,6 +288,20 @@ toggleParent(parentId: number) {
    * beside the button. A product with several has a thickness to pick and a quantity per thickness,
    * and only the dialog can ask for both - so the card opens it rather than guessing at either.
    */
+  /**
+   * A card's own click.
+   *
+   * A product with one dimension puts everything on the card - the size, the price, the quantity
+   * field and both buttons - so a dialog over the top of it adds nothing and only gets in the way.
+   * A product with several has a thickness to choose, and only that one opens.
+   */
+  openDetail(product: Product, event: Event): void {
+    if ((product.dimensions || []).length <= 1) {
+      return;
+    }
+    this.openModal(product, event);
+  }
+
   addOrOpen(product: Product, event: Event): void {
     event.stopPropagation();
     if ((product.dimensions || []).length > 1) {
