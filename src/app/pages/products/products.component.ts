@@ -236,14 +236,16 @@ toggleParent(parentId: number) {
     });
     this.quoteCount = this.quoteList.count();
     this.quoteNotice = product.code;
-    // Say what went in, then clear the choices so the dialog is ready for the next one. The
-    // quantities are read before the clear, because they are about to disappear.
-    this.justAdded = chosen
+    // Read the quantities first, because re-seeding replaces them with what the list holds.
+    const summary = chosen
       .map((dimension) => `${this.quantityFor(product, dimension)} × ${this.describeDimension(dimension)}`)
       .join(' · ');
-    this.chosenDimensions = {};
-    this.quantities = {};
-    this.onList = this.linesOnList(product);
+    // Leave the dialog showing the order as it now stands, rather than an empty form. Clearing the
+    // ticks - which is what this did - also took away the quantity field and greyed the add button,
+    // so the dialog looked broken until it was closed and reopened. Reopening did nothing more than
+    // re-seed from the list; that is what happens here now, and straight away.
+    this.seedFromRequestList(product);
+    this.justAdded = summary;
   }
 
   /** "Trashësia 1.5 mm — 4.80 Eur", or as much of that as the dimension knows. */
