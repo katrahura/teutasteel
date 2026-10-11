@@ -21,7 +21,7 @@ describe('ProjectsComponent', () => {
   it('shows every project it has', () => {
     const cards = fixture.nativeElement.querySelectorAll('.project');
     expect(cards.length).toBe(component.projects.length);
-    expect(cards.length).toBe(6);
+    expect(cards.length).toBe(12);
     // The translation pipe answers with the key in a unit test, which is enough to prove the words
     // are wired up.
     expect(fixture.nativeElement.textContent).toContain('PROJECTS.P1_TITLE');
@@ -36,16 +36,17 @@ describe('ProjectsComponent', () => {
   });
 
   it('leaves a slot, not a borrowed picture, where a job has no photograph', () => {
-    // Standing a neighbouring photograph in for a job would say something untrue about it.
+    // Standing a neighbouring photograph in for a job would say something untrue about it. One job
+    // is in that position: the stainless brackets, since every picture here is untreated steel.
     const expecting = component.projects.filter((project) => project.images.length === 0);
-    expect(expecting.length).toBe(2);
-    expect(fixture.nativeElement.querySelectorAll('.awaiting').length).toBe(2);
+    expect(expecting.length).toBe(1);
+    expect(fixture.nativeElement.querySelectorAll('.awaiting').length).toBe(1);
     expect(fixture.nativeElement.textContent).toContain('PROJECTS.PHOTO_TOMORROW');
   });
 
   it('lists what still has to be photographed, while these are samples', () => {
     // The briefs are the owner's shooting list: the page is a to-do as much as a gallery.
-    expect(fixture.nativeElement.querySelectorAll('.photos ol').length).toBe(6);
+    expect(fixture.nativeElement.querySelectorAll('.photos ol').length).toBe(12);
     expect(fixture.nativeElement.textContent).toContain('PROJECTS.P1_PHOTO_2');
   });
 });
