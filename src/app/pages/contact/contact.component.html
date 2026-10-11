@@ -141,6 +141,9 @@
           [attr.aria-disabled]="!isQuoteValid()"
           (click)="isQuoteValid() || $event.preventDefault()"
         >{{ 'QUOTE.SEND' | translate }}</a>
+        <!-- What happens next. Without it, sending the enquiry into WhatsApp is a blank: the visitor
+             has no idea whether anyone is there. -->
+        <p class="text-muted small mt-2 mb-0">{{ 'QUOTE.REPLY_EXPECTATION' | translate }}</p>
       </div>
     </div>
 

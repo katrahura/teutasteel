@@ -50,7 +50,9 @@
         &middot; {{ "PRODUCTS.REQUEST_ADDED" | translate }} {{ quoteNotice }}
       </span>
     </span>
-    <a class="btn btn-sm btn-success ms-auto" [routerLink]="['/contact']">
+    <!-- The way to the request is the primary action here too, not a green button on a green
+         panel, where it read as part of the background. -->
+    <a class="btn btn-sm btn-add-to-request ms-auto" [routerLink]="['/contact']">
       {{ "PRODUCTS.REQUEST_OPEN" | translate }}
     </a>
   </div>

@@ -327,8 +327,9 @@
     "QUANTITY": "Sasia",
     "NOTES": "Shënime",
     "SEND": "Dërgo kërkesën në WhatsApp",
-    "REQUIRED": "Plotësoni emrin, telefonin dhe produktin që ju nevojitet.",
-    "MESSAGE_INTRO": "Përshëndetje, dua një ofertë:"
+    "REQUIRED": "Plotësoni emrin dhe telefonin.",
+    "MESSAGE_INTRO": "Përshëndetje, dua një ofertë:",
+    "REPLY_EXPECTATION": "Përgjigjemi gjatë orarit të punës, Hën–Sht 08:00–17:00."
   },
   "SERVICES": {
     "TITLE": "Shërbimet Tona",
