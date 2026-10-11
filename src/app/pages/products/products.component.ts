@@ -801,6 +801,13 @@ this.subscriptions.push(
     const edit = Number(params.get('edit'));
     if (edit && this.isLoggedIn) {
       this.openEditorFor(edit, Number(params.get('category')) || null);
+    } else {
+      // A plain link to one category, which is what the admin panel's list of switched-off
+      // categories offers: what is actually in it, before deciding whether to switch it back on.
+      const category = Number(params.get('category'));
+      if (category) {
+        this.showProducts({ id: category } as any);
+      }
     }
   })
 );

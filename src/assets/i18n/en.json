@@ -199,7 +199,8 @@
     "ONLY_EMPTY": "Only the ones that found nothing",
     "OPEN_PRODUCT": "Open the product",
     "NO_DETAILS": "Nothing on them at all",
-    "WITHOUT_IMAGE": "Categories with no image"
+    "WITHOUT_IMAGE": "Categories with no image",
+    "SEE_PRODUCTS": "See the products"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

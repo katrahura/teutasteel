@@ -143,6 +143,10 @@ describe('AdminDashboardComponent', () => {
     const button = (fixture.nativeElement as HTMLElement)
       .querySelector('.switch-on') as HTMLButtonElement;
     expect(button).toBeTruthy();
+    // And the category's name is a way to see what is in it, before deciding to switch it on.
+    const seeIt = (fixture.nativeElement as HTMLElement)
+      .querySelector('.off-list .chip a') as HTMLAnchorElement;
+    expect(seeIt.getAttribute('href')).toContain('category=7');
     button.click();
 
     const put = httpMock.expectOne(

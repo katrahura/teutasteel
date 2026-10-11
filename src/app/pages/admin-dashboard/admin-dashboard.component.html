@@ -73,7 +73,10 @@
         <strong class="small d-block mb-1">{{ 'ADMIN.OFF_LIST' | translate }}</strong>
         <div class="off-list">
           <span class="chip" *ngFor="let category of summary.categories.off_categories || []">
-            {{ category.title }}
+            <!-- What is in it, before deciding whether to switch it back on. The panel remembers
+                 its own place in the address, so the back button returns to this list. -->
+            <a [routerLink]="['/products']" [queryParams]="{ category: category.id }"
+               [title]="'ADMIN.SEE_PRODUCTS' | translate">{{ category.title }}</a>
             <!-- Twenty-seven categories are off, and finding the one you mean on the products page
                  means opening groups until it turns up. -->
             <button
