@@ -697,7 +697,14 @@ toggleParent(parentId: number) {
   ngOnInit(): void {
       // Only the browser fetches data: prerendering/SSR must not call the API.
       if (isPlatformBrowser(this.platformId)) {
-        this.loadCategoryGroups();
+        // The groups load only when nothing is being searched for. A term handed over as ?q= starts
+        // its own search below, and loading the groups as well left the two racing: whichever
+        // answered last took the screen, so the term sometimes sat in the box with the whole group
+        // list behind it instead of the results.
+        const handedOver = (this.route.snapshot.queryParamMap.get('q') || '').trim();
+        if (!handedOver) {
+          this.loadCategoryGroups();
+        }
         // Product descriptions come from the API per language, so reload the
         // open product list when the visitor switches language.
         this.subscriptions.push(

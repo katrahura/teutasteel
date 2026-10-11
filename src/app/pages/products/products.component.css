@@ -54,18 +54,35 @@ h1.text-center, h2.text-center {
 .card.h-100 .card-title { font-weight: 700; letter-spacing: -.01em; }
 .card.h-100 .btn { border-radius: 8px; font-weight: 700; }
 
-/* The add-to-request button, in the shop's amber rather than Bootstrap's green. Green stays on the
-   WhatsApp button, because that is WhatsApp's own colour and people look for it; this button
-   belongs to the shop. .card.h-100 carries more weight than .btn-outline-success, so this wins. */
-.card.h-100 .btn-outline-success {
-  color: #b45309;
-  border-color: var(--accent, #f59e0b);
-  background: #fff;
-}
-.card.h-100 .btn-outline-success:hover {
+/* One primary action per card: adding to the request is the shop's own amber and now carries the
+   weight, filled rather than outlined. WhatsApp keeps its green, because that is WhatsApp's colour
+   and people look for it, but as an outline - a filled green button outweighed the action that
+   actually builds the enquiry, and the enquiry is what saves the shop a dozen messages.
+
+   .btn.btn- keeps these ahead of Bootstrap's own .btn background. */
+.btn.btn-add-to-request {
   background: var(--accent, #f59e0b);
   border-color: var(--accent, #f59e0b);
   color: #111827;
+}
+.btn.btn-add-to-request:hover {
+  background: var(--accent-dark, #b45309);
+  border-color: var(--accent-dark, #b45309);
+  color: #fff;
+}
+.btn.btn-add-to-request.disabled,
+.btn.btn-add-to-request[aria-disabled="true"] {
+  opacity: .5;
+}
+.btn.btn-whatsapp {
+  background: #fff;
+  border-color: #15803d;
+  color: #15803d;
+}
+.btn.btn-whatsapp:hover {
+  background: #15803d;
+  border-color: #15803d;
+  color: #fff;
 }
 
 /* Global card styling */

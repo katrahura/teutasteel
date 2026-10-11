@@ -30,7 +30,10 @@
           <input #heroSearch type="search" name="heroSearch"
                  [placeholder]="'SHELL.SEARCH_PLACEHOLDER' | translate"
                  [attr.aria-label]="'SHELL.SEARCH_PLACEHOLDER' | translate">
-          <button class="btn btn-accent" type="submit">{{ 'HOME.SEARCH_BUTTON' | translate }}</button>
+          <!-- Slate, not amber: the hero already has one amber primary action, the telephone. A
+               second filled amber button beside it made the eye choose between two things that
+               answer the same question. The search field is a control. -->
+          <button class="btn btn-dark" type="submit">{{ 'HOME.SEARCH_BUTTON' | translate }}</button>
         </form>
       </div>
       <div class="hero-card">
