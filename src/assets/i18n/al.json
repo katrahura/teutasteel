@@ -230,7 +230,11 @@
     "DENIED": "Kjo faqe është e pronarit. Kyçu me llogarinë e administratorit.",
     "FAILED": "Raportet nuk u ngarkuan. Provoni përsëri.",
     "LOGIN": "Kyçu",
-    "SWITCH_ON": "Ndez"
+    "SWITCH_ON": "Ndez",
+    "SEE_WHICH": "Shiko cilat",
+    "CLOSE": "Mbyll",
+    "PREVIOUS": "Përpara",
+    "NEXT": "Mbrapa"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

@@ -37,6 +37,22 @@ export interface CatalogueSummary {
   };
 }
 
+/** One product on a worklist: enough to find it, not its dimensions and translations as well. */
+export interface GapProduct {
+  id: number;
+  code: string;
+  category_id: number | null;
+  category: string | null;
+}
+
+export interface GapPage {
+  gap: string;
+  total: number;
+  page: number;
+  pages: number;
+  products: GapProduct[];
+}
+
 /**
  * The owner's own view of the shop.
  *
@@ -64,6 +80,17 @@ export class AdminService {
     return this.http.get<CatalogueSummary>(`${this.baseUrl}/admin/summary`, {
       headers: this.authHeaders(),
     });
+  }
+
+  /**
+   * The products behind one of the summary's figures.
+   *
+   * A figure says how many; the owner needs to know which. The light shape is deliberate - this is
+   * a worklist, and a page of full products would be several times its size.
+   */
+  getGapProducts(gap: string, page: number = 1, perPage: number = 20): Observable<GapPage> {
+    const url = `${this.baseUrl}/admin/products?gap=${gap}&page=${page}&per_page=${perPage}`;
+    return this.http.get<GapPage>(url, { headers: this.authHeaders() });
   }
 
   private authHeaders(): HttpHeaders {

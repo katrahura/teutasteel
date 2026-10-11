@@ -98,8 +98,7 @@ describe('AdminDashboardComponent', () => {
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('2368');
   });
 
-  it('switches a category back on, and reads the figures again', () => {
-    // The list of off categories is the reason to have this page: finding the one you mean on the
+  it('switches a category back on, and reads the figures again', () => {    // The list of off categories is the reason to have this page: finding the one you mean on the
     // products page means opening groups until it turns up.
     httpMock.expectOne(summaryUrl).flush(summary);
     httpMock.expectOne(searchesUrl).flush({ empty: 0, total: 0, searches: [] });
@@ -123,5 +122,39 @@ describe('AdminDashboardComponent', () => {
     fixture.detectChanges();
 
     expect(component.switching).toBeNull();
+  });
+
+  it('opens the worklist behind a figure', () => {
+    // A figure says how many products are missing a photograph; the owner needs to know which.
+    httpMock.expectOne(summaryUrl).flush(summary);
+    httpMock.expectOne(searchesUrl).flush({ empty: 0, total: 0, searches: [] });
+    fixture.detectChanges();
+
+    const figures = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('button.stat')
+    ) as HTMLButtonElement[];
+    expect(figures.length).toBe(3);
+
+    const photoFigure = figures.find((figure) =>
+      (figure.textContent || '').includes('ADMIN.PRICED_WITHOUT_PHOTO')
+    ) as HTMLButtonElement;
+    expect(photoFigure).toBeTruthy();
+    photoFigure.click();
+
+    const gap = httpMock.expectOne((req) =>
+      req.url.startsWith(`${environment.apiUrl}/admin/products?gap=no_photo`)
+    );
+    gap.flush({
+      gap: 'no_photo',
+      total: 3,
+      page: 1,
+      pages: 1,
+      products: [{ id: 11, code: 'PLAIN-1', category_id: 3, category: 'Round tubes' }],
+    });
+    fixture.detectChanges();
+
+    expect(component.gap).toBe('no_photo');
+    expect(component.gapTotal).toBe(3);
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('PLAIN-1');
   });
 });

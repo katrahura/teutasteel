@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import {
   AdminService,
   CatalogueSummary,
+  GapProduct,
   SearchReport,
 } from '../../services/admin.service';
 import { ProductService } from '../../services/product.service';
@@ -41,6 +42,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   failed = false;
   /** The category currently being switched back on, so its own button can wait. */
   switching: number | null = null;
+
+  /** The worklist open under the figures: which products, not just how many. */
+  gap: string | null = null;
+  gapProducts: GapProduct[] = [];
+  gapTotal = 0;
+  gapPage = 1;
+  gapPages = 1;
+  gapLoading = false;
 
   ngOnInit(): void {
     this.loading = true;
@@ -115,5 +124,51 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     } else {
       this.failed = true;
     }
+  }
+
+  /**
+   * Open the worklist behind one of the figures.
+   *
+   * The figures say how many products are missing a photograph, have no size, or sit under a
+   * category that is switched off. None of that is actionable until it says which one, so each
+   * opens the list underneath.
+   */
+  openGap(name: string, page: number = 1): void {
+    this.gap = name;
+    this.gapLoading = true;
+    this.subscriptions.add(
+      this.admin.getGapProducts(name, page).subscribe({
+        next: (result) => {
+          this.gapProducts = result.products || [];
+          this.gapTotal = result.total;
+          this.gapPage = result.page;
+          this.gapPages = result.pages;
+          this.gapLoading = false;
+        },
+        error: (error) => {
+          this.noteRefusal(error);
+          this.gapLoading = false;
+        },
+      })
+    );
+  }
+
+  closeGap(): void {
+    this.gap = null;
+    this.gapProducts = [];
+  }
+
+  /** Which figure the open list belongs to, so its heading can say the same thing. */
+  gapLabelKey(): string {
+    if (this.gap === 'no_photo') {
+      return 'ADMIN.PRICED_WITHOUT_PHOTO';
+    }
+    if (this.gap === 'no_size') {
+      return 'ADMIN.PRICED_WITHOUT_SIZE';
+    }
+    if (this.gap === 'off_category') {
+      return 'ADMIN.IN_OFF_CATEGORIES';
+    }
+    return '';
   }
 }

@@ -28,18 +28,26 @@
           <span class="n">{{ summary.products.active }}</span>
           <span class="l">{{ 'ADMIN.PRODUCTS_ACTIVE' | translate }}</span>
         </div>
-        <div class="stat warn">
+        <!-- The three that mean work to do are buttons: a figure says how many, and the owner needs
+             to know which. -->
+        <button type="button" class="stat warn" [class.active]="gap === 'off_category'"
+                (click)="openGap('off_category')">
           <span class="n">{{ summary.products.in_off_categories }}</span>
           <span class="l">{{ 'ADMIN.IN_OFF_CATEGORIES' | translate }}</span>
-        </div>
-        <div class="stat warn">
+          <span class="hint">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
+        </button>
+        <button type="button" class="stat warn" [class.active]="gap === 'no_photo'"
+                (click)="openGap('no_photo')">
           <span class="n">{{ summary.products.priced_without_photo }}</span>
           <span class="l">{{ 'ADMIN.PRICED_WITHOUT_PHOTO' | translate }}</span>
-        </div>
-        <div class="stat warn">
+          <span class="hint">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
+        </button>
+        <button type="button" class="stat warn" [class.active]="gap === 'no_size'"
+                (click)="openGap('no_size')">
           <span class="n">{{ summary.products.priced_without_size }}</span>
           <span class="l">{{ 'ADMIN.PRICED_WITHOUT_SIZE' | translate }}</span>
-        </div>
+          <span class="hint">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
+        </button>
         <div class="stat">
           <span class="n">{{ summary.categories.total }}</span>
           <span class="l">{{ 'ADMIN.CATEGORIES_TOTAL' | translate }}</span>
@@ -65,6 +73,41 @@
               (click)="switchOn(category)"
             >{{ 'ADMIN.SWITCH_ON' | translate }}</button>
           </span>
+        </div>
+      </div>
+
+      <!-- The worklist behind whichever figure was pressed. -->
+      <div class="gap-list mt-4" *ngIf="gap">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <strong class="small">{{ gapLabelKey() | translate }}</strong>
+          <span class="text-muted small">
+            {{ gapProducts.length ? ((gapPage - 1) * 20 + 1) : 0 }}–{{ (gapPage - 1) * 20 + gapProducts.length }}
+            / {{ gapTotal }}
+          </span>
+          <button type="button" class="btn-close ms-auto" [attr.aria-label]="'ADMIN.CLOSE' | translate"
+                  (click)="closeGap()"></button>
+        </div>
+
+        <div class="text-muted small" *ngIf="gapLoading">
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        </div>
+
+        <ul class="gap-items" *ngIf="!gapLoading && gapProducts.length">
+          <li *ngFor="let product of gapProducts">
+            <span class="code">{{ product.code }}</span>
+            <span class="cat text-muted">{{ product.category }}</span>
+          </li>
+        </ul>
+
+        <div class="d-flex gap-2 mt-2" *ngIf="gapPages > 1">
+          <button type="button" class="btn btn-sm btn-outline-secondary"
+                  [disabled]="gapPage <= 1" (click)="openGap(gap, gapPage - 1)">
+            {{ 'ADMIN.PREVIOUS' | translate }}
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary"
+                  [disabled]="gapPage >= gapPages" (click)="openGap(gap, gapPage + 1)">
+            {{ 'ADMIN.NEXT' | translate }}
+          </button>
         </div>
       </div>
     </section>
