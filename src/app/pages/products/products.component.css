@@ -145,20 +145,10 @@ h1.text-center, h2.text-center {
   border: 1px solid var(--accent, #f59e0b) !important;
   color: #111827 !important;
 }
-.info-container .btn.btn-add-to-request:hover {
-  background: var(--accent-dark, #b45309) !important;
-  border-color: var(--accent-dark, #b45309) !important;
-  color: #fff !important;
-}
 .info-container .btn.btn-whatsapp {
   background: #fff !important;
   border: 1px solid #15803d !important;
   color: #15803d !important;
-}
-.info-container .btn.btn-whatsapp:hover {
-  background: #15803d !important;
-  border-color: #15803d !important;
-  color: #fff !important;
 }
 
 /* Global card styling */
