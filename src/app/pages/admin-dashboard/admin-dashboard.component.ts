@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import {
@@ -32,6 +32,8 @@ import { ProductService } from '../../services/product.service';
 export class AdminDashboardComponent implements OnInit, OnDestroy {
   private admin = inject(AdminService);
   private products = inject(ProductService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private subscriptions = new Subscription();
 
   summary: CatalogueSummary | null = null;
@@ -81,6 +83,36 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         },
       })
     );
+
+    // The address says which list was open. Working through 396 products without photographs means
+    // going to a product and coming back, and without this every return lands at the top of the
+    // dashboard with the list closed and the page forgotten.
+    const asked = this.route.snapshot.queryParamMap;
+    if ((asked.get('searches') || '') === 'empty') {
+      this.loadSearches(true);
+    }
+    const gap = asked.get('gap');
+    if (gap) {
+      this.openGap(gap, Number(asked.get('page')) || 1);
+    }
+  }
+
+  /**
+   * Keep the open list in the address.
+   *
+   * Replaced rather than pushed: the back button should leave the dashboard, not walk back through
+   * every page of a list somebody is working through.
+   */
+  private remember(): void {
+    const queryParams: Record<string, string | number> = {};
+    if (this.gap) {
+      queryParams['gap'] = this.gap;
+      queryParams['page'] = this.gapPage;
+    }
+    if (this.onlyEmpty) {
+      queryParams['searches'] = 'empty';
+    }
+    this.router.navigate([], { queryParams, replaceUrl: true });
   }
 
   /**
@@ -91,6 +123,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
    */
   loadSearches(onlyEmpty: boolean = false): void {
     this.onlyEmpty = onlyEmpty;
+    this.remember();
     this.subscriptions.add(
       this.admin.getSearches(100, onlyEmpty).subscribe({
         next: (report) => { this.report = report; },
@@ -153,7 +186,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
    */
   openGap(name: string, page: number = 1): void {
     this.gap = name;
+    this.gapPage = page;
     this.gapLoading = true;
+    this.remember();
     this.subscriptions.add(
       this.admin.getGapProducts(name, page).subscribe({
         next: (result) => {
@@ -162,6 +197,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           this.gapPage = result.page;
           this.gapPages = result.pages;
           this.gapLoading = false;
+          this.remember();
         },
         error: (error) => {
           this.noteRefusal(error);
@@ -174,6 +210,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   closeGap(): void {
     this.gap = null;
     this.gapProducts = [];
+    this.remember();
   }
 
   /** Which figure the open list belongs to, so its heading can say the same thing. */

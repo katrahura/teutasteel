@@ -96,9 +96,12 @@
           <li *ngFor="let product of gapProducts">
             <!-- The list says which products; this is the way to one, straight into its editor.
                  The category goes with it because the product's own endpoint does not return one,
-                 and the editor's dialog only exists while a category is being shown. -->
+                 and the editor's dialog only exists while a category is being shown. A new tab, so
+                 the list stays open where it was left: working through 396 of these one at a time
+                 should not mean finding your place again after every one. -->
             <a class="code" [routerLink]="['/products']"
                [queryParams]="{ edit: product.id, category: product.category_id }"
+               target="_blank" rel="noopener"
                [title]="'ADMIN.OPEN_PRODUCT' | translate">{{ product.code }}</a>
             <span class="cat text-muted">
               <span *ngIf="product.group">{{ product.group }} &rsaquo; </span>{{ product.category }}
