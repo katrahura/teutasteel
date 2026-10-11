@@ -177,7 +177,15 @@
     "SEARCH_RETRY": "Provo përsëri",
     "PRODUCT_COUNT": "produkte",
     "SUBCATEGORIES": "Nënkategoritë",
-    "ASK_FOR_DETAILS": "Pyetni për masat dhe çmimin"
+    "ASK_FOR_DETAILS": "Pyetni për masat dhe çmimin",
+    "FILTERS": "Filtrat",
+    "FILTER_THICKNESS": "Trashësia",
+    "FILTER_ANY": "Të gjitha",
+    "FILTER_SIZE_FROM": "Madhësia nga",
+    "FILTER_SIZE_TO": "deri",
+    "FILTER_APPLY": "Filtro",
+    "FILTER_CLEAR": "Pastro filtrat",
+    "FILTER_SHOWING": "Duke shfaqur"
   },
   "MODAL": {
     "CLOSE": "Mbyll",

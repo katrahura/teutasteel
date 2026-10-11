@@ -85,7 +85,19 @@ export interface Pagination {
   total_items: number;
 }
 
+/** What a category holds, so the filters can offer sizes that exist rather than invented ones. */
+export interface CategoryFacets {
+  /** At most a few dozen: a category has up to eighteen distinct thicknesses. */
+  thicknesses: number[];
+  /** The range of sizes, rather than the list: one category holds up to sixty-two of them. */
+  height_min: number | null;
+  height_max: number | null;
+  total_thicknesses: number;
+  total_sizes: number;
+}
+
 export interface CategoryResponse {
   products: Product[];
   pagination: Pagination;
+  facets?: CategoryFacets;
 }

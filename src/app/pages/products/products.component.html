@@ -856,6 +856,59 @@
       >
         {{ "MISC.NO_PRODUCTS_IN_CATEGORY" | translate }}
       </p>
+      <!-- Narrowing the list, which is what makes a group of hundreds usable. The choices are what
+           this category actually holds, so a customer picks a real thickness rather than guessing
+           one that does not exist. -->
+      <div class="filter-bar mb-3" *ngIf="!isLoading && selectedCategory && facets
+           && (facets.thicknesses.length || facets.height_max)">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <strong class="small me-1">{{ "PRODUCTS.FILTERS" | translate }}</strong>
+
+          <ng-container *ngIf="facets.thicknesses.length">
+            <label class="form-label visually-hidden" for="filterThickness">
+              {{ "PRODUCTS.FILTER_THICKNESS" | translate }}
+            </label>
+            <select id="filterThickness" class="form-select form-select-sm w-auto"
+                    [ngModel]="filterThickness"
+                    (ngModelChange)="filterThickness = $event; applyFilters()">
+              <option [ngValue]="null">{{ "PRODUCTS.FILTER_ANY" | translate }}</option>
+              <option *ngFor="let value of facets.thicknesses" [ngValue]="value">{{ value }} mm</option>
+            </select>
+          </ng-container>
+
+          <ng-container *ngIf="facets.height_max">
+            <label class="form-label visually-hidden" for="filterMinHeight">
+              {{ "PRODUCTS.FILTER_SIZE_FROM" | translate }}
+            </label>
+            <span class="small text-muted">{{ "PRODUCTS.FILTER_SIZE_FROM" | translate }}</span>
+            <input id="filterMinHeight" class="form-control form-control-sm w-auto" type="number"
+                   [(ngModel)]="filterMinHeight" [ngModelOptions]="{ standalone: true }"
+                   (change)="applyFilters()" />
+            <span class="small text-muted">
+              {{ "PRODUCTS.FILTER_SIZE_TO" | translate }} {{ facets.height_max }} mm
+            </span>
+            <label class="form-label visually-hidden" for="filterMaxHeight">
+              {{ "PRODUCTS.FILTER_SIZE_TO" | translate }}
+            </label>
+            <input id="filterMaxHeight" class="form-control form-control-sm w-auto" type="number"
+                   [attr.placeholder]="facets.height_max"
+                   [(ngModel)]="filterMaxHeight" [ngModelOptions]="{ standalone: true }"
+                   (change)="applyFilters()" />
+          </ng-container>
+
+          <button type="button" class="btn btn-sm btn-outline-secondary"
+                  *ngIf="hasFilters()" (click)="clearFilters()">
+            {{ "PRODUCTS.FILTER_CLEAR" | translate }}
+          </button>
+
+          <!-- "Showing 1" rather than "1 products": Albanian would need "1 produkt" and a plural
+               rule for it, and a count with no noun avoids the whole question. -->
+          <span class="small text-muted ms-auto" *ngIf="hasFilters()">
+            {{ "PRODUCTS.FILTER_SHOWING" | translate }} {{ totalItems }}
+          </span>
+        </div>
+      </div>
+
       <!-- Product Cards -->
       <div class="row" *ngIf="!isLoading">
         <div class="col-md-3 mb-4" *ngFor="let product of products">

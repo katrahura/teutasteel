@@ -293,6 +293,34 @@ describe('ProductsComponent', () => {
     expect(text).toContain('SIZED-1');
   });
 
+  it('narrows the category when a filter is chosen, from the first page', () => {
+    // A group like the tubes holds hundreds of products, and a customer looking for a 2 mm wall
+    // wants the ones that have it.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+    component.showProducts({ id: 1, title: 'Doors', is_active: true } as any);
+    const facets = {
+      thicknesses: [2, 5], height_min: 20, height_max: 40, total_thicknesses: 2, total_sizes: 2,
+    };
+    httpMock.expectOne((req) => req.url.startsWith(`${environment.apiUrl}/category/1?`))
+      .flush({ id: 1, title: 'Doors', pagination: { page: 1, total_pages: 1, total_items: 2 },
+               products: [], facets });
+    fixture.detectChanges();
+
+    component.currentPage = 3;
+    component.filterThickness = 2;
+    component.applyFilters();
+
+    const filtered = httpMock.expectOne((req) => req.url.includes('thickness=2'));
+    // Back to the first page: the third one may not exist under the filter.
+    expect(filtered.request.url).toContain('page=1');
+    filtered.flush({ id: 1, title: 'Doors', pagination: { page: 1, total_pages: 1, total_items: 1 },
+                     products: [], facets });
+    fixture.detectChanges();
+
+    expect(component.totalItems).toBe(1);
+    expect(component.hasFilters()).toBeTrue();
+  });
+
   it('cancels an older search before accepting newer results', () => {
     httpMock.expectOne(groupsUrl).flush([]);
     component.searchQuery='old';component.runSearch();

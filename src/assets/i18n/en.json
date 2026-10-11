@@ -138,7 +138,15 @@
     "SEARCH_RETRY": "Try again",
     "PRODUCT_COUNT": "products",
     "SUBCATEGORIES": "Sub-categories",
-    "ASK_FOR_DETAILS": "Ask us for sizes and prices"
+    "ASK_FOR_DETAILS": "Ask us for sizes and prices",
+    "FILTERS": "Filters",
+    "FILTER_THICKNESS": "Thickness",
+    "FILTER_ANY": "All",
+    "FILTER_SIZE_FROM": "Size from",
+    "FILTER_SIZE_TO": "to",
+    "FILTER_APPLY": "Apply",
+    "FILTER_CLEAR": "Clear filters",
+    "FILTER_SHOWING": "Showing"
   },
   "MODAL": {
     "CLOSE": "Close",

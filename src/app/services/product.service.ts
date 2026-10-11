@@ -191,8 +191,35 @@ export class ProductService {
   // Method to get a single category by ID, including its products
 
 
-  getCategoryById(category_id: number, page: number = 1, perPage: number = 8, lang: string = 'en'): Observable<CategoryResponse> {
-    const url = `${this.apiUrl}/category/${category_id}?page=${page}&per_page=${perPage}&lang=${lang}`;
+  /**
+   * One category and a page of its products, optionally narrowed.
+   *
+   * The filters are sent only when they were chosen: an empty filter in the address would come back
+   * as a narrowed list with nothing to explain why. The API applies every condition to the same
+   * size row, so a 2 mm tube is one whose own thickness is 2 mm.
+   */
+  getCategoryById(
+    category_id: number,
+    page: number = 1,
+    perPage: number = 8,
+    lang: string = 'en',
+    filters: {
+      thickness?: number | null;
+      minHeight?: number | null;
+      maxHeight?: number | null;
+    } = {}
+  ): Observable<CategoryResponse> {
+    const query = [`page=${page}`, `per_page=${perPage}`, `lang=${lang}`];
+    if (filters.thickness != null) {
+      query.push(`thickness=${filters.thickness}`);
+    }
+    if (filters.minHeight != null) {
+      query.push(`min_height=${filters.minHeight}`);
+    }
+    if (filters.maxHeight != null) {
+      query.push(`max_height=${filters.maxHeight}`);
+    }
+    const url = `${this.apiUrl}/category/${category_id}?${query.join('&')}`;
     return this.http.get<CategoryResponse>(url, { headers: this.getAuthHeaders() })
       .pipe(
         this.retryTransient(),

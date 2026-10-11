@@ -12,6 +12,7 @@ import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
 import { environment } from '../../../environments/environment';
 import {
   Category,
+  CategoryFacets,
   CategoryResponse,
   Product,
   ProductDimension,
@@ -91,6 +92,21 @@ toggleParent(parentId: number) {
   selectedProduct: any = null;
   currentPage = 1;
   totalPages = 1;
+
+  /**
+   * Narrowing a category, which is what makes a group with hundreds of products usable.
+   *
+   * The thickness is a list because a category holds at most eighteen of them; the size is a range
+   * because one holds up to sixty-two, and a dropdown of sixty-two is not a control anybody uses.
+   * The choices come from the API's facets - what this category actually holds - rather than from a
+   * list written down here, which would drift the first time a size was added.
+   */
+  facets: CategoryFacets | null = null;
+  filterThickness: number | null = null;
+  filterMinHeight: number | null = null;
+  filterMaxHeight: number | null = null;
+  /** How many products the filter matches altogether, not just on this page. */
+  totalItems = 0;
   isLoading = true; // Default to loading
   isLoggedIn: boolean = false;
   newCategory: Category = this.emptyCategory();
@@ -786,6 +802,17 @@ toggleParent(parentId: number) {
       }
     // this.loadCategories();
     this.isLoggedIn= this.authService.isAuthenticated();
+
+    // The filters when the address carries them. Read from the snapshot and before anything loads,
+    // because the first category load has to know them already - and a subscription would fire on
+    // every change the controls make and re-apply them in a loop.
+    const start = this.route.snapshot.queryParamMap;
+    const startThickness = Number(start.get('thickness'));
+    const startMinHeight = Number(start.get('minHeight'));
+    const startMaxHeight = Number(start.get('maxHeight'));
+    if (startThickness) { this.filterThickness = startThickness; }
+    if (startMinHeight) { this.filterMinHeight = startMinHeight; }
+    if (startMaxHeight) { this.filterMaxHeight = startMaxHeight; }
 // A search handed over from the header, the hero or a featured product's card arrives as ?q=.
 // A subscription, not a snapshot: the header's box is used while already on the products page,
 // where this component is reused and ngOnInit never runs again. The snapshot worked from the home
@@ -806,9 +833,12 @@ this.subscriptions.push(
     } else {
       // A plain link to one category, which is what the admin panel's list of switched-off
       // categories offers: what is actually in it, before deciding whether to switch it back on.
+      // Only when it is a different category: this subscription also fires when the filter controls
+      // change the address, and reloading the same category there would be a second request for
+      // nothing. The filters come with it, because the address is where they live.
       const category = Number(params.get('category'));
-      if (category) {
-        this.showProducts({ id: category } as any);
+      if (category && category !== this.selectedCategory?.id) {
+        this.showProducts({ id: category } as any, true);
       }
     }
 
@@ -1134,11 +1164,18 @@ this.showProducts(this.selectedCategory)
     }
   }
   // Show products for a specific category
-  showProducts(category: any) {
+  showProducts(category: any, keepFilters: boolean = false) {
     this.cancelSearch();
     this.searchQuery = this.searchTerm = '';
     this.selectedCategory = category;
     this.showingGroups = false;
+
+    // Filters belong to the category they were chosen in: carrying them into another would narrow
+    // it by a size that may not exist there, with the facets left to explain it. The one exception
+    // is a link that came with both, where the address is the instruction.
+    if (!keepFilters) {
+      this.clearFilters(false);
+    }
 
     if (category.products && category.products.length > 0) {
       // Products are already included in the category data
@@ -1147,6 +1184,49 @@ this.showProducts(this.selectedCategory)
       // Fetch the category data including products
       this.loadCategoryWithProducts(category.id, 1);
     }
+  }
+
+  /** Whether anything is being narrowed, for the clear link and the count. */
+  hasFilters(): boolean {
+    return this.filterThickness != null || this.filterMinHeight != null || this.filterMaxHeight != null;
+  }
+
+  /** Apply the controls. Back to the first page: the old one may not exist under the new filter. */
+  applyFilters(): void {
+    if (!this.selectedCategory?.id) {
+      return;
+    }
+    this.loadCategoryWithProducts(this.selectedCategory.id, 1);
+    this.rememberFilters();
+  }
+
+  clearFilters(apply: boolean = true): void {
+    this.filterThickness = null;
+    this.filterMinHeight = null;
+    this.filterMaxHeight = null;
+    if (apply && this.selectedCategory?.id) {
+      this.loadCategoryWithProducts(this.selectedCategory.id, 1);
+    }
+    this.rememberFilters();
+  }
+
+  /**
+   * Keep the filters in the address.
+   *
+   * A narrowed catalogue is worth sharing and worth bookmarking, and the back button then steps
+   * back through the filters instead of leaving the page. Merged, because the category is in the
+   * address too; a null removes its parameter.
+   */
+  private rememberFilters(): void {
+    this.router.navigate([], {
+      queryParams: {
+        thickness: this.filterThickness,
+        minHeight: this.filterMinHeight,
+        maxHeight: this.filterMaxHeight,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   /**
@@ -1319,13 +1399,21 @@ this.showProducts(this.selectedCategory)
     // Product text (description/slug) is stored per language in the API, so the
     // requested language has to travel with the request.
     const lang = this.currentLanguage();
-    const sub = this.productService.getCategoryById(category_id, page, 8, lang).subscribe({
+    const sub = this.productService.getCategoryById(category_id, page, 8, lang, {
+      thickness: this.filterThickness,
+      minHeight: this.filterMinHeight,
+      maxHeight: this.filterMaxHeight,
+    }).subscribe({
       next: (categoryResponse: CategoryResponse) => {
         this.products = categoryResponse.products || [];
         // Which of these are already on the request list, so the cards can say so.
         this.refreshCardList();
         this.currentPage = categoryResponse.pagination.page;
         this.totalPages = categoryResponse.pagination.total_pages;
+        this.totalItems = categoryResponse.pagination.total_items;
+        // The facets describe the whole category, not the filtered page, so choosing a thickness
+        // does not shorten the list of thicknesses.
+        this.facets = categoryResponse.facets || this.facets;
         this.isLoading = false; // Turn off loader
 
       },
