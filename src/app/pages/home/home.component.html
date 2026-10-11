@@ -18,9 +18,19 @@
         <span class="kicker">{{ 'HOME.KICKER' | translate }}</span>
         <h1>{{ 'HOME.HERO_TITLE' | translate }}</h1>
         <p class="lead">{{ 'HOME.HERO_SUBTITLE' | translate }}</p>
+        <!-- The two things a steel supplier's front page is for: seeing what is stocked, and asking
+             what it costs. They were missing - the hero offered the telephone, WhatsApp and the
+             search box - so a visitor who wanted either had to find it in the navigation. The
+             telephone keeps the one filled amber button; these two are outlines beside it. -->
         <div class="cta-row">
           <a class="btn btn-accent" [href]="'tel:' + phone">
             <span aria-hidden="true">&#9990;</span> {{ 'HOME.CALL' | translate }}
+          </a>
+          <a class="btn btn-outline-accent" routerLink="/products">
+            {{ 'MISC.VIEW_PRODUCTS' | translate }}
+          </a>
+          <a class="btn btn-outline-accent" routerLink="/contact">
+            {{ 'QUOTE.TITLE' | translate }}
           </a>
           <a class="btn btn-ghost" [href]="whatsappLink" target="_blank" rel="noopener noreferrer">
             WhatsApp

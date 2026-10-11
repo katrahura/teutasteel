@@ -67,14 +67,9 @@
           {{ 'NAVBAR.CONTACT' | translate }}
         </a>
       </li>
-      <li role="none" class="mnav-cta">
-        <a role="menuitem" routerLink="/login" (click)="close()" [hidden]="isLoggedIn">
-          <i class="bi bi-person-circle fs-5" aria-hidden="true"></i> {{ 'NAVBAR.LOGIN' | translate }}
-        </a>
-        <button type="button" role="menuitem" class="mnav-logout" [hidden]="!isLoggedIn" (click)="logout()">
-          <i class="bi bi-box-arrow-right fs-5" aria-hidden="true"></i> {{ 'MISC.LOGOUT' | translate }}
-        </button>
-      </li>
+      <!-- Signing in and out used to sit here as well. It is in the footer, on every page, for the
+           same reason it left the header: this site is for customers, and none of them has an
+           account - an administrator creates one for each person who works here. -->
     </ul>
 
     <div class="mnav-footer">

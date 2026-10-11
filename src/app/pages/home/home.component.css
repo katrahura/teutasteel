@@ -20,6 +20,20 @@
   text-decoration: none;
 }
 .btn-accent { background: var(--accent, #f59e0b); color: #111827; }
+
+/* Outline rather than two more filled amber buttons: the eye should not have to choose between
+   three primaries, and these answer different questions from the telephone anyway. */
+.btn-outline-accent {
+  background: transparent;
+  border-color: var(--accent, #f59e0b);
+  color: #fff;
+}
+
+.btn-outline-accent:hover {
+  background: var(--accent, #f59e0b);
+  color: #111827;
+}
+
 .btn-ghost { border-color: rgba(255, 255, 255, .35); color: #fff; }
 .btn-outline { border-color: var(--line, #e5e7eb); background: #fff; color: var(--ink, #111827); }
 .btn-dark { background: #111827; color: #fff; }
