@@ -65,7 +65,8 @@ export const PROJECTS: Project[] = [
     materialKey: 'PROJECTS.P3_MATERIAL',
     serviceKey: 'PROJECTS.P3_SERVICE',
     photoKeys: ['PROJECTS.P3_PHOTO_1', 'PROJECTS.P3_PHOTO_2'],
-    images: [picture('plates-slotted.jpg')],
+    // The piece, and the stack of them: what a run of the same part looks like.
+    images: [picture('plates-slotted.jpg'), picture('stock-plates.jpg')],
   },
   {
     titleKey: 'PROJECTS.P4_TITLE',
@@ -107,7 +108,7 @@ export const PROJECTS: Project[] = [
     materialKey: 'PROJECTS.P7_MATERIAL',
     serviceKey: 'PROJECTS.P7_SERVICE',
     photoKeys: ['PROJECTS.P7_PHOTO_1', 'PROJECTS.P7_PHOTO_2'],
-    images: [picture('profile-u.jpg')],
+    images: [picture('profile-u.jpg'), picture('stock-profile-u.jpg')],
   },
   {
     titleKey: 'PROJECTS.P8_TITLE',
@@ -127,7 +128,7 @@ export const PROJECTS: Project[] = [
     materialKey: 'PROJECTS.P9_MATERIAL',
     serviceKey: 'PROJECTS.P9_SERVICE',
     photoKeys: ['PROJECTS.P9_PHOTO_1', 'PROJECTS.P9_PHOTO_2'],
-    images: [picture('tray-folded.jpg')],
+    images: [picture('tray-folded.jpg'), picture('stock-trays.jpg')],
   },
   {
     titleKey: 'PROJECTS.P10_TITLE',
@@ -147,7 +148,7 @@ export const PROJECTS: Project[] = [
     materialKey: 'PROJECTS.P11_MATERIAL',
     serviceKey: 'PROJECTS.P11_SERVICE',
     photoKeys: ['PROJECTS.P11_PHOTO_1', 'PROJECTS.P11_PHOTO_2'],
-    images: [picture('brackets-l.jpg')],
+    images: [picture('brackets-l.jpg'), picture('stock-brackets.jpg')],
   },
   {
     titleKey: 'PROJECTS.P12_TITLE',
@@ -157,12 +158,13 @@ export const PROJECTS: Project[] = [
     materialKey: 'PROJECTS.P12_MATERIAL',
     serviceKey: 'PROJECTS.P12_SERVICE',
     photoKeys: ['PROJECTS.P12_PHOTO_1', 'PROJECTS.P12_PHOTO_2'],
-    images: [picture('tubes-bent.jpg')],
+    images: [picture('tubes-bent.jpg'), picture('stock-bent-tubes.jpg')],
   },
 ];
 
 /**
- * The photograph at the head of the page: a spread of the things this shop prepares - plates,
- * brackets, square and round tube - which says more about the work than a rack of stock does.
+ * The photograph at the head of the page: a spread of the things this shop prepares - slotted
+ * plates, folded brackets, cut round tube - which says more about the work than a rack of stock
+ * does. This is the one of the advertising set with room around the subject.
  */
-export const PROJECTS_HEADER_IMAGE = picture('kit-assorted.jpg');
+export const PROJECTS_HEADER_IMAGE = picture('hero-kit.jpg');
