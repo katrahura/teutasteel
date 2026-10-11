@@ -284,7 +284,7 @@ toggleParent(parentId: number) {
     if (this.showsValue(dimension.height)) {
       parts.push(`${dimension.height}${dimension.width ? ' × ' + dimension.width : ''} mm`);
     }
-    if (this.showsValue(dimension.length)) parts.push(`${dimension.length} mm`);
+    if (this.showsValue(dimension.length)) parts.push(this.formatLength(dimension.length));
     if (this.showsValue(dimension.price)) {
       parts.push(`${dimension.price} ${dimension.currency || ''}`.trim());
     }

@@ -64,6 +64,13 @@ h1.text-center, h2.text-center {
   border-bottom: 1px solid var(--line, #e5e7eb);
 }
 .section-chip-lg { min-height: 260px; border-bottom: 0; border-radius: 8px; }
+/* In the dialog the panel is large and the section is the whole of it, so draw it bigger rather
+   than leave a small shape adrift in the middle. Three classes, because the base rules below are
+   two and would otherwise tie and win on order. */
+.section-chip.section-chip-lg .p-round { width: 96px; height: 96px; border-width: 16px; }
+.section-chip.section-chip-lg .p-square { width: 92px; height: 92px; border-width: 14px; }
+.section-chip.section-chip-lg .p-flat { width: 120px; height: 22px; }
+.section-chip.section-chip-lg .p-angle { width: 84px; height: 84px; border-width: 18px; }
 /* The size is not repeated here: it stands on its own line below, whether or not there is a
    photograph, so the chip carries the section and nothing else. */
 .section-chip .profile { display: block; background: #cbd5e1; flex: none; }
@@ -300,6 +307,20 @@ h1.text-center, h2.text-center {
   padding: 20px;
   flex-wrap: nowrap;
   background-color: #f8f9fa;
+}
+
+/* On a phone the dialog was two columns side by side - about 195px each - and the left one was 80vh
+   of near-nothing. Stack them and give the image a short band. This sits after the base rule above
+   because at equal specificity the later rule wins, and the base sets align-items. */
+@media (max-width: 768px) {
+  .product-modal .modal-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .product-modal .image-container {
+    width: 100%;
+    height: 180px;
+  }
 }
 
 .nav-btn {
