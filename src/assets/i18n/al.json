@@ -172,7 +172,9 @@
     "REQUEST_UNPRICED": "Artikuj pa çmim",
     "REQUEST_UNPRICED_NOTE": "Për këta çmimin e llogarisim ne dhe ju kthejmë përgjigje me ofertën.",
     "ON_REQUEST": "në kërkesë",
-    "JUST_ADDED": "U shtua në kërkesë"
+    "JUST_ADDED": "U shtua në kërkesë",
+    "SEARCH_ERROR": "Kërkimi nuk u ngarkua. Ju lutemi provoni përsëri.",
+    "SEARCH_RETRY": "Provo përsëri"
   },
   "MODAL": {
     "CLOSE": "Mbyll",

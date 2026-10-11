@@ -4,6 +4,10 @@ import { BehaviorSubject } from 'rxjs';
 export interface QuoteItem {
   /** The product it came from, so the same one is not added twice. */
   productId: number;
+  variantKey?: string;
+  dimensions?: { height?: number; width?: number; length?: number; thickness?: number | string | null; weight?: number };
+  unitPrice?: number | null;
+  currency?: string;
   code: string;
   /** The size and thickness the customer chose, exactly as it should read in the enquiry. */
   detail: string;
@@ -43,7 +47,12 @@ export class QuoteListService {
     }
     try {
       const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? (parsed as QuoteItem[]) : [];
+      return Array.isArray(parsed) ? (parsed as QuoteItem[]).map(item => {
+        // Preserve prices for lists saved before structured values were introduced.
+        if (item.unitPrice !== undefined) return item;
+        const legacy = /([\d.]+)\s*(?:Eur|EUR|€)/.exec(item.detail || '');
+        return { ...item, unitPrice: legacy ? Number(legacy[1]) : null, currency: legacy ? 'EUR' : undefined };
+      }) : [];
     } catch {
       // A corrupted entry must not take the page down with it.
       this.storage()?.removeItem(this.key);
@@ -69,10 +78,10 @@ export class QuoteListService {
   add(item: QuoteItem): QuoteItem[] {
     const items = this.items();
     const existing = items.find(
-      (other) => other.productId === item.productId && (other.detail || '') === (item.detail || '')
+      (other) => this.sameLine(other, item)
     );
     if (existing) {
-      existing.quantity += item.quantity || 1;
+      Object.assign(existing, item, { quantity: existing.quantity + (item.quantity || 1) });
     } else {
       items.push({ ...item, quantity: item.quantity || 1 });
     }
@@ -94,7 +103,7 @@ export class QuoteListService {
     const wanted = Math.floor(Number(quantity));
     const items = this.items();
     const at = items.findIndex(
-      (other) => other.productId === item.productId && (other.detail || '') === (item.detail || '')
+      (other) => this.sameLine(other, item)
     );
     if (!Number.isFinite(wanted) || wanted < 1) {
       // Zero takes that line off and leaves its neighbours where they are.
@@ -105,7 +114,7 @@ export class QuoteListService {
       // reordered the list every time a quantity was edited: the customer typed a new number against
       // their first item and found it at the bottom. The list reads in the order things went in, and
       // editing one must not move it.
-      items[at] = { ...items[at], quantity: wanted };
+      items[at] = { ...items[at], ...item, quantity: wanted };
     } else {
       items.push({ ...item, quantity: wanted });
     }
@@ -119,6 +128,26 @@ export class QuoteListService {
     // refresh it - which is why it looked stuck until a page load.
     this.changes.next([]);
     return [];
+  }
+
+  /** Adopt old saved lines only when the old size description identifies one variant. */
+  migrateLegacy(productId: number, candidates: { signature: string; variantKey: string }[]): void {
+    let changed = false;
+    const items = this.items().map(item => {
+      if (item.productId !== productId || item.variantKey) return item;
+      const signature = ((item.detail || '').split(/—| - /)[0].match(/\d+(?:\.\d+)?/g) || []).map(Number).join(':');
+      const matches = candidates.filter(candidate => candidate.signature === signature);
+      if (matches.length !== 1) return item;
+      changed = true;
+      return { ...item, variantKey: matches[0].variantKey };
+    });
+    if (changed) this.save(items);
+  }
+
+  private sameLine(other: QuoteItem, item: QuoteItem): boolean {
+    if (other.productId !== item.productId) return false;
+    if (other.variantKey && item.variantKey) return other.variantKey === item.variantKey;
+    return (other.detail || '') === (item.detail || '');
   }
 
   private save(items: QuoteItem[]): QuoteItem[] {

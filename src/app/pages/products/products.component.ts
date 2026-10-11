@@ -21,7 +21,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { SharedService } from '../../shared.service';
-import { QuoteListService } from '../../shared/quote-list.service';
+import { QuoteListService, QuoteItem } from '../../shared/quote-list.service';
 import { describeWeight, shapeForCategory } from '../../shared/steel-weight';
 type DimensionKey =
   | 'height'
@@ -78,6 +78,8 @@ toggleParent(parentId: number) {
   searchTerm = '';
   searching = false;
   private searchTimer: any = null;
+  private searchSubscription?: Subscription;
+  searchError = false;
 
   /** The group to scroll to once the list has rendered, when the visitor arrived from a card. */
   private scrollToGroupId: number | null = null;
@@ -165,7 +167,7 @@ toggleParent(parentId: number) {
    * the dimension it is showing. The dialog passes the thicknesses the customer ticked, and each
    * becomes its own line so the shop can price them separately.
    */
-  /** Lines of the open product that are already on the request list, keyed by their description. */
+  /** Lines of the open product that are already on the request list, keyed by stable variant identity. */
   onList: { [detail: string]: number } = {};
 
   /** What the last add put in, shown under the thicknesses. */
@@ -173,10 +175,11 @@ toggleParent(parentId: number) {
 
   /** Which lines of this product are on the request list. Built once, never read per pass. */
   private linesOnList(product: Product): { [detail: string]: number } {
+    this.migrateLegacyQuote(product);
     const map: { [detail: string]: number } = {};
     this.quoteList.items().forEach((item) => {
       if (item.productId === (product.id || 0)) {
-        map[item.detail || ''] = item.quantity;
+        map[item.variantKey || item.detail || ''] = item.quantity;
       }
     });
     return map;
@@ -184,7 +187,7 @@ toggleParent(parentId: number) {
 
   /** How many of this thickness are already on the request list, for the badge beside it. */
   onListQuantity(dimension: ProductDimension): number {
-    return this.onList[this.describeDimension(dimension)] || 0;
+    return this.onList[this.variantKey(dimension)] || 0;
   }
 
   /**
@@ -201,7 +204,7 @@ toggleParent(parentId: number) {
     const chosen: { [index: number]: boolean } = {};
     const quantities: { [index: number]: number } = {};
     (product.dimensions || []).forEach((dimension, index) => {
-      const quantity = this.onList[this.describeDimension(dimension)];
+      const quantity = this.onList[this.variantKey(dimension)];
       if (quantity) {
         chosen[index] = true;
         quantities[index] = quantity;
@@ -212,6 +215,7 @@ toggleParent(parentId: number) {
   }
 
   addToQuote(product: Product, dimensions?: ProductDimension[]): void {
+    this.migrateLegacyQuote(product);
     // With nothing passed - the card, which has no picker - add the dimension it is showing rather
     // than every thickness the product carries, which for a merged sheet would be fourteen lines.
     const chosen = dimensions && dimensions.length
@@ -224,13 +228,13 @@ toggleParent(parentId: number) {
     // numbers came from the list - so lowering twenty to fifteen has to mean fifteen. Adding would
     // make it thirty-five, which is how this was wrong before. A thickness they have unticked is
     // taken off; one they left ticked keeps its new number.
-    const ticked = chosen.map((dimension) => this.describeDimension(dimension));
+    const ticked = chosen.map((dimension) => this.variantKey(dimension));
     (product.dimensions || []).forEach((dimension) => {
-      const detail = this.describeDimension(dimension);
-      const item = { productId: product.id || 0, code: product.code, detail, quantity: 0 };
-      if (ticked.indexOf(detail) >= 0) {
+      const item = this.quoteItem(product, dimension);
+      const key = this.variantKey(dimension);
+      if (ticked.indexOf(key) >= 0) {
         this.quoteList.setQuantity(item, this.quantityFor(product, dimension));
-      } else if (this.onList[detail]) {
+      } else if (this.onList[key]) {
         this.quoteList.setQuantity(item, 0);
       }
     });
@@ -249,13 +253,38 @@ toggleParent(parentId: number) {
   }
 
   /** "Trashësia 1.5 mm — 4.80 Eur", or as much of that as the dimension knows. */
+  private migrateLegacyQuote(product: Product): void {
+    this.quoteList.migrateLegacy(product.id || 0, (product.dimensions || []).map(dimension => ({
+      signature: this.showsValue(dimension.thickness) ? String(Number(dimension.thickness))
+        : [dimension.height, dimension.width].filter(value => !!value).map(Number).join(':'),
+      variantKey: this.variantKey(dimension),
+    })));
+  }
+
+  private variantKey(dimension: ProductDimension): string {
+    if (dimension.id != null) return 'id:' + dimension.id;
+    return 'size:' + ['height', 'width', 'length', 'thickness', 'weight']
+      .map(key => Number((dimension as any)[key] || 0)).join(':');
+  }
+
+  private quoteItem(product: Product, dimension: ProductDimension): QuoteItem {
+    const price = Number(dimension.price);
+    return { productId: product.id || 0, code: product.code,
+      variantKey: this.variantKey(dimension), detail: this.describeDimension(dimension),
+      dimensions: { height: dimension.height, width: dimension.width, length: dimension.length, thickness: dimension.thickness, weight: dimension.weight },
+      unitPrice: Number.isFinite(price) && price > 0 ? price : null,
+      currency: dimension.currency || 'EUR', quantity: 0 };
+  }
+
   private describeDimension(dimension: ProductDimension): string {
     const parts: string[] = [];
     if (this.showsValue(dimension.thickness)) {
       parts.push(`${this.translate.instant('PRODUCTS.THICKNESS')} ${dimension.thickness} mm`);
-    } else if (this.showsValue(dimension.height)) {
+    }
+    if (this.showsValue(dimension.height)) {
       parts.push(`${dimension.height}${dimension.width ? ' × ' + dimension.width : ''} mm`);
     }
+    if (this.showsValue(dimension.length)) parts.push(`${dimension.length} mm`);
     if (this.showsValue(dimension.price)) {
       parts.push(`${dimension.price} ${dimension.currency || ''}`.trim());
     }
@@ -347,6 +376,7 @@ toggleParent(parentId: number) {
 
   /** A card's add for a single-dimension product: the dimension it shows, and the typed quantity. */
   addCardToQuote(product: Product): void {
+    this.migrateLegacyQuote(product);
     const dimension = (product.dimensions || [])[0];
     if (!dimension) {
       return;
@@ -354,12 +384,7 @@ toggleParent(parentId: number) {
     // Replace, like the dialog. The field shows what is already ordered, so adding would double it:
     // a card reading 20 and pressed twice would mean 40.
     this.quoteList.setQuantity(
-      {
-        productId: product.id || 0,
-        code: product.code,
-        detail: this.describeDimension(dimension),
-        quantity: 0,
-      },
+      this.quoteItem(product, dimension),
       this.cardQuantity(product)
     );
     this.quoteCount = this.quoteList.count();
@@ -677,7 +702,9 @@ toggleParent(parentId: number) {
         // open product list when the visitor switches language.
         this.subscriptions.push(
           this.translate.onLangChange.subscribe(() => {
-            if (this.selectedCategory?.id) {
+            if (this.searchQuery.trim().length >= 2) {
+              this.runSearch();
+            } else if (this.selectedCategory?.id) {
               this.loadCategoryWithProducts(this.selectedCategory.id, this.currentPage);
             }
           })
@@ -966,6 +993,8 @@ this.showProducts(this.selectedCategory)
   }
   // Show products for a specific category
   showProducts(category: any) {
+    this.cancelSearch();
+    this.searchQuery = this.searchTerm = '';
     this.selectedCategory = category;
     this.showingGroups = false;
 
@@ -1003,6 +1032,7 @@ this.showProducts(this.selectedCategory)
 
   // Go back to showing categories
   goBackToGroups() {
+    this.cancelSearch();
     this.showingGroups = true;
     this.selectedCategory = null;
     this.expandedParentId = null;
@@ -1017,33 +1047,45 @@ this.showProducts(this.selectedCategory)
    * "IPE 100", "15x15" - finds it without guessing which group it was filed under.
    */
   onSearchInput(): void {
+    this.cancelSearch();
+    if (this.searchQuery.trim().length < 2) { this.goBackToGroups(); return; }
     if (this.searchTimer) {
       clearTimeout(this.searchTimer);
     }
     this.searchTimer = setTimeout(() => this.runSearch(), 350);
   }
 
+  private cancelSearch(): void {
+    clearTimeout(this.searchTimer);
+    this.searchSubscription?.unsubscribe();
+    this.searching = false;
+    this.searchError = false;
+  }
+
   runSearch(): void {
+    this.cancelSearch();
     const term = this.searchQuery.trim();
     if (term.length < 2) {
+      this.goBackToGroups();
       return;
     }
     this.searching = true;
     // The skeleton cards are for a category loading. A search that finds eight results would
     // otherwise sit behind eight placeholders, because this flag was left true by the group load.
     this.isLoading = false;
-    const sub = this.productService
+    this.searchSubscription = this.productService
       .searchProducts(term, this.translate.currentLang || 'al')
       .subscribe({
         next: (results) => {
           this.products = results;
+          this.refreshCardList();
           this.searchTerm = term;
           this.selectedCategory = null;
           this.showingGroups = false;
           this.searching = false;
         },
         error: () => {
-          // The service has already logged it; show the empty state rather than a stale list.
+          this.searchError = true;
           this.products = [];
           this.searchTerm = term;
           this.selectedCategory = null;
@@ -1051,11 +1093,11 @@ this.showProducts(this.selectedCategory)
           this.searching = false;
         },
       });
-    this.subscriptions.push(sub);
   }
 
   /** Leave the search results and go back to the groups. */
   clearSearch(): void {
+    this.cancelSearch();
     this.searchQuery = '';
     this.searchTerm = '';
     this.goBackToGroups();
@@ -1127,6 +1169,7 @@ this.showProducts(this.selectedCategory)
   }
 
   ngOnDestroy(): void {
+    this.cancelSearch();
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
   loadCategoryWithProducts(category_id: number, page: number = 1) {

@@ -6,6 +6,7 @@
     }
 
     export interface ProductDimension {
+      id?: number;
       height?: number;
       width?: number;
       length?: number;

@@ -25,11 +25,16 @@
         <button
           class="btn btn-outline-secondary"
           type="button"
-          *ngIf="searchTerm"
+          *ngIf="searchQuery || searchTerm"
           (click)="clearSearch()"
         >{{ "PRODUCTS.SEARCH_CLEAR" | translate }}</button>
       </div>
     </div>
+  </div>
+
+  <div *ngIf="searchError" class="alert alert-danger mt-3" role="alert">
+    {{ 'PRODUCTS.SEARCH_ERROR' | translate }}
+    <button type="button" class="btn btn-outline-danger ms-2" (click)="runSearch()">{{ 'PRODUCTS.SEARCH_RETRY' | translate }}</button>
   </div>
 
   <!-- What is on the request list. A customer building an order of a tube, its bends and a sheet
@@ -796,7 +801,7 @@
     <button class="btn btn-secondary mb-1" (click)="clearSearch()">
       {{ "PRODUCTS.BACK_TO_GROUPS_BUTTON" | translate }}
     </button>
-    <div class="text-center text-muted my-5" *ngIf="searchTerm && !searching && products.length === 0">
+    <div class="text-center text-muted my-5" *ngIf="searchTerm && !searching && !searchError && products.length === 0">
       {{ "PRODUCTS.NO_RESULTS" | translate }}
     </div>
     <div class="container" *ngIf="!showingGroups && isLoading">

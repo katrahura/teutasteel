@@ -263,4 +263,37 @@ describe('ProductsComponent', () => {
     expect(localFixture.nativeElement.querySelector('#topCategory')).toBeNull();
     clearToken();
   });
+
+  it('cancels an older search before accepting newer results', () => {
+    httpMock.expectOne(groupsUrl).flush([]);
+    component.searchQuery='old';component.runSearch();
+    const old=httpMock.expectOne(req=>req.url.includes('/product/search?q=old'));
+    component.searchQuery='new';component.runSearch();
+    expect(old.cancelled).toBeTrue();
+    httpMock.expectOne(req=>req.url.includes('/product/search?q=new')).flush([]);
+    expect(component.searchTerm).toBe('new');
+  });
+  it('cancels a search on clear and distinguishes failures from no matches', () => {
+    httpMock.expectOne(groupsUrl).flush([]);
+    component.searchQuery='steel';component.runSearch();
+    const pending=httpMock.expectOne(req=>req.url.includes('/product/search?'));
+    component.clearSearch();expect(pending.cancelled).toBeTrue();
+    expect(component.showingGroups).toBeTrue();
+    component.searchQuery='steel';component.runSearch();
+    httpMock.expectOne(req=>req.url.includes('/product/search?')).flush('missing',{status:404,statusText:'Not Found'});
+    expect(component.searchError).toBeTrue();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeTruthy();
+    expect(fixture.nativeElement.textContent).not.toContain('PRODUCTS.NO_RESULTS');
+  });
+  it('cancels a pending debounce when leaving the page', () => {
+    httpMock.expectOne(groupsUrl).flush([]);
+    const clock=jasmine.clock();clock.install();
+    try {
+      component.searchQuery='steel';component.onSearchInput();
+      component.ngOnDestroy();clock.tick(400);
+      httpMock.expectNone(req=>req.url.includes('/product/search?'));
+    } finally { clock.uninstall(); }
+  });
+
 });

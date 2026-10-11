@@ -133,7 +133,9 @@
     "REQUEST_UNPRICED": "Items without a price",
     "REQUEST_UNPRICED_NOTE": "We will work these out ourselves and come back to you with the quote.",
     "ON_REQUEST": "in the request",
-    "JUST_ADDED": "Added to the request"
+    "JUST_ADDED": "Added to the request",
+    "SEARCH_ERROR": "Search could not load. Please try again.",
+    "SEARCH_RETRY": "Try again"
   },
   "MODAL": {
     "CLOSE": "Close",

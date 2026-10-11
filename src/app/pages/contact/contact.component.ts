@@ -72,14 +72,10 @@ export class ContactComponent implements OnInit {
     this.split();
   }
 
-  /** The price inside a line - "Trashesia 1.3 mm - 4.20 Eur" is 4.20 - or null when there is none. */
+  /** Only EUR lines contribute to the EUR subtotal. Other currencies require a quote. */
   private priceOf(item: QuoteItem): number | null {
-    const found = /([\d.]+)\s*(?:Eur|EUR|\u20ac)/.exec(item.detail || '');
-    if (!found) {
-      return null;
-    }
-    const value = Number(found[1]);
-    return Number.isFinite(value) && value > 0 ? value : null;
+    const value = Number(item.unitPrice);
+    return (item.currency || '').toUpperCase() === 'EUR' && Number.isFinite(value) && value > 0 ? value : null;
   }
 
   removeRequested(item: QuoteItem): void {
