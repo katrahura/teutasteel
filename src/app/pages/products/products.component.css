@@ -299,6 +299,19 @@ h1.text-center, h2.text-center {
   background-color: #f8f9fa;
 }
 
+/* The details dialog's close button, floated into the corner: the dialog could be left only with
+   Escape or by clicking outside it, and a telephone has no Escape key. */
+.product-modal .modal-content {
+  position: relative;
+}
+
+.product-modal .modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 5;
+}
+
 /* Modal Body Styling for Left (Image) and Right (Info) Layout */
 .product-modal .modal-body {
   display: flex;

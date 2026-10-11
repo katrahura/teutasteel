@@ -1069,6 +1069,11 @@
 >
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
+      <!-- This dialog had no close button at all: it could be left only with Escape or by clicking
+           the backdrop, and a telephone has no Escape key. Floated rather than given a header,
+           because the two-column layout starts at the top of the dialog on purpose. -->
+      <button type="button" class="btn-close modal-close" data-bs-dismiss="modal"
+              [attr.aria-label]="'MODAL.CLOSE' | translate"></button>
       <div class="modal-body d-flex">
         <!-- Left Section -->
         <div class="image-container">

@@ -83,6 +83,8 @@ toggleParent(parentId: number) {
   searchError = false;
   /** The product whose editor was already opened from a link, so it is not opened twice. */
   private openedEditorFor: number | null = null;
+  /** A product named in the address, waiting for its category to load. */
+  private pendingProductId: number | null = null;
   /** The same, for a category's editor. A separate field: a product and a category can share an id. */
   private openedCategoryEditorFor: number | null = null;
 
@@ -540,12 +542,56 @@ toggleParent(parentId: number) {
     this.selectedProduct = product;
     this.clearChoices();
 
+    // The address now points at this product, so it can be sent to somebody or bookmarked. The
+    // category goes with it: the single-product endpoint asks for a token, so a link that has to
+    // work for anybody has to say which category listing to find the product in.
+    this.rememberProduct(product?.id ?? null);
+
     // Ensure Angular detects the change
 
     // Open the Bootstrap modal
     const modalElement = document.getElementById('productDetailsModal');
+    // Bootstrap closes the dialog on Escape and on the backdrop without telling the component, so
+    // the address would go on pointing at a product nobody is looking at.
+    modalElement?.addEventListener('hidden.bs.modal', () => this.rememberProduct(null), { once: true });
     const modalInstance = new bootstrap.Modal(modalElement as HTMLElement);
     modalInstance.show();
+  }
+
+  /**
+   * Keep the open product in the address, or take it out.
+   *
+   * A null removes the parameter and leaves the category alone: closing a product's dialog leaves
+   * the visitor browsing the category they were in.
+   */
+  private rememberProduct(productId: number | null): void {
+    const queryParams: Record<string, number | null> = { product: productId };
+    if (productId && this.selectedCategory?.id) {
+      queryParams['category'] = this.selectedCategory.id;
+    }
+    this.router.navigate([], {
+      queryParams,
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  /**
+   * Open the product a shared link named, once its category has arrived.
+   *
+   * The listing is where the product comes from, because that endpoint is open to anybody and the
+   * single-product one is not - which also means the link carries the category.
+   */
+  private openWaitingProduct(): void {
+    const wanted = this.pendingProductId;
+    if (!wanted) {
+      return;
+    }
+    this.pendingProductId = null;
+    const product = this.products.find((item) => item.id === wanted);
+    if (product) {
+      this.openModal(product, new Event('click'));
+    }
   }
   
   closeModal(): void {
@@ -813,6 +859,13 @@ toggleParent(parentId: number) {
     if (startThickness) { this.filterThickness = startThickness; }
     if (startMinHeight) { this.filterMinHeight = startMinHeight; }
     if (startMaxHeight) { this.filterMaxHeight = startMaxHeight; }
+
+    // A link to one product - somebody shared it, or bookmarked it. Opened once its category has
+    // arrived, which is why the category travels in the link too.
+    const shared = Number(start.get('product'));
+    if (shared) {
+      this.pendingProductId = shared;
+    }
 // A search handed over from the header, the hero or a featured product's card arrives as ?q=.
 // A subscription, not a snapshot: the header's box is used while already on the products page,
 // where this component is reused and ngOnInit never runs again. The snapshot worked from the home
@@ -1415,6 +1468,7 @@ this.showProducts(this.selectedCategory)
         // does not shorten the list of thicknesses.
         this.facets = categoryResponse.facets || this.facets;
         this.isLoading = false; // Turn off loader
+        this.openWaitingProduct();
 
       },
       error: (error) => {
