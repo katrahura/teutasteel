@@ -2,7 +2,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { catchError, forkJoin, of, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ProductService } from '../../services/product.service';
 import { Product, TopCategory } from '../../models/product.model';
 import { SharedService } from '../../shared.service';
@@ -80,10 +80,13 @@ export class HomeComponent implements OnDestroy {
     }
     // The tree, not the top categories: the tiles need the counts, which both carry, but the
     // featured row needs the children, which only the tree has.
+    // Both at once. The featured row no longer works anything out from the tree, so making it wait
+    // for a catalogue-wide request would put that request's whole duration in front of four cards
+    // for no reason - five seconds of it on the development backend.
+    this.loadFeatured();
     const sub = this.productService.getCategoryTree().subscribe({
       next: (data) => {
         this.topCategories = data;
-        this.loadFeatured();
       },
       error: (error) => {
         console.error('Error occurred while fetching categories:', error);
@@ -93,47 +96,18 @@ export class HomeComponent implements OnDestroy {
   }
 
   /**
-   * A page of products from the busiest sub-categories, then the best few for the featured row.
+   * The featured row, in one request.
    *
-   * The products are not in the top-level groups. Decorative metal holds none of its own - they live
-   * in sub-categories like Laser sheets - and /category/107 returned zero products for every one of
-   * the six groups, which is why the section came out empty. The tree gives each group's children,
-   * so this asks the children with the most products.
-   *
-   * Each request fails on its own: with forkJoin alone, one bad response empties the whole row and
-   * the failure is invisible, which is exactly what happened.
+   * This used to work the choice out in the browser: fetch the tree, take the two busiest
+   * sub-categories of every group, then ask for each of those on its own - thirteen round trips for
+   * four cards, and most of the homepage's second of waiting. The API makes the same choice now,
+   * where the data already is, so the section costs one call.
    */
   private loadFeatured(): void {
-    const targets: any[] = [];
-    (this.topCategories || []).forEach((group: any) => {
-      (group.children || [])
-        .filter((child: any) => child.id && (child.product_count || 0) > 0)
-        .sort((a: any, b: any) => (b.product_count || 0) - (a.product_count || 0))
-        .slice(0, 2)
-        .forEach((child: any) => targets.push(child));
-    });
-    const wanted = targets.slice(0, 12);
-    if (!wanted.length) {
-      return;
-    }
     const language = this.translate.currentLang || 'al';
-    const calls = wanted.map((child: any) =>
-      this.productService.getCategoryById(child.id, 1, 8, language).pipe(
-        catchError(() => of({ products: [] } as any))
-      )
-    );
-    const sub = forkJoin(calls).subscribe({
-      next: (responses: any[]) => {
-        const all: Product[] = [];
-        (responses || []).forEach((response: any) => {
-          (response && response.products ? response.products : []).forEach((product: Product) => {
-            all.push(product);
-          });
-        });
-        this.featured = all
-          .filter((product) => this.hasPrice(product))
-          .sort((a, b) => this.photographs(b) - this.photographs(a))
-          .slice(0, 4);
+    const sub = this.productService.getFeatured(language).subscribe({
+      next: (response) => {
+        this.featured = ((response && response.products) || []).slice(0, 4);
       },
       error: () => {
         // A failure here leaves the section out rather than breaking the page.
@@ -141,11 +115,6 @@ export class HomeComponent implements OnDestroy {
       },
     });
     this.subscriptions.add(sub);
-  }
-
-  /** Whether any of a product's dimensions carries a price. */
-  private hasPrice(product: Product): boolean {
-    return (product.dimensions || []).some((dimension: any) => Number(dimension.price) > 0);
   }
 
   /**
@@ -165,10 +134,6 @@ export class HomeComponent implements OnDestroy {
   }
 
   /** How many photographs a product has, for sorting: 1 if it has one, 0 if not. */
-  private photographs(product: Product): number {
-    const asset = (product as any).image_asset;
-    return asset && asset.original_path ? 1 : 0;
-  }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();

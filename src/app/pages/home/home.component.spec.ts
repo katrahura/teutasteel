@@ -72,4 +72,33 @@ describe('HomeComponent', () => {
     expect(images.every((img) => !!img.getAttribute('src'))).toBeTrue();
     expect(tiles.querySelectorAll('.ico').length).toBe(1);
   });
+
+  it('fills the featured row from the API in one request', () => {
+    // Regression: this used to fetch the tree and then a dozen sub-categories one at a time -
+    // thirteen round trips for four cards, and most of the homepage's second of waiting.
+    httpMock.expectOne((req) => req.url === categoriesUrl).flush(categories);
+    const featured = httpMock.expectOne(
+      (req) => req.url.startsWith(`${environment.apiUrl}/category/featured`)
+    );
+    expect(featured.request.method).toBe('GET');
+    featured.flush({
+      products: [
+        {
+          id: 1,
+          code: 'PRICED-1',
+          cut_type: 0,
+          is_active: true,
+          new_product: false,
+          category_id: 2,
+          image_asset: null,
+          translations: [],
+          dimensions: [{ id: 9, height: 100, width: 200, length: 300, price: 4.2, currency: 'EUR' }],
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    expect(component.featured.length).toBe(1);
+    expect(component.featured[0].code).toBe('PRICED-1');
+  });
 });

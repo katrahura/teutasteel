@@ -90,6 +90,27 @@ export class ProductService {
         catchError(this.handleError)
       );
   }
+
+  /**
+   * Four priced products for the home page's featured row.
+   *
+   * One call. The page used to fetch the tree, choose the busiest sub-categories and then ask for
+   * each of them on its own - thirteen round trips for four cards, which is where the homepage's
+   * second of waiting went.
+   */
+  getFeatured(lang: string = 'al'): Observable<{ products: Product[] }> {
+    const url = `${this.apiUrl}/category/featured?lang=${lang}`;
+    return this.http.get<{ products: Product[] }>(url).pipe(
+      this.retryTransient(),
+      map((response) => ({
+        products: ((response && response.products) || []).map((product) =>
+          this.withDeliveredImage(product, 'product_images')
+        ),
+      })),
+      catchError(this.handleError)
+    );
+  }
+
   createCategory(category: Category): Observable<Category> {
     const headers = this.getAuthHeaders(); // Get authorization headers
     return this.http.post<Category>(`${this.apiUrl}/category/create`, category, { headers });
