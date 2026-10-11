@@ -135,7 +135,9 @@
     "ON_REQUEST": "in the request",
     "JUST_ADDED": "Added to the request",
     "SEARCH_ERROR": "Search could not load. Please try again.",
-    "SEARCH_RETRY": "Try again"
+    "SEARCH_RETRY": "Try again",
+    "PRODUCT_COUNT": "products",
+    "SUBCATEGORIES": "Sub-categories"
   },
   "MODAL": {
     "CLOSE": "Close",

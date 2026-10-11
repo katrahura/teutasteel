@@ -92,7 +92,14 @@
   [attr.aria-expanded]="expandedParentId === parent.id"
   [attr.aria-controls]="'children-' + parent.id"
 >
-  <span class="fw-semibold">{{ getTranslatedCategoryTitle(parent) }}</span>
+  <span class="group-name">
+    <span class="fw-semibold">{{ getTranslatedCategoryTitle(parent) }}</span>
+    <!-- How big the group is. The number was already in the payload and never shown, and it is the
+         first thing somebody wants when choosing between "Decorative metal" and "Fencing". -->
+    <span class="group-meta" *ngIf="parent.product_count">
+      · {{ parent.product_count }} {{ "PRODUCTS.PRODUCT_COUNT" | translate }}
+    </span>
+  </span>
   <!-- A category switched off is hidden from visitors but still listed here, because this
        is where it gets switched back on. Without this marker it looks like any other. -->
   <span
@@ -130,6 +137,20 @@
                   {{ "PRODUCTS.VIEW_PRODUCTS_BUTTON" | translate }}
                 </button>
               </div>
+            </div>
+
+            <!-- Collapsed, a group reads as a map: how many products are in it and which
+                 sub-categories it holds. Expanded, the grid below says the same thing with pictures,
+                 so these step aside instead of repeating it. Below the header row, not inside it:
+                 in that row they sat beside the title and, on a phone, pushed it into three
+                 wrapped lines with the chips hanging off the right edge. -->
+            <div class="group-chips" *ngIf="expandedParentId !== parent.id">
+              <span class="chip" *ngFor="let child of (childrenMap.get(parent.id!) || []) | slice:0:4">
+                {{ getTranslatedCategoryTitle(child) }}
+              </span>
+              <span class="chip chip-more" *ngIf="(childrenMap.get(parent.id!) || []).length > 4">
+                +{{ (childrenMap.get(parent.id!) || []).length - 4 }}
+              </span>
             </div>
 
             <!-- Children grid (small cards with image) -->

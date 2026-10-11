@@ -425,6 +425,30 @@ h1.text-center, h2.text-center {
   box-shadow: 0 0 0 3px rgba(100,150,250,.3);
 }
 
+/* A collapsed group reads as a map rather than as a name: how many products it holds, and which
+   sub-categories are inside it. The rows were never as tall as they looked - 116px measured - so
+   nothing needed squeezing; this is information added, not space saved. */
+.group-name { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
+.group-meta { color: #6b7280; font-size: 13.5px; font-weight: 600; }
+.group-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 20px 14px; }
+.group-chips .chip {
+  background: #f1f5f9;
+  border: 1px solid var(--line, #e5e7eb);
+  color: #475569;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.group-chips .chip-more { background: #fff; color: #6b7280; }
+
+/* On a phone the chips wrapped onto four lines and took the row from 110px to 300px, which is more
+   scrolling before the first product than the names are worth. One line, and it scrolls sideways. */
+@media (max-width: 700px) {
+  .group-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 18px; }
+  .group-chips .chip { flex: none; }
+}
+
 .arrow {
   transition: transform 0.2s;
   font-size: 1.25rem;

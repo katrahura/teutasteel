@@ -106,14 +106,10 @@ export class AppComponent {
   }
 
   /**
-   * The navigation's search box hands its term to the products page, which owns the searching - one
-   * implementation rather than two that drift apart.
+   * The navigation used to carry its own search box and hand the term over. There is one search in
+   * the site now, in the catalogue where the results are, and the header links to it - so this went
+   * with the box it served.
    */
-  goToSearch(event: Event, term: string): void {
-    event.preventDefault();
-    const query = (term || '').trim();
-    this.router.navigate(['/products'], query ? { queryParams: { q: query } } : {});
-  }
 
   
 }

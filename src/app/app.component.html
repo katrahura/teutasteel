@@ -37,14 +37,15 @@
         </nav>
 
         <div class="nav-tools">
-          <!-- A template reference rather than ngModel: the app component does not import FormsModule,
-               and a search box is not worth pulling it in for. -->
-          <form class="search-mini" (submit)="goToSearch($event, navSearch.value)">
+          <!-- One search box in the whole site, and it lives in the catalogue - where the results
+               appear, the term stays visible and there is a button to clear it. This is the way to
+               it. A second box here meant two of them on the products page at once, and the one in
+               the header was the smaller and less useful of the two. -->
+          <a class="search-link" [routerLink]="['/products']"
+             [attr.aria-label]="'SHELL.SEARCH_PLACEHOLDER' | translate"
+             [title]="'SHELL.SEARCH_PLACEHOLDER' | translate">
             <span aria-hidden="true">&#9906;</span>
-            <input #navSearch type="search" name="navSearch"
-                   [placeholder]="'SHELL.SEARCH_PLACEHOLDER' | translate"
-                   [attr.aria-label]="'SHELL.SEARCH_PLACEHOLDER' | translate">
-          </form>
+          </a>
 
           <a class="basket" [routerLink]="['/contact']"
              [attr.aria-label]="'SHELL.REQUEST' | translate">

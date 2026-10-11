@@ -59,13 +59,13 @@ nav.links a:hover { color: var(--accent-dark); }
 nav.links a.active { border-bottom-color: var(--accent); }
 
 .nav-tools { margin-left: auto; display: flex; align-items: center; gap: 12px; }
-.search-mini {
-  display: flex; align-items: center; gap: 8px; background: var(--paper-soft);
-  border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; min-width: 220px;
-  color: var(--ink-soft);
+.search-link {
+  display: flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--paper-soft);
+  font-size: 19px; line-height: 1; text-decoration: none; color: var(--ink-soft);
 }
-.search-mini:focus-within { border-color: var(--accent); }
-.search-mini input { border: 0; background: none; outline: none; font: inherit; width: 100%; color: var(--ink); }
+.search-link:hover { border-color: var(--accent); color: var(--ink); }
 .basket {
   display: flex; align-items: center; gap: 8px; border: 1px solid var(--line);
   border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 14px;
@@ -114,11 +114,8 @@ footer.site-footer .fine {
     padding-bottom: 2px;
   }
   nav.links a { white-space: nowrap; }
-  /* The search box is hidden here rather than stretched: with `width: 100%` inside a row that sizes
-     itself to its content, it made the page's layout viewport 444px wide on a 390px phone, which is
-     a horizontal scrollbar on every page. The catalogue's own search sits at the top of the products
-     page, full width, where it is easier to use than a cramped box in the header. */
-  .search-mini { display: none; }
+  /* The header carries a link to the catalogue's search rather than a box of its own, so the site
+     has one search at every width. */
   .nav-tools { min-width: 0; }
   footer.site-footer .cols { grid-template-columns: 1fr 1fr; }
 }
