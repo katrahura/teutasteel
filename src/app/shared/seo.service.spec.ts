@@ -26,6 +26,8 @@ describe('SeoService', () => {
         SERVICES_DESCRIPTION: 'Përshkrim shërbime',
         GUIDES_TITLE: 'Udhëzues praktikë për çelikun',
         GUIDES_DESCRIPTION: 'Përshkrim udhëzues',
+        PROJECTS_TITLE: 'Punët tona | TeutaSteel',
+        PROJECTS_DESCRIPTION: 'Përshkrim punësh',
         ABOUT_TITLE: 'Rreth Nesh | TeutaSteel',
         ABOUT_DESCRIPTION: 'Përshkrim rreth nesh',
         CONTACT_TITLE: 'Kontakt | TeutaSteel',
@@ -43,6 +45,8 @@ describe('SeoService', () => {
         SERVICES_DESCRIPTION: 'Services description',
         GUIDES_TITLE: 'Practical steel guides',
         GUIDES_DESCRIPTION: 'Guides description',
+        PROJECTS_TITLE: 'Our work | TeutaSteel',
+        PROJECTS_DESCRIPTION: 'Projects description',
         ABOUT_TITLE: 'About | TeutaSteel',
         ABOUT_DESCRIPTION: 'About description',
         CONTACT_TITLE: 'Contact | TeutaSteel',
@@ -113,6 +117,24 @@ describe('SeoService', () => {
     expect(TestBed.inject(Title).getTitle()).toBe('Udhëzues praktikë për çelikun');
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
       .toBe(`${environment.siteUrl}/guides`);
+  });
+
+  it('keeps the gallery of samples out of search engines, and takes the mark away after it', () => {
+    // The pictures came from an image model and the text describes work that has not been done. The
+    // page is linked from the footer, so a crawler will reach it - and must be told not to list it.
+    navigate('/projects');
+
+    expect(TestBed.inject(Title).getTitle()).toBe('Punët tona | TeutaSteel');
+    expect(document.head.querySelector('meta[name="robots"]')?.getAttribute('content'))
+      .toBe('noindex, nofollow');
+    // A canonical asks to be indexed as the original; together with noindex it contradicts itself.
+    expect(document.head.querySelector('link[rel="canonical"]')).toBeNull();
+
+    navigate('/products');
+    // Left behind, the mark would keep every page visited after it out of the index.
+    expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
+      .toBe(`${environment.siteUrl}/products`);
   });
 
   it('keeps exactly one canonical link', () => {

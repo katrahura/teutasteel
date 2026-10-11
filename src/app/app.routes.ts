@@ -37,6 +37,14 @@ export const appRoutes: Routes = [
     data: { animation: 'AboutPage' },
   },
   {
+    // Deliberately not in the sitemap and not in the page metadata: while the entries are samples,
+    // a search engine should not be led here. See shared/projects.ts.
+    path: 'projects',
+    loadComponent: () =>
+      import('./pages/projects/projects.component').then((m) => m.ProjectsComponent),
+    data: { animation: 'AboutPage' },
+  },
+  {
     path: 'about',
     loadComponent: () =>
       import('./pages/about/about.component').then((m) => m.AboutComponent),

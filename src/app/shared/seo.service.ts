@@ -10,6 +10,11 @@ import { environment } from '../../environments/environment';
 interface PageSeo {
   titleKey: string;
   descriptionKey: string;
+  /**
+   * Kept out of search engines. For a page that exists and is linked, but has nothing real on it
+   * yet: the gallery of samples is the case this was added for.
+   */
+  noindex?: boolean;
 }
 
 const PUBLIC_PAGES: Record<string, PageSeo> = {
@@ -17,6 +22,13 @@ const PUBLIC_PAGES: Record<string, PageSeo> = {
   '/products': { titleKey: 'SEO.PRODUCTS_TITLE', descriptionKey: 'SEO.PRODUCTS_DESCRIPTION' },
   '/services': { titleKey: 'SEO.SERVICES_TITLE', descriptionKey: 'SEO.SERVICES_DESCRIPTION' },
   '/guides': { titleKey: 'SEO.GUIDES_TITLE', descriptionKey: 'SEO.GUIDES_DESCRIPTION' },
+  // The entries are examples, so no search engine should be led here. It still names itself, for
+  // anybody who is sent the link; it simply asks not to be listed.
+  '/projects': {
+    titleKey: 'SEO.PROJECTS_TITLE',
+    descriptionKey: 'SEO.PROJECTS_DESCRIPTION',
+    noindex: true,
+  },
   '/about': { titleKey: 'SEO.ABOUT_TITLE', descriptionKey: 'SEO.ABOUT_DESCRIPTION' },
   '/contact': { titleKey: 'SEO.CONTACT_TITLE', descriptionKey: 'SEO.CONTACT_DESCRIPTION' },
 };
@@ -68,14 +80,36 @@ export class SeoService {
       // login and the dashboards: no canonical, and a title that is not a promise
       // about content a crawler cannot see anyway
       this.setCanonical(null);
+      this.setRobots(null);
       this.setHead('SEO.PRIVATE_TITLE', 'SEO.PRIVATE_DESCRIPTION', null);
       return;
     }
 
     const base = environment.siteUrl.replace(/\/$/, '');
     const url = this.currentPath === '/' ? `${base}/` : `${base}${this.currentPath}`;
-    this.setCanonical(url);
+    // A page that asks not to be indexed has no use for a canonical, and the two together would
+    // contradict each other.
+    this.setRobots(page.noindex ? 'noindex, nofollow' : null);
+    this.setCanonical(page.noindex ? null : url);
     this.setHead(page.titleKey, page.descriptionKey, url);
+  }
+
+  private setRobots(content: string | null): void {
+    const existing = this.document.head.querySelector('meta[name="robots"]');
+    if (!content) {
+      // Removed rather than left behind: a page that asked not to be indexed would otherwise mark
+      // every page visited after it.
+      existing?.remove();
+      return;
+    }
+    if (existing) {
+      existing.setAttribute('content', content);
+      return;
+    }
+    const meta = this.document.createElement('meta');
+    meta.setAttribute('name', 'robots');
+    meta.setAttribute('content', content);
+    this.document.head.appendChild(meta);
   }
 
   private setCanonical(url: string | null): void {
