@@ -1015,21 +1015,6 @@
         <!-- Right Section -->
         <div class="info-container">
           <h5>{{ selectedProduct?.code }}</h5>
-          <p>
-            {{
-              selectedProduct?.description ||
-                ("MISC.NO_DESCRIPTION_AVAILABLE." | translate)
-            }}
-          </p>
-          <!-- The translation's "content" field was only ever editable: the form offered
-               it, the API stored it, and no page displayed it. It is the long description,
-               so it belongs here, in the one place with room for it. Angular sanitises
-               what is bound this way, so a script tag in the field cannot run. -->
-          <div
-            *ngIf="selectedProduct?.content"
-            class="product-content"
-            [innerHTML]="selectedProduct!.content"
-          ></div>
           <h6 *ngIf="hasAnythingToShow()">
             {{ "PRODUCTS.DIMENSIONS" | translate }}:
           </h6>
@@ -1175,7 +1160,7 @@
 
           <button
             type="button"
-            class="btn btn-outline-success mt-2 me-2"
+            class="btn btn-add-to-request mt-2 me-2"
             [class.disabled]="!canContact() || !canAddTicked()"
             [attr.aria-disabled]="!canContact() || !canAddTicked()"
             (click)="canContact() && canAddTicked() && addToQuote(selectedProduct, tickedDimensions(selectedProduct))"
@@ -1186,7 +1171,7 @@
 
           <a
             [href]="getWhatsAppLink(selectedProduct)"
-            class="btn btn-success mt-2"
+            class="btn btn-whatsapp mt-2"
             [class.disabled]="!canContact()"
             [attr.aria-disabled]="!canContact()"
             (click)="canContact() || $event.preventDefault()"
@@ -1196,6 +1181,23 @@
             <i class="fab fa-whatsapp"></i>
             {{ "MODAL.CONTACT_WHATSAPP" | translate }}
           </a>
+
+          <!-- The description comes last. Somebody opens this dialog to choose a thickness and a
+               quantity, and the prose used to be the first thing in it, pushing the choice down the
+               panel. The long "content" field belongs here too: the form offered it, the API stored
+               it, and no page displayed it. Angular sanitises what is bound this way, so a script
+               tag in the field cannot run. -->
+          <p class="product-description">
+            {{
+              selectedProduct?.description ||
+                ("MISC.NO_DESCRIPTION_AVAILABLE." | translate)
+            }}
+          </p>
+          <div
+            *ngIf="selectedProduct?.content"
+            class="product-content"
+            [innerHTML]="selectedProduct!.content"
+          ></div>
         </div>
       </div>
     </div>

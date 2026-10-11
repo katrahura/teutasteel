@@ -37,6 +37,15 @@ h1.text-center, h2.text-center {
    to #f8f9fa with a 20% black shadow, and at equal specificity the later rule wins. The shell
    defines --ink, --accent and --line, and the tokens cascade in, so a card wears the same slate and
    amber as the rest of the site. ---- */
+/* The dialog's description, below the choice: muted and separated by a rule, so it reads as the
+   small print rather than as the introduction to a form. */
+.product-description {
+  color: #4b5563;
+  border-top: 1px solid var(--line, #e5e7eb);
+  padding-top: 12px;
+  margin: 16px 0 4px !important;
+}
+
 /* ---- A drawn section instead of the "No product image" plate.
 
    429 products have no photograph. What they got was a grey box carrying the logo and the words
@@ -124,6 +133,32 @@ h1.text-center, h2.text-center {
   background: #15803d;
   border-color: #15803d;
   color: #fff;
+}
+
+/* In the dialog, stated outright.
+   The dialog's buttons were painted by an older rule that gave every button in the panel a green
+   WhatsApp gradient, and a stale copy of that rule kept winning inside the modal even after the
+   element stopped carrying the class. These two lines decide it here rather than by precedence:
+   adding to the request is the shop's amber, and WhatsApp is a quiet outline. */
+.info-container .btn.btn-add-to-request {
+  background: var(--accent, #f59e0b) !important;
+  border: 1px solid var(--accent, #f59e0b) !important;
+  color: #111827 !important;
+}
+.info-container .btn.btn-add-to-request:hover {
+  background: var(--accent-dark, #b45309) !important;
+  border-color: var(--accent-dark, #b45309) !important;
+  color: #fff !important;
+}
+.info-container .btn.btn-whatsapp {
+  background: #fff !important;
+  border: 1px solid #15803d !important;
+  color: #15803d !important;
+}
+.info-container .btn.btn-whatsapp:hover {
+  background: #15803d !important;
+  border-color: #15803d !important;
+  color: #fff !important;
 }
 
 /* Global card styling */
@@ -408,21 +443,21 @@ h1.text-center, h2.text-center {
   transform: rotate(90deg);
 }
 
+/* The shape only. The green gradient that used to sit here painted every button in the dialog
+   WhatsApp-green, including the one that adds to the request, so the two were indistinguishable at
+   a glance. Colours come from the button classes now. */
 .info-container .btn {
   align-self: flex-start;
   margin-top: 15px;
   font-size: 1rem;
   font-weight: bold;
   padding: 10px 20px;
-  background: linear-gradient(45deg, #25d366, #20c065);
   border-radius: 8px;
-  transition: transform 0.3s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
 .info-container .btn:hover {
-  transform: scale(1.1);
-  background: linear-gradient(45deg, #20c065, #1ebd5c);
-  color: #fff;
+  transform: translateY(-1px);
 }
 
 /* Pagination */
