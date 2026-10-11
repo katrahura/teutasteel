@@ -224,6 +224,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     if (this.gap === 'off_category') {
       return 'ADMIN.IN_OFF_CATEGORIES';
     }
+    if (this.gap === 'no_details') {
+      return 'ADMIN.NO_DETAILS';
+    }
     return '';
   }
 }

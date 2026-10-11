@@ -32,12 +32,17 @@ export interface CatalogueSummary {
     in_off_categories: number;
     priced_without_photo: number;
     priced_without_size: number;
+    /** No dimension rows at all: no size, no weight, no price. Nothing a customer can read. */
+    no_details: number;
   };
   categories: {
     total: number;
     off: number;
     /** The categories that are switched off, with the ids needed to switch one back on. */
     off_categories: { id: number; title: string }[];
+   /** Categories with no image, so the shop's own tiles render as blank cards. */
+    without_image: number;
+    without_image_titles: string[];
   };
 }
 

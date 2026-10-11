@@ -20,8 +20,15 @@ describe('AdminDashboardComponent', () => {
       in_off_categories: 1133,
       priced_without_photo: 429,
       priced_without_size: 55,
+      no_details: 49,
     },
-    categories: { total: 70, off: 28, off_categories: [{ id: 7, title: 'Old stock' }] },
+    categories: {
+      total: 70,
+      off: 28,
+      off_categories: [{ id: 7, title: 'Old stock' }],
+      without_image: 29,
+      without_image_titles: ['Motifs'],
+    },
   };
 
   beforeEach(async () => {
@@ -51,7 +58,11 @@ describe('AdminDashboardComponent', () => {
     expect(text).toContain('2368');
     expect(text).toContain('429');   // priced, no photograph
     expect(text).toContain('1133');  // under a category that is switched off
+    expect(text).toContain('49');    // nothing on the row at all
     expect(text).toContain('Old stock');
+    // A blank tile on the shop's own front page, named rather than counted alone.
+    expect(text).toContain('ADMIN.WITHOUT_IMAGE');
+    expect(text).toContain('Motifs');
   });
 
   it('lists the searches that found nothing, marked', () => {
@@ -98,6 +109,31 @@ describe('AdminDashboardComponent', () => {
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('2368');
   });
 
+  it('shows what it can when the API is a version behind', () => {
+    // Not hypothetical. The frontend and the API are deployed separately, and the API needs
+    // restarting where the frontend does not, so a panel one version ahead of the running API is
+    // the normal state of this project. A missing field used to take the whole page down with
+    // "Cannot read properties of undefined (reading 'length')" - twice, without my being able to
+    // reproduce it, because it only happens while the two are out of step.
+    httpMock.expectOne(summaryUrl).flush({
+      products: {
+        total: 2368,
+        active: 2300,
+        in_off_categories: 1133,
+        priced_without_photo: 429,
+        priced_without_size: 55,
+      },
+      categories: { total: 70, off: 28, off_categories: [{ id: 7, title: 'Old stock' }] },
+      // and none of the newer fields: no no_details, no without_image_titles
+    });
+    httpMock.expectOne(searchesUrl).flush({ empty: 0, total: 0, searches: [] });
+
+    expect(() => fixture.detectChanges()).not.toThrow();
+    const text = (fixture.nativeElement as HTMLElement).textContent || '';
+    expect(text).toContain('2368');      // the figures it does have still render
+    expect(text).toContain('Old stock');
+  });
+
   it('switches a category back on, and reads the figures again', () => {    // The list of off categories is the reason to have this page: finding the one you mean on the
     // products page means opening groups until it turns up.
     httpMock.expectOne(summaryUrl).flush(summary);
@@ -133,7 +169,7 @@ describe('AdminDashboardComponent', () => {
     const figures = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll('button.stat')
     ) as HTMLButtonElement[];
-    expect(figures.length).toBe(3);
+    expect(figures.length).toBe(4);
 
     const photoFigure = figures.find((figure) =>
       (figure.textContent || '').includes('ADMIN.PRICED_WITHOUT_PHOTO')

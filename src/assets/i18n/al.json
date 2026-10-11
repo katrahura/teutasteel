@@ -236,7 +236,9 @@
     "PREVIOUS": "Përpara",
     "NEXT": "Mbrapa",
     "ONLY_EMPTY": "Vetëm ato pa rezultat",
-    "OPEN_PRODUCT": "Hap produktin"
+    "OPEN_PRODUCT": "Hap produktin",
+    "NO_DETAILS": "Pa asnjë masë fare",
+    "WITHOUT_IMAGE": "Kategori pa imazh"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
