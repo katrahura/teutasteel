@@ -825,24 +825,15 @@ private loadCategoryGroups(): void {
   this.loadingGroups = true;
   this.groupsError = null;
 
-  const sub = this.productService.getTopCategories().pipe(
-    switchMap((parents) => {
-      this.topCategories = parents || [];
-      if (!parents || parents.length === 0) {
-        return of([]); // nothing to fetch
-      }
-      // Fetch children for each parent in parallel
-      const calls = parents.map(p =>
-        this.productService.getCategoryChildren(p.id!)
-      );
-      return forkJoin(calls);
-    })
-  ).subscribe({
-    next: (childrenArrays) => {
-      // childrenArrays is an array aligned with topCategories
+  // One request instead of seven. /category/tree carries each group's children, and this page needs
+  // exactly that pair: it used to ask for the groups and then for every group's children in turn -
+  // six more round trips for data that was already in the tree.
+  const sub = this.productService.getCategoryTree().subscribe({
+    next: (tree) => {
+      this.topCategories = tree || [];
       this.childrenMap.clear();
-      this.topCategories.forEach((p, idx) => {
-        this.childrenMap.set(p.id!, childrenArrays[idx] || []);
+      this.topCategories.forEach((parent) => {
+        this.childrenMap.set(parent.id!, parent.children || []);
       });
       this.loadingGroups = false;
       // Do not force the group view back on when the visitor arrived asking for a particular

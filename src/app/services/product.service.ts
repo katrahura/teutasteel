@@ -121,11 +121,29 @@ export class ProductService {
     const sanitizedProduct = this.sanitizePayload(product);
     return this.http.post<Product>(`${this.apiUrl}/product/create`, sanitizedProduct, { headers });
   }
+  /**
+   * Top-level categories, and - when the endpoint is the tree - their children as well.
+   *
+   * The children are shown as cards with photographs of their own on the products page, and the tree
+   * carries them inline. Transforming only the outer array left every sub-category image pointing at
+   * a bare path, which is what the page would have rendered the moment it stopped asking for the
+   * children separately.
+   */
   private transformCategories(
     categories: Category[],
     folder: string
   ): Category[] {
-    return categories.map((category) => this.withDeliveredImage(category, folder));
+    return categories.map((category) => {
+      const delivered = this.withDeliveredImage(category, folder) as Category & {
+        children?: Category[];
+      };
+      return delivered.children
+        ? {
+            ...delivered,
+            children: delivered.children.map((child) => this.withDeliveredImage(child, folder)),
+          }
+        : delivered;
+    });
   }
 
   private transformProducts(category: CategoryResponse, folder: string): CategoryResponse {

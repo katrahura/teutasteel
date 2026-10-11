@@ -11,7 +11,9 @@ describe('ProductsComponent', () => {
   let fixture: ComponentFixture<ProductsComponent>;
   let httpMock: HttpTestingController;
 
-  const groupsUrl = `${environment.apiUrl}/category/top`;
+  // The page reads the tree, not the flat list: one request carries the groups and their children,
+  // where it used to ask for the groups and then for each group's children in turn.
+  const groupsUrl = `${environment.apiUrl}/category/tree`;
   const createCategoryUrl = `${environment.apiUrl}/category/create`;
 
   beforeAll(() => {
@@ -50,8 +52,7 @@ describe('ProductsComponent', () => {
     httpMock.expectOne((req) => req.url === groupsUrl).flush([
       { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null },
     ]);
-    // each parent is then asked for its children
-    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
+    // each group's children arrive inside the tree, with no second request
 
     expect(component.topCategories.length).toBe(1);
     expect(component.groupsError).toBeNull();
@@ -112,7 +113,6 @@ describe('ProductsComponent', () => {
     httpMock.expectOne((req) => req.url === groupsUrl).flush([
       { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null },
     ]);
-    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
     localFixture.detectChanges();
 
     expect(localFixture.componentInstance.isLoggedIn).toBeTrue();
@@ -162,7 +162,6 @@ describe('ProductsComponent', () => {
     httpMock.expectOne((req) => req.url === groupsUrl).flush([
       { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null },
     ]);
-    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
     localFixture.detectChanges();
 
     // the translation may arrive as the key rather than the sentence in a unit test
@@ -183,7 +182,6 @@ describe('ProductsComponent', () => {
     httpMock.expectOne((req) => req.url === groupsUrl).flush([
       { id: 1, title: 'Retired', is_active: false, top_category: true, image_asset: null },
     ]);
-    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
     localFixture.detectChanges();
 
     const badges = [...localFixture.nativeElement.querySelectorAll('.badge')]
@@ -231,7 +229,6 @@ describe('ProductsComponent', () => {
     httpMock.expectOne((req) => req.url === groupsUrl).flush([
       { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null },
     ]);
-    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
 
     component.showProducts({ id: 1, title: 'Doors', is_active: true, top_category: true } as any);
     httpMock.expectOne((req) => req.url.startsWith(`${environment.apiUrl}/category/1?`))
@@ -256,7 +253,6 @@ describe('ProductsComponent', () => {
     httpMock.expectOne((req) => req.url === groupsUrl).flush([
       { id: 1, title: 'Doors', is_active: true, top_category: true, image_asset: null },
     ]);
-    httpMock.expectOne((req) => req.url === `${environment.apiUrl}/category/1/children`).flush([]);
     localFixture.detectChanges();
 
     expect(localFixture.nativeElement.querySelector('#categoryTop')).toBeNull();
