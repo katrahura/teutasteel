@@ -200,7 +200,11 @@
     "OPEN_PRODUCT": "Open the product",
     "NO_DETAILS": "Nothing on them at all",
     "WITHOUT_IMAGE": "Categories with no image",
-    "SEE_PRODUCTS": "See the products"
+    "SEE_PRODUCTS": "See the products",
+    "DOWNLOAD_CSV": "Download CSV",
+    "CODE": "Code",
+    "GROUP": "Group",
+    "CATEGORY": "Category"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

@@ -239,7 +239,11 @@
     "OPEN_PRODUCT": "Hap produktin",
     "NO_DETAILS": "Pa asnjë masë fare",
     "WITHOUT_IMAGE": "Kategori pa imazh",
-    "SEE_PRODUCTS": "Shiko produktet"
+    "SEE_PRODUCTS": "Shiko produktet",
+    "DOWNLOAD_CSV": "Shkarko CSV",
+    "CODE": "Kodi",
+    "GROUP": "Grupi",
+    "CATEGORY": "Kategoria"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

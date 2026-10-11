@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Subscription, forkJoin } from 'rxjs';
 import {
   AdminService,
   CatalogueSummary,
@@ -34,6 +34,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   private products = inject(ProductService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private translate = inject(TranslateService);
   private subscriptions = new Subscription();
 
   summary: CatalogueSummary | null = null;
@@ -54,6 +55,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   gapLoading = false;
   /** Whether the searches are filtered to the terms that found nothing. */
   onlyEmpty = false;
+  /** True while the whole open list is being gathered for a download. */
+  exporting = false;
 
   ngOnInit(): void {
     this.loading = true;
@@ -211,6 +214,73 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.gap = null;
     this.gapProducts = [];
     this.remember();
+  }
+
+  /**
+   * The open list as a CSV, so it can leave the screen.
+   *
+   * The pictures for these products are not added here - they go up through the hosting panel -
+   * which makes this list a shopping list for whoever takes them rather than a form to fill in.
+   * Kept apart from the download so what it produces can be tested without a browser.
+   *
+   * The escaping is not optional: a code like `+ Korit 10x100cm` is harmless, but one holding a
+   * comma or a quote would shift every column after it.
+   */
+  csvOf(products: GapProduct[]): string {
+    const cell = (value: string | null | undefined): string => {
+      const text = value == null ? '' : String(value);
+      return /[",\r\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+    };
+    const head = [
+      this.translate.instant('ADMIN.CODE'),
+      this.translate.instant('ADMIN.GROUP'),
+      this.translate.instant('ADMIN.CATEGORY'),
+    ];
+    const rows = products.map((product) => [product.code, product.group, product.category]);
+    return [head, ...rows].map((row) => row.map(cell).join(',')).join('\r\n');
+  }
+
+  /** Gather every page of the open list and hand it to the browser as a file. */
+  downloadOpenGap(): void {
+    const gap = this.gap;
+    if (!gap || this.exporting) {
+      return;
+    }
+    this.exporting = true;
+    // A hundred to a request: the API's ceiling, so 1107 products is twelve calls rather than
+    // fifty-six.
+    const pageCount = Math.max(1, Math.ceil(this.gapTotal / 100));
+    const pages = Array.from({ length: pageCount }, (_, index) => index + 1);
+
+    this.subscriptions.add(
+      forkJoin(pages.map((page) => this.admin.getGapProducts(gap, page, 100))).subscribe({
+        next: (results) => {
+          const all: GapProduct[] = [];
+          results.forEach((result) => all.push(...(result.products || [])));
+          this.saveCsv(gap, this.csvOf(all));
+          this.exporting = false;
+        },
+        error: (error) => {
+          this.noteRefusal(error);
+          this.exporting = false;
+        },
+      })
+    );
+  }
+
+  private saveCsv(gap: string, csv: string): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+    const name = `teutasteel-${gap}-${new Date().toISOString().slice(0, 10)}.csv`;
+    // The byte order mark is for Excel: without it the Albanian names arrive as mojibake.
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = name;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   /** Which figure the open list belongs to, so its heading can say the same thing. */

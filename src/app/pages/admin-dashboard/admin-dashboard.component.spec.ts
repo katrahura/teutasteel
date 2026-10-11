@@ -134,6 +134,21 @@ describe('AdminDashboardComponent', () => {
     expect(text).toContain('Old stock');
   });
 
+  it('writes the open list as a CSV a spreadsheet can read', () => {
+    // The pictures are not added from here - they go up through the hosting panel - so the list
+    // has to be able to leave the screen.
+    const rows = component.csvOf([
+      { id: 11, code: 'PLAIN-1', category_id: 3, category: 'Round tubes', group: 'Tubes' },
+      // A code with a comma and a quote in it would shift every column after it, unwatched.
+      { id: 12, code: 'ODD,"1"', category_id: 3, category: 'Angles', group: 'Profiles' },
+    ]);
+    const lines = rows.split('\r\n');
+
+    expect(lines[0]).toBe('ADMIN.CODE,ADMIN.GROUP,ADMIN.CATEGORY');
+    expect(lines[1]).toBe('PLAIN-1,Tubes,Round tubes');
+    expect(lines[2]).toBe('"ODD,""1""",Profiles,Angles');
+  });
+
   it('switches a category back on, and reads the figures again', () => {    // The list of off categories is the reason to have this page: finding the one you mean on the
     // products page means opening groups until it turns up.
     httpMock.expectOne(summaryUrl).flush(summary);
