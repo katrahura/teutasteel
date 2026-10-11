@@ -343,6 +343,69 @@ toggleParent(parentId: number) {
    */
   cardQuantities: { [productId: number]: number } = {};
 
+  /** Products whose image failed to load, so they get the drawn chip rather than a broken frame. */
+  private noImage = new Set<number>();
+
+  /**
+   * Whether there is a photograph to show.
+   *
+   * Takes null as well as a product: the dialog sits in the DOM from the start with nothing
+   * selected, and an expression that throws on every change-detection pass takes the whole view
+   * down with it - the product list stopped rendering because of this line, and the error went to
+   * the console as a template failure rather than as an exception.
+   */
+  hasPhoto(product: Product | null | undefined): boolean {
+    return !!product?.image_asset?.thumbnail_path && !this.noImage.has(product?.id || 0);
+  }
+
+  /** Called from the template when a photograph cannot be loaded. */
+  markNoImage(product: Product | null | undefined): void {
+    this.noImage.add(product?.id || 0);
+  }
+
+  /**
+   * The size in one line: "15×15×1.3 mm", "Ø21×3.2 mm", "10×120 mm" for a tipla.
+   *
+   * The card used to spell out "Lartësia: 15 mm / Gjerësia: 15 mm / Trashësia: 1.3 mm" over three
+   * or four lines, which is how a catalogue is read on paper, not how a grid is scanned on a screen.
+   * The full list stays in the dialog, where somebody has already chosen the product.
+   */
+  shortSize(product: Product | null | undefined): string {
+    const dimension = (product?.dimensions || [])[0];
+    if (!dimension) {
+      return '';
+    }
+    const values = [dimension.height, dimension.width, dimension.thickness]
+      .filter((value) => this.showsValue(value))
+      .map((value) => String(Number(value)));
+    if (!values.length) {
+      return '';
+    }
+    // A round section is read with its diameter sign, the way it is written on a drawing.
+    const round = (product?.code || '').indexOf('Ø') >= 0;
+    return (round ? 'Ø' : '') + values.join('×') + ' mm';
+  }
+
+  /**
+   * Which profile to draw when there is no photograph.
+   *
+   * 429 products have none, and a grey plate saying "No product image" in English made the
+   * catalogue look unfinished. A drawn section with its size looks like what it is: a technical list.
+   */
+  profileClass(product: Product | null | undefined): string {
+    const code = product?.code || '';
+    if (code.indexOf('Ø') >= 0 || /DN-/.test(code)) {
+      return 'p-round';
+    }
+    if (/^Llam/i.test(code)) {
+      return 'p-flat';
+    }
+    if (/^L[\s\d]/i.test(code)) {
+      return 'p-angle';
+    }
+    return 'p-square';
+  }
+
   /** productId -> how many are already on the request list, for the single-dimension cards. */
   onListByProduct: { [productId: number]: number } = {};
 

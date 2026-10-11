@@ -37,6 +37,47 @@ h1.text-center, h2.text-center {
    to #f8f9fa with a 20% black shadow, and at equal specificity the later rule wins. The shell
    defines --ink, --accent and --line, and the tokens cascade in, so a card wears the same slate and
    amber as the rest of the site. ---- */
+/* ---- A drawn section instead of the "No product image" plate.
+
+   429 products have no photograph. What they got was a grey box carrying the logo and the words
+   "No product image" - in English, on an Albanian site - which reads as unfinished work rather than
+   as information. A section drawn in the page, with its size beside it, reads as what the catalogue
+   actually is: a technical list. */
+.section-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 100%;
+  min-height: 150px;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--line, #e5e7eb);
+}
+.section-chip-lg { min-height: 260px; border-bottom: 0; border-radius: 8px; }
+/* The size is not repeated here: it stands on its own line below, whether or not there is a
+   photograph, so the chip carries the section and nothing else. */
+.section-chip .profile { display: block; background: #cbd5e1; flex: none; }
+.section-chip .p-round { width: 54px; height: 54px; border-radius: 50%; background: none; border: 9px solid #cbd5e1; }
+.section-chip .p-square { width: 52px; height: 52px; background: none; border: 8px solid #cbd5e1; }
+.section-chip .p-flat { width: 68px; height: 14px; border-radius: 2px; }
+.section-chip .p-angle {
+  width: 48px;
+  height: 48px;
+  background: none;
+  border-left: 11px solid #cbd5e1;
+  border-bottom: 11px solid #cbd5e1;
+}
+
+/* The card's size, on one line rather than three labelled ones. */
+.card.h-100 .size-line {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -.01em;
+  margin: 0 0 8px !important;
+}
+
 .price-unit { color: #4b5563; font-size: .85em; font-weight: 600; white-space: nowrap; }
 
 .card.h-100 {

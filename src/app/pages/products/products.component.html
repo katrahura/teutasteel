@@ -849,17 +849,18 @@
                 </span>
               </div>
             </div>
-            <!-- Product Image -->
+            <!-- Product Image, or a drawn section when there is none. -->
             <div class="image-container">
               <img
-                        appImageFallback="assets/images/placeholder_product.jpg"
-                [src]="
-                  product.image_asset?.thumbnail_path ||
-                  'assets/images/placeholder_product.jpg'
-                "
+                *ngIf="hasPhoto(product)"
+                [src]="product.image_asset?.thumbnail_path"
                 class="product-image"
                 [alt]="product.image_asset?.alternative_text || product?.code"
+                (error)="markNoImage(product)"
               />
+              <div *ngIf="!hasPhoto(product)" class="section-chip">
+                <span class="profile" [ngClass]="profileClass(product)" aria-hidden="true"></span>
+              </div>
             </div>
             <div class="card-body text-center">
               <h5 class="card-title">{{ product?.code }}</h5>
@@ -869,41 +870,9 @@
                     ("MISC.NO_DESCRIPTION_AVAILABLE." | translate)
                 }}
               </p>
-              <p
-                class="card-text"
-                *ngIf="hasAnyDimension(product.dimensions ? product.dimensions[0] : null)"
-              >
-                <strong>{{ "PRODUCTS.DIMENSIONS" | translate }}:</strong><br />
-                <ng-container *ngIf="showsValue(getProductDimension(product, 'height'))">
-                  {{
-                    (isRound(product) || isTipla(product) ? "PRODUCTS.DIAMETER" : "PRODUCTS.HEIGHT")
-                      | translate
-                  }}:
-                  {{ getProductDimension(product, "height") }} mm<br />
-                </ng-container>
-                <!-- A TIPLLA's second number is a length, not a width: "10x120" is 10 mm across and
-                     120 mm long. It is shown below as the length instead. -->
-                <ng-container
-                  *ngIf="showsValue(getProductDimension(product, 'width')) && !isTipla(product)"
-                >
-                  {{ "PRODUCTS.WIDTH" | translate }}:
-                  {{ getProductDimension(product, "width") }} mm<br />
-                </ng-container>
-                <ng-container *ngIf="showsValue(getProductDimension(product, 'thickness'))">
-                  {{ "PRODUCTS.THICKNESS" | translate }}:
-                  {{ getProductDimension(product, "thickness") }} mm<br />
-                </ng-container>
-                <ng-container
-                  *ngIf="showsValue(shownLength(product, product.dimensions ? product.dimensions[0] : null))"
-                >
-                  {{ "PRODUCTS.LENGTH" | translate }}:
-                  {{ formatLength(shownLength(product, product.dimensions ? product.dimensions[0] : null)) }}<br />
-                </ng-container>
-                <ng-container *ngIf="showsValue(getProductDimension(product, 'weight'))">
-                  {{ "MISC.WEIGHT" | translate }}:
-                  {{ formatWeight(getProductDimension(product, "weight")) }}
-                </ng-container>
-              </p>
+              <!-- The size on one line. The full list of dimensions lives in the dialog, where
+                   somebody has already chosen the product and wants the detail. -->
+              <p class="card-text size-line" *ngIf="shortSize(product)">{{ shortSize(product) }}</p>
               <p
                 class="card-text"
                 *ngIf="
@@ -1026,17 +995,17 @@
         <!-- Left Section -->
         <div class="image-container">
           <img
-                        appImageFallback="assets/images/placeholder_product.jpg"
-            [src]="
-              selectedProduct?.image_asset?.thumbnail_path ||
-              'assets/images/placeholder_product.jpg'
-            "
+            *ngIf="hasPhoto(selectedProduct)"
+            [src]="selectedProduct?.image_asset?.thumbnail_path"
             [alt]="
               selectedProduct?.image_asset?.alternative_text ||
               ('MISC.PRODUCT_IMAGE' | translate)
             "
             class="product-image"
           />
+          <div *ngIf="!hasPhoto(selectedProduct)" class="section-chip section-chip-lg">
+            <span class="profile" [ngClass]="profileClass(selectedProduct)" aria-hidden="true"></span>
+          </div>
         </div>
         <!-- The prev/next buttons that used to sit here jumped from product to product without
              leaving the dialog. The owner asked for them gone: a dialog is opened to look at the
