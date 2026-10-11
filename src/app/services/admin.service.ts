@@ -47,6 +47,8 @@ export interface GapProduct {
   code: string;
   category_id: number | null;
   category: string | null;
+  /** The group the sub-category sits in, so a row says where in the catalogue it is. */
+  group: string | null;
 }
 
 export interface GapPage {

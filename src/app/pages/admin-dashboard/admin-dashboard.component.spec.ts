@@ -149,13 +149,15 @@ describe('AdminDashboardComponent', () => {
       total: 3,
       page: 1,
       pages: 1,
-      products: [{ id: 11, code: 'PLAIN-1', category_id: 3, category: 'Round tubes' }],
+      products: [{ id: 11, code: 'PLAIN-1', category_id: 3, category: 'Round tubes', group: 'Tubes' }],
     });
     fixture.detectChanges();
 
     expect(component.gap).toBe('no_photo');
     expect(component.gapTotal).toBe(3);
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('PLAIN-1');
+    // The group as well, so the row says where in the catalogue it is.
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Tubes');
   });
 
   it('can narrow the searches to the ones that found nothing', () => {

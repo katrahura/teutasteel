@@ -98,7 +98,9 @@
                  products page reads ?q= and searches for it. -->
             <a class="code" [routerLink]="['/products']" [queryParams]="{ q: product.code }"
                [title]="'ADMIN.OPEN_PRODUCT' | translate">{{ product.code }}</a>
-            <span class="cat text-muted">{{ product.category }}</span>
+            <span class="cat text-muted">
+              <span *ngIf="product.group">{{ product.group }} &rsaquo; </span>{{ product.category }}
+            </span>
           </li>
         </ul>
 
