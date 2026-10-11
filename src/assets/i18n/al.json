@@ -48,7 +48,7 @@
     "SERVICES": "Shërbimet"
   },
   "FOOTER": {
-    "COPYRIGHT": "© 2024 TeutaSteel. Të gjitha të drejtat janë të rezervuara.",
+    "COPYRIGHT": "© {{year}} TeutaSteel. Të gjitha të drejtat janë të rezervuara.",
     "ABOUT": "Furnizim dhe përpunim çeliku për ndërtim, industri dhe zeje.",
     "PRODUCTS_TITLE": "Produktet",
     "GROUP_SHEETS": "Fletë & Pllaka",
@@ -70,21 +70,21 @@
     },
     "VALUES_TITLE": "Vlerat Tona",
     "VALUES_LIST": {
-      "QUALITY_FIRST": "Cilësia në radhë të parë: Ne besojmë se cilësia është themeli i suksesit tonë. Secili produkt i nënshtrohet testimeve rigoroze për të siguruar që i plotëson standardet më të larta.",
+      "QUALITY_FIRST": "Cilësia para së gjithash: punojmë me masa të matura, dhe katalogu i tregon, që t'i kontrolloni përpara se të porositni.",
       "CUSTOMER_FOCUS": "Fokus te klienti: Ne përpiqemi të ndërtojmë marrëdhënie afatgjata me klientët tanë duke ofruar shërbim dhe mbështetje të shkëlqyer.",
       "SUSTAINABILITY": "Qëndrueshmëria: TeutaSteel është e angazhuar për praktika të qëndrueshme, përfshirë burimet e përgjegjshme të materialeve dhe minimizimin e ndikimit tonë në mjedis."
     },
     "WHY_US_TITLE": "Pse të Zgjidhni Ne?",
     "WHY_US_LIST": {
       "EXPERTISE": "Ekspertizë: Me vite përvojë në industrinë e çelikut, ekipi ynë është i pajisur me njohuri dhe ekspertizë për të përmbushur nevojat tuaja.",
-      "INNOVATION": "Inovacion: Ne investojmë vazhdimisht në teknologjinë dhe proceset më të fundit për të qëndruar në ballë të industrisë.",
-      "DELIVERY": "Dërgim i besueshëm: Ne e kuptojmë rëndësinë e dërgesave në kohë. TeutaSteel siguron që produktet tuaja të dorëzohen në kohë, çdo herë."
+      "INNOVATION": "Përpunim sipas vizatimit tuaj: prerje CNC, gijotinë, lakim dhe përpunim kompleks.",
+      "DELIVERY": "Dorëzim i besueshëm: afati konfirmohet në ofertën tuaj, që ta dini përpara se të porositni."
     },
     "CONTACT_BUTTON": "Na Kontaktoni"
   },
   "HOME": {
     "HERO_TITLE": "Çeliku që ju duhet, i prerë sipas masës.",
-    "HERO_SUBTITLE": "Gypa, llamarinë, profile dhe hekur dekorativ, me çmim dhe masë të shënuar për çdo produkt.",
+    "HERO_SUBTITLE": "Shikoni masat dhe çmimet e disponueshme, ose kërkoni ofertë.",
     "HERO_BUTTON": "Eksploroni Produktet Tona",
     "TOP_PRODUCTS_TITLE": "Produktet Tonë Kryesore",
     "VIEW_DETAILS_BUTTON": "Shikoni Detajet",
@@ -111,7 +111,7 @@
     "GROUPS_SUBTITLE": "Grupet kryesore, me numrin e produkteve që mund të shihni.",
     "ALL_GROUPS": "Të gjitha grupet",
     "PRODUCTS_UNIT": "produkte",
-    "TRUST_PRODUCTS": "produkte me masë dhe çmim",
+    "TRUST_PRODUCTS": "produkte në katalog",
     "TRUST_GROUPS": "grupe produktesh",
     "TRUST_CUT_SHORT": "Prerje",
     "TRUST_CUT": "me masë sipas projektit",
@@ -124,8 +124,8 @@
     "QUOTE_TEXT": "Dërgoni listën tuaj dhe merrni një ofertë të vetme me çmim dhe afat.",
     "QUOTE_WHATSAPP": "Dërgo listën në WhatsApp",
     "QUOTE_FORM": "Plotëso formularin",
-    "FEATURED_TITLE": "Më të kërkuarat",
-    "FEATURED_SUBTITLE": "Produkte me çmim, me foton përpara.",
+    "FEATURED_TITLE": "Produkte të zgjedhura",
+    "FEATURED_SUBTITLE": "Produkte me çmim dhe masë, me foton përpara.",
     "ALL_PRODUCTS": "Të gjitha produktet"
   },
   "PRODUCTS": {
@@ -349,7 +349,9 @@
     "CONTACT_TITLE": "Kontakt | TeutaSteel",
     "CONTACT_DESCRIPTION": "Adresa, telefoni, emaili dhe WhatsApp — kontaktoni TeutaSteel për produkte çeliku dhe përpunim.",
     "PRIVATE_TITLE": "TeutaSteel",
-    "PRIVATE_DESCRIPTION": "Produkte çeliku dhe përpunim nga TeutaSteel."
+    "PRIVATE_DESCRIPTION": "Produkte çeliku dhe përpunim nga TeutaSteel.",
+    "SERVICES_TITLE": "Shërbime prerjeje dhe lakimi çeliku",
+    "SERVICES_DESCRIPTION": "Prerje CNC, gijotinë, prerje profilesh, lakim gypash, presë dhe përpunim kompleks, sipas vizatimit tuaj."
   },
   "USER_DASHBOARD": {
     "USER_NAME": "Emri i Përdoruesit",
@@ -367,7 +369,9 @@
     "SEND": "Dërgo kërkesën në WhatsApp",
     "REQUIRED": "Plotësoni emrin dhe telefonin.",
     "MESSAGE_INTRO": "Përshëndetje, dua një ofertë:",
-    "REPLY_EXPECTATION": "Përgjigjemi gjatë orarit të punës, Hën–Sht 08:00–17:00."
+    "REPLY_EXPECTATION": "Përgjigjemi gjatë orarit të punës, Hën–Sht 08:00–17:00.",
+    "SERVICE": "Shërbimi",
+    "SUBTOTAL": "Nëntotali i artikujve me çmim"
   },
   "SERVICES": {
     "TITLE": "Shërbimet Tona",

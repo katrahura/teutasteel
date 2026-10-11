@@ -44,6 +44,9 @@ export class AppComponent {
   readonly email = environment.contactEmail;
   readonly whatsappLink = 'https://wa.me/' + environment.whatsappNumber;
 
+  /** The copyright year, worked out rather than written down: the footer said 2024. */
+  readonly year = new Date().getFullYear();
+
   /** How many items are on the request list, shown in the navigation. */
   quoteCount = 0;
 

@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { QuoteListService, QuoteItem } from '../../shared/quote-list.service';
+import { SERVICES, ServiceOffering } from '../../shared/services';
 
 @Component({
   selector: 'app-contact',
@@ -16,6 +17,17 @@ import { QuoteListService, QuoteItem } from '../../shared/quote-list.service';
 export class ContactComponent implements OnInit {
   private translate = inject(TranslateService);
   private quoteList = inject(QuoteListService);
+  private route = inject(ActivatedRoute);
+
+  /**
+   * The service the visitor pressed on the services page, if they came from there.
+   *
+   * Those cards have always carried `?service=cnc` and nothing read it, so choosing a service and
+   * pressing "request a quote" arrived here as a general enquiry - the service.ts comment even says
+   * the id exists "so a button can open it with this service already chosen". It is optional:
+   * somebody can open the quote form directly, and the request list is what carries the products.
+   */
+  selectedService: ServiceOffering | null = null;
 
   /**
    * What the visitor added while browsing.
@@ -70,6 +82,13 @@ export class ContactComponent implements OnInit {
    */
   ngOnInit(): void {
     this.split();
+    const asked = (this.route.snapshot.queryParamMap.get('service') || '').trim();
+    this.selectedService = SERVICES.find((service) => service.id === asked) || null;
+  }
+
+  /** The chosen service's name, in the language the visitor is reading. */
+  get serviceName(): string {
+    return this.selectedService ? this.translate.instant(this.selectedService.titleKey) : '';
   }
 
   /** Only EUR lines contribute to the EUR subtotal. Other currencies require a quote. */
@@ -146,6 +165,11 @@ export class ContactComponent implements OnInit {
       `${this.translate.instant('QUOTE.NAME')}: ${this.quote.name.trim()}`,
       `${this.translate.instant('QUOTE.PHONE')}: ${this.quote.phone.trim()}`,
     ];
+    // The service they picked before they got here, so the shop sees it in the message rather than
+    // having to ask which one they meant.
+    if (this.selectedService) {
+      lines.push(`${this.translate.instant('QUOTE.SERVICE')}: ${this.serviceName}`);
+    }
     // Only if they wrote something: with a request list, this box is often left empty, and an empty
     // label in the message reads as a mistake.
     if (this.quote.product.trim()) {

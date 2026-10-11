@@ -9,7 +9,7 @@
     "SERVICES": "Services"
   },
   "FOOTER": {
-    "COPYRIGHT": "© 2024 TeutaSteel. All rights reserved.",
+    "COPYRIGHT": "© {{year}} TeutaSteel. All rights reserved.",
     "ABOUT": "Steel supply and fabrication for construction, industry and trade.",
     "PRODUCTS_TITLE": "Products",
     "GROUP_SHEETS": "Sheets & Plates",
@@ -31,21 +31,21 @@
     },
     "VALUES_TITLE": "Our Values",
     "VALUES_LIST": {
-      "QUALITY_FIRST": "Quality First: We believe that quality is the foundation of our success. Each product undergoes rigorous testing to ensure it meets the highest standards.",
+      "QUALITY_FIRST": "Quality First: we work to measured sizes, and the catalogue shows them so you can check before you order.",
       "CUSTOMER_FOCUS": "Customer Focus: We strive to build long-term relationships with our customers by providing exceptional service and support.",
       "SUSTAINABILITY": "Sustainability: TeutaSteel is committed to sustainable practices, including responsible sourcing of materials and minimizing our environmental impact."
     },
     "WHY_US_TITLE": "Why Choose Us?",
     "WHY_US_LIST": {
       "EXPERTISE": "Expertise: With years of experience in the steel industry, our team is equipped with the knowledge and expertise to meet your needs.",
-      "INNOVATION": "Innovation: We continuously invest in cutting-edge technology and processes to stay at the forefront of the industry.",
-      "DELIVERY": "Reliable Delivery: We understand the importance of timely delivery. TeutaSteel ensures that your products are delivered on time, every time."
+      "INNOVATION": "Working to your drawing: CNC cutting, shearing, bending and complex fabrication.",
+      "DELIVERY": "Reliable Delivery: the lead time is confirmed in your quote, so you know it before you order."
     },
     "CONTACT_BUTTON": "Contact Us"
   },
   "HOME": {
     "HERO_TITLE": "The steel you need, cut to size.",
-    "HERO_SUBTITLE": "Tubes, sheet, profiles and decorative iron, with the size and the price stated for every product.",
+    "HERO_SUBTITLE": "Explore sizes and available prices, or request a quote.",
     "HERO_BUTTON": "Explore Our Products",
     "TOP_PRODUCTS_TITLE": "Our Top Products",
     "VIEW_DETAILS_BUTTON": "View Details",
@@ -72,7 +72,7 @@
     "GROUPS_SUBTITLE": "The main groups, with the number of products you can actually see.",
     "ALL_GROUPS": "All groups",
     "PRODUCTS_UNIT": "products",
-    "TRUST_PRODUCTS": "products with size and price",
+    "TRUST_PRODUCTS": "products in the catalogue",
     "TRUST_GROUPS": "product groups",
     "TRUST_CUT_SHORT": "Cutting",
     "TRUST_CUT": "to size, for your project",
@@ -85,8 +85,8 @@
     "QUOTE_TEXT": "Send us your list and get one quote with the price and the lead time.",
     "QUOTE_WHATSAPP": "Send the list on WhatsApp",
     "QUOTE_FORM": "Fill in the form",
-    "FEATURED_TITLE": "Most asked for",
-    "FEATURED_SUBTITLE": "Priced products, with the photographed ones first.",
+    "FEATURED_TITLE": "Featured products",
+    "FEATURED_SUBTITLE": "Products with a price and a size, photographed ones first.",
     "ALL_PRODUCTS": "All products"
   },
   "PRODUCTS": {
@@ -310,7 +310,9 @@
     "CONTACT_TITLE": "Contact | TeutaSteel",
     "CONTACT_DESCRIPTION": "Address, phone, email and WhatsApp — get in touch with TeutaSteel for steel products and processing.",
     "PRIVATE_TITLE": "TeutaSteel",
-    "PRIVATE_DESCRIPTION": "TeutaSteel steel products and processing."
+    "PRIVATE_DESCRIPTION": "TeutaSteel steel products and processing.",
+    "SERVICES_TITLE": "Steel cutting and bending services",
+    "SERVICES_DESCRIPTION": "CNC cutting, shearing, profile cutting, pipe bending, press brake and complex fabrication, to your drawing."
   },
   "USER_DASHBOARD": {
     "USER_NAME": "User Name",
@@ -328,7 +330,9 @@
     "SEND": "Send the request on WhatsApp",
     "REQUIRED": "Please fill in your name and telephone number.",
     "MESSAGE_INTRO": "Hello, I would like a quote:",
-    "REPLY_EXPECTATION": "We answer during opening hours, Mon–Sat 08:00–17:00."
+    "REPLY_EXPECTATION": "We answer during opening hours, Mon–Sat 08:00–17:00.",
+    "SERVICE": "Service",
+    "SUBTOTAL": "Subtotal of priced items"
   },
   "SERVICES": {
     "TITLE": "Our Services",

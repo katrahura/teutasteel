@@ -25,6 +25,12 @@
         <h5 class="card-title">{{ 'QUOTE.TITLE' | translate }}</h5>
         <p class="text-muted small">{{ 'QUOTE.INTRO' | translate }}</p>
 
+        <!-- The choice made on the services page, kept. That card has always passed ?service= and
+             nothing ever read it, so pressing "request a quote" on a service lost the service. -->
+        <p class="small mb-2" *ngIf="selectedService">
+          {{ 'QUOTE.SERVICE' | translate }}: <strong>{{ serviceName }}</strong>
+        </p>
+
         <div class="row g-2">
           <div class="col-md-6">
             <label class="form-label" for="quoteName">{{ 'QUOTE.NAME' | translate }} *</label>
@@ -108,8 +114,10 @@
                 [ngTemplateOutletContext]="{ $implicit: item, i: i }"
               ></ng-container>
             </ul>
+            <!-- A subtotal, and it says so. It adds up only the lines that carry a price; the
+                 unpriced ones below are quoted by the shop, so calling this a total was wrong. -->
             <div class="d-flex align-items-center border-top pt-2 mt-1">
-              <strong>{{ "PRODUCTS.REQUEST_TOTAL" | translate }}</strong>
+              <strong>{{ "QUOTE.SUBTOTAL" | translate }}</strong>
               <strong class="ms-auto">{{ pricedTotal }} Eur</strong>
             </div>
           </div>

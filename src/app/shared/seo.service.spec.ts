@@ -22,6 +22,8 @@ describe('SeoService', () => {
         HOME_DESCRIPTION: 'Përshkrim kryefaqe',
         PRODUCTS_TITLE: 'Produkte | TeutaSteel',
         PRODUCTS_DESCRIPTION: 'Përshkrim produkte',
+        SERVICES_TITLE: 'Shërbime prerjeje dhe lakimi çeliku',
+        SERVICES_DESCRIPTION: 'Përshkrim shërbime',
         ABOUT_TITLE: 'Rreth Nesh | TeutaSteel',
         ABOUT_DESCRIPTION: 'Përshkrim rreth nesh',
         CONTACT_TITLE: 'Kontakt | TeutaSteel',
@@ -35,6 +37,8 @@ describe('SeoService', () => {
         HOME_DESCRIPTION: 'Home description',
         PRODUCTS_TITLE: 'Products | TeutaSteel',
         PRODUCTS_DESCRIPTION: 'Products description',
+        SERVICES_TITLE: 'Steel cutting and bending services',
+        SERVICES_DESCRIPTION: 'Services description',
         ABOUT_TITLE: 'About | TeutaSteel',
         ABOUT_DESCRIPTION: 'About description',
         CONTACT_TITLE: 'Contact | TeutaSteel',
@@ -84,6 +88,19 @@ describe('SeoService', () => {
       .toBe(`${environment.siteUrl}/products`);
     expect(document.head.querySelector('meta[name="description"]')?.getAttribute('content'))
       .toBe('Përshkrim produkte');
+  });
+
+  it('names the services page, which used to be left out of this table', () => {
+    // /services was absent from the mapping, so it fell through to the private branch: it took the
+    // generic company title and carried no canonical at all - a public page telling a search engine
+    // nothing about itself.
+    navigate('/services');
+
+    expect(TestBed.inject(Title).getTitle()).toBe('Shërbime prerjeje dhe lakimi çeliku');
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
+      .toBe(`${environment.siteUrl}/services`);
+    expect(document.head.querySelector('meta[name="description"]')?.getAttribute('content'))
+      .toBe('Përshkrim shërbime');
   });
 
   it('keeps exactly one canonical link', () => {

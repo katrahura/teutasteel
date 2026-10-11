@@ -15,6 +15,7 @@ interface PageSeo {
 const PUBLIC_PAGES: Record<string, PageSeo> = {
   '/': { titleKey: 'SEO.HOME_TITLE', descriptionKey: 'SEO.HOME_DESCRIPTION' },
   '/products': { titleKey: 'SEO.PRODUCTS_TITLE', descriptionKey: 'SEO.PRODUCTS_DESCRIPTION' },
+  '/services': { titleKey: 'SEO.SERVICES_TITLE', descriptionKey: 'SEO.SERVICES_DESCRIPTION' },
   '/about': { titleKey: 'SEO.ABOUT_TITLE', descriptionKey: 'SEO.ABOUT_DESCRIPTION' },
   '/contact': { titleKey: 'SEO.CONTACT_TITLE', descriptionKey: 'SEO.CONTACT_DESCRIPTION' },
 };

@@ -1,4 +1,5 @@
 import { QuoteListService } from '../../shared/quote-list.service';
+import { SERVICES } from '../../shared/services';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ContactComponent } from './contact.component';
@@ -32,6 +33,24 @@ describe('ContactComponent', () => {
     expect(local.componentInstance.pricedTotal).toBe(12);
     expect(local.componentInstance.unpricedItems.length).toBe(1);
     list.clear();local.destroy();
+  });
+
+  it('keeps the service chosen on the services page and puts it in the enquiry', () => {
+    // Those cards have always passed ?service=<id>, and nothing read it: choosing a service and
+    // pressing "request a quote" arrived as a general enquiry, with the choice dropped.
+    component.selectedService = SERVICES.find((service) => service.id === 'cnc') || null;
+    component.quote = { name: 'Ana', phone: '044 133 208', product: '', quantity: '', notes: '' };
+
+    expect(component.serviceName).toBe('MISC.CNC_METAL_CUTTING');
+    expect(decodeURIComponent(component.getQuoteLink()))
+      .toContain('QUOTE.SERVICE: MISC.CNC_METAL_CUTTING');
+  });
+
+  it('says nothing about a service when none was chosen', () => {
+    component.selectedService = null;
+    component.quote = { name: 'Ana', phone: '044', product: '', quantity: '', notes: '' };
+
+    expect(decodeURIComponent(component.getQuoteLink())).not.toContain('QUOTE.SERVICE');
   });
 
 });
