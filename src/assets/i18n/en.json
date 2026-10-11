@@ -17,7 +17,8 @@
     "GROUP_PROFILES": "Structural Steel Profiles",
     "GROUP_DECOR": "Decorative metal",
     "SERVICES_TITLE": "Services",
-    "CONTACT_TITLE": "Contact"
+    "CONTACT_TITLE": "Contact",
+    "GUIDES": "Guides"
   },
   "ABOUT": {
     "TITLE": "About Us",
@@ -321,7 +322,9 @@
     "PRIVATE_TITLE": "TeutaSteel",
     "PRIVATE_DESCRIPTION": "TeutaSteel steel products and processing.",
     "SERVICES_TITLE": "Steel cutting and bending services",
-    "SERVICES_DESCRIPTION": "CNC cutting, shearing, profile cutting, pipe bending, press brake and complex fabrication, to your drawing."
+    "SERVICES_DESCRIPTION": "CNC cutting, shearing, profile cutting, pipe bending, press brake and complex fabrication, to your drawing.",
+    "GUIDES_TITLE": "Practical steel guides",
+    "GUIDES_DESCRIPTION": "Galvanized or untreated, how tube sizes are named, sheet thicknesses, and how to prepare a cutting drawing."
   },
   "USER_DASHBOARD": {
     "USER_NAME": "User Name",
@@ -362,5 +365,30 @@
     "TEL": "Tel",
     "SEARCH_PLACEHOLDER": "Search by code or size…",
     "REQUEST": "Request"
+  },
+  "GUIDES": {
+    "TITLE": "Practical guides",
+    "INTRO": "Four things customers ask about most, kept short.",
+    "GALV_TITLE": "Galvanized or untreated?",
+    "GALV_1": "Hot-dip galvanizing coats steel in zinc. The zinc corrodes first and protects the steel underneath, even where the coating has been scratched.",
+    "GALV_2": "For outdoor work - fencing, gates, railings, anything the rain reaches - galvanized is the usual choice.",
+    "GALV_3": "Untreated (black) steel is cheaper and is the one you paint, powder-coat or weld before finishing. Left outside bare, it rusts.",
+    "GALV_4": "For indoor fabrication and anything that will be painted, black steel is usually enough.",
+    "TUBE_TITLE": "How tube sizes are named",
+    "TUBE_1": "Two different numbers get called \"the size\". Nominal bore (DN15, 1/2\") describes the bore for pipework and is not the outside diameter.",
+    "TUBE_2": "The outside diameter and the wall thickness (33.7 x 3.2 mm, for instance) describe the tube itself, and that is what a fabricator measures.",
+    "TUBE_3": "Square and rectangular tube is named by its outside dimensions and its wall: 40 x 40 x 2 mm.",
+    "TUBE_4": "When ordering, give the outside dimensions and the wall; if a drawing says DN, say which you mean.",
+    "SHEET_TITLE": "Sheet thickness",
+    "SHEET_1": "Sheet is sold by thickness in millimetres, and the difference between 0.5 and 0.7 mm decides what a panel will do.",
+    "SHEET_2": "0.5 mm for decoration and door tops; 1-2 mm for parts that carry weight; 3 mm and up for plate.",
+    "SHEET_3": "A sheet also has its own size (1000 x 2000, 1250 x 2500, 1500 x 3000), and the price is usually given per sheet or per square metre.",
+    "SHEET_4": "Which is why both numbers matter when you compare.",
+    "DRAW_TITLE": "Preparing a cutting drawing",
+    "DRAW_1": "A DXF goes straight into the machine; a PDF or a photograph has to be redrawn, which costs time and invites mistakes.",
+    "DRAW_2": "Whatever the format: the outline of every part, the dimensions, the thickness and the material, and how many of each.",
+    "DRAW_3": "Mark the holes with their diameters, and say which edges have to be square or smooth.",
+    "DRAW_4": "Without a drawing, a dimensioned sketch and the quantity are enough to quote from.",
+    "ASK": "Cannot find the size you need? Send the list or the drawing and we will price it."
   }
 }

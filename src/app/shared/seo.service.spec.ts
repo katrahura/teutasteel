@@ -24,6 +24,8 @@ describe('SeoService', () => {
         PRODUCTS_DESCRIPTION: 'Përshkrim produkte',
         SERVICES_TITLE: 'Shërbime prerjeje dhe lakimi çeliku',
         SERVICES_DESCRIPTION: 'Përshkrim shërbime',
+        GUIDES_TITLE: 'Udhëzues praktikë për çelikun',
+        GUIDES_DESCRIPTION: 'Përshkrim udhëzues',
         ABOUT_TITLE: 'Rreth Nesh | TeutaSteel',
         ABOUT_DESCRIPTION: 'Përshkrim rreth nesh',
         CONTACT_TITLE: 'Kontakt | TeutaSteel',
@@ -39,6 +41,8 @@ describe('SeoService', () => {
         PRODUCTS_DESCRIPTION: 'Products description',
         SERVICES_TITLE: 'Steel cutting and bending services',
         SERVICES_DESCRIPTION: 'Services description',
+        GUIDES_TITLE: 'Practical steel guides',
+        GUIDES_DESCRIPTION: 'Guides description',
         ABOUT_TITLE: 'About | TeutaSteel',
         ABOUT_DESCRIPTION: 'About description',
         CONTACT_TITLE: 'Contact | TeutaSteel',
@@ -101,6 +105,14 @@ describe('SeoService', () => {
       .toBe(`${environment.siteUrl}/services`);
     expect(document.head.querySelector('meta[name="description"]')?.getAttribute('content'))
       .toBe('Përshkrim shërbime');
+  });
+
+  it('names the guides page', () => {
+    navigate('/guides');
+
+    expect(TestBed.inject(Title).getTitle()).toBe('Udhëzues praktikë për çelikun');
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
+      .toBe(`${environment.siteUrl}/guides`);
   });
 
   it('keeps exactly one canonical link', () => {

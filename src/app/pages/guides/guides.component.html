@@ -1,0 +1,20 @@
+<div class="guides">
+  <div class="shell">
+    <h1>{{ 'GUIDES.TITLE' | translate }}</h1>
+    <p class="lead">{{ 'GUIDES.INTRO' | translate }}</p>
+
+    <div class="guide-grid">
+      <article class="guide" *ngFor="let guide of guides">
+        <h2>{{ guide.titleKey | translate }}</h2>
+        <p *ngFor="let key of guide.bodyKeys">{{ key | translate }}</p>
+      </article>
+    </div>
+
+    <!-- A guide explains the material; the work itself is quoted. -->
+    <div class="ask">
+      <p>{{ 'GUIDES.ASK' | translate }}</p>
+      <a class="btn" routerLink="/contact">{{ 'QUOTE.TITLE' | translate }}</a>
+      <a class="btn btn-quiet" routerLink="/services">{{ 'NAVBAR.SERVICES' | translate }}</a>
+    </div>
+  </div>
+</div>

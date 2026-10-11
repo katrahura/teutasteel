@@ -31,6 +31,12 @@ export const appRoutes: Routes = [
     data: { animation: 'AboutPage' },
   },
   {
+    path: 'guides',
+    loadComponent: () =>
+      import('./pages/guides/guides.component').then((m) => m.GuidesComponent),
+    data: { animation: 'AboutPage' },
+  },
+  {
     path: 'about',
     loadComponent: () =>
       import('./pages/about/about.component').then((m) => m.AboutComponent),

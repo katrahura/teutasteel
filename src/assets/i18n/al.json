@@ -56,7 +56,8 @@
     "GROUP_PROFILES": "Profile Strukturore",
     "GROUP_DECOR": "Metal Dekorativ",
     "SERVICES_TITLE": "Shërbimet",
-    "CONTACT_TITLE": "Kontakt"
+    "CONTACT_TITLE": "Kontakt",
+    "GUIDES": "Udhëzuesit"
   },
   "ABOUT": {
     "TITLE": "Rreth Nesh",
@@ -360,7 +361,9 @@
     "PRIVATE_TITLE": "TeutaSteel",
     "PRIVATE_DESCRIPTION": "Produkte çeliku dhe përpunim nga TeutaSteel.",
     "SERVICES_TITLE": "Shërbime prerjeje dhe lakimi çeliku",
-    "SERVICES_DESCRIPTION": "Prerje CNC, gijotinë, prerje profilesh, lakim gypash, presë dhe përpunim kompleks, sipas vizatimit tuaj."
+    "SERVICES_DESCRIPTION": "Prerje CNC, gijotinë, prerje profilesh, lakim gypash, presë dhe përpunim kompleks, sipas vizatimit tuaj.",
+    "GUIDES_TITLE": "Udhëzues praktikë për çelikun",
+    "GUIDES_DESCRIPTION": "Galvanizuar apo i patrajtuar, si emërtohen gypat, trashësia e llamarinës dhe si përgatitet një vizatim prerjeje."
   },
   "USER_DASHBOARD": {
     "USER_NAME": "Emri i Përdoruesit",
@@ -401,5 +404,30 @@
     "TEL": "Tel",
     "SEARCH_PLACEHOLDER": "Kërko me kod ose masë…",
     "REQUEST": "Kërkesa"
+  },
+  "GUIDES": {
+    "TITLE": "Udhëzues praktikë",
+    "INTRO": "Katër gjëra që klientët i pyesin më shpesh, të shkruara shkurt.",
+    "GALV_TITLE": "Galvanizuar apo i patrajtuar?",
+    "GALV_1": "Galvanizimi i nxehtë e vesh çelikun me zink. Zinku ndryshket i pari dhe e mbron çelikun edhe aty ku veshja është gërvishtur.",
+    "GALV_2": "Për punime në natyrë — rrethoja, porta, kangjella, çka laget nga shiu — zakonisht zgjidhet i galvanizuari.",
+    "GALV_3": "Çeliku i patrajtuar (i zi) është më i lirë dhe është ai që lyhet, pluhuroset ose saldohet përpara mbarimit. Jashtë, i palyer, ndryshket.",
+    "GALV_4": "Për punime brenda dhe për çka do lyer, i ziu zakonisht mjafton.",
+    "TUBE_TITLE": "Si emërtohen masat e gypave",
+    "TUBE_1": "Dy numra të ndryshëm quhen \"madhësia\". Diametri nominal (DN15, 1/2\") përshkruan kalimin e brendshëm për instalime dhe nuk është diametri i jashtëm.",
+    "TUBE_2": "Diametri i jashtëm dhe trashësia e murit (p.sh. 33,7 × 3,2 mm) përshkruajnë vetë gypin, dhe atë mat metalpërpunuesi.",
+    "TUBE_3": "Gypat katrorë e drejtkëndësh emërtohen me përmasat e jashtme dhe murin: 40×40×2 mm.",
+    "TUBE_4": "Kur porositni, jepni përmasat e jashtme dhe murin; nëse vizatimi thotë DN, thoni çka do të thotë.",
+    "SHEET_TITLE": "Trashësia e llamarinës",
+    "SHEET_1": "Llamarina shitet sipas trashësisë në milimetra, dhe dallimi mes 0,5 dhe 0,7 mm vendos çka bën paneli.",
+    "SHEET_2": "0,5 mm për dekor dhe sipër dyer; 1–2 mm për pjesë që mbajnë peshë; 3 mm e lart për pllaka.",
+    "SHEET_3": "Fleta ka edhe përmasat e vet (1000×2000, 1250×2500, 1500×3000), dhe çmimi zakonisht jepet për fletë ose për metër katror.",
+    "SHEET_4": "Prandaj të dy numrat kanë rëndësi kur krahasoni.",
+    "DRAW_TITLE": "Si përgatitet një vizatim prerjeje",
+    "DRAW_1": "DXF-i shkon drejt në makinë; PDF-i ose fotografia duhet rivizatuar, çka kushton kohë dhe sjell gabime.",
+    "DRAW_2": "Në çfarëdo formati: kontura e secilës pjesë, përmasat, trashësia dhe materiali, dhe sa copë.",
+    "DRAW_3": "Shënoni vrimat me diametrat e tyre, dhe thoni cilat anë duhet të jenë të drejta ose të lëmuara.",
+    "DRAW_4": "Pa vizatim, një skicë me përmasa dhe sasinë mjafton për një ofertë.",
+    "ASK": "Nuk gjeni masën që ju nevojitet? Dërgoni listën ose vizatimin dhe e llogarisim."
   }
 }
