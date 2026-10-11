@@ -107,6 +107,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
    * every page of a list somebody is working through.
    */
   private remember(): void {
+    // Nothing to write into while the page is rendered on the server: there is no address bar, and
+    // navigating there is meaningless.
+    if (typeof window === 'undefined') {
+      return;
+    }
     const queryParams: Record<string, string | number> = {};
     if (this.gap) {
       queryParams['gap'] = this.gap;

@@ -542,6 +542,14 @@ toggleParent(parentId: number) {
     this.selectedProduct = product;
     this.clearChoices();
 
+    // Only in a browser. This was reachable by clicking a card, so `document` and Bootstrap were
+    // always there; opening a product from a shared link made it reachable from the category's
+    // response as well, and that also arrives while the page is being rendered on the server. There
+    // it threw "ReferenceError: document is not defined" on every server render of that address.
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     // The address now points at this product, so it can be sent to somebody or bookmarked. The
     // category goes with it: the single-product endpoint asks for a token, so a link that has to
     // work for anybody has to say which category listing to find the product in.
@@ -1271,6 +1279,11 @@ this.showProducts(this.selectedCategory)
    * address too; a null removes its parameter.
    */
   private rememberFilters(): void {
+    // Nothing to write into while the page is rendered on the server: there is no address bar.
+    // This is reached during a server render, because opening a category clears the filters.
+    if (typeof window === 'undefined') {
+      return;
+    }
     this.router.navigate([], {
       queryParams: {
         thickness: this.filterThickness,
