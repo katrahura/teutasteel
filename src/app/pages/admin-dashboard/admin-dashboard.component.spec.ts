@@ -157,4 +157,44 @@ describe('AdminDashboardComponent', () => {
     expect(component.gapTotal).toBe(3);
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('PLAIN-1');
   });
+
+  it('can narrow the searches to the ones that found nothing', () => {
+    // A tally of a hundred terms is a report; the handful nobody could find is a to-do list.
+    httpMock.expectOne(summaryUrl).flush(summary);
+    httpMock.expectOne(searchesUrl).flush({
+      empty: 1,
+      total: 2,
+      returned: 2,
+      searches: [
+        { term: 'ipe 200', lang: 'al', hits: 0, times: 3, last_seen: null },
+        { term: '15x15', lang: 'al', hits: 2, times: 5, last_seen: null },
+      ],
+    });
+    fixture.detectChanges();
+
+    const toggle = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('button')
+    ).find((button) => (button.textContent || '').includes('ADMIN.ONLY_EMPTY')) as HTMLButtonElement;
+    expect(toggle).toBeTruthy();
+    toggle.click();
+
+    const filtered = httpMock.expectOne(
+      (req) => req.url === `${environment.apiUrl}/admin/searches?limit=100&only_empty=1`
+    );
+    filtered.flush({
+      only_empty: true,
+      returned: 1,
+      empty: 1,
+      total: 2,
+      searches: [{ term: 'ipe 200', lang: 'al', hits: 0, times: 3, last_seen: null }],
+    });
+    fixture.detectChanges();
+
+    expect(component.onlyEmpty).toBeTrue();
+    const rows = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr')
+    );
+    expect(rows.length).toBe(1);
+    expect(rows[0].textContent).toContain('ipe 200');
+  });
 });

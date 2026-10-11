@@ -195,7 +195,9 @@
     "SEE_WHICH": "See which",
     "CLOSE": "Close",
     "PREVIOUS": "Previous",
-    "NEXT": "Next"
+    "NEXT": "Next",
+    "ONLY_EMPTY": "Only the ones that found nothing",
+    "OPEN_PRODUCT": "Open the product"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

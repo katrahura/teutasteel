@@ -17,6 +17,10 @@ export interface SearchRow {
 export interface SearchReport {
   empty: number;
   total: number;
+  /** How many rows this answer carries: the filter is applied before the limit. */
+  returned?: number;
+  /** Whether the answer was filtered to the terms that found nothing. */
+  only_empty?: boolean;
   searches: SearchRow[];
 }
 
@@ -70,8 +74,15 @@ export class AdminService {
 
   constructor(private http: HttpClient) {}
 
-  getSearches(limit: number = 100): Observable<SearchReport> {
-    return this.http.get<SearchReport>(`${this.baseUrl}/admin/searches?limit=${limit}`, {
+  /**
+   * What customers searched for, the terms that found nothing first.
+   *
+   * With onlyEmpty, just those: a tally of a hundred terms is a report, and the handful nobody
+   * could find is a to-do list.
+   */
+  getSearches(limit: number = 100, onlyEmpty: boolean = false): Observable<SearchReport> {
+    const url = `${this.baseUrl}/admin/searches?limit=${limit}${onlyEmpty ? '&only_empty=1' : ''}`;
+    return this.http.get<SearchReport>(url, {
       headers: this.authHeaders(),
     });
   }

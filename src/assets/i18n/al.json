@@ -234,7 +234,9 @@
     "SEE_WHICH": "Shiko cilat",
     "CLOSE": "Mbyll",
     "PREVIOUS": "Përpara",
-    "NEXT": "Mbrapa"
+    "NEXT": "Mbrapa",
+    "ONLY_EMPTY": "Vetëm ato pa rezultat",
+    "OPEN_PRODUCT": "Hap produktin"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

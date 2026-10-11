@@ -137,6 +137,12 @@ h2 {
   color: #111827;
 }
 
+/* A row is the way to the product, so it says so on hover. */
+.gap-items .code:hover {
+  color: var(--accent-dark, #b45309);
+  text-decoration: underline;
+}
+
 .gap-items .cat {
   margin-left: auto;
 }

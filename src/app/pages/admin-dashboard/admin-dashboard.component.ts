@@ -50,6 +50,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   gapPage = 1;
   gapPages = 1;
   gapLoading = false;
+  /** Whether the searches are filtered to the terms that found nothing. */
+  onlyEmpty = false;
 
   ngOnInit(): void {
     this.loading = true;
@@ -77,6 +79,22 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           this.noteRefusal(error);
           this.loading = false;
         },
+      })
+    );
+  }
+
+  /**
+   * Read the tally again, either the whole of it or only the terms that found nothing.
+   *
+   * The panel's own line is the reason to have it: a hundred terms is a report, and the handful
+   * nobody could find is the list worth acting on.
+   */
+  loadSearches(onlyEmpty: boolean = false): void {
+    this.onlyEmpty = onlyEmpty;
+    this.subscriptions.add(
+      this.admin.getSearches(100, onlyEmpty).subscribe({
+        next: (report) => { this.report = report; },
+        error: (error) => this.noteRefusal(error),
       })
     );
   }
