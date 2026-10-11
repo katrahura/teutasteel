@@ -204,7 +204,8 @@
     "DOWNLOAD_CSV": "Download CSV",
     "CODE": "Code",
     "GROUP": "Group",
-    "CATEGORY": "Category"
+    "CATEGORY": "Category",
+    "EDIT_CATEGORY": "Edit the category"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

@@ -243,7 +243,8 @@
     "DOWNLOAD_CSV": "Shkarko CSV",
     "CODE": "Kodi",
     "GROUP": "Grupi",
-    "CATEGORY": "Kategoria"
+    "CATEGORY": "Kategoria",
+    "EDIT_CATEGORY": "Redakto kategorinë"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

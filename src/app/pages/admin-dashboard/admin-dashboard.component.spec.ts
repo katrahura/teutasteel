@@ -28,6 +28,7 @@ describe('AdminDashboardComponent', () => {
       off_categories: [{ id: 7, title: 'Old stock' }],
       without_image: 29,
       without_image_titles: ['Motifs'],
+      without_image_categories: [{ id: 60, title: 'Motifs' }],
     },
   };
 
@@ -60,9 +61,14 @@ describe('AdminDashboardComponent', () => {
     expect(text).toContain('1133');  // under a category that is switched off
     expect(text).toContain('49');    // nothing on the row at all
     expect(text).toContain('Old stock');
-    // A blank tile on the shop's own front page, named rather than counted alone.
+    // A blank tile on the shop's own front page, named rather than counted alone - and the name is
+    // a way into that category's editor, which is where its image is set.
     expect(text).toContain('ADMIN.WITHOUT_IMAGE');
     expect(text).toContain('Motifs');
+    const links = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('.off-list .chip a')
+    ).map((link) => link.getAttribute('href') || '');
+    expect(links.some((href) => href.includes('editCategory=60'))).toBeTrue();
   });
 
   it('lists the searches that found nothing, marked', () => {

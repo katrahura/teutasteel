@@ -82,6 +82,8 @@ toggleParent(parentId: number) {
   searchError = false;
   /** The product whose editor was already opened from a link, so it is not opened twice. */
   private openedEditorFor: number | null = null;
+  /** The same, for a category's editor. A separate field: a product and a category can share an id. */
+  private openedCategoryEditorFor: number | null = null;
 
   /** The group to scroll to once the list has rendered, when the visitor arrived from a card. */
   private scrollToGroupId: number | null = null;
@@ -809,6 +811,13 @@ this.subscriptions.push(
         this.showProducts({ id: category } as any);
       }
     }
+
+    // A link from the panel's list of categories with no image: straight into that category's
+    // editor, which is where the image is set.
+    const categoryEdit = Number(params.get('editCategory'));
+    if (categoryEdit && this.isLoggedIn) {
+      this.openCategoryEditorFor(categoryEdit);
+    }
   })
 );
 
@@ -1034,6 +1043,30 @@ this.showProducts(this.selectedCategory)
         error: () => {
           // Said nothing about: the products page is still there to work from.
           this.openedEditorFor = null;
+        },
+      })
+    );
+  }
+
+  /**
+   * Open the editor for one category, by id.
+   *
+   * The panel's list of categories with no image carries a title and an id; the editor needs the
+   * whole category, including whether it already has an image, which is the point of opening it.
+   * The dialog element is always in the DOM, unlike the product's, so nothing has to be opened
+   * behind it first.
+   */
+  private openCategoryEditorFor(id: number): void {
+    if (this.openedCategoryEditorFor === id) {
+      return;
+    }
+    this.openedCategoryEditorFor = id;
+    this.subscriptions.push(
+      this.productService.getCategoryById(id, 1, 8, this.currentLanguage()).subscribe({
+        next: (response: any) => this.editCategory(response),
+        error: () => {
+          // Said nothing about: the products page is still there to work from.
+          this.openedCategoryEditorFor = null;
         },
       })
     );

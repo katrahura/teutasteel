@@ -43,6 +43,8 @@ export interface CatalogueSummary {
    /** Categories with no image, so the shop's own tiles render as blank cards. */
     without_image: number;
     without_image_titles: string[];
+    /** The same categories with their ids, so the panel can link to each one's editor. */
+    without_image_categories: { id: number; title: string }[];
   };
 }
 

@@ -90,16 +90,23 @@
         </div>
       </div>
 
-      <!-- A blank tile on the shop's own front page. Listed rather than made clickable: the
-           category editor lives on the products page, and this says which ones are worth opening. -->
-      <div class="mt-3" *ngIf="summary.categories.without_image_titles?.length">
+      <!-- A blank tile on the shop's own front page. Each name is a way into that category's
+           editor, which is where its image is set. -->
+      <div class="mt-3" *ngIf="summary.categories.without_image_categories?.length || summary.categories.without_image_titles?.length">
         <strong class="small d-block mb-1">
           {{ 'ADMIN.WITHOUT_IMAGE' | translate }}: {{ summary.categories.without_image }}
         </strong>
         <div class="off-list">
-          <span class="chip" *ngFor="let title of summary.categories.without_image_titles || []">
-            {{ title }}
+          <span class="chip" *ngFor="let category of summary.categories.without_image_categories || []">
+            <a [routerLink]="['/products']" [queryParams]="{ editCategory: category.id }"
+               [title]="'ADMIN.EDIT_CATEGORY' | translate">{{ category.title }}</a>
           </span>
+          <!-- For a page built before the ids arrived. -->
+          <ng-container *ngIf="!summary.categories.without_image_categories?.length">
+            <span class="chip" *ngFor="let title of summary.categories.without_image_titles || []">
+              {{ title }}
+            </span>
+          </ng-container>
         </div>
       </div>
 
