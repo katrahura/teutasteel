@@ -1,7 +1,96 @@
 <div class="dashboard py-5 px-3 mb-5 mt-5">
   <div class="container">
-    <h1 class="h2">{{ 'ADMIN.ADMIN_DASHBOARD' | translate }}</h1>
-    <p>{{ 'ADMIN.HINT' | translate }}</p>
-    <a class="btn btn-primary" routerLink="/products">{{ 'ADMIN.EDIT_BUTTON' | translate }}</a>
+    <h1 class="h2">{{ 'ADMIN.PANEL_TITLE' | translate }}</h1>
+    <p class="text-muted">{{ 'ADMIN.HINT' | translate }}</p>
+
+    <!-- Refused rather than broken. The API answers 401 to nobody and 403 to somebody signed in
+         without the right, and they mean different things to the person reading the page. -->
+    <div class="alert alert-warning" *ngIf="denied">
+      {{ 'ADMIN.DENIED' | translate }}
+      <a class="btn btn-sm btn-primary ms-2" routerLink="/login">{{ 'ADMIN.LOGIN' | translate }}</a>
+    </div>
+    <div class="alert alert-danger" *ngIf="failed">{{ 'ADMIN.FAILED' | translate }}</div>
+    <div class="text-muted" *ngIf="loading">
+      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+    </div>
+
+    <!-- How much of the catalogue a customer can actually reach, and what is missing from it. -->
+    <section *ngIf="summary" class="mt-4">
+      <h2 class="h5">{{ 'ADMIN.CATALOGUE_TITLE' | translate }}</h2>
+      <p class="text-muted small mb-3">{{ 'ADMIN.CATALOGUE_HINT' | translate }}</p>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="n">{{ summary.products.total }}</span>
+          <span class="l">{{ 'ADMIN.PRODUCTS_TOTAL' | translate }}</span>
+        </div>
+        <div class="stat">
+          <span class="n">{{ summary.products.active }}</span>
+          <span class="l">{{ 'ADMIN.PRODUCTS_ACTIVE' | translate }}</span>
+        </div>
+        <div class="stat warn">
+          <span class="n">{{ summary.products.in_off_categories }}</span>
+          <span class="l">{{ 'ADMIN.IN_OFF_CATEGORIES' | translate }}</span>
+        </div>
+        <div class="stat warn">
+          <span class="n">{{ summary.products.priced_without_photo }}</span>
+          <span class="l">{{ 'ADMIN.PRICED_WITHOUT_PHOTO' | translate }}</span>
+        </div>
+        <div class="stat warn">
+          <span class="n">{{ summary.products.priced_without_size }}</span>
+          <span class="l">{{ 'ADMIN.PRICED_WITHOUT_SIZE' | translate }}</span>
+        </div>
+        <div class="stat">
+          <span class="n">{{ summary.categories.total }}</span>
+          <span class="l">{{ 'ADMIN.CATEGORIES_TOTAL' | translate }}</span>
+        </div>
+        <div class="stat warn">
+          <span class="n">{{ summary.categories.off }}</span>
+          <span class="l">{{ 'ADMIN.CATEGORIES_OFF' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="mt-3" *ngIf="summary.categories.off_titles.length">
+        <strong class="small d-block mb-1">{{ 'ADMIN.OFF_LIST' | translate }}</strong>
+        <div class="off-list">
+          <span class="chip" *ngFor="let title of summary.categories.off_titles">{{ title }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- What customers typed, the terms that found nothing first. -->
+    <section *ngIf="report" class="mt-5">
+      <h2 class="h5">{{ 'ADMIN.SEARCHES_TITLE' | translate }}</h2>
+      <p class="text-muted small mb-2">{{ 'ADMIN.SEARCHES_HINT' | translate }}</p>
+
+      <p class="small" *ngIf="report.total">
+        <strong>{{ report.empty }}</strong> {{ 'ADMIN.SEARCHES_EMPTY' | translate }}
+        <strong>{{ report.total }}</strong>
+      </p>
+      <p class="text-muted" *ngIf="!report.total">{{ 'ADMIN.NO_SEARCHES' | translate }}</p>
+
+      <div class="table-responsive" *ngIf="report.searches.length">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'ADMIN.TERM' | translate }}</th>
+              <th scope="col" class="text-end">{{ 'ADMIN.HITS' | translate }}</th>
+              <th scope="col" class="text-end">{{ 'ADMIN.TIMES' | translate }}</th>
+              <th scope="col">{{ 'ADMIN.LAST_SEEN' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of report.searches" [class.found-nothing]="row.hits === 0">
+              <td class="term">{{ row.term }}</td>
+              <td class="text-end">{{ row.hits }}</td>
+              <td class="text-end">{{ row.times }}</td>
+              <td class="text-muted small">
+                {{ row.last_seen ? (row.last_seen | date: 'short') : '—' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
 </div>

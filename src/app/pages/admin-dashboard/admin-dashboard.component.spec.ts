@@ -1,11 +1,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 
 import { AdminDashboardComponent } from './admin-dashboard.component';
 import { provideTestConfig } from '../../testing/test-providers';
+import { environment } from '../../../environments/environment';
 
 describe('AdminDashboardComponent', () => {
   let component: AdminDashboardComponent;
   let fixture: ComponentFixture<AdminDashboardComponent>;
+  let httpMock: HttpTestingController;
+
+  const summaryUrl = `${environment.apiUrl}/admin/summary`;
+  const searchesUrl = `${environment.apiUrl}/admin/searches?limit=100`;
+
+  const summary = {
+    products: {
+      total: 2368,
+      active: 2300,
+      in_off_categories: 1133,
+      priced_without_photo: 429,
+      priced_without_size: 55,
+    },
+    categories: { total: 70, off: 28, off_titles: ['Old stock'] },
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -16,10 +33,68 @@ describe('AdminDashboardComponent', () => {
 
     fixture = TestBed.createComponent(AdminDashboardComponent);
     component = fixture.componentInstance;
+    httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('shows what the catalogue is missing', () => {
+    // The figures the owner could previously only get by asking the database by hand.
+    httpMock.expectOne(summaryUrl).flush(summary);
+    httpMock.expectOne(searchesUrl).flush({ empty: 0, total: 0, searches: [] });
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent || '';
+    expect(text).toContain('2368');
+    expect(text).toContain('429');   // priced, no photograph
+    expect(text).toContain('1133');  // under a category that is switched off
+    expect(text).toContain('Old stock');
+  });
+
+  it('lists the searches that found nothing, marked', () => {
+    httpMock.expectOne(summaryUrl).flush(summary);
+    httpMock.expectOne(searchesUrl).flush({
+      empty: 1,
+      total: 2,
+      searches: [
+        { term: 'ipe 200', lang: 'al', hits: 0, times: 3, last_seen: null },
+        { term: '15x15', lang: 'al', hits: 2, times: 5, last_seen: null },
+      ],
+    });
+    fixture.detectChanges();
+
+    const rows = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr')
+    );
+    expect(rows.length).toBe(2);
+    expect(rows[0].textContent).toContain('ipe 200');
+    expect(rows[0].classList).toContain('found-nothing');
+    expect(rows[1].classList).not.toContain('found-nothing');
+  });
+
+  it('says the page belongs to the owner instead of failing', () => {
+    // The API answers 401 to nobody and 403 to somebody signed in without the right. Both used to
+    // be the same thing to this page: an empty dashboard.
+    httpMock.expectOne(summaryUrl).flush('no', { status: 403, statusText: 'Forbidden' });
+    httpMock.expectOne(searchesUrl).flush('no', { status: 403, statusText: 'Forbidden' });
+    fixture.detectChanges();
+
+    expect(component.denied).toBeTrue();
+    expect(component.failed).toBeFalse();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('ADMIN.DENIED');
+  });
+
+  it('keeps one report when the other fails', () => {
+    // They fail on their own: one bad report must not blank the other.
+    httpMock.expectOne(summaryUrl).flush(summary);
+    httpMock.expectOne(searchesUrl).flush('boom', { status: 500, statusText: 'Server Error' });
+    fixture.detectChanges();
+
+    expect(component.summary).not.toBeNull();
+    expect(component.failed).toBeTrue();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('2368');
   });
 });
