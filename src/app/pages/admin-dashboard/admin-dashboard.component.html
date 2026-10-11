@@ -94,9 +94,11 @@
 
         <ul class="gap-items" *ngIf="!gapLoading && gapProducts.length">
           <li *ngFor="let product of gapProducts">
-            <!-- The list says which products; this is the way to one without hunting for it. The
-                 products page reads ?q= and searches for it. -->
-            <a class="code" [routerLink]="['/products']" [queryParams]="{ q: product.code }"
+            <!-- The list says which products; this is the way to one, straight into its editor.
+                 The category goes with it because the product's own endpoint does not return one,
+                 and the editor's dialog only exists while a category is being shown. -->
+            <a class="code" [routerLink]="['/products']"
+               [queryParams]="{ edit: product.id, category: product.category_id }"
                [title]="'ADMIN.OPEN_PRODUCT' | translate">{{ product.code }}</a>
             <span class="cat text-muted">
               <span *ngIf="product.group">{{ product.group }} &rsaquo; </span>{{ product.category }}

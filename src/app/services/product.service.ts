@@ -244,6 +244,22 @@ export class ProductService {
     return throwError('Something went wrong; please try again later.');
   }
 
+  /**
+   * One product, as the API stores it.
+   *
+   * The admin panel's worklists link to a product's editor, and a row there carries a code and a
+   * category rather than the whole product the dialog needs. The API asks for a token here, unlike
+   * the category pages, so the headers go with it.
+   */
+  getProductById(id: number, lang: string = 'al'): Observable<Product> {
+    const url = `${this.apiUrl}/product/${id}?lang=${lang}`;
+    return this.http.get<Product>(url, { headers: this.getAuthHeaders() }).pipe(
+      this.retryTransient(),
+      map((product) => this.withDeliveredImage(product, 'product_images')),
+      catchError(this.handleError)
+    );
+  }
+
   updateProduct(product: Product): Observable<Product> {
     const headers = this.getAuthHeaders(); // Get authorization headers
   

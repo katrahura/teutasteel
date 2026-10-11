@@ -80,6 +80,8 @@ toggleParent(parentId: number) {
   private searchTimer: any = null;
   private searchSubscription?: Subscription;
   searchError = false;
+  /** The product whose editor was already opened from a link, so it is not opened twice. */
+  private openedEditorFor: number | null = null;
 
   /** The group to scroll to once the list has rendered, when the visitor arrived from a card. */
   private scrollToGroupId: number | null = null;
@@ -793,6 +795,13 @@ this.subscriptions.push(
       this.searchQuery = asked;
       this.runSearch();
     }
+
+    // A link from the admin panel's worklists opens the editor for one product. Pressing a row
+    // there is meant to be the start of fixing it, not the start of looking for it.
+    const edit = Number(params.get('edit'));
+    if (edit && this.isLoggedIn) {
+      this.openEditorFor(edit, Number(params.get('category')) || null);
+    }
   })
 );
 
@@ -990,6 +999,38 @@ this.showProducts(this.selectedCategory)
 
     }}
 
+
+  /**
+   * Open the editor for one product, by id.
+   *
+   * The category has to come from the link as well: the API's product schema excludes category_id,
+   * so a product cannot say which category it is in, and the dialog is fetched from the DOM by id -
+   * it only exists while the page is showing a category. That one is opened first and the view
+   * brought up to date, because a dialog that has not been rendered cannot be opened.
+   *
+   * Once per id, because the query parameters emit again on other navigations.
+   */
+  private openEditorFor(id: number, categoryId: number | null): void {
+    if (this.openedEditorFor === id) {
+      return;
+    }
+    this.openedEditorFor = id;
+
+    if (categoryId) {
+      this.showProducts({ id: categoryId } as any);
+      this.changeDetector.detectChanges();
+    }
+
+    this.subscriptions.push(
+      this.productService.getProductById(id).subscribe({
+        next: (product) => this.openEditModal(product),
+        error: () => {
+          // Said nothing about: the products page is still there to work from.
+          this.openedEditorFor = null;
+        },
+      })
+    );
+  }
 
   openEditModal(product: Product): void {
     // Clone the product to avoid direct mutation

@@ -158,6 +158,11 @@ describe('AdminDashboardComponent', () => {
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('PLAIN-1');
     // The group as well, so the row says where in the catalogue it is.
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Tubes');
+    // And the row is the way to the product's editor, not just to a search for it. The category
+    // travels with it: the product's own endpoint does not return one.
+    const link = (fixture.nativeElement as HTMLElement).querySelector('.gap-items a.code') as HTMLAnchorElement;
+    expect(link.getAttribute('href')).toContain('edit=11');
+    expect(link.getAttribute('href')).toContain('category=3');
   });
 
   it('can narrow the searches to the ones that found nothing', () => {
