@@ -137,7 +137,8 @@
     "SEARCH_ERROR": "Search could not load. Please try again.",
     "SEARCH_RETRY": "Try again",
     "PRODUCT_COUNT": "products",
-    "SUBCATEGORIES": "Sub-categories"
+    "SUBCATEGORIES": "Sub-categories",
+    "ASK_FOR_DETAILS": "Ask us for sizes and prices"
   },
   "MODAL": {
     "CLOSE": "Close",
@@ -332,7 +333,13 @@
     "MESSAGE_INTRO": "Hello, I would like a quote:",
     "REPLY_EXPECTATION": "We answer during opening hours, Mon–Sat 08:00–17:00.",
     "SERVICE": "Service",
-    "SUBTOTAL": "Subtotal of priced items"
+    "SUBTOTAL": "Subtotal of priced items",
+    "SERVICE_DETAILS": "About the work",
+    "THICKNESS": "Thickness",
+    "DIMENSIONS": "Dimensions",
+    "DRAWING": "Drawing (DXF, PDF or photo)",
+    "DELIVERY_PLACE": "Delivery location (optional)",
+    "REQUIRED_DATE": "Required date"
   },
   "SERVICES": {
     "TITLE": "Our Services",

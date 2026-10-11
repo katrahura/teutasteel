@@ -260,6 +260,39 @@ describe('ProductsComponent', () => {
     clearToken();
   });
 
+  it('offers the size, not a sentence about a missing description', () => {
+    // "No description available" is a dead end. Where the product carries dimensions the size line
+    // says something useful, and where it carries nothing at all the card invites the question.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+
+    component.showProducts({ id: 1, title: 'Doors', is_active: true } as any);
+    httpMock.expectOne((req) => req.url.startsWith(`${environment.apiUrl}/category/1?`))
+      .flush({
+        id: 1,
+        title: 'Doors',
+        pagination: { page: 1, total_pages: 1 },
+        products: [
+          {
+            id: 1, code: 'BARE-1', cut_type: 0, category_id: 1, is_active: true,
+            new_product: false, description: null, image_asset: null, dimensions: [],
+            translations: [],
+          },
+          {
+            id: 2, code: 'SIZED-1', cut_type: 0, category_id: 1, is_active: true,
+            new_product: false, description: null, image_asset: null, translations: [],
+            dimensions: [{ id: 9, height: 20, thickness: 2, price: 5, currency: 'EUR' }],
+          },
+        ],
+      });
+    fixture.detectChanges();
+
+    const text: string = fixture.nativeElement.textContent;
+    expect(text).not.toContain('NO_DESCRIPTION_AVAILABLE');
+    expect(text).toContain('PRODUCTS.ASK_FOR_DETAILS');
+    expect(text).toContain('BARE-1');
+    expect(text).toContain('SIZED-1');
+  });
+
   it('cancels an older search before accepting newer results', () => {
     httpMock.expectOne(groupsUrl).flush([]);
     component.searchQuery='old';component.runSearch();

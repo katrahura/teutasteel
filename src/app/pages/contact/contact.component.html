@@ -50,6 +50,52 @@
             <textarea id="quoteNotes" class="form-control" rows="3"
                       [(ngModel)]="quote.notes" name="quoteNotes"></textarea>
           </div>
+
+          <!-- The work itself, once a service has been chosen. A cutting or bending job cannot be
+               priced without these, and asking here saves the shop writing back to ask. -->
+          <ng-container *ngIf="selectedService">
+            <div class="col-12">
+              <div class="small text-uppercase text-muted mt-2">
+                {{ 'QUOTE.SERVICE_DETAILS' | translate }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="quoteThickness">{{ 'QUOTE.THICKNESS' | translate }}</label>
+              <input id="quoteThickness" class="form-control" type="text"
+                     [(ngModel)]="quote.thickness" name="quoteThickness" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="quoteDimensions">{{ 'QUOTE.DIMENSIONS' | translate }}</label>
+              <input id="quoteDimensions" class="form-control" type="text"
+                     [(ngModel)]="quote.dimensions" name="quoteDimensions" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="quoteQuantity">{{ 'QUOTE.QUANTITY' | translate }}</label>
+              <input id="quoteQuantity" class="form-control" type="text"
+                     [(ngModel)]="quote.quantity" name="quoteQuantity" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="quoteDrawing">{{ 'QUOTE.DRAWING' | translate }}</label>
+              <input id="quoteDrawing" class="form-control" type="text"
+                     [(ngModel)]="quote.drawing" name="quoteDrawing" />
+            </div>
+          </ng-container>
+
+          <!-- For everybody: where it goes, and when it is needed. -->
+          <div class="col-md-6">
+            <label class="form-label" for="quoteDeliveryPlace">
+              {{ 'QUOTE.DELIVERY_PLACE' | translate }}
+            </label>
+            <input id="quoteDeliveryPlace" class="form-control" type="text"
+                   [(ngModel)]="quote.deliveryPlace" name="quoteDeliveryPlace" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="quoteRequiredDate">
+              {{ 'QUOTE.REQUIRED_DATE' | translate }}
+            </label>
+            <input id="quoteRequiredDate" class="form-control" type="date"
+                   [(ngModel)]="quote.requiredDate" name="quoteRequiredDate" />
+          </div>
         </div>
 
         <!-- What they added while browsing, in the two groups the owner asked for: what we can

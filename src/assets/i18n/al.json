@@ -176,7 +176,8 @@
     "SEARCH_ERROR": "Kërkimi nuk u ngarkua. Ju lutemi provoni përsëri.",
     "SEARCH_RETRY": "Provo përsëri",
     "PRODUCT_COUNT": "produkte",
-    "SUBCATEGORIES": "Nënkategoritë"
+    "SUBCATEGORIES": "Nënkategoritë",
+    "ASK_FOR_DETAILS": "Pyetni për masat dhe çmimin"
   },
   "MODAL": {
     "CLOSE": "Mbyll",
@@ -371,7 +372,13 @@
     "MESSAGE_INTRO": "Përshëndetje, dua një ofertë:",
     "REPLY_EXPECTATION": "Përgjigjemi gjatë orarit të punës, Hën–Sht 08:00–17:00.",
     "SERVICE": "Shërbimi",
-    "SUBTOTAL": "Nëntotali i artikujve me çmim"
+    "SUBTOTAL": "Nëntotali i artikujve me çmim",
+    "SERVICE_DETAILS": "Të dhënat e shërbimit",
+    "THICKNESS": "Trashësia",
+    "DIMENSIONS": "Përmasat",
+    "DRAWING": "Vizatimi (DXF, PDF ose foto)",
+    "DELIVERY_PLACE": "Vendi i dorëzimit (opsional)",
+    "REQUIRED_DATE": "Data e nevojshme"
   },
   "SERVICES": {
     "TITLE": "Shërbimet Tona",

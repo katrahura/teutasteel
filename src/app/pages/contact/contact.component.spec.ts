@@ -39,7 +39,8 @@ describe('ContactComponent', () => {
     // Those cards have always passed ?service=<id>, and nothing read it: choosing a service and
     // pressing "request a quote" arrived as a general enquiry, with the choice dropped.
     component.selectedService = SERVICES.find((service) => service.id === 'cnc') || null;
-    component.quote = { name: 'Ana', phone: '044 133 208', product: '', quantity: '', notes: '' };
+    component.quote.name = 'Ana';
+    component.quote.phone = '044 133 208';
 
     expect(component.serviceName).toBe('MISC.CNC_METAL_CUTTING');
     expect(decodeURIComponent(component.getQuoteLink()))
@@ -48,9 +49,45 @@ describe('ContactComponent', () => {
 
   it('says nothing about a service when none was chosen', () => {
     component.selectedService = null;
-    component.quote = { name: 'Ana', phone: '044', product: '', quantity: '', notes: '' };
+    component.quote.name = 'Ana';
+    component.quote.phone = '044';
 
     expect(decodeURIComponent(component.getQuoteLink())).not.toContain('QUOTE.SERVICE');
+  });
+
+  it('asks a service enquiry for the work, and carries it into the message', () => {
+    // A cutting or bending job cannot be priced without the thickness, the dimensions, the
+    // quantity and whether there is a drawing.
+    component.selectedService = SERVICES.find((service) => service.id === 'bending') || null;
+    component.quote.name = 'Ana';
+    component.quote.phone = '044';
+    component.quote.thickness = '3 mm';
+    component.quote.dimensions = '1200 x 600';
+    component.quote.quantity = '4';
+    component.quote.drawing = 'DXF';
+
+    const message = decodeURIComponent(component.getQuoteLink());
+    expect(message).toContain('QUOTE.THICKNESS: 3 mm');
+    expect(message).toContain('QUOTE.DIMENSIONS: 1200 x 600');
+    expect(message).toContain('QUOTE.QUANTITY: 4');
+    expect(message).toContain('QUOTE.DRAWING: DXF');
+  });
+
+  it('carries a delivery place and a date, and leaves them out when empty', () => {
+    component.quote.name = 'Ana';
+    component.quote.phone = '044';
+    component.quote.deliveryPlace = 'Prishtinë';
+    component.quote.requiredDate = '2026-11-02';
+
+    let message = decodeURIComponent(component.getQuoteLink());
+    expect(message).toContain('QUOTE.DELIVERY_PLACE: Prishtinë');
+    expect(message).toContain('QUOTE.REQUIRED_DATE: 2026-11-02');
+
+    component.quote.deliveryPlace = '';
+    component.quote.requiredDate = '';
+    message = decodeURIComponent(component.getQuoteLink());
+    expect(message).not.toContain('QUOTE.DELIVERY_PLACE');
+    expect(message).not.toContain('QUOTE.REQUIRED_DATE');
   });
 
 });

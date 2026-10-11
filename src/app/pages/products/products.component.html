@@ -887,11 +887,13 @@
             </div>
             <div class="card-body text-center">
               <h5 class="card-title">{{ product?.code }}</h5>
-              <p class="card-text">
-                {{
-                  product.description ||
-                    ("MISC.NO_DESCRIPTION_AVAILABLE." | translate)
-                }}
+              <p class="card-text" *ngIf="product.description">{{ product.description }}</p>
+              <!-- Where nothing is written about a product, the size line below is the useful
+                   answer and this stays out of its way. Where there is no size either, inviting
+                   the question beats printing "No description available". -->
+              <p class="card-text text-muted"
+                 *ngIf="!product.description && !product.dimensions?.length">
+                {{ 'PRODUCTS.ASK_FOR_DETAILS' | translate }}
               </p>
               <!-- The size on one line. The full list of dimensions lives in the dialog, where
                    somebody has already chosen the product and wants the detail. -->
@@ -1210,11 +1212,12 @@
                panel. The long "content" field belongs here too: the form offered it, the API stored
                it, and no page displayed it. Angular sanitises what is bound this way, so a script
                tag in the field cannot run. -->
-          <p class="product-description">
-            {{
-              selectedProduct?.description ||
-                ("MISC.NO_DESCRIPTION_AVAILABLE." | translate)
-            }}
+          <p class="product-description" *ngIf="selectedProduct?.description">
+            {{ selectedProduct?.description }}
+          </p>
+          <p class="product-description text-muted"
+             *ngIf="!selectedProduct?.description && !selectedProduct?.dimensions?.length">
+            {{ 'PRODUCTS.ASK_FOR_DETAILS' | translate }}
           </p>
           <div
             *ngIf="selectedProduct?.content"

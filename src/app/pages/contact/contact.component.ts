@@ -138,8 +138,26 @@ export class ContactComponent implements OnInit {
   readonly whatsappDisplay = environment.whatsappDisplay;
   readonly email = environment.contactEmail;
 
-  /** What the visitor types into the quote form. */
-  quote = { name: '', phone: '', product: '', quantity: '', notes: '' };
+  /**
+   * What the visitor types into the quote form.
+   *
+   * The service block appears only when a service was chosen: thickness, dimensions and whether
+   * there is a drawing are what a cutting or bending job cannot be priced without, and asking for
+   * them here saves a reply. Delivery location and the date are for everybody - one optional, the
+   * other what the customer is working towards.
+   */
+  quote = {
+    name: '',
+    phone: '',
+    product: '',
+    quantity: '',
+    notes: '',
+    thickness: '',
+    dimensions: '',
+    drawing: '',
+    deliveryPlace: '',
+    requiredDate: '',
+  };
 
   /**
    * The shop cannot answer without a name and a phone.
@@ -180,6 +198,30 @@ export class ContactComponent implements OnInit {
     }
     if (this.quote.notes.trim()) {
       lines.push(`${this.translate.instant('QUOTE.NOTES')}: ${this.quote.notes.trim()}`);
+    }
+    // The work itself, when a service was chosen. The quantity is above, with the rest of the
+    // reply's labels, so it is not repeated here.
+    if (this.selectedService) {
+      const details: [string, string][] = [
+        ['QUOTE.THICKNESS', this.quote.thickness],
+        ['QUOTE.DIMENSIONS', this.quote.dimensions],
+        ['QUOTE.DRAWING', this.quote.drawing],
+      ];
+      details.forEach(([key, value]) => {
+        if (value.trim()) {
+          lines.push(`${this.translate.instant(key)}: ${value.trim()}`);
+        }
+      });
+    }
+    if (this.quote.deliveryPlace.trim()) {
+      lines.push(
+        `${this.translate.instant('QUOTE.DELIVERY_PLACE')}: ${this.quote.deliveryPlace.trim()}`
+      );
+    }
+    if (this.quote.requiredDate.trim()) {
+      lines.push(
+        `${this.translate.instant('QUOTE.REQUIRED_DATE')}: ${this.quote.requiredDate.trim()}`
+      );
     }
     // What they added while browsing. This is the point of the request list: a tube, its bends, a
     // sheet - one enquiry instead of four messages.
