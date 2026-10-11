@@ -21,7 +21,7 @@ describe('AdminDashboardComponent', () => {
       priced_without_photo: 429,
       priced_without_size: 55,
     },
-    categories: { total: 70, off: 28, off_titles: ['Old stock'] },
+    categories: { total: 70, off: 28, off_categories: [{ id: 7, title: 'Old stock' }] },
   };
 
   beforeEach(async () => {
@@ -96,5 +96,32 @@ describe('AdminDashboardComponent', () => {
     expect(component.summary).not.toBeNull();
     expect(component.failed).toBeTrue();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('2368');
+  });
+
+  it('switches a category back on, and reads the figures again', () => {
+    // The list of off categories is the reason to have this page: finding the one you mean on the
+    // products page means opening groups until it turns up.
+    httpMock.expectOne(summaryUrl).flush(summary);
+    httpMock.expectOne(searchesUrl).flush({ empty: 0, total: 0, searches: [] });
+    fixture.detectChanges();
+
+    const button = (fixture.nativeElement as HTMLElement)
+      .querySelector('.switch-on') as HTMLButtonElement;
+    expect(button).toBeTruthy();
+    button.click();
+
+    const put = httpMock.expectOne(
+      (req) => req.url === `${environment.apiUrl}/category/without-products/7`
+    );
+    expect(put.request.method).toBe('PUT');
+    // The id goes in the path, not the body - a partial update is all this needs.
+    expect(put.request.body).toEqual({ is_active: true });
+    put.flush({ id: 7, title: 'Old stock', is_active: true });
+
+    // The summary is read again, so the list and the counts agree with what was just done.
+    httpMock.expectOne(summaryUrl).flush(summary);
+    fixture.detectChanges();
+
+    expect(component.switching).toBeNull();
   });
 });

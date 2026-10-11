@@ -229,7 +229,8 @@
     "NO_SEARCHES": "Ende nuk ka kërkime të regjistruara.",
     "DENIED": "Kjo faqe është e pronarit. Kyçu me llogarinë e administratorit.",
     "FAILED": "Raportet nuk u ngarkuan. Provoni përsëri.",
-    "LOGIN": "Kyçu"
+    "LOGIN": "Kyçu",
+    "SWITCH_ON": "Ndez"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

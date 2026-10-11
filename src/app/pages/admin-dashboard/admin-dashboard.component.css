@@ -54,6 +54,9 @@ h2 {
 }
 
 .off-list .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: #f1f5f9;
   border: 1px solid var(--line, #e5e7eb);
   color: #475569;
@@ -61,6 +64,23 @@ h2 {
   padding: 3px 10px;
   font-size: 12.5px;
   font-weight: 600;
+}
+
+/* Quiet, because it is a small correction rather than the point of the page. */
+.off-list .switch-on {
+  border: 0;
+  background: none;
+  color: var(--accent-dark, #b45309);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  padding: 0;
+  cursor: pointer;
+}
+
+.off-list .switch-on[disabled] {
+  opacity: .5;
+  cursor: default;
 }
 
 /* A term nobody found is the reason the page exists, so it is the one row that stands out. */

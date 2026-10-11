@@ -64,6 +64,15 @@
                   [attr.aria-label]="'MISC.LOGOUT' | translate" [title]="'MISC.LOGOUT' | translate">
             <i class="bi bi-box-arrow-right fs-4" aria-hidden="true"></i>
           </button>
+
+          <!-- The panel, which until now could only be reached by typing its address. Kept in the
+               DOM and toggled with [hidden], like the two controls beside it, so hydration only
+               updates an attribute. -->
+          <a id="nav-admin" class="icon-link" [routerLink]="['/admin-dashboard']"
+             [hidden]="!isLoggedIn" [attr.aria-label]="'ADMIN.PANEL_TITLE' | translate"
+             [title]="'ADMIN.PANEL_TITLE' | translate">
+            <i class="bi bi-speedometer2 fs-4" aria-hidden="true"></i>
+          </a>
         </div>
       </div>
     </header>

@@ -190,7 +190,8 @@
     "NO_SEARCHES": "No searches recorded yet.",
     "DENIED": "This page belongs to the owner. Sign in with the administrator account.",
     "FAILED": "The reports could not be loaded. Please try again.",
-    "LOGIN": "Sign in"
+    "LOGIN": "Sign in",
+    "SWITCH_ON": "Switch on"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

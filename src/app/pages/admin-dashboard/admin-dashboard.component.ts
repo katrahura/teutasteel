@@ -8,6 +8,7 @@ import {
   CatalogueSummary,
   SearchReport,
 } from '../../services/admin.service';
+import { ProductService } from '../../services/product.service';
 
 /**
  * The owner's dashboard.
@@ -29,6 +30,7 @@ import {
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
   private admin = inject(AdminService);
+  private products = inject(ProductService);
   private subscriptions = new Subscription();
 
   summary: CatalogueSummary | null = null;
@@ -37,6 +39,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   /** Signed in without the right, or not signed in at all. */
   denied = false;
   failed = false;
+  /** The category currently being switched back on, so its own button can wait. */
+  switching: number | null = null;
 
   ngOnInit(): void {
     this.loading = true;
@@ -70,6 +74,38 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  /**
+   * Switch a category back on, from the list of the ones that are off.
+   *
+   * The list is the reason to have this page: twenty-seven categories are off, and finding the one
+   * you mean on the products page means opening groups until it turns up. A partial update is all
+   * the API needs for this - editing catalogue content is a signed-in act, deleting is not - and
+   * the summary is read again afterwards so the figures and the list agree with what was done.
+   */
+  switchOn(category: { id: number; title: string }): void {
+    if (this.switching !== null) {
+      return;
+    }
+    this.switching = category.id;
+    this.subscriptions.add(
+      this.products.updateCategory({ id: category.id, is_active: true } as any).subscribe({
+        next: () => {
+          this.switching = null;
+          this.subscriptions.add(
+            this.admin.getSummary().subscribe({
+              next: (summary) => { this.summary = summary; },
+              error: (error) => this.noteRefusal(error),
+            })
+          );
+        },
+        error: (error) => {
+          this.switching = null;
+          this.noteRefusal(error);
+        },
+      })
+    );
   }
 
   private noteRefusal(error: any): void {

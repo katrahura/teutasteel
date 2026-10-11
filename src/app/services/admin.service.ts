@@ -32,7 +32,8 @@ export interface CatalogueSummary {
   categories: {
     total: number;
     off: number;
-    off_titles: string[];
+    /** The categories that are switched off, with the ids needed to switch one back on. */
+    off_categories: { id: number; title: string }[];
   };
 }
 
