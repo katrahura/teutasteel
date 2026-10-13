@@ -226,7 +226,8 @@
     "CODE": "Code",
     "GROUP": "Group",
     "CATEGORY": "Category",
-    "EDIT_CATEGORY": "Edit the category"
+    "EDIT_CATEGORY": "Edit the category",
+    "PRICED_WITHOUT_THICKNESS": "Priced, no thickness"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

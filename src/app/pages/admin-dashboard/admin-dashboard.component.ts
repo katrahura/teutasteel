@@ -296,6 +296,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     if (this.gap === 'no_size') {
       return 'ADMIN.PRICED_WITHOUT_SIZE';
     }
+    if (this.gap === 'no_thickness') {
+      return 'ADMIN.PRICED_WITHOUT_THICKNESS';
+    }
     if (this.gap === 'off_category') {
       return 'ADMIN.IN_OFF_CATEGORIES';
     }

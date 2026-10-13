@@ -265,7 +265,8 @@
     "CODE": "Kodi",
     "GROUP": "Grupi",
     "CATEGORY": "Kategoria",
-    "EDIT_CATEGORY": "Redakto kategorinë"
+    "EDIT_CATEGORY": "Redakto kategorinë",
+    "PRICED_WITHOUT_THICKNESS": "Me çmim, pa trashësi"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

@@ -194,7 +194,7 @@ describe('AdminDashboardComponent', () => {
     const figures = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll('button.stat')
     ) as HTMLButtonElement[];
-    expect(figures.length).toBe(4);
+    expect(figures.length).toBe(5);
 
     const photoFigure = figures.find((figure) =>
       (figure.textContent || '').includes('ADMIN.PRICED_WITHOUT_PHOTO')

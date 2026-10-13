@@ -48,6 +48,14 @@
           <span class="l">{{ 'ADMIN.PRICED_WITHOUT_SIZE' | translate }}</span>
           <span class="hint">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
         </button>
+        <!-- Priced and no thickness: the customer can see the price and not what they are buying.
+             The largest gap in the catalogue, and the one that stops somebody ordering. -->
+        <button type="button" class="stat warn" [class.active]="gap === 'no_thickness'"
+                (click)="openGap('no_thickness')">
+          <span class="n">{{ summary.products.priced_without_thickness }}</span>
+          <span class="l">{{ 'ADMIN.PRICED_WITHOUT_THICKNESS' | translate }}</span>
+          <span class="hint">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
+        </button>
         <!-- Nothing on the row at all: no size, no weight, no price. -->
         <button type="button" class="stat warn" [class.active]="gap === 'no_details'"
                 (click)="openGap('no_details')">

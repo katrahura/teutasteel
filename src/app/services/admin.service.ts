@@ -32,6 +32,8 @@ export interface CatalogueSummary {
     in_off_categories: number;
     priced_without_photo: number;
     priced_without_size: number;
+    /** Priced, and no thickness on any row: the price is visible and the product is not. */
+    priced_without_thickness: number;
     /** No dimension rows at all: no size, no weight, no price. Nothing a customer can read. */
     no_details: number;
   };
