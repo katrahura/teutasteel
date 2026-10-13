@@ -1161,6 +1161,7 @@
               <strong>{{ "PRODUCTS.WIDTH" | translate }}:</strong>
               {{ sharedDimensionValue("width") }}
             </div>
+
             <div *ngIf="sharedDimensionValue('length') !== null">
               <strong>{{ "PRODUCTS.LENGTH" | translate }}:</strong>
               {{ formatLength(sharedDimensionValue("length")) }}
@@ -1170,6 +1171,16 @@
               {{ formatWeight(sharedDimensionValue("weight")) }}
             </div>
           </div>
+
+          <!-- Said out loud rather than left as a blank line, and outside the block above: for most
+               of these products the shared-value block does not render at all, because their one
+               size is not shared - it is the only one - so a note inside it never appeared. 256
+               products carry a real price and no thickness, so a customer sees what it costs and
+               cannot tell what they are buying. The catalogue cannot be filled in from here; the
+               page can stop being silent about it. -->
+          <p class="missing-thickness" *ngIf="pricedWithoutThickness(selectedProduct)">
+            {{ "PRODUCTS.THICKNESS_NOT_RECORDED" | translate }}
+          </p>
 
           <ul
             *ngIf="

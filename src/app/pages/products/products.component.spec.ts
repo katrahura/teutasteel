@@ -343,6 +343,33 @@ describe('ProductsComponent', () => {
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeTruthy();
     expect(fixture.nativeElement.textContent).not.toContain('PRODUCTS.NO_RESULTS');
   });
+  it('lets a product with one size be added without ticking anything', () => {
+    // The dialog's add button is guarded by canAddTicked, and tickedDimensions hands back a single
+    // size whether or not it is ticked. The two disagreed, so the button did nothing at all for
+    // every product with one dimension - 730 of them, and any tube with a single wall.
+    component.selectedProduct = {
+      id: 1,
+      code: '08252',
+      dimensions: [{ id: 1, width: 1000, height: 2000, price: '25.00' }],
+    } as unknown as ProductsComponent['selectedProduct'];
+    component.chosenDimensions = {};
+    expect(component.canAddTicked()).toBeTrue();
+  });
+
+  it('still refuses a product whose ticked size has no quantity', () => {
+    component.selectedProduct = {
+      id: 1,
+      code: 'Llam',
+      dimensions: [
+        { id: 1, thickness: 1 },
+        { id: 2, thickness: 2 },
+      ],
+    } as unknown as ProductsComponent['selectedProduct'];
+    component.chosenDimensions = { 0: true };
+    component.quantities = { 0: 0 };
+    expect(component.canAddTicked()).toBeFalse();
+  });
+
   it('cancels a pending debounce when leaving the page', () => {
     httpMock.expectOne(groupsUrl).flush([]);
     const clock=jasmine.clock();clock.install();

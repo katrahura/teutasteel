@@ -293,8 +293,14 @@ toggleParent(parentId: number) {
 
   private quoteItem(product: Product, dimension: ProductDimension): QuoteItem {
     const price = Number(dimension.price);
+    // A product with a price and no thickness is the state of 730 of the 876 products that carry any
+    // size, and every one of them is priced. The line says so, so the enquiry that reaches the shop
+    // says which sizes still need confirming instead of leaving it to be guessed at from a blank.
+    const detail = this.describeDimension(dimension) + (this.pricedWithoutThickness(product)
+      ? ' · ' + this.translate.instant('PRODUCTS.THICKNESS_UNCONFIRMED')
+      : '');
     return { productId: product.id || 0, code: product.code,
-      variantKey: this.variantKey(dimension), detail: this.describeDimension(dimension),
+      variantKey: this.variantKey(dimension), detail,
       dimensions: { height: dimension.height, width: dimension.width, length: dimension.length, thickness: dimension.thickness, weight: dimension.weight },
       unitPrice: Number.isFinite(price) && price > 0 ? price : null,
       currency: dimension.currency || 'EUR', quantity: 0 };
@@ -385,6 +391,28 @@ toggleParent(parentId: number) {
   /** Called from the template when a photograph cannot be loaded. */
   markNoImage(product: Product | null | undefined): void {
     this.noImage.add(product?.id || 0);
+  }
+
+  /**
+   * True when a product carries a price and no thickness at all.
+   *
+   * 730 of the 876 products that carry any size are in this state, and where one of them also
+   * carries a price, a customer sees what it costs and cannot tell what they are buying: two
+   * decorative panels of different thicknesses look identical.
+   *
+   * I wrote here that every one of them is priced, and that was wrong - it came from a comparison
+   * that let the string "0.00" through as a price. The decorative products carry no price at all,
+   * which is why the note below does not appear on them. It appears where it should: on anything
+   * with a real price and no recorded thickness.
+   */
+  pricedWithoutThickness(product: Product | null | undefined): boolean {
+    const dimensions = product?.dimensions || [];
+    if (!dimensions.length) {
+      return false;
+    }
+    const priced = dimensions.some((dimension) => this.showsValue(dimension.price));
+    const thick = dimensions.some((dimension) => this.showsValue(dimension.thickness));
+    return priced && !thick;
   }
 
   /**
@@ -1587,8 +1615,19 @@ this.showProducts(this.selectedCategory)
     return typeof chosen === 'number' && chosen > 0 ? chosen : 1;
   }
 
-  /** True when every ticked thickness has a quantity of at least one. */
+  /**
+   * True when every ticked thickness has a quantity of at least one.
+   *
+   * A product with a single size has nothing to tick - tickedDimensions hands it back either way -
+   * so this has to agree with that and say yes. It did not, and the add button in the dialog
+   * therefore did nothing at all, silently, for every product with one dimension: the 730 that carry
+   * no thickness, and any tube with a single wall. The card did not have the problem, because it
+   * goes straight to addToQuote.
+   */
   canAddTicked(): boolean {
+    if ((this.selectedProduct?.dimensions || []).length <= 1) {
+      return true;
+    }
     const indexes = Object.keys(this.chosenDimensions).filter(
       (key) => this.chosenDimensions[Number(key)]
     );

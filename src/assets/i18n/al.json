@@ -192,7 +192,9 @@
     "FILTER_SIZE_TO": "deri",
     "FILTER_APPLY": "Filtro",
     "FILTER_CLEAR": "Pastro filtrat",
-    "FILTER_SHOWING": "Duke shfaqur"
+    "FILTER_SHOWING": "Duke shfaqur",
+    "THICKNESS_NOT_RECORDED": "Trashësia nuk është e shënuar në katalog për këtë produkt. Shkruajeni në kërkesë, që porosia të jetë e qartë.",
+    "THICKNESS_UNCONFIRMED": "trashësia e pakonfirmuar"
   },
   "MODAL": {
     "CLOSE": "Mbyll",
