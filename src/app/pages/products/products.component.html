@@ -961,6 +961,7 @@
                   [width]="getProductDimension(product, 'width')"
                   [height]="getProductDimension(product, 'height')"
                   [length]="getProductDimension(product, 'length')"
+                  [showCaption]="!shortSize(product, selectedCategory?.id)"
                 ></app-section-drawing>
                 <ng-template #plainProfile>
                   <span class="profile" [ngClass]="profileClass(product)" aria-hidden="true"></span>

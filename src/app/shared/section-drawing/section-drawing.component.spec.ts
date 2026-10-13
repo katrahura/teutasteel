@@ -39,6 +39,18 @@ describe('SectionDrawingComponent', () => {
       .toContain('IPE-80 · 80 × 46');
   });
 
+  it('leaves the numbers out when the card prints its own size line', () => {
+    // The card prints "10×10×1.3 · 6 m" a few lines below the drawing, so the caption said the same
+    // size again in another format. showCaption is what the card turns off for that; a drawing whose
+    // card has no size line keeps its numbers, and the label stays on the svg either way, so a screen
+    // reader still hears the section.
+    expect(build({ categoryId: 123, width: 10, height: 10, thickness: 1.3 }).textContent)
+      .toContain('10 × 10 × 1.3');
+    const without = build({ categoryId: 123, width: 10, height: 10, thickness: 1.3, showCaption: false });
+    expect(without.textContent).not.toContain('10 × 10 × 1.3');
+    expect(without.querySelector('svg')?.getAttribute('aria-label')).toContain('10 × 10 × 1.3');
+  });
+
   it('falls back to the product code when the category does not say', () => {
     // The codes are the shop's own convention, and the only thing that separates an I-beam from a
     // channel inside one category.

@@ -74,7 +74,7 @@ import { SectionShape, shapeFor } from '../section-shape';
                 fill="#e2e8f0" stroke="#94a3b8" stroke-dasharray="4 3" />
         </g>
       </svg>
-      <figcaption class="dims" *ngIf="label()">{{ label() }}</figcaption>
+      <figcaption class="dims" *ngIf="showCaption && label()">{{ label() }}</figcaption>
     </figure>
   `,
   styles: [
@@ -110,6 +110,17 @@ export class SectionDrawingComponent {
   @Input() height: number | string | null = null;
   /** Only sheets use it: a sheet is 1000 x 2000, and the 2000 lives in this field. */
   @Input() length: number | string | null = null;
+
+  /**
+   * Whether to print the numbers under the drawing.
+   *
+   * The card prints a size line of its own a few lines further down - with the length and the unit -
+   * and the two said the same thing twice, in two formats: "10 × 10 × 1.3" under the drawing and
+   * "10×10×1.3 · 6 m" below. A customer reading a card twice over learns nothing the second time.
+   * The card turns this off when it has a size line to show and leaves it on when it has not, so a
+   * drawing is never left standing without its numbers.
+   */
+  @Input() showCaption = true;
 
   /**
    * How much room the drawing takes. The card has a narrow strip and the dialog has half a modal,

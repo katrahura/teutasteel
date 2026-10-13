@@ -299,6 +299,35 @@ describe('ProductsComponent', () => {
     expect(component.selectedProduct?.id).toBe(7);
   });
 
+  it('prints the size once on a card, not twice', () => {
+    // The drawing captioned itself with the same numbers in another format, so a card read
+    // "10 × 10 × 1.3" under the drawing and "10×10×1.3 · 6 m" further down. A visual check found it;
+    // nothing that counted characters would have.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+
+    component.showProducts({ id: 1, title: 'Doors', is_active: true } as any);
+    httpMock.expectOne((req) => req.url.startsWith(`${environment.apiUrl}/category/1?`))
+      .flush({
+        id: 1,
+        title: 'Doors',
+        pagination: { page: 1, total_pages: 1 },
+        products: [{
+          id: 8,
+          code: '10x10 x 1.3mm',
+          is_active: true,
+          image_asset: null,
+          dimensions: [{ id: 1, width: 10, height: 10, length: 6, thickness: 1.3, price: '3.80', currency: 'EUR' }],
+        }],
+      });
+    fixture.detectChanges();
+
+    const card = fixture.nativeElement.querySelector('.card') as HTMLElement;
+    const text = (card?.textContent || '').replace(/\s+/g, ' ');
+    // The spaced caption is what the drawing used to add; the size line below it stays.
+    expect(text).not.toContain('10 × 10 × 1.3');
+    expect(text).toContain('10×10×1.3 · 6 m');
+  });
+
   it('offers the size, not a sentence about a missing description', () => {
     // "No description available" is a dead end. Where the product carries dimensions the size line
     // says something useful, and where it carries nothing at all the card invites the question.

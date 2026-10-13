@@ -118,12 +118,15 @@ footer.site-footer .staff [hidden] { display: none; }
   nav.links {
     order: 3;
     width: 100%;
-    /* Without this the five nowrap links set the page's minimum width and the layout viewport grew to
-       444px on a 390px phone, which is a scrollbar on every page. min-width: 0 lets the row shrink
-       and scroll its own contents instead. */
+    /* The five links wrap onto a second row rather than scrolling sideways. They used to scroll,
+       which kept the page's own width in check - the nowrap links had once set the layout viewport
+       to 444px on a 390px phone - but it cut the last link in half, and the last link is Kontaktoni:
+       the way to ask for a price. Wrapping keeps every link whole and still lets the row shrink, so
+       the page stays its proper width without hiding anything. Measured before this: the last link
+       ended at 428px on a 390px screen, 38px past the edge. */
     min-width: 0;
-    overflow-x: auto;
-    gap: 16px;
+    flex-wrap: wrap;
+    gap: 10px 16px;
     padding-bottom: 2px;
   }
   nav.links a { white-space: nowrap; }
