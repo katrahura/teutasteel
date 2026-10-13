@@ -9,12 +9,14 @@ import { SharedService } from '../../shared.service';
 import { translateCategoryTitle } from '../../shared/translate-category-title';
 import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
 import { SERVICES } from '../../shared/services';
+import { shapeFor } from '../../shared/section-shape';
+import { SectionDrawingComponent } from '../../shared/section-drawing/section-drawing.component';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterModule, CommonModule, TranslateModule, ImageFallbackDirective],
+  imports: [RouterModule, CommonModule, TranslateModule, ImageFallbackDirective, SectionDrawingComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -116,11 +118,40 @@ export class HomeComponent implements OnDestroy {
    * four cards, and most of the homepage's second of waiting. The API makes the same choice now,
    * where the data already is, so the section costs one call.
    */
+  /**
+   * One value from a product's first dimension, in the shape the drawing wants.
+   *
+   * The drawing reads width, height, thickness and length from the product's own numbers, the way the
+   * products page hands them over.
+   */
+  dimensionOf(product: Product, field: 'width' | 'height' | 'thickness' | 'length'): number | string | null {
+    const first = (product?.dimensions || [])[0] as Record<string, unknown> | undefined;
+    const value = first ? first[field] : null;
+    return (value === undefined ? null : value) as number | string | null;
+  }
+
+  /**
+   * Whether this product's section can be drawn at all.
+   *
+   * Where it cannot, the card shows a restrained mark rather than an empty box: a section that is not
+   * known is honest, and a box with a cross in it reads as a picture that failed to load.
+   */
+  hasShape(product: Product): boolean {
+    const shape = shapeFor(
+      product?.category_id,
+      product?.code,
+      this.dimensionOf(product, 'width') as number,
+      this.dimensionOf(product, 'height') as number,
+      this.dimensionOf(product, 'thickness') as number
+    );
+    return shape !== 'plain';
+  }
+
   private loadFeatured(): void {
     const language = this.translate.currentLang || 'al';
     const sub = this.productService.getFeatured(language).subscribe({
       next: (response) => {
-        this.featured = ((response && response.products) || []).slice(0, 4);
+        this.featured = this.bestFour((response && response.products) || []);
       },
       error: () => {
         // A failure here leaves the section out rather than breaking the page.
@@ -128,6 +159,39 @@ export class HomeComponent implements OnDestroy {
       },
     });
     this.subscriptions.add(sub);
+  }
+
+  /**
+   * The four to show, best first.
+   *
+   * A photograph beats everything on this catalogue, so those come first. After them come the
+   * products whose section can actually be drawn from the code and the dimensions - the drawing is
+   * the whole reason a product without a picture is still worth showing. Last are the ones whose
+   * section is unknown: their card is a small dashed square that, at this size, reads as a
+   * photograph that failed to load, which is the wrong first impression for a shop's front page.
+   *
+   * The API sends twelve candidates for exactly this choosing; the shape map lives here, so the
+   * choice is made here. Equal ranks keep the API's order, which is fixed, so the row does not
+   * shuffle between visits.
+   */
+  private bestFour(products: Product[]): Product[] {
+    const rank = (product: Product): number => {
+      if (product?.image_asset?.thumbnail_path) {
+        return 0;
+      }
+      const first = (product?.dimensions || [])[0] as
+        | { width?: number | null; height?: number | null; thickness?: number | null }
+        | undefined;
+      const shape = shapeFor(
+        product?.category_id, product?.code, first?.width, first?.height, first?.thickness
+      );
+      return shape === 'plain' ? 2 : 1;
+    };
+    return (products || [])
+      .map((product, index) => ({ product, index, rank: rank(product) }))
+      .sort((a, b) => a.rank - b.rank || a.index - b.index)
+      .slice(0, 4)
+      .map((entry) => entry.product);
   }
 
   /**

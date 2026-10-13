@@ -101,4 +101,69 @@ describe('HomeComponent', () => {
     expect(component.featured.length).toBe(1);
     expect(component.featured[0].code).toBe('PRICED-1');
   });
+
+  it('puts a photograph, then a section it can draw, before a section it cannot', () => {
+    // The API sends candidates with photographed ones first, but almost no priced product has a
+    // photograph, so the first four can all be products whose card falls back to an unknown-section
+    // placeholder - a small dashed square that reads as a photograph that failed to load. The shape
+    // map lives in this application, so the order is decided here.
+    httpMock.expectOne((req) => req.url === categoriesUrl).flush(categories);
+    httpMock
+      .expectOne((req) => req.url.startsWith(`${environment.apiUrl}/category/featured`))
+      .flush({
+        products: [
+          // Deliberately worst first, which is the order this is here to change.
+          { id: 1, code: 'MYSTERY-1', category_id: 999, image_asset: null, dimensions: [], translations: [] },
+          {
+            id: 2,
+            code: 'TUBE-20x20x1.5',
+            category_id: 123,
+            image_asset: null,
+            translations: [],
+            dimensions: [{ id: 3, width: 20, height: 20, thickness: 1.5, price: 5, currency: 'EUR' }],
+          },
+          {
+            id: 3,
+            code: 'PHOTO-1',
+            category_id: 2,
+            translations: [],
+            dimensions: [],
+            image_asset: { file_name: 'p.jpg', thumbnail_path: 'thumb.jpg', original_path: 'orig.jpg' },
+          },
+        ],
+      });
+    fixture.detectChanges();
+
+    expect(component.featured.map((product) => product.code))
+      .toEqual(['PHOTO-1', 'TUBE-20x20x1.5', 'MYSTERY-1']);
+  });
+
+  it('draws the section on a featured card rather than a mark that reads as a broken picture', () => {
+    // The card showed a box-with-a-cross character whenever there was no photograph. At that size it
+    // is what a photograph that failed to load looks like, and it was the first thing on the front
+    // page. It draws the section now, and keeps the character only where there is nothing to draw.
+    httpMock.expectOne((req) => req.url === categoriesUrl).flush(categories);
+    httpMock
+      .expectOne((req) => req.url.startsWith(`${environment.apiUrl}/category/featured`))
+      .flush({
+        products: [
+          {
+            id: 2,
+            code: 'TUBE-20x20',
+            category_id: 123,
+            image_asset: null,
+            translations: [],
+            dimensions: [{ id: 3, width: 20, height: 20, thickness: 1.5, price: 5, currency: 'EUR' }],
+          },
+          { id: 1, code: 'MYSTERY-1', category_id: 999, image_asset: null, dimensions: [], translations: [] },
+        ],
+      });
+    fixture.detectChanges();
+
+    const cards = (fixture.nativeElement as HTMLElement).querySelectorAll('.pcard');
+    expect(cards[0].querySelector('app-section-drawing')).toBeTruthy();
+    expect(cards[0].querySelector('.pcard-none')).toBeFalsy();
+    expect(cards[1].querySelector('app-section-drawing')).toBeFalsy();
+    expect(cards[1].querySelector('.pcard-none')).toBeTruthy();
+  });
 });

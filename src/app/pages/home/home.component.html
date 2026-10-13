@@ -145,12 +145,26 @@
         <a class="pcard" *ngFor="let product of featured"
            [routerLink]="['/products']" [queryParams]="{ q: product.code }">
           <span class="pcard-photo">
+            <!-- A photograph where there is one, and the section drawn from the product's own numbers
+                 where there is not - the same choice the products page makes, and the one the review
+                 asked for. This used to be a single character, a box with a cross through it, which
+                 at this size reads as a photograph that failed to load. The character stays for the
+                 products whose section is unknown: there is nothing to draw for those. -->
             <img *ngIf="product.image_asset?.original_path"
                  [src]="product.image_asset?.original_path"
                  [alt]="product.image_asset?.alternative_text || product.code"
                  appImageFallback="assets/images/placeholder_category.jpg"
                  loading="lazy">
-            <span class="pcard-none" *ngIf="!product.image_asset?.original_path"
+            <app-section-drawing
+              *ngIf="!product.image_asset?.original_path && hasShape(product)"
+              [categoryId]="product.category_id || null"
+              [code]="product.code"
+              [thickness]="dimensionOf(product, 'thickness')"
+              [width]="dimensionOf(product, 'width')"
+              [height]="dimensionOf(product, 'height')"
+              [length]="dimensionOf(product, 'length')"
+            ></app-section-drawing>
+            <span class="pcard-none" *ngIf="!product.image_asset?.original_path && !hasShape(product)"
                   aria-hidden="true">&#9638;</span>
           </span>
           <span class="pcard-body">
