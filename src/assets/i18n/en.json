@@ -155,7 +155,8 @@
     "FILTER_CLEAR": "Clear filters",
     "FILTER_SHOWING": "Showing",
     "THICKNESS_NOT_RECORDED": "The thickness is not recorded in the catalogue for this product. Write it in your enquiry so the order is clear.",
-    "THICKNESS_UNCONFIRMED": "thickness unconfirmed"
+    "THICKNESS_UNCONFIRMED": "thickness unconfirmed",
+    "ADD_NEEDS_A_CHOICE": "Choose a thickness and a quantity, then add it to the request."
   },
   "MODAL": {
     "CLOSE": "Close",

@@ -85,6 +85,14 @@ h1.text-center, h2.text-center {
   border-bottom: 11px solid #cbd5e1;
 }
 
+/* Why the add button is dim, said in words. A greyed button with no reason is the same silence the
+   button itself was guilty of. */
+.add-hint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
 /* A fact the catalogue cannot supply, said rather than left as a blank line. Not an error message:
    it is what the catalogue holds, and somebody about to ask for a price should know it. */
 .missing-thickness {

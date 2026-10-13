@@ -194,7 +194,8 @@
     "FILTER_CLEAR": "Pastro filtrat",
     "FILTER_SHOWING": "Duke shfaqur",
     "THICKNESS_NOT_RECORDED": "Trashësia nuk është e shënuar në katalog për këtë produkt. Shkruajeni në kërkesë, që porosia të jetë e qartë.",
-    "THICKNESS_UNCONFIRMED": "trashësia e pakonfirmuar"
+    "THICKNESS_UNCONFIRMED": "trashësia e pakonfirmuar",
+    "ADD_NEEDS_A_CHOICE": "Zgjidh trashësinë dhe sasinë, pastaj e shton në kërkesë."
   },
   "MODAL": {
     "CLOSE": "Mbyll",

@@ -1294,12 +1294,20 @@
             type="button"
             class="btn btn-add-to-request mt-2 me-2"
             [class.disabled]="!canContact() || !canAddTicked()"
+            [disabled]="!canContact() || !canAddTicked()"
             [attr.aria-disabled]="!canContact() || !canAddTicked()"
             (click)="canContact() && canAddTicked() && addToQuote(selectedProduct, tickedDimensions(selectedProduct))"
           >
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
             {{ "PRODUCTS.ADD_TO_REQUEST" | translate }}
           </button>
+          <!-- Greyed and inert is not the same as explained. Somebody who ticks nothing gets a
+               button that looks dim and does nothing when pressed, with no word about what is
+               wanted - which is how the same button came to be silently dead for 730 products
+               before it was fixed. -->
+          <p class="add-hint" *ngIf="!canAddTicked()">
+            {{ "PRODUCTS.ADD_NEEDS_A_CHOICE" | translate }}
+          </p>
 
           <a
             [href]="getWhatsAppLink(selectedProduct)"
