@@ -82,7 +82,11 @@
       "INNOVATION": "Përpunim sipas vizatimit tuaj: prerje CNC, gijotinë, lakim dhe përpunim kompleks.",
       "DELIVERY": "Dorëzim i besueshëm: afati konfirmohet në ofertën tuaj, që ta dini përpara se të porositni."
     },
-    "CONTACT_BUTTON": "Na Kontaktoni"
+    "CONTACT_BUTTON": "Na Kontaktoni",
+    "PHOTOS_TITLE": "Punëtoria dhe ekipi",
+    "PHOTOS_LEAD": "Dy fotografi që mungojnë. Vendet janë lënë bosh me qëllim, që të shihet sa hapësirë zënë.",
+    "PHOTO_WORKSHOP": "Punëtoria",
+    "PHOTO_TEAM": "Ekipi në punë"
   },
   "HOME": {
     "HERO_TITLE": "Çeliku që ju duhet, i prerë sipas masës.",
@@ -400,7 +404,8 @@
     "INTRO": "Presim, lakim dhe dekorojmë metal sipas vizatimit tuaj.",
     "ASK": "Kërko ofertë",
     "DRAWING_TITLE": "Dërgoni vizatimin",
-    "DRAWING_TEXT": "Nëse keni vizatim, DXF ose foto, shtypni bashkangjit në WhatsApp dhe dërgoni atë. DXF-i është më i saktë sesa fotografia, sepse shkon drejt në makinë."
+    "DRAWING_TEXT": "Nëse keni vizatim, DXF ose foto, shtypni bashkangjit në WhatsApp dhe dërgoni atë. DXF-i është më i saktë sesa fotografia, sepse shkon drejt në makinë.",
+    "PHOTO_SLOT": "Fotografia e shërbimit"
   },
   "SHELL": {
     "HOURS": "Hën–Sht 08:00–17:00",

@@ -43,7 +43,11 @@
       "INNOVATION": "Working to your drawing: CNC cutting, shearing, bending and complex fabrication.",
       "DELIVERY": "Reliable Delivery: the lead time is confirmed in your quote, so you know it before you order."
     },
-    "CONTACT_BUTTON": "Contact Us"
+    "CONTACT_BUTTON": "Contact Us",
+    "PHOTOS_TITLE": "The workshop and the team",
+    "PHOTOS_LEAD": "Two photographs still to be taken. The places are left empty on purpose, so the room they take can be seen.",
+    "PHOTO_WORKSHOP": "The workshop",
+    "PHOTO_TEAM": "The team at work"
   },
   "HOME": {
     "HERO_TITLE": "The steel you need, cut to size.",
@@ -361,7 +365,8 @@
     "INTRO": "We cut, bend and decorate metal to your drawing.",
     "ASK": "Request a quote",
     "DRAWING_TITLE": "Send your drawing",
-    "DRAWING_TEXT": "If you have a drawing, a DXF or a photograph, tap attach in WhatsApp and send it. The DXF is more accurate than a photograph, because it goes straight to the machine."
+    "DRAWING_TEXT": "If you have a drawing, a DXF or a photograph, tap attach in WhatsApp and send it. The DXF is more accurate than a photograph, because it goes straight to the machine.",
+    "PHOTO_SLOT": "Photograph of this service"
   },
   "SHELL": {
     "HOURS": "Mon–Sat 08:00–17:00",

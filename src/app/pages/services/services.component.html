@@ -18,6 +18,15 @@
             loading="lazy"
             style="height: 210px; object-fit: cover"
           />
+          <!-- No photograph of this one exists yet. A slot in the same place and shape shows where
+               it will sit, which is more useful than a blank strip and more honest than a picture of
+               a different machine. -->
+          <app-photo-slot
+            *ngIf="!service.image && showPlaceholders"
+            labelKey="SERVICES.PHOTO_SLOT"
+            size="1200 × 675 px · 16:9"
+            ratio="16 / 9"
+          ></app-photo-slot>
           <div class="card-body d-flex flex-column">
             <h5 class="card-title">{{ service.titleKey | translate }}</h5>
             <p class="card-text flex-grow-1">{{ service.textKey | translate }}</p>
