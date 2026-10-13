@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
+import { SectionShape, shapeFor } from '../section-shape';
+
 /**
  * The cross-section of a product, drawn from the dimensions in the catalogue.
  *
@@ -10,10 +12,8 @@ import { Component, Input } from '@angular/core';
  * is made from them rather than invented: the shape is drawn to their proportions, so an 18 x 18
  * angle and an 80 x 46 beam do not come out the same size.
  *
- * Which shape it is comes from the category, and where that is not enough, from the product code -
- * which is the shop's own convention: a code starting with the diameter sign is a round tube, "L-"
- * is an angle, "IPE" is a beam, "Llam" is a sheet. The dimensions cannot be trusted with this: a
- * square tube and an angle both read 18 x 18.
+ * Which shape it is comes from `shared/section-shape.ts`, which the card's size line uses too: the
+ * two must not disagree about what a product is.
  *
  * The numbers are printed without a unit. The catalogue does not always agree with itself on one -
  * sheets are entered in millimetres, some sheet sizes in metres - and "2 mm" printed under a
@@ -23,33 +23,6 @@ import { Component, Input } from '@angular/core';
  * The values arrive as they are stored, which is a number for a size and a string for a price, so
  * everything is read through one place that turns them into numbers or null.
  */
-type Shape =
-  | 'round-hollow'
-  | 'rect-hollow'
-  | 'solid-round'
-  | 'solid-square'
-  | 'sheet'
-  | 'angle'
-  | 'ibeam'
-  | 'channel'
-  | 'bend'
-  | 'plain';
-
-/** Category id to shape. These are the ids in the catalogue, read from it rather than assumed. */
-const BY_CATEGORY: Record<number, Shape> = {
-  122: 'round-hollow', // Round tubes
-  123: 'rect-hollow', // Square & rectangular tubes
-  125: 'bend', // Bends (Kthesa)
-  130: 'sheet', // Aluminium and special sheet
-  131: 'solid-square', // Flat bars (SHP)
-  132: 'sheet', // Galvanised sheet
-  133: 'solid-round', // Solid round and square bar
-  134: 'sheet', // Steel sheets (black, galvanised, ribbed)
-  135: 'angle', // Angles (L-Profil)
-  136: 'ibeam', // I-beams and channels
-  137: 'plain', // Spacers, nuts and T/D profiles
-};
-
 @Component({
   selector: 'app-section-drawing',
   standalone: true,
@@ -171,50 +144,14 @@ export class SectionDrawingComponent {
     return this.num(this.thickness);
   }
 
-  get shape(): Shape {
-    const byCategory = this.categoryId ? BY_CATEGORY[this.categoryId] : undefined;
-    if (byCategory) {
-      // An I-beam category also holds channels, and the code is the only thing that tells them
-      // apart: UNP is a channel, everything else in that category is an I or an H.
-      if (byCategory === 'ibeam' && /^unp/i.test((this.code || '').trim())) {
-        return 'channel';
-      }
-      return byCategory;
-    }
-    return this.fromCode();
-  }
-
-  /** When the category is unknown or missing, the shop's own code convention still says a lot. */
-  private fromCode(): Shape {
-    const code = (this.code || '').trim().toLowerCase();
-    if (!code) {
-      return 'plain';
-    }
-    if (code.startsWith('ø') || code.startsWith('o ') || code.includes(' fi ')) {
-      return 'round-hollow';
-    }
-    if (code.startsWith('l-') || code.startsWith('l ')) {
-      return 'angle';
-    }
-    if (/^(ipe|hea|heb|inp|hla|hlb)/.test(code)) {
-      return 'ibeam';
-    }
-    if (code.startsWith('unp')) {
-      return 'channel';
-    }
-    if (/(llam|zn|briz|flet|tabak|panel)/.test(code)) {
-      return 'sheet';
-    }
-    if (!code.startsWith('shp') && code.includes('ø')) {
-      return 'round-hollow';
-    }
-    // Two sizes close together and a third much smaller: a hollow section.
-    const w = this.widthValue ?? 0;
-    const h = this.heightValue ?? 0;
-    if (w > 0 && h > 0 && Math.abs(w - h) / Math.max(w, h) < 0.25 && this.thicknessValue) {
-      return 'rect-hollow';
-    }
-    return 'plain';
+  get shape(): SectionShape {
+    return shapeFor(
+      this.categoryId,
+      this.code,
+      this.widthValue,
+      this.heightValue,
+      this.thicknessValue
+    );
   }
 
   /** The drawn width and height, keeping the catalogue's proportions. */

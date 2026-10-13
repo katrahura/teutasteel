@@ -964,7 +964,7 @@
               </p>
               <!-- The size on one line. The full list of dimensions lives in the dialog, where
                    somebody has already chosen the product and wants the detail. -->
-              <p class="card-text size-line" *ngIf="shortSize(product)">{{ shortSize(product) }}</p>
+              <p class="card-text size-line" *ngIf="shortSize(product, selectedCategory?.id)">{{ shortSize(product, selectedCategory?.id) }}</p>
               <p
                 class="card-text"
                 *ngIf="

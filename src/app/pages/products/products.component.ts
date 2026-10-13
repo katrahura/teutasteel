@@ -10,6 +10,7 @@ import { ProductService } from '../../services/product.service';
 import { translateCategoryTitle } from '../../shared/translate-category-title';
 import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
 import { SectionDrawingComponent } from '../../shared/section-drawing/section-drawing.component';
+import { isSheet, shapeFor } from '../../shared/section-shape';
 import { environment } from '../../../environments/environment';
 import {
   Category,
@@ -399,11 +400,30 @@ toggleParent(parentId: number) {
    * question and the catalogue is consistent about it - 6000 is six metres - so it is said, and a
    * customer comparing tubes is choosing a length as much as a section.
    */
-  shortSize(product: Product | null | undefined): string {
+  shortSize(product: Product | null | undefined, categoryId?: number | null): string {
     const dimension = (product?.dimensions || [])[0];
     if (!dimension) {
       return '';
     }
+    const asNumber = (value: any) => (this.showsValue(value) ? Number(value) : null);
+    const shape = shapeFor(
+      categoryId,
+      product?.code,
+      asNumber(dimension.width),
+      asNumber(dimension.height),
+      asNumber(dimension.thickness)
+    );
+
+    // A sheet is sold by its flat size and its thickness - 1000 x 2000 x 0.5, the way a steel table
+    // writes it. Reading it as "1000 x 0.5 - 2 m" left the thickness where the width belongs, and
+    // the length in metres alongside two numbers in millimetres.
+    if (isSheet(shape)) {
+      return [dimension.width, dimension.length ?? dimension.height, dimension.thickness]
+        .filter((value) => this.showsValue(value))
+        .map((value) => String(Number(value)))
+        .join(' × ');
+    }
+
     const values = [dimension.height, dimension.width, dimension.thickness]
       .filter((value) => this.showsValue(value))
       .map((value) => String(Number(value)));

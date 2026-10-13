@@ -389,11 +389,29 @@ describe('ProductsComponent shortSize', () => {
   it('claims no unit after the section, because the catalogue does not agree on one', () => {
     // The aluminium sheet is stored as 2 x 1 in metres. Printing "mm" after it said the sheet was
     // two millimetres wide, which is a thousand times out, on a card where somebody is buying.
+    // The code says it is a sheet, so it reads width first, the way a sheet is quoted.
     const size = component.shortSize(
       product([{ height: 1, width: 2, thickness: 1.2, length: null }], 'Briz 1.2 1x2')
     );
-    expect(size).toBe('1×2×1.2');
+    expect(size).toBe('2 × 1 × 1.2');
     expect(size).not.toContain('mm');
+  });
+
+  it('reads a sheet by its flat size and thickness, the way a steel table does', () => {
+    // 134 is Steel sheets: the catalogue holds width 1000, length 2000 and thickness 0.5 for this
+    // one. It used to read "1000x0.5 - 2 m", which put the thickness where the width goes.
+    expect(
+      component.shortSize(
+        product([{ width: 1000, height: null, length: 2000, thickness: 0.5 }], 'Llam Zez 1000x2000'),
+        134
+      )
+    ).toBe('1000 × 2000 × 0.5');
+  });
+
+  it('keeps section-then-length for a tube, whichever way the category is known', () => {
+    const tube = product([{ height: 10, width: 10, thickness: 1.3, length: 6000 }], '10x10 x 1.3mm');
+    expect(component.shortSize(tube, 123)).toBe('10×10×1.3 · 6 m');
+    expect(component.shortSize(tube)).toBe('10×10×1.3 · 6 m');
   });
 
   it('gives a length even when there is no section to give', () => {
