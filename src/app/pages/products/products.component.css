@@ -85,6 +85,14 @@ h1.text-center, h2.text-center {
   border-bottom: 11px solid #cbd5e1;
 }
 
+/* The two size boxes belong to one filter and are narrow enough to sit side by side, so the pair
+   wraps as a unit rather than each box finding its own line. At the default width a Bootstrap input
+   takes about twenty characters and the four pieces of this filter spent four lines on a phone. */
+.size-input {
+  width: 5.5rem;
+  flex: 0 0 auto;
+}
+
 /* The picture and the title open the detail view, so they have to look like something to press.
    The cursor change was missing and the picture read as decoration. */
 .image-container {

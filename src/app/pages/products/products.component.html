@@ -877,23 +877,35 @@
           </ng-container>
 
           <ng-container *ngIf="facets.height_max">
-            <label class="form-label visually-hidden" for="filterMinHeight">
-              {{ "PRODUCTS.FILTER_SIZE_FROM" | translate }}
-            </label>
-            <span class="small text-muted">{{ "PRODUCTS.FILTER_SIZE_FROM" | translate }}</span>
-            <input id="filterMinHeight" class="form-control form-control-sm w-auto" type="number"
-                   [(ngModel)]="filterMinHeight" [ngModelOptions]="{ standalone: true }"
-                   (change)="applyFilters()" />
-            <span class="small text-muted">
-              {{ "PRODUCTS.FILTER_SIZE_TO" | translate }} {{ facets.height_max }} mm
-            </span>
-            <label class="form-label visually-hidden" for="filterMaxHeight">
-              {{ "PRODUCTS.FILTER_SIZE_TO" | translate }}
-            </label>
-            <input id="filterMaxHeight" class="form-control form-control-sm w-auto" type="number"
-                   [attr.placeholder]="facets.height_max"
-                   [(ngModel)]="filterMaxHeight" [ngModelOptions]="{ standalone: true }"
-                   (change)="applyFilters()" />
+            <!-- One filter, one group. As a run of inline items these four wrapped into four lines on
+                 a phone, with "deri 200 mm" sitting between the two boxes and the second box then
+                 landing on a line of its own, its placeholder reading like a value already applied.
+                 The two boxes are a pair now, narrow enough to sit together, and the catalogue's
+                 range is said once, in the label. -->
+            <div class="size-filter d-flex flex-wrap align-items-center gap-2">
+              <span class="small text-muted">
+                {{ "PRODUCTS.FILTER_SIZE_FROM" | translate }} ({{ "PRODUCTS.FILTER_SIZE_TO" | translate }} {{ facets.height_max }} mm)
+              </span>
+              <!-- The two boxes and the word between them are one unit, so they wrap together. Left to
+                   wrap on their own, the label, the first box and "deri" took the first line and the
+                   second box sat alone on the next. -->
+              <span class="d-flex align-items-center gap-2">
+                <label class="form-label visually-hidden" for="filterMinHeight">
+                  {{ "PRODUCTS.FILTER_SIZE_FROM" | translate }}
+                </label>
+                <input id="filterMinHeight" class="form-control form-control-sm size-input" type="number"
+                       placeholder="0"
+                       [(ngModel)]="filterMinHeight" [ngModelOptions]="{ standalone: true }"
+                       (change)="applyFilters()" />
+                <span class="small text-muted">{{ "PRODUCTS.FILTER_SIZE_TO" | translate }}</span>
+                <label class="form-label visually-hidden" for="filterMaxHeight">
+                  {{ "PRODUCTS.FILTER_SIZE_TO" | translate }}
+                </label>
+                <input id="filterMaxHeight" class="form-control form-control-sm size-input" type="number"
+                       [(ngModel)]="filterMaxHeight" [ngModelOptions]="{ standalone: true }"
+                       (change)="applyFilters()" />
+              </span>
+            </div>
           </ng-container>
 
           <button type="button" class="btn btn-sm btn-outline-secondary"

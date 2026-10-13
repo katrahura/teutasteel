@@ -5,15 +5,20 @@
     <p class="lead">{{ 'CONTACT.REACH_US' | translate }}</p>
 
     <div class="mb-4">
-      <p><strong>{{ 'CONTACT.PHONE' | translate }}:</strong> <a [href]="'tel:' + phone">{{ phoneDisplay }}</a></p>
+      <!-- The space after each colon is written as &nbsp; inside the label, not left as whitespace in
+           the template. Angular drops whitespace-only text nodes between two elements, so
+           "Telefoni: <a>" was rendering as "Telefoni:+383 44 133 208" - and the address below, whose
+           value is text rather than an element, was the only line that looked right, which is what
+           gave the cause away. The note about drawings is on its own line for the same reason: it was
+           running into the email address, "info@teutasteel.comPër vizatime dhe DXF". -->
+      <p><strong>{{ 'CONTACT.PHONE' | translate }}:&nbsp;</strong><a [href]="'tel:' + phone">{{ phoneDisplay }}</a></p>
       <!-- Both of these were labelled "Telefoni", and this one's link was built from the
            digits-only WhatsApp value, so it had no + and would not dial internationally. -->
-      <p><strong>{{ 'CONTACT.WHATSAPP' | translate }}:</strong> <a [href]="'tel:+' + whatsappNumber">{{ whatsappDisplay }}</a></p>
-      <p><strong>{{ 'CONTACT.EMAIL' | translate }}:</strong> <a [href]="'mailto:' + email">{{ email }}</a>
-        <span class="text-muted small">{{ 'CONTACT.EMAIL_FOR_DRAWINGS' | translate }}</span></p>
+      <p><strong>{{ 'CONTACT.WHATSAPP' | translate }}:&nbsp;</strong><a [href]="'tel:+' + whatsappNumber">{{ whatsappDisplay }}</a></p>
+      <p><strong>{{ 'CONTACT.EMAIL' | translate }}:&nbsp;</strong><a [href]="'mailto:' + email">{{ email }}</a>
+        <span class="text-muted small d-block">{{ 'CONTACT.EMAIL_FOR_DRAWINGS' | translate }}</span></p>
       <p>
-        <strong>{{ 'CONTACT.ADDRESS' | translate }}:</strong>
-        {{ location.street }} {{ location.number }}, {{ location.city }}
+        <strong>{{ 'CONTACT.ADDRESS' | translate }}:&nbsp;</strong>{{ location.street }} {{ location.number }}, {{ location.city }}
       </p>
     </div>
 
