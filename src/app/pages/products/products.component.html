@@ -935,7 +935,21 @@
                 (error)="markNoImage(product)"
               />
               <div *ngIf="!hasPhoto(product)" class="section-chip">
-                <span class="profile" [ngClass]="profileClass(product)" aria-hidden="true"></span>
+                <!-- The section the catalogue describes, drawn from its own numbers. Forty tubes look
+                     the same in a photograph; the section is what tells them apart, which is what the
+                     review asked for. The plain silhouette stays for the products that carry no
+                     dimensions at all - there is nothing to draw. -->
+                <app-section-drawing
+                  *ngIf="product.dimensions?.length; else plainProfile"
+                  [categoryId]="selectedCategory?.id || null"
+                  [code]="product.code"
+                  [thickness]="getProductDimension(product, 'thickness')"
+                  [width]="getProductDimension(product, 'width')"
+                  [height]="getProductDimension(product, 'height')"
+                ></app-section-drawing>
+                <ng-template #plainProfile>
+                  <span class="profile" [ngClass]="profileClass(product)" aria-hidden="true"></span>
+                </ng-template>
               </div>
             </div>
             <div class="card-body text-center">
@@ -1117,11 +1131,15 @@
                 (isRound(selectedProduct) ? "PRODUCTS.DIAMETER" : "PRODUCTS.HEIGHT")
                   | translate
               }}:</strong>
-              {{ sharedDimensionValue("height") }} mm
+              <!-- No unit: the catalogue is not consistent about one. Sheets are entered in
+                   millimetres (1000 x 2000) and some sheet sizes in metres (2 x 1), so printing
+                   "mm" after a width that is really two metres was stating something untrue. The
+                   thickness below keeps its millimetres, where the catalogue does agree. -->
+              {{ sharedDimensionValue("height") }}
             </div>
             <div *ngIf="sharedDimensionValue('width') !== null">
               <strong>{{ "PRODUCTS.WIDTH" | translate }}:</strong>
-              {{ sharedDimensionValue("width") }} mm
+              {{ sharedDimensionValue("width") }}
             </div>
             <div *ngIf="sharedDimensionValue('length') !== null">
               <strong>{{ "PRODUCTS.LENGTH" | translate }}:</strong>
@@ -1147,13 +1165,13 @@
                   (isRound(selectedProduct) ? "PRODUCTS.DIAMETER" : "PRODUCTS.HEIGHT")
                     | translate
                 }}:</strong>
-                {{ dimension.height }} mm
+                {{ dimension.height }}
               </div>
               <div
                 *ngIf="sharedDimensionValue('width') === null && showsValue(dimension.width)"
               >
                 <strong>{{ "PRODUCTS.WIDTH" | translate }}:</strong>
-                {{ dimension.width }} mm
+                {{ dimension.width }}
               </div>
               <div
                 *ngIf="sharedDimensionValue('length') === null && showsValue(dimension.length)"
