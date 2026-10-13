@@ -94,6 +94,38 @@ describe('ProductService', () => {
     );
   });
 
+  it('carries the status and the API’s own words when a request fails', () => {
+    // Two things went missing while this threw a bare string. The panel decides between "you are not
+    // allowed" and "something failed" by reading the status, so a refusal was reported as a
+    // breakdown; and the API's field-by-field detail was thrown away in favour of one vague sentence.
+    let thrown: any = null;
+    service.getTopCategories().subscribe({ error: (error) => (thrown = error) });
+
+    httpMock
+      .expectOne((req) => req.url === topCategoriesUrl)
+      .flush(
+        { error: 'Validation error', details: { dimensions: { 0: { price: ['Missing data for required field.'] } } } },
+        { status: 403, statusText: 'Forbidden' }
+      );
+
+    expect(thrown?.status).toBe(403);
+    expect(String(thrown)).toContain('dimensions.0.price');
+    expect(String(thrown)).toContain('Missing data for required field.');
+    // And it still reads as a sentence if anything shows it directly.
+    expect(String(thrown)).not.toContain('[object Object]');
+  });
+
+  it('falls back to one plain sentence when the API says nothing useful', () => {
+    let thrown: any = null;
+    service.getTopCategories().subscribe({ error: (error) => (thrown = error) });
+    // 400 rather than 502: a 5xx is retried, and this test is about the message, not the retrying.
+    httpMock
+      .expectOne((req) => req.url === topCategoriesUrl)
+      .flush('not json at all', { status: 400, statusText: 'Bad Request' });
+    expect(thrown?.status).toBe(400);
+    expect(String(thrown)).toContain('Something went wrong');
+  });
+
   it('does not retry a client error', () => {
     // Regression: retry(4) fired five requests at /category/top even though the
     // live API answers 404 there, so every visitor paid for five failures.

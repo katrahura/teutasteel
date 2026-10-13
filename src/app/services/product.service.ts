@@ -8,6 +8,49 @@ import { catchError, mergeMap, Observable, of, retryWhen, throwError, map } from
 import { Category, CategoryResponse, ImageAsset, Product, TopCategory } from '../models/product.model';
 import { environment } from '../../environments/environment';
 import { getToken } from './token-storage';
+/**
+ * What the API actually said, flattened into one line.
+ *
+ * A refused save comes back as `{"error": "Validation error", "details": {"dimensions": {"0":
+ * {"price": ["Missing data for required field."]}}}}`, and the panel used to be told only that
+ * something went wrong. This walks that shape - however deeply the schema nests it - and names the
+ * field.
+ *
+ * A plain function rather than a method, because `handleError` is handed to `catchError` as a
+ * reference: there is no `this` inside it, and reaching for one threw
+ * "Cannot read properties of undefined". The tests caught that before it went anywhere.
+ */
+function explainApiError(error: HttpErrorResponse): string {
+  const body = (error && error.error) as Record<string, unknown> | null;
+  if (!body || typeof body !== 'object') {
+    return '';
+  }
+  const problems = (body['details'] ?? body['validation_errors'] ?? null) as unknown;
+  if (!problems) {
+    return typeof body['error'] === 'string' ? (body['error'] as string) : '';
+  }
+  const lines: string[] = [];
+  const walk = (value: unknown, path: string[]): void => {
+    if (value === null || value === undefined) {
+      return;
+    }
+    if (typeof value === 'string') {
+      lines.push((path.length ? path.join('.') + ': ' : '') + value);
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((entry) => walk(entry, path));
+      return;
+    }
+    if (typeof value === 'object') {
+      Object.keys(value as Record<string, unknown>)
+        .forEach((key) => walk((value as Record<string, unknown>)[key], path.concat(key)));
+    }
+  };
+  walk(problems, []);
+  return lines.slice(0, 6).join(' · ');
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -257,18 +300,27 @@ export class ProductService {
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
+  /**
+   * What went wrong, in a shape a caller can use.
+   *
+   * The status goes with the message. Throwing a bare string threw the status away, and the panel
+   * decides between "you are not allowed" and "something failed" by reading it - so a member of
+   * staff who is not an administrator was told the panel had broken, and never that they had no
+   * business being there. The toString keeps this readable if any caller shows the value directly.
+   */
   private handleError(error: HttpErrorResponse) {
     if (typeof window !== 'undefined' && error.error instanceof ErrorEvent) {
-      // Client-side error
       console.error('A client-side error occurred:', error.error.message);
     } else {
-      // Server-side error
-      console.error(
-        `Backend returned code ${error.status}, body was: ${error.message}`
-      );
+      console.error(`Backend returned code ${error.status}, body was: ${error.message}`);
     }
     console.error('Full error details:', error);
-    return throwError('Something went wrong; please try again later.');
+    const message = explainApiError(error) || 'Something went wrong; please try again later.';
+    return throwError(() => ({
+      status: (error && error.status) || 0,
+      message,
+      toString: () => message,
+    }));
   }
 
   /**
