@@ -727,3 +727,31 @@ h1.text-center, h2.text-center {
 @media (min-width: 992px) {
   .child-card__img { height: 180px; }
 }
+
+/* The dialog on a phone, at the end of the file because that is where it has to be.
+   Two rules above are written for the wide dialog and set a width for each half of it - the picture
+   panel is capped at 42%, the details take 50%. Overriding them from further up the file does not
+   work: at equal specificity the later rule wins, and both of those sit below. So the phone's
+   overrides live here, after everything they are overriding.
+
+   What it looked like when they did not: the picture panel was 139px and the details 166px inside a
+   372px dialog, the photograph cut off at the left edge, the section's caption reading "1000 x 20(",
+   "Shto ne kerkese" wrapped onto three lines and an empty column down the right. A visual check at
+   390px found it, and the cause was mine - the 42% ceiling was added for the wide dialog two rounds
+   earlier. */
+@media (max-width: 768px) {
+  .product-modal .modal-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .product-modal .image-container {
+    width: 100%;
+    max-width: 100%;
+    height: 180px;
+    max-height: 180px;
+  }
+  .product-modal .info-container {
+    width: 100%;
+    max-width: 100%;
+  }
+}
