@@ -89,7 +89,8 @@
     "QUOTE_FORM": "Fill in the form",
     "FEATURED_TITLE": "Featured products",
     "FEATURED_SUBTITLE": "Products with a price and a size, photographed ones first.",
-    "ALL_PRODUCTS": "All products"
+    "ALL_PRODUCTS": "All products",
+    "SAMPLE_PHOTO": "Illustrative photograph"
   },
   "PRODUCTS": {
     "GROUPS_TITLE": "Product Groups",

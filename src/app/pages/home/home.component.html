@@ -13,6 +13,10 @@
 
   <!-- Hero -->
   <div class="hero">
+    <!-- Under the gradient, not instead of it. The alt text carries the same admission the note
+         does, because a photograph on the front page reads as "this is us". -->
+    <img class="hero-photo" [src]="heroPhoto" [alt]="'HOME.SAMPLE_PHOTO' | translate" />
+    <span class="hero-sample" *ngIf="samplePhoto">{{ 'HOME.SAMPLE_PHOTO' | translate }}</span>
     <div class="shell grid">
       <div>
         <span class="kicker">{{ 'HOME.KICKER' | translate }}</span>

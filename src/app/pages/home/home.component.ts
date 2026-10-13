@@ -23,15 +23,28 @@ export class HomeComponent implements OnDestroy {
   topCategories: TopCategory[] = [];
 
   /**
-   * The products under "Më të kërkuarat".
+   * The products in the "Featured products" row.
    *
-   * There is no featured flag in the catalogue, so the rule is: **priced** products, with the
-   * **photographed** ones sorted to the front. The audit found the two sets barely overlap - the
-   * priced products in the five selling groups have almost no photographs, and the photographed
-   * decorative ones are barely priced - so filtering on both would leave the section empty. Sorting
-   * rather than filtering fills it, and prefers the complete cards without hiding the rest.
+   * Filled from the API's own endpoint, which takes priced products and prefers the photographed
+   * ones. Not from popularity: this shop records no demand, which is why the heading stopped
+   * claiming "most asked for".
    */
   featured: Product[] = [];
+
+  /**
+   * The photograph behind the hero.
+   *
+   * The review asked for a strong photograph of the workshop, the stock or finished work, with the
+   * slate and amber identity kept - so the picture sits **under** the existing gradient rather than
+   * replacing it. This one came from an image model, which is why `samplePhoto` is true and the
+   * hero says so on the page: a photograph on the front page reads as "this is us", and until it
+   * is, the page has to say otherwise.
+   *
+   * To make it real: put your own photograph in `assets/gallery/`, change the path here, and set
+   * `samplePhoto` to false - which removes the note.
+   */
+  readonly heroPhoto = 'assets/gallery/hero-kit.jpg';
+  readonly samplePhoto = true;
 
   /**
    * The services the company advertises, from shared/services.ts.
