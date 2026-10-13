@@ -64,6 +64,9 @@
   align-items: start;
   padding: 40px 0;
   border-bottom: 1px solid var(--line, #e5e7eb);
+  /* The service pages link straight to an entry, and the site header is sticky: without this the
+     heading it lands on sits underneath the header. */
+  scroll-margin-top: 96px;
 }
 
 .pictures {

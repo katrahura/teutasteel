@@ -3,7 +3,7 @@ import {
   importProvidersFrom,
   provideZoneChangeDetection,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import {
   HttpClient,
   provideHttpClient,
@@ -31,7 +31,16 @@ export function HttpLoaderFactory(http: HttpClient) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(appRoutes),
+    provideRouter(
+      appRoutes,
+      // Without these two, a link carrying #project-7 opened the gallery but left the visitor at the
+      // top of it, and moving from the bottom of one page to another left them at the bottom of the
+      // new one. Neither is what a link is expected to do.
+      withInMemoryScrolling({
+        scrollPositionRestoration: 'enabled',
+        anchorScrolling: 'enabled',
+      })
+    ),
     // Reuse the prerendered HTML instead of discarding it and re-rendering.
     // Verified against the production build: no hydration mismatch on /,
     // /products or /about, the language switcher and client-side routing keep

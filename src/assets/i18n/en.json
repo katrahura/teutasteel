@@ -372,7 +372,8 @@
     "SEND_3": "The material: untreated, galvanised, stainless or aluminium. The grade, if you know it.",
     "SEND_4": "The bends and the holes: the angle of the bend, the radius, and the diameter and position of the holes.",
     "SEND_5": "The deadline: when you need the part.",
-    "DRAWING_GUIDE": "How to prepare the drawing - the guide"
+    "DRAWING_GUIDE": "How to prepare the drawing - the guide",
+    "SAMPLES": "Examples"
   },
   "SHELL": {
     "HOURS": "Mon–Sat 08:00–17:00",

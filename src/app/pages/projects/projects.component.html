@@ -11,7 +11,7 @@
   </header>
 
   <div class="shell">
-    <article class="project" *ngFor="let project of projects">
+    <article class="project" *ngFor="let project of projects; let i = index" [attr.id]="'project-' + (i + 1)">
       <div class="pictures">
         <ng-container *ngIf="project.images.length; else awaiting">
           <img

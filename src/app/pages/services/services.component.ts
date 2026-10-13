@@ -3,7 +3,8 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { SERVICES } from '../../shared/services';
+import { SERVICES, ServiceOffering } from '../../shared/services';
+import { PROJECTS } from '../../shared/projects';
 import { PhotoSlotComponent } from '../../shared/photo-slot/photo-slot.component';
 import { SHOW_PLACEHOLDERS } from '../../shared/placeholders';
 
@@ -42,4 +43,18 @@ export class ServicesComponent {
     'SERVICES.SEND_4',
     'SERVICES.SEND_5',
   ];
+
+  /**
+   * The gallery entries that show this service being done, ready to link.
+   *
+   * The review asked the service pages to carry examples. Rather than a second set of photographs
+   * to take, each service points at the jobs in the gallery that used it - one set of pictures,
+   * used in both places - and the link lands on that entry rather than the top of the page.
+   */
+  samplesFor(service: ServiceOffering): { titleKey: string; anchor: string }[] {
+    return service.sampleIndexes
+      .map((index) => ({ project: PROJECTS[index - 1], index }))
+      .filter((entry) => !!entry.project)
+      .map((entry) => ({ titleKey: entry.project.titleKey, anchor: 'project-' + entry.index }));
+  }
 }
