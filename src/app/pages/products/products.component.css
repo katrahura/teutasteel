@@ -268,9 +268,16 @@ h1.text-center, h2.text-center {
   justify-content: center;
 }
 
+/* The picture's panel used to take half the dialog's width and four fifths of its height whatever it
+   had to show, so the dialog ran off the bottom of the screen and left the drawing stranded in the
+   middle of a wide gap. The panel takes the room its picture needs now, with a ceiling on both
+   sides so a large photograph cannot push the dialog off the screen either. */
 .product-modal .image-container {
-  height: 80vh;
-  width: 50%;
+  height: auto;
+  max-height: 58vh;
+  width: auto;
+  max-width: 42%;
+  flex: 0 1 auto;
 }
 
 .product-image {
@@ -395,6 +402,10 @@ h1.text-center, h2.text-center {
 .product-modal .modal-body {
   display: flex;
   align-items: center;
+  /* The three pieces belong together. They were spread across the width of a large dialog - the
+     picture far left, the drawing in the middle, the details far right - with wide empty gaps
+     between them. */
+  justify-content: center;
   gap: 20px;
   padding: 20px;
   flex-wrap: nowrap;
