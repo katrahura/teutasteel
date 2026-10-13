@@ -29,7 +29,9 @@ describe('SectionDrawingComponent', () => {
       .toContain('10 × 20 × 0.9');
     expect(build({ categoryId: 135, width: 30, height: 30, thickness: 2.5 }).textContent)
       .toContain('L 30 × 30 × 2.5');
-    expect(build({ categoryId: 136, width: 80, height: 46, code: 'IPE-80' }).textContent)
+    // The catalogue stores a beam as width 46 and height 80 - the height is the section's depth -
+    // and the label reads depth first, the way a steel table does.
+    expect(build({ categoryId: 136, width: 46, height: 80, code: 'IPE-80' }).textContent)
       .toContain('IPE-80 · 80 × 46');
   });
 
