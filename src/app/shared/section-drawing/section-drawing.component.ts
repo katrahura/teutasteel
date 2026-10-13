@@ -108,6 +108,8 @@ export class SectionDrawingComponent {
   @Input() thickness: number | string | null = null;
   @Input() width: number | string | null = null;
   @Input() height: number | string | null = null;
+  /** Only sheets use it: a sheet is 1000 x 2000, and the 2000 lives in this field. */
+  @Input() length: number | string | null = null;
 
   /**
    * How much room the drawing takes. The card has a narrow strip and the dialog has half a modal,
@@ -142,6 +144,10 @@ export class SectionDrawingComponent {
 
   private get thicknessValue(): number | null {
     return this.num(this.thickness);
+  }
+
+  private get lengthValue(): number | null {
+    return this.num(this.length);
   }
 
   get shape(): SectionShape {
@@ -233,11 +239,15 @@ export class SectionDrawingComponent {
     const width = this.widthValue;
     const height = this.heightValue;
     const thickness = this.thicknessValue;
+    const length = this.lengthValue;
 
     switch (shape) {
       case 'sheet':
-        // A sheet end-on: as wide as it is, and as thick as it is, with a floor so it stays visible.
-        return ratio(Math.max(width || 0, height || 0, 100), Math.max(thickness || 1, 1) * 3);
+        // A sheet is drawn as the flat rectangle it is, at its real proportions: 1000 x 2000 comes
+        // out twice as tall as it is wide. Drawn end-on it was a sliver, which told a customer
+        // nothing about the size of the sheet they were choosing - and in the decorative group
+        // nearly every product is a sheet with a photograph, so this is the drawing they see.
+        return ratio(width || height || 100, length || height || width || 100);
       case 'solid-square':
         return ratio(width || height || 10, height || width || 10);
       case 'angle':
@@ -293,7 +303,7 @@ export class SectionDrawingComponent {
         return [this.code, size].filter(Boolean).join(' · ');
       }
       case 'sheet':
-        return cross([width || height, height || width, thickness]) || this.code || '';
+        return cross([width || height, this.lengthValue || height || width, thickness]) || this.code || '';
       case 'solid-square':
         return cross([width || height, height || width]) || this.code || '';
       default:

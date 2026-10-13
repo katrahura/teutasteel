@@ -13,7 +13,11 @@ describe('SectionDrawingComponent', () => {
   const build = (inputs: Partial<SectionDrawingComponent>) => {
     fixture = TestBed.createComponent(SectionDrawingComponent);
     component = fixture.componentInstance;
-    Object.assign(component, inputs);
+    // setInput is the framework's own way of setting an input. A plain assignment works too; this is
+    // not what the sheet test was failing on, which was a missing category in the shape map.
+    for (const [key, value] of Object.entries(inputs)) {
+      fixture.componentRef.setInput(key, value);
+    }
     fixture.detectChanges();
     return fixture.nativeElement as HTMLElement;
   };
@@ -67,5 +71,27 @@ describe('SectionDrawingComponent', () => {
     const element = build({});
     expect(element.querySelector('svg')).toBeTruthy();
     expect(element.textContent).not.toContain('null');
+  });
+
+  it('draws a sheet as the flat rectangle it is, not end-on', () => {
+    // The catalogue holds a laser-cut sheet as width 1000 and length 2000, with no thickness. Drawn
+    // end-on it came out a sliver, which says nothing about the size of the sheet being chosen; in
+    // the decorative group nearly every product is a sheet with a photograph, so this is the
+    // drawing a customer sees beside the picture.
+    const element = build({ categoryId: 59, width: 1000, length: 2000, code: '08252' });
+    expect(element.textContent).toContain('1000 × 2000');
+    const rect = element.querySelector('rect');
+    expect(rect).toBeTruthy();
+    const height = Number(rect?.getAttribute('height'));
+    const width = Number(rect?.getAttribute('width'));
+    // Twice as tall as it is wide, because the sheet is.
+    expect(height).toBeGreaterThan(width * 1.5);
+  });
+
+  it('keeps the thickness out of the shape but in the words', () => {
+    // A 0.5 mm sheet and a 15 mm plate are the same rectangle from above; the thickness is what the
+    // label is for.
+    const element = build({ categoryId: 134, width: 1000, length: 2000, thickness: 0.5 });
+    expect(element.textContent).toContain('1000 × 2000 × 0.5');
   });
 });

@@ -946,6 +946,7 @@
                   [thickness]="getProductDimension(product, 'thickness')"
                   [width]="getProductDimension(product, 'width')"
                   [height]="getProductDimension(product, 'height')"
+                  [length]="getProductDimension(product, 'length')"
                 ></app-section-drawing>
                 <ng-template #plainProfile>
                   <span class="profile" [ngClass]="profileClass(product)" aria-hidden="true"></span>
@@ -1100,22 +1101,27 @@
             "
             class="product-image"
           />
-          <div *ngIf="!hasPhoto(selectedProduct)" class="section-chip section-chip-lg">
-            <!-- The section, drawn from the catalogue, in place of the silhouette. The dialog is
-                 where somebody chooses a thickness, and the section is what the thickness belongs
-                 to. The plain silhouette stays for a product with no dimensions to draw. -->
+          <div class="drawing-with-photo" *ngIf="selectedProduct?.dimensions?.length"
+               [class.alone]="!hasPhoto(selectedProduct)">
+            <!-- The section goes *with* the photograph, not instead of it. The review asked for a
+                 representative photograph combined with an accurate dimension drawing, and this is
+                 where it applies: nearly every product in the decorative group carries both, and a
+                 photograph of a laser-cut sheet does not say what size it is. Drawn large either
+                 way, because this is the panel somebody is deciding in; the plain silhouette below
+                 is the last resort for a product with no dimensions at all. -->
             <app-section-drawing
-              *ngIf="selectedProduct?.dimensions?.length; else plainProfileLarge"
               size="large"
               [categoryId]="selectedCategory?.id || null"
               [code]="selectedProduct?.code"
               [thickness]="getProductDimension(selectedProduct, 'thickness')"
               [width]="getProductDimension(selectedProduct, 'width')"
               [height]="getProductDimension(selectedProduct, 'height')"
+              [length]="getProductDimension(selectedProduct, 'length')"
             ></app-section-drawing>
-            <ng-template #plainProfileLarge>
-              <span class="profile" [ngClass]="profileClass(selectedProduct)" aria-hidden="true"></span>
-            </ng-template>
+          </div>
+          <div *ngIf="!hasPhoto(selectedProduct) && !selectedProduct?.dimensions?.length"
+               class="section-chip section-chip-lg">
+            <span class="profile" [ngClass]="profileClass(selectedProduct)" aria-hidden="true"></span>
           </div>
         </div>
         <!-- The prev/next buttons that used to sit here jumped from product to product without

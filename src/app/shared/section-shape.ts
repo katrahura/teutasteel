@@ -25,14 +25,33 @@ export type SectionShape =
 
 /** Category id to shape. Read out of the catalogue, not guessed. */
 export const SHAPE_BY_CATEGORY: Record<number, SectionShape> = {
+  // Decorative metal. Nearly a thousand products, and almost every one of them is a flat sheet with
+  // a photograph and no thickness - which is exactly the case the review names, where a photograph
+  // alone does not say what size the thing is.
+  59: 'sheet', // Laser sheets
+  61: 'sheet', // Conifer and ribbed iron
+  62: 'sheet', // Panels
+  69: 'sheet', // Leafy part motifs
+  70: 'sheet', // Hot prints
+  72: 'sheet', // Spear
+  79: 'sheet', // Door sheets
+  111: 'sheet', // Decorative panels (R patterns)
+  112: 'sheet', // Lattice panels (Reshetk)
+  113: 'sheet', // Multiwall sheet (Multival)
+  114: 'sheet', // Plexiglass
+  // Deliberately not mapped, because I do not know what shape they are and will not guess: door
+  // handles, bolts and cylinders fall through to the code, and to the plain section after that.
+  // Hollow sections and pipes.
   122: 'round-hollow', // Round tubes
   123: 'rect-hollow', // Square & rectangular tubes
   125: 'bend', // Bends (Kthesa)
+  // Sheets and bars.
   130: 'sheet', // Aluminium and special sheet
   131: 'solid-square', // Flat bars (SHP)
   132: 'sheet', // Galvanised sheet
   133: 'solid-round', // Solid round and square bar
   134: 'sheet', // Steel sheets (black, galvanised, ribbed)
+  // Structural profiles.
   135: 'angle', // Angles (L-Profil)
   136: 'ibeam', // I-beams and channels
   137: 'plain', // Spacers, nuts and T/D profiles
