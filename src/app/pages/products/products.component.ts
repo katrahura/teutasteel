@@ -239,6 +239,11 @@ toggleParent(parentId: number) {
   }
 
   addToQuote(product: Product, dimensions?: ProductDimension[]): void {
+    if (!product) {
+      // Reachable only from the dialog's markup while the dialog is closed: see the note in
+      // migrateLegacyQuote. Nothing to add, and nothing to throw about.
+      return;
+    }
     this.migrateLegacyQuote(product);
     // With nothing passed - the card, which has no picker - add the dimension it is showing rather
     // than every thickness the product carries, which for a merged sheet would be fourteen lines.
@@ -278,6 +283,14 @@ toggleParent(parentId: number) {
 
   /** "Trashësia 1.5 mm — 4.80 Eur", or as much of that as the dimension knows. */
   private migrateLegacyQuote(product: Product): void {
+    // The dialog's markup sits in the page even while the dialog is closed, so its buttons can be
+    // reached with no product selected - by a script, not by a person, since a hidden button cannot
+    // be clicked. That path threw "Cannot read properties of null (reading 'id')" here, because
+    // product.id is this method's first argument. Found by building with source maps and reading the
+    // stack instead of the message.
+    if (!product) {
+      return;
+    }
     this.quoteList.migrateLegacy(product.id || 0, (product.dimensions || []).map(dimension => ({
       signature: this.showsValue(dimension.thickness) ? String(Number(dimension.thickness))
         : [dimension.height, dimension.width].filter(value => !!value).map(Number).join(':'),

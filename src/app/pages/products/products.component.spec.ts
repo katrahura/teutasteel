@@ -379,6 +379,21 @@ describe('ProductsComponent', () => {
     expect(component_.variantKey(null)).toBe('unknown');
   });
 
+  it('does not fall over when the dialog markup is used with no product selected', () => {
+    // The dialog's buttons are in the page even while it is closed, so a script can reach them with
+    // selectedProduct null. That threw "Cannot read properties of null (reading 'id')" in
+    // migrateLegacyQuote, whose first argument is product.id. A hidden button cannot be clicked by a
+    // person, so this is robustness rather than a customer-facing fault - but it is a real crash on a
+    // real path, found with source maps.
+    const component_ = component as unknown as {
+      addToQuote(product: unknown, dimensions?: unknown): void;
+      migrateLegacyQuote(product: unknown): void;
+    };
+    expect(() => component_.migrateLegacyQuote(null)).not.toThrow();
+    expect(() => component_.addToQuote(null)).not.toThrow();
+    expect(() => component_.addToQuote(undefined)).not.toThrow();
+  });
+
   it('cancels a pending debounce when leaving the page', () => {
     httpMock.expectOne(groupsUrl).flush([]);
     const clock=jasmine.clock();clock.install();
