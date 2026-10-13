@@ -354,3 +354,55 @@ describe('ProductsComponent', () => {
   });
 
 });
+
+/**
+ * The one-line size on a card. Both the unit and the length are decisions with a reason behind
+ * them, so they are pinned down here.
+ */
+describe('ProductsComponent shortSize', () => {
+  let component: ProductsComponent;
+
+  const product = (dimensions: unknown[], code = 'X') =>
+    ({ code, dimensions } as unknown as Parameters<ProductsComponent['shortSize']>[0]);
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ProductsComponent],
+      providers: [provideTestConfig()],
+    }).compileComponents();
+    // Creating it is enough: shortSize reads the argument and nothing else, so no request is made
+    // and no change detection is needed.
+    component = TestBed.createComponent(ProductsComponent).componentInstance;
+  });
+
+  it('reads a square tube as its section and its length', () => {
+    expect(
+      component.shortSize(product([{ height: 10, width: 10, thickness: 1.3, length: 6000 }], '10x10 x 1.3mm'))
+    ).toBe('10×10×1.3 · 6 m');
+  });
+
+  it('writes a round section with its diameter sign', () => {
+    expect(component.shortSize(product([{ height: 16, thickness: 1.3, length: 6000 }], 'Ø16 x 1.3mm')))
+      .toBe('Ø16×1.3 · 6 m');
+  });
+
+  it('claims no unit after the section, because the catalogue does not agree on one', () => {
+    // The aluminium sheet is stored as 2 x 1 in metres. Printing "mm" after it said the sheet was
+    // two millimetres wide, which is a thousand times out, on a card where somebody is buying.
+    const size = component.shortSize(
+      product([{ height: 1, width: 2, thickness: 1.2, length: null }], 'Briz 1.2 1x2')
+    );
+    expect(size).toBe('1×2×1.2');
+    expect(size).not.toContain('mm');
+  });
+
+  it('gives a length even when there is no section to give', () => {
+    expect(component.shortSize(product([{ height: null, width: null, thickness: null, length: 6000 }])))
+      .toBe('6 m');
+  });
+
+  it('says nothing at all when there is no size', () => {
+    expect(component.shortSize(product([]))).toBe('');
+    expect(component.shortSize(null)).toBe('');
+  });
+});

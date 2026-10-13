@@ -387,11 +387,17 @@ toggleParent(parentId: number) {
   }
 
   /**
-   * The size in one line: "15×15×1.3 mm", "Ø21×3.2 mm", "10×120 mm" for a tipla.
+   * The size in one line: "15×15×1.3 · 6 m", "Ø21×3.2 · 6 m", "1×2×1.2" for a sheet.
    *
    * The card used to spell out "Lartësia: 15 mm / Gjerësia: 15 mm / Trashësia: 1.3 mm" over three
    * or four lines, which is how a catalogue is read on paper, not how a grid is scanned on a screen.
    * The full list stays in the dialog, where somebody has already chosen the product.
+   *
+   * No unit follows the section, because the catalogue does not agree with itself on one: sheets are
+   * entered as 1000 x 2000 in millimetres and some sheet sizes as 2 x 1 in metres, so "1x2 mm" under
+   * a sheet that is a metre by two was out by a factor of a thousand. The length is a different
+   * question and the catalogue is consistent about it - 6000 is six metres - so it is said, and a
+   * customer comparing tubes is choosing a length as much as a section.
    */
   shortSize(product: Product | null | undefined): string {
     const dimension = (product?.dimensions || [])[0];
@@ -402,11 +408,14 @@ toggleParent(parentId: number) {
       .filter((value) => this.showsValue(value))
       .map((value) => String(Number(value)));
     if (!values.length) {
-      return '';
+      const lengthOnly = this.showsValue(dimension.length) ? this.formatLength(dimension.length) : '';
+      return lengthOnly;
     }
     // A round section is read with its diameter sign, the way it is written on a drawing.
     const round = (product?.code || '').indexOf('Ø') >= 0;
-    return (round ? 'Ø' : '') + values.join('×') + ' mm';
+    const section = (round ? 'Ø' : '') + values.join('×');
+    const length = this.showsValue(dimension.length) ? this.formatLength(dimension.length) : '';
+    return length ? `${section} · ${length}` : section;
   }
 
   /**
