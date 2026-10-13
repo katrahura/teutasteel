@@ -158,7 +158,8 @@
     "THICKNESS_UNCONFIRMED": "thickness unconfirmed",
     "ADD_NEEDS_A_CHOICE": "Choose a thickness and a quantity, then add it to the request.",
     "COPY_LINK": "Copy the link",
-    "LINK_COPIED": "Link copied"
+    "LINK_COPIED": "Link copied",
+    "OPEN_DETAILS": "Open the details"
   },
   "MODAL": {
     "CLOSE": "Close",

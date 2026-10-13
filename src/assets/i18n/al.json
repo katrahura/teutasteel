@@ -197,7 +197,8 @@
     "THICKNESS_UNCONFIRMED": "trashësia e pakonfirmuar",
     "ADD_NEEDS_A_CHOICE": "Zgjidh trashësinë dhe sasinë, pastaj e shton në kërkesë.",
     "COPY_LINK": "Kopjo lidhjen",
-    "LINK_COPIED": "Lidhja u kopjua"
+    "LINK_COPIED": "Lidhja u kopjua",
+    "OPEN_DETAILS": "Hap detajet"
   },
   "MODAL": {
     "CLOSE": "Mbyll",

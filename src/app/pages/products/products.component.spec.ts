@@ -260,6 +260,45 @@ describe('ProductsComponent', () => {
     clearToken();
   });
 
+  it('opens the detail view from the picture and from the title', () => {
+    // The dialog holds the large drawing, the whole size table and the button that copies the
+    // product's address. Only a product with a choice could reach it, because the add button needs
+    // one to open it - so for the single-size majority of the catalogue the dialog was unreachable,
+    // and so was the address. A visual check found this; nothing text-based had. The picture and the
+    // title are the way in now, and this keeps them that way.
+    httpMock.expectOne((req) => req.url === groupsUrl).flush([]);
+
+    component.showProducts({ id: 1, title: 'Doors', is_active: true } as any);
+    httpMock.expectOne((req) => req.url.startsWith(`${environment.apiUrl}/category/1?`))
+      .flush({
+        id: 1,
+        title: 'Doors',
+        pagination: { page: 1, total_pages: 1 },
+        products: [{
+          id: 7,
+          code: 'Llam Zez 1000x2000',
+          description: 'Llamarina e zakonshme',
+          is_active: true,
+          image_asset: null,
+          dimensions: [{ id: 1, thickness: 0.5, price: '5.00', currency: 'EUR' }],
+        }],
+      });
+    fixture.detectChanges();
+
+    const picture = fixture.nativeElement.querySelector('.image-container') as HTMLElement;
+    expect(picture).toBeTruthy();
+    // It has to look like something to press: it read as decoration before.
+    expect(getComputedStyle(picture).cursor).toBe('pointer');
+    picture.click();
+    expect(component.selectedProduct?.id).toBe(7);
+
+    component.selectedProduct = null;
+    const title = fixture.nativeElement.querySelector('.card-title') as HTMLElement;
+    expect(title).toBeTruthy();
+    title.click();
+    expect(component.selectedProduct?.id).toBe(7);
+  });
+
   it('offers the size, not a sentence about a missing description', () => {
     // "No description available" is a dead end. Where the product carries dimensions the size line
     // says something useful, and where it carries nothing at all the card invites the question.

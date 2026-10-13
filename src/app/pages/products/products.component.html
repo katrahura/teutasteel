@@ -926,7 +926,21 @@
               </div>
             </div>
             <!-- Product Image, or a drawn section when there is none. -->
-            <div class="image-container">
+            <!-- Clicking it opens the detail view, which is where the large drawing, the whole size
+                 table and the button that copies the product's address live. Until this, only a
+                 product with several thicknesses could be opened - its add button needs the choice -
+                 so for the single-size majority of the catalogue that dialog was unreachable, and so
+                 was the address. The picture is the button for anybody using a keyboard; the title
+                 below is the same target for a mouse, without a second stop in the tab order. -->
+            <div
+              class="image-container"
+              role="button"
+              tabindex="0"
+              [attr.aria-label]="'PRODUCTS.OPEN_DETAILS' | translate"
+              (click)="openModal(product, $event)"
+              (keydown.enter)="openModal(product, $event)"
+              (keydown.space)="openModal(product, $event); $event.preventDefault()"
+            >
               <img
                 *ngIf="hasPhoto(product)"
                 [src]="product.image_asset?.thumbnail_path"
@@ -954,7 +968,7 @@
               </div>
             </div>
             <div class="card-body text-center">
-              <h5 class="card-title">{{ product?.code }}</h5>
+              <h5 class="card-title" (click)="openModal(product, $event)">{{ product?.code }}</h5>
               <p class="card-text" *ngIf="product.description">{{ product.description }}</p>
               <!-- Where nothing is written about a product, the size line below is the useful
                    answer and this stays out of its way. Where there is no size either, inviting

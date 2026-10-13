@@ -85,6 +85,20 @@ h1.text-center, h2.text-center {
   border-bottom: 11px solid #cbd5e1;
 }
 
+/* The picture and the title open the detail view, so they have to look like something to press.
+   The cursor change was missing and the picture read as decoration. */
+.image-container {
+  cursor: pointer;
+}
+.card-title {
+  cursor: pointer;
+}
+.image-container:focus-visible,
+.card-title:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 2px;
+}
+
 /* Why the add button is dim, said in words. A greyed button with no reason is the same silence the
    button itself was guilty of. */
 .add-hint {
