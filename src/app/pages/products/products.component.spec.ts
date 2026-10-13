@@ -370,6 +370,15 @@ describe('ProductsComponent', () => {
     expect(component.canAddTicked()).toBeFalse();
   });
 
+  it('does not fall over on a null dimension', () => {
+    // A null dimension reached variantKey through the add path, and the click threw "Cannot read
+    // properties of null (reading 'id')" - caught by Angular, logged, and the add silently did
+    // nothing. This is the one place every route into the request list shares.
+    const component_ = component as unknown as { variantKey(dimension: unknown): string };
+    expect(() => component_.variantKey(null)).not.toThrow();
+    expect(component_.variantKey(null)).toBe('unknown');
+  });
+
   it('cancels a pending debounce when leaving the page', () => {
     httpMock.expectOne(groupsUrl).flush([]);
     const clock=jasmine.clock();clock.install();

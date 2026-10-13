@@ -286,13 +286,20 @@ toggleParent(parentId: number) {
   }
 
   private variantKey(dimension: ProductDimension): string {
+    // Every route into the request list passes through here, and a null dimension reached it: the
+    // click threw "Cannot read properties of null (reading 'id')", Angular caught it and logged it,
+    // and the add silently did nothing at all - the same nothing-happens that this list has already
+    // been guilty of twice. A guard at the point they all share covers every one of them.
+    if (!dimension) {
+      return 'unknown';
+    }
     if (dimension.id != null) return 'id:' + dimension.id;
     return 'size:' + ['height', 'width', 'length', 'thickness', 'weight']
       .map(key => Number((dimension as any)[key] || 0)).join(':');
   }
 
   private quoteItem(product: Product, dimension: ProductDimension): QuoteItem {
-    const price = Number(dimension.price);
+    const price = Number(dimension?.price);
     // A product with a price and no thickness is the state of 730 of the 876 products that carry any
     // size, and every one of them is priced. The line says so, so the enquiry that reaches the shop
     // says which sizes still need confirming instead of leaving it to be guessed at from a blank.
