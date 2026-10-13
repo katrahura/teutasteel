@@ -40,9 +40,19 @@
       </div>
     </div>
 
+    <!-- What an accurate quote needs. The review asked for this on the service pages, and none of it
+         is a claim about this company: it is what any workshop needs in order to price a job. The
+         one part that is theirs - what each machine can actually do - stays in the cards above, and
+         is for the owner to confirm rather than for me to state. -->
     <div class="alert alert-light border mt-4">
       <strong>{{ "SERVICES.DRAWING_TITLE" | translate }}</strong>
-      <p class="mb-0">{{ "SERVICES.DRAWING_TEXT" | translate }}</p>
+      <p>{{ "SERVICES.DRAWING_TEXT" | translate }}</p>
+      <ol class="mb-3">
+        <li *ngFor="let key of sendKeys">{{ key | translate }}</li>
+      </ol>
+      <a class="btn btn-sm btn-outline-secondary" routerLink="/guides">
+        {{ "SERVICES.DRAWING_GUIDE" | translate }}
+      </a>
     </div>
   </div>
 </section>

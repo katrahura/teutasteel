@@ -56,7 +56,7 @@ const BY_CATEGORY: Record<number, Shape> = {
   imports: [CommonModule],
   template: `
     <figure class="drawing">
-      <svg viewBox="0 0 120 96" role="img" [attr.aria-label]="label()">
+      <svg viewBox="0 0 120 96" role="img" [attr.aria-label]="label()" [style.max-width.px]="maxWidth">
         <g [attr.transform]="'translate(' + offsetX + ',' + offsetY + ')'">
           <!-- Hollow sections: the outside, then the wall inside it. -->
           <ng-container *ngIf="shape === 'round-hollow'">
@@ -115,7 +115,6 @@ const BY_CATEGORY: Record<number, Shape> = {
       }
       svg {
         width: 100%;
-        max-width: 150px;
         height: auto;
       }
       .dims {
@@ -136,6 +135,16 @@ export class SectionDrawingComponent {
   @Input() thickness: number | string | null = null;
   @Input() width: number | string | null = null;
   @Input() height: number | string | null = null;
+
+  /**
+   * How much room the drawing takes. The card has a narrow strip and the dialog has half a modal,
+   * and a section drawn for the one looks lost in the other.
+   */
+  @Input() size: 'card' | 'large' = 'card';
+
+  get maxWidth(): number {
+    return this.size === 'large' ? 280 : 150;
+  }
 
   /** The box the section is drawn in, inside the 120 x 96 viewBox. */
   private readonly boxW = 96;

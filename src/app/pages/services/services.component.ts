@@ -26,4 +26,20 @@ export class ServicesComponent {
 
   /** Draws the empty photograph places while there are no photographs to put in them. */
   readonly showPlaceholders = SHOW_PLACEHOLDERS;
+
+  /**
+   * What to send for a price that does not have to be asked about twice.
+   *
+   * General to any workshop, which is why it can be written here: a DXF goes straight to the
+   * machine, a sketch with the sizes and the quantity is the next best thing, and the material,
+   * the bends and the deadline are what decide the rest. The guide behind the link goes through
+   * the same ground at length.
+   */
+  readonly sendKeys = [
+    'SERVICES.SEND_1',
+    'SERVICES.SEND_2',
+    'SERVICES.SEND_3',
+    'SERVICES.SEND_4',
+    'SERVICES.SEND_5',
+  ];
 }

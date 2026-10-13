@@ -405,7 +405,13 @@
     "ASK": "Kërko ofertë",
     "DRAWING_TITLE": "Dërgoni vizatimin",
     "DRAWING_TEXT": "Nëse keni vizatim, DXF ose foto, shtypni bashkangjit në WhatsApp dhe dërgoni atë. DXF-i është më i saktë sesa fotografia, sepse shkon drejt në makinë.",
-    "PHOTO_SLOT": "Fotografia e shërbimit"
+    "PHOTO_SLOT": "Fotografia e shërbimit",
+    "SEND_1": "Vizatimi DXF, nëse e keni: është më i saktë se çdo përshkrim dhe shkon drejt në makinë.",
+    "SEND_2": "Pa DXF: një skicë me masat e sakta — gjatësia, gjerësia, trashësia — dhe sa copë ju duhen.",
+    "SEND_3": "Materiali: çelik i zi, i galvanizuar, inoks apo alumin. Klasa, nëse e dini.",
+    "SEND_4": "Lakimet dhe vrimat: këndi i lakimit, rrezja, dhe diametri e vendi i vrimave.",
+    "SEND_5": "Afati: kur ju duhet pjesa.",
+    "DRAWING_GUIDE": "Si ta përgatisni vizatimin — udhëzuesi"
   },
   "SHELL": {
     "HOURS": "Hën–Sht 08:00–17:00",

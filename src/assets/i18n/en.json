@@ -366,7 +366,13 @@
     "ASK": "Request a quote",
     "DRAWING_TITLE": "Send your drawing",
     "DRAWING_TEXT": "If you have a drawing, a DXF or a photograph, tap attach in WhatsApp and send it. The DXF is more accurate than a photograph, because it goes straight to the machine.",
-    "PHOTO_SLOT": "Photograph of this service"
+    "PHOTO_SLOT": "Photograph of this service",
+    "SEND_1": "The DXF drawing, if you have one: it is more accurate than any description and goes straight to the machine.",
+    "SEND_2": "Without a DXF: a sketch with the exact sizes - length, width, thickness - and how many pieces you need.",
+    "SEND_3": "The material: untreated, galvanised, stainless or aluminium. The grade, if you know it.",
+    "SEND_4": "The bends and the holes: the angle of the bend, the radius, and the diameter and position of the holes.",
+    "SEND_5": "The deadline: when you need the part.",
+    "DRAWING_GUIDE": "How to prepare the drawing - the guide"
   },
   "SHELL": {
     "HOURS": "Mon–Sat 08:00–17:00",

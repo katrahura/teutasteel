@@ -1101,7 +1101,21 @@
             class="product-image"
           />
           <div *ngIf="!hasPhoto(selectedProduct)" class="section-chip section-chip-lg">
-            <span class="profile" [ngClass]="profileClass(selectedProduct)" aria-hidden="true"></span>
+            <!-- The section, drawn from the catalogue, in place of the silhouette. The dialog is
+                 where somebody chooses a thickness, and the section is what the thickness belongs
+                 to. The plain silhouette stays for a product with no dimensions to draw. -->
+            <app-section-drawing
+              *ngIf="selectedProduct?.dimensions?.length; else plainProfileLarge"
+              size="large"
+              [categoryId]="selectedCategory?.id || null"
+              [code]="selectedProduct?.code"
+              [thickness]="getProductDimension(selectedProduct, 'thickness')"
+              [width]="getProductDimension(selectedProduct, 'width')"
+              [height]="getProductDimension(selectedProduct, 'height')"
+            ></app-section-drawing>
+            <ng-template #plainProfileLarge>
+              <span class="profile" [ngClass]="profileClass(selectedProduct)" aria-hidden="true"></span>
+            </ng-template>
           </div>
         </div>
         <!-- The prev/next buttons that used to sit here jumped from product to product without
