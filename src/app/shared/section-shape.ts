@@ -41,6 +41,20 @@ export const SHAPE_BY_CATEGORY: Record<number, SectionShape> = {
   114: 'sheet', // Plexiglass
   // Deliberately not mapped, because I do not know what shape they are and will not guess: door
   // handles, bolts and cylinders fall through to the code, and to the plain section after that.
+  // Fencing and mesh: a mesh is flat and is bought by the sheet, whatever it is woven from.
+  116: 'sheet', // Galvanised mesh (Rrjeta ZN)
+  117: 'sheet', // PVC mesh (Rrjeta PVC)
+  119: 'sheet', // Rabic fencing
+  121: 'sheet', // Welded mesh (Rrjeta ZN salduara)
+  // Pipes, which end in a ring like any other round tube.
+  126: 'round-hollow', // Heating pipes (Nxemjes)
+  129: 'round-hollow', // Water pipes (Ujit)
+  // A bearing is a round part; the section is a circle whatever it is housed in.
+  124: 'solid-round', // Bearings (Llager)
+  // Left out on purpose, and still drawing the plain section: TIPLLA, Tanks, Posts, Stair parts,
+  // Gabions, Cylinders, Door handles, Bolts. I cannot tell a tank from a post from the name, and a
+  // product drawn as the wrong shape is worse than one drawn as a plain rectangle with its numbers
+  // on it.
   // Hollow sections and pipes.
   122: 'round-hollow', // Round tubes
   123: 'rect-hollow', // Square & rectangular tubes
