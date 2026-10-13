@@ -394,6 +394,28 @@ describe('ProductsComponent', () => {
     expect(() => component_.addToQuote(undefined)).not.toThrow();
   });
 
+  it('builds the address of a product from the configured host, not from the browser', () => {
+    // The link goes into the WhatsApp message the shop receives, so it has to name the site the
+    // build is configured for. These tests run against the development environment, whose address is
+    // localhost - which is why the assertion is that the link is built from environment.siteUrl
+    // rather than that it avoids the word. My first version asserted the latter and failed here.
+    component.selectedCategory = { id: 134 } as unknown as ProductsComponent['selectedCategory'];
+    const link = component.productLink({ id: 4633 } as unknown as Parameters<ProductsComponent['productLink']>[0]);
+    expect(link).toBe(environment.siteUrl.replace(/\/$/, '') + '/products?category=134&product=4633');
+    // Without a category, or without a product, it says nothing rather than something wrong.
+    component.selectedCategory = null;
+    expect(component.productLink({ id: 7 } as unknown as Parameters<ProductsComponent['productLink']>[0]))
+      .toBe(environment.siteUrl.replace(/\/$/, '') + '/products?product=7');
+    expect(component.productLink(null)).toBe('');
+  });
+
+  it('puts that address in the WhatsApp message', () => {
+    component.selectedCategory = { id: 123 } as unknown as ProductsComponent['selectedCategory'];
+    const product = { id: 4284, code: '10x10 x 1.3mm', dimensions: [{ id: 1, thickness: 1.3 }] };
+    const link = component.getWhatsAppLink(product as unknown as Parameters<ProductsComponent['getWhatsAppLink']>[0]);
+    expect(decodeURIComponent(link)).toContain('/products?category=123&product=4284');
+  });
+
   it('cancels a pending debounce when leaving the page', () => {
     httpMock.expectOne(groupsUrl).flush([]);
     const clock=jasmine.clock();clock.install();

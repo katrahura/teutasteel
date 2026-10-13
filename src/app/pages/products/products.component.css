@@ -93,6 +93,20 @@ h1.text-center, h2.text-center {
   color: #6b7280;
 }
 
+/* The link button sits beside the WhatsApp one, and the word that it worked beside that. */
+.btn-copy-link {
+  border: 1px solid var(--line, #e5e7eb);
+  background: #fff;
+  color: #111827;
+  font-weight: 600;
+}
+.copied-note {
+  margin-left: 8px;
+  font-size: 13px;
+  color: #15803d;
+  font-weight: 600;
+}
+
 /* A fact the catalogue cannot supply, said rather than left as a blank line. Not an error message:
    it is what the catalogue holds, and somebody about to ask for a price should know it. */
 .missing-thickness {

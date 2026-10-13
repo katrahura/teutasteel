@@ -1322,6 +1322,15 @@
             {{ "MODAL.CONTACT_WHATSAPP" | translate }}
           </a>
 
+          <!-- The address of this one product, so it can be sent on or kept. The review asks for an
+               item to be shareable directly; until this, the only way was to select the address bar
+               and hope the whole of it was copied. -->
+          <button type="button" class="btn btn-copy-link mt-2 ms-2" (click)="copyProductLink(selectedProduct)">
+            <i class="bi bi-link-45deg" aria-hidden="true"></i>
+            {{ "PRODUCTS.COPY_LINK" | translate }}
+          </button>
+          <span class="copied-note" *ngIf="linkCopied">{{ "PRODUCTS.LINK_COPIED" | translate }}</span>
+
           <!-- The description comes last. Somebody opens this dialog to choose a thickness and a
                quantity, and the prose used to be the first thing in it, pushing the choice down the
                panel. The long "content" field belongs here too: the form offered it, the API stored
