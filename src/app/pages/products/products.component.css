@@ -412,19 +412,9 @@ h1.text-center, h2.text-center {
   background-color: #f8f9fa;
 }
 
-/* On a phone the dialog was two columns side by side - about 195px each - and the left one was 80vh
-   of near-nothing. Stack them and give the image a short band. This sits after the base rule above
-   because at equal specificity the later rule wins, and the base sets align-items. */
-@media (max-width: 768px) {
-  .product-modal .modal-body {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .product-modal .image-container {
-    width: 100%;
-    height: 180px;
-  }
-}
+/* The dialog's phone rules are at the end of this file, after the rules they override. They were
+   here once, and being here is why they did not work; leaving a second copy behind would be a trap
+   for whoever reads this next. */
 
 .nav-btn {
   position: absolute;
@@ -743,6 +733,12 @@ h1.text-center, h2.text-center {
   .product-modal .modal-body {
     flex-direction: column;
     align-items: stretch;
+    /* A dialog taller than the screen has to be able to scroll, or whatever falls below the fold
+       cannot be reached at all. At 320px the body was 780px tall in a 700px screen with its overflow
+       visible and nothing scrollable: the three buttons were reachable and the section's description
+       was not. The matrix check found it. */
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
   }
   .product-modal .image-container {
     width: 100%;
