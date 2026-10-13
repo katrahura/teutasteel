@@ -417,8 +417,14 @@ toggleParent(parentId: number) {
     // A sheet is sold by its flat size and its thickness - 1000 x 2000 x 0.5, the way a steel table
     // writes it. Reading it as "1000 x 0.5 - 2 m" left the thickness where the width belongs, and
     // the length in metres alongside two numbers in millimetres.
+    //
+    // The second size is the length where there is one, and the height where there is not. It has to
+    // be asked with showsValue rather than ??, because the catalogue stores the length of a laser
+    // sheet as the number 0 rather than as nothing - and ?? accepts a zero, which left four hundred
+    // decorative sheets reading "1000" instead of "1000 x 2000".
     if (isSheet(shape)) {
-      return [dimension.width, dimension.length ?? dimension.height, dimension.thickness]
+      const second = this.showsValue(dimension.length) ? dimension.length : dimension.height;
+      return [dimension.width, second, dimension.thickness]
         .filter((value) => this.showsValue(value))
         .map((value) => String(Number(value)))
         .join(' × ');

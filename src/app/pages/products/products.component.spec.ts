@@ -408,6 +408,18 @@ describe('ProductsComponent shortSize', () => {
     ).toBe('1000 × 2000 × 0.5');
   });
 
+  it('reads a sheet whose length is stored as zero, not as nothing', () => {
+    // The catalogue writes the length of a laser sheet as the number 0. Reading it with ?? accepted
+    // the zero and dropped the height behind it, so four hundred decorative sheets showed "1000"
+    // where they should have shown "1000 x 2000".
+    expect(
+      component.shortSize(
+        product([{ width: 1000, height: 2000, length: 0, thickness: 0 }], '08252'),
+        59
+      )
+    ).toBe('1000 × 2000');
+  });
+
   it('keeps section-then-length for a tube, whichever way the category is known', () => {
     const tube = product([{ height: 10, width: 10, thickness: 1.3, length: 6000 }], '10x10 x 1.3mm');
     expect(component.shortSize(tube, 123)).toBe('10×10×1.3 · 6 m');
