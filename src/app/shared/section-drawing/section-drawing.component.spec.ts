@@ -39,6 +39,37 @@ describe('SectionDrawingComponent', () => {
       .toContain('IPE-80 · 80 × 46');
   });
 
+  it('draws the wall at the catalogue’s own proportion, not enlarged', () => {
+    // The owner's catch, and he was right: a 28 mm tube with a 1.5 mm wall was drawn with the wall
+    // tripled, so the drawing read as four or five millimetres of wall. The wall is the number a tube
+    // is bought by, and inflating it tells the customer they are buying a heavier tube than they are.
+    build({ categoryId: 122, height: 28, thickness: 1.5, size: 'large' });
+    // The section is drawn 72 units across, so 1.5 of 28 mm is 72 * 1.5 / 28 = 3.9 units, and it was
+    // 11.6 before. The detail beside it carries the number.
+    expect(component.wall).toBeCloseTo(3.9, 1);
+  });
+
+  it('keeps the dimensions for the dialog and leaves the card alone', () => {
+    // At card size the numbers would be six pixels high and the wall a hairline, so the technical
+    // version belongs where somebody has already chosen the product and is reading it properly.
+    const dialog = build({ categoryId: 123, width: 10, height: 10, thickness: 1.3, size: 'large' });
+    expect(dialog.querySelector('svg')?.getAttribute('viewBox')).toBe('0 0 140 112');
+    expect(dialog.textContent).toContain('t 1.3');
+
+    const card = build({ categoryId: 123, width: 10, height: 10, thickness: 1.3 });
+    expect(card.querySelector('svg')?.getAttribute('viewBox')).toBe('0 0 120 96');
+    expect(card.textContent).not.toContain('t 1.3');
+    expect(card.querySelectorAll('g[stroke-width]').length).toBeGreaterThanOrEqual(0);
+  });
+
+  it('invents no dimension the catalogue does not hold', () => {
+    // A beam with a code and nothing else: no numbers, so no dimension lines - rather than a pair of
+    // lines with a guess in them.
+    const bare = build({ categoryId: 136, code: 'IPE-AA', size: 'large' });
+    expect(component.dimensionLines.length).toBe(0);
+    expect(bare.textContent).not.toContain('null');
+  });
+
   it('leaves the numbers out when the card prints its own size line', () => {
     // The card prints "10×10×1.3 · 6 m" a few lines below the drawing, so the caption said the same
     // size again in another format. showCaption is what the card turns off for that; a drawing whose

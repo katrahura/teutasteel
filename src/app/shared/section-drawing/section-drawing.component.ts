@@ -29,38 +29,46 @@ import { SectionShape, shapeFor } from '../section-shape';
   imports: [CommonModule],
   template: `
     <figure class="drawing">
-      <svg viewBox="0 0 120 96" role="img" [attr.aria-label]="label()" [style.max-width.px]="maxWidth">
-        <g [attr.transform]="'translate(' + offsetX + ',' + offsetY + ')'">
+      <svg [attr.viewBox]="viewBox" role="img" [attr.aria-label]="label()" [style.max-width.px]="maxWidth">
+        <!-- In the dialog the material is hatched, the way a cut section is drawn on any steel
+             drawing. The pattern is defined only where it is used; a page shows one dialog. -->
+        <defs *ngIf="size === 'large'">
+          <pattern id="sectionHatch" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+            <rect width="8" height="8" fill="#eef2f5" />
+            <line x1="0" y1="0" x2="0" y2="8" stroke="#8496a6" stroke-width="0.55" />
+          </pattern>
+        </defs>
+        <g [attr.transform]="'translate(' + offsetX + ',' + offsetY + ')'" [attr.stroke-width]="strokeWidth">
           <!-- Hollow sections: the outside, then the wall inside it. -->
           <ng-container *ngIf="shape === 'round-hollow'">
-            <circle [attr.cx]="w / 2" [attr.cy]="h / 2" [attr.r]="w / 2" fill="#cbd5e1" stroke="#94a3b8" />
+            <circle [attr.cx]="w / 2" [attr.cy]="h / 2" [attr.r]="w / 2" [attr.fill]="fill" stroke="#94a3b8" />
             <circle [attr.cx]="w / 2" [attr.cy]="h / 2" [attr.r]="Math.max(w / 2 - wall, 2)" fill="#f8fafc" stroke="#94a3b8" />
             <line [attr.x1]="w / 2" [attr.y1]="h / 2 - w / 2" [attr.x2]="w / 2" [attr.y2]="h / 2 - w / 2 + wall" stroke="#475569" />
             <line [attr.x1]="w / 2 - w / 2" [attr.y1]="h / 2" [attr.x2]="w / 2 - w / 2 + wall" [attr.y2]="h / 2" stroke="#475569" />
           </ng-container>
 
           <ng-container *ngIf="shape === 'rect-hollow'">
-            <rect [attr.width]="w" [attr.height]="h" rx="2" fill="#cbd5e1" stroke="#94a3b8" />
+            <rect [attr.width]="w" [attr.height]="h" rx="2" [attr.fill]="fill" stroke="#94a3b8" />
             <rect [attr.x]="wall" [attr.y]="wall" [attr.width]="Math.max(w - 2 * wall, 4)" [attr.height]="Math.max(h - 2 * wall, 4)"
                   rx="1" fill="#f8fafc" stroke="#94a3b8" />
           </ng-container>
 
           <!-- Solid sections. -->
           <circle *ngIf="shape === 'solid-round'" [attr.cx]="w / 2" [attr.cy]="h / 2" [attr.r]="w / 2"
-                  fill="#cbd5e1" stroke="#94a3b8" />
+                  [attr.fill]="fill" stroke="#94a3b8" />
           <rect *ngIf="shape === 'solid-square'" [attr.width]="w" [attr.height]="h" rx="2"
-                fill="#cbd5e1" stroke="#94a3b8" />
+                [attr.fill]="fill" stroke="#94a3b8" />
           <!-- A sheet or a flat bar, seen end on. -->
-          <rect *ngIf="shape === 'sheet'" [attr.width]="w" [attr.height]="h" fill="#cbd5e1" stroke="#94a3b8" />
+          <rect *ngIf="shape === 'sheet'" [attr.width]="w" [attr.height]="h" [attr.fill]="fill" stroke="#94a3b8" />
 
           <!-- An angle: two legs of the same length. -->
-          <path *ngIf="shape === 'angle'" [attr.d]="anglePath" fill="#cbd5e1" stroke="#94a3b8" />
+          <path *ngIf="shape === 'angle'" [attr.d]="anglePath" [attr.fill]="fill" stroke="#94a3b8" />
 
           <!-- A beam: two flanges and a web. -->
-          <path *ngIf="shape === 'ibeam'" [attr.d]="ibeamPath" fill="#cbd5e1" stroke="#94a3b8" />
+          <path *ngIf="shape === 'ibeam'" [attr.d]="ibeamPath" [attr.fill]="fill" stroke="#94a3b8" />
 
           <!-- A channel: two flanges and one web, open on one side. -->
-          <path *ngIf="shape === 'channel'" [attr.d]="channelPath" fill="#cbd5e1" stroke="#94a3b8" />
+          <path *ngIf="shape === 'channel'" [attr.d]="channelPath" [attr.fill]="fill" stroke="#94a3b8" />
 
           <!-- A bend, seen from the side: two straight runs and the arc between them. -->
           <ng-container *ngIf="shape === 'bend'">
@@ -73,6 +81,34 @@ import { SectionShape, shapeFor } from '../section-shape';
           <rect *ngIf="shape === 'plain'" [attr.width]="w" [attr.height]="h" rx="2"
                 fill="#e2e8f0" stroke="#94a3b8" stroke-dasharray="4 3" />
         </g>
+        <!-- The dimensions, and the wall seen large, only in the dialog: at card size the numbers
+             would be six pixels tall and the wall a hairline. -->
+        <ng-container *ngIf="size === 'large'">
+          <g *ngFor="let line of dimensionLines">
+            <path [attr.d]="line.path" stroke="#334155" stroke-width="0.5" fill="none" />
+            <path [attr.d]="line.heads" fill="#334155" stroke="none" />
+            <text [attr.x]="line.x" [attr.y]="line.y" [attr.text-anchor]="line.anchor" font-size="6.4"
+                  font-weight="600" fill="#1e293b"
+                  style="paint-order:stroke;stroke:#fff;stroke-width:2.2px;stroke-linejoin:round">{{ line.text }}</text>
+          </g>
+          <g *ngIf="detail as d">
+            <line [attr.x1]="d.fromX" [attr.y1]="d.fromY" [attr.x2]="d.leadX" [attr.y2]="d.leadY"
+                  stroke="#0f766e" stroke-width="0.45" stroke-dasharray="1.6 1.6" />
+            <clipPath id="sectionDetailClip">
+              <circle [attr.cx]="d.cx" [attr.cy]="d.cy" [attr.r]="d.r" />
+            </clipPath>
+            <g clip-path="url(#sectionDetailClip)">
+              <circle [attr.cx]="d.cx" [attr.cy]="d.cy" [attr.r]="d.r" fill="#fff" />
+              <circle [attr.cx]="d.cx" [attr.cy]="d.cy" [attr.r]="d.r - 2.6" fill="none"
+                      stroke="url(#sectionHatch)" stroke-width="5.4" />
+              <circle [attr.cx]="d.cx" [attr.cy]="d.cy" [attr.r]="d.r - 2.6" fill="none" stroke="#8496a6" stroke-width="0.45" />
+              <circle [attr.cx]="d.cx" [attr.cy]="d.cy" [attr.r]="d.r - 5.6" fill="#fff" stroke="#8496a6" stroke-width="0.45" />
+            </g>
+            <circle [attr.cx]="d.cx" [attr.cy]="d.cy" [attr.r]="d.r" fill="none" stroke="#0f766e" stroke-width="0.7" />
+            <text [attr.x]="d.cx" [attr.y]="d.cy + d.r + 6.6" text-anchor="middle" font-size="6.4"
+                  font-weight="600" fill="#0f766e">{{ d.label }}</text>
+          </g>
+        </ng-container>
       </svg>
       <figcaption class="dims" *ngIf="showCaption && label()">{{ label() }}</figcaption>
     </figure>
@@ -180,24 +216,131 @@ export class SectionDrawingComponent {
     return this.proportions().h;
   }
 
+  /**
+   * The room the drawing needs.
+   *
+   * In the dialog the section sits ten units in from the corner, which leaves space on the right and
+   * below for the dimension lines. The card keeps the plain box it has always had, because nothing is
+   * drawn outside the section there and a card is too small to carry numbers anyway.
+   */
+  get viewBox(): string {
+    return this.size === 'large' ? '0 0 140 112' : '0 0 120 96';
+  }
+
+  /** The material: hatched in the dialog, flat on the card, where a hatch reads as noise. */
+  get fill(): string {
+    return this.size === 'large' ? 'url(#sectionHatch)' : '#cbd5e1';
+  }
+
+  get strokeWidth(): number {
+    return this.size === 'large' ? 0.55 : 1;
+  }
+
   get offsetX(): number {
-    return (120 - this.w) / 2;
+    return (this.size === 'large' ? 10 : 0) + (120 - this.w) / 2;
   }
 
   get offsetY(): number {
-    return (96 - this.h) / 2;
+    return (this.size === 'large' ? 10 : 0) + (96 - this.h) / 2;
   }
 
-  /** The wall thickness in drawing units, kept visible even when the real one is a sliver. */
+  /**
+   * The wall, at the catalogue's own proportion - no multiplier.
+   *
+   * This used to be multiplied by three so that a thin wall stayed visible, and the result was a
+   * drawing of a 28 mm tube with a 1.5 mm wall in which the wall looked four or five millimetres
+   * thick. The owner spotted it and he was right: the wall is the number a tube is bought by, and a
+   * drawing that inflates it tells the customer they are getting a heavier tube than they are.
+   *
+   * It is drawn true now, lifted only to the thinnest line that still shows. Where even that is not
+   * enough, the detail beside the drawing carries the number.
+   */
   get wall(): number {
     const smallest = Math.min(this.w, this.h);
     const thickness = this.thicknessValue;
     const reference = Math.max(this.widthValue || 1, this.heightValue || 1);
     if (!thickness) {
-      return Math.max(3, smallest * 0.14);
+      // Nothing in the catalogue to draw from: a thin, neutral wall rather than a heavy one.
+      return Math.max(1.2, smallest * 0.05);
     }
-    const ratio = thickness / reference;
-    return Math.min(Math.max(smallest * ratio * 3, 3), smallest * 0.32);
+    return Math.max(smallest * (thickness / reference), 1.2);
+  }
+
+  /**
+   * The dimensions, in the dialog only.
+   *
+   * Every number is the catalogue's own; where it has none, no line is drawn and the code stands on
+   * its own, which is what the caption already does. Nothing is measured or rounded up on the way.
+   */
+  get dimensionLines(): Array<{ path: string; heads: string; x: number; y: number; anchor: string; text: string }> {
+    if (this.size !== 'large') {
+      return [];
+    }
+    const lines: Array<{ path: string; heads: string; x: number; y: number; anchor: string; text: string }> = [];
+    const width = this.widthValue;
+    const height = this.heightValue;
+    const left = this.offsetX, top = this.offsetY;
+    const right = left + this.w, bottom = top + this.h;
+    const gap = 10;
+    const round = (n: number) => Math.round(n * 10) / 10;
+    const head = (x: number, y: number, vertical: boolean) => {
+      const s = 1.9, l = 2.6;
+      return vertical
+        ? `M${x},${y + l} L${x - s},${y - s * 0.3} L${x + s},${y - s * 0.3} Z`
+        : `M${x + l},${y} L${x - s * 0.3},${y - s} L${x - s * 0.3},${y + s} Z`;
+    };
+
+    // Across the bottom: the width, or the diameter for a round section.
+    const under = bottom + 7;
+    const across = this.shape === 'round-hollow' && height !== null
+      ? `Ø${height}`
+      : (width !== null ? String(width) : '');
+    if (across) {
+      lines.push({
+        path: `M${round(left)},${round(under)} H${round((left + right) / 2 - gap)} ` +
+              `M${round(right)},${round(under)} H${round((left + right) / 2 + gap)}`,
+        heads: head(left, under, false) + ' ' + head(right, under, false),
+        x: round((left + right) / 2), y: round(under + 8), anchor: 'middle', text: across,
+      });
+    }
+    // Down the right side: the height, except for a round section, which its diameter already says.
+    if (height !== null && this.shape !== 'round-hollow') {
+      const side = right + 7;
+      lines.push({
+        path: `M${round(side)},${round(top)} V${round((top + bottom) / 2 - gap)} ` +
+              `M${round(side)},${round(bottom)} V${round((top + bottom) / 2 + gap)}`,
+        heads: head(side, top, true) + ' ' + head(side, bottom, true),
+        x: round(side - 4), y: round((top + bottom) / 2 + 2.9), anchor: 'end', text: String(height),
+      });
+    }
+    return lines;
+  }
+
+  /**
+   * The wall seen large, labelled with the number it stands for.
+   *
+   * Only for a hollow section whose thickness the catalogue states: this is the one thing the drawing
+   * cannot show at its true scale in 72 units, so it is shown magnified next to it rather than
+   * exaggerated inside it.
+   */
+  get detail(): { cx: number; cy: number; r: number; label: string; leadX: number; leadY: number;
+                  fromX: number; fromY: number } | null {
+    if (this.size !== 'large') {
+      return null;
+    }
+    const thickness = this.thicknessValue;
+    const shape = this.shape;
+    if (!thickness || (shape !== 'rect-hollow' && shape !== 'round-hollow')) {
+      return null;
+    }
+    const cx = 129, cy = 11, r = 8;
+    const fromX = shape === 'round-hollow'
+      ? this.offsetX + this.w / 2 + (this.w / 2) * Math.cos(-Math.PI / 4)
+      : this.offsetX + this.w;
+    const fromY = shape === 'round-hollow'
+      ? this.offsetY + this.h / 2 + (this.h / 2) * Math.sin(-Math.PI / 4)
+      : this.offsetY;
+    return { cx, cy, r, label: `t ${thickness}`, fromX, fromY, leadX: cx - r * 0.7, leadY: cy + r * 0.7 };
   }
 
   get anglePath(): string {
