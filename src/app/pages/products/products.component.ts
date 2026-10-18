@@ -197,9 +197,6 @@ toggleParent(parentId: number) {
   /** What the last add put in, shown under the thicknesses. */
   justAdded = '';
 
-  /** True once the product's own address has been copied, for the word beside the button. */
-  linkCopied = false;
-
   /** Which lines of this product are on the request list. Built once, never read per pass. */
   private linesOnList(product: Product): { [detail: string]: number } {
     this.migrateLegacyQuote(product);
@@ -628,8 +625,6 @@ toggleParent(parentId: number) {
     event.stopPropagation(); // Stop event propagation
     this.selectedProduct = product;
     this.clearChoices();
-    // A fresh dialog: do not leave "link copied" showing against a different product.
-    this.linkCopied = false;
 
     // Only in a browser. This was reachable by clicking a card, so `document` and Bootstrap were
     // always there; opening a product from a shared link made it reachable from the category's
@@ -1498,25 +1493,9 @@ this.showProducts(this.selectedCategory)
     return `${base}/products${query}`;
   }
 
-  /** Copy that address, so a customer can send it on without hunting for the address bar. */
-  copyProductLink(product: Product | null | undefined): void {
-    const link = this.productLink(product);
-    if (!link) {
-      return;
-    }
-    // Only in a browser: the clipboard is not there when the page is rendered on the server.
-    if (isPlatformBrowser(this.platformId) && navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText(link).then(
-        () => { this.linkCopied = true; },
-        () => { this.linkCopied = false; }
-      );
-      return;
-    }
-    this.linkCopied = false;
-  }
-
   // Generate WhatsApp link
-  getWhatsAppLink(product: Product): string {    // Say which thickness, or the enquiry is "tell me about 100x100" with no idea which wall.
+  getWhatsAppLink(product: Product): string {
+    // Say which thickness, or the enquiry is "tell me about 100x100" with no idea which wall.
     // When a product has only one dimension there is nothing to tick, so that one is what the
     // customer means.
     const dimensions = (product?.dimensions || []) as ProductDimension[];
