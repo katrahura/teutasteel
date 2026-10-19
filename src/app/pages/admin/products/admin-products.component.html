@@ -1,0 +1,126 @@
+<section class="admin-products pb-5">
+  <header class="head">
+    <div>
+      <h1 class="h3">{{ 'ADMIN.TABLE_TITLE' | translate }}</h1>
+      <p class="muted">{{ 'ADMIN.TABLE_LEAD' | translate }}</p>
+    </div>
+    <p class="count" *ngIf="!loading && !denied && !failed">
+      {{ total }} {{ 'ADMIN.PRODUCTS_COUNT' | translate }}
+    </p>
+  </header>
+
+  <!-- Signed in without the right is not a failure: the panel belongs to the owner, and a member of
+       staff needs to be told that rather than shown an error. -->
+  <p class="notice denied" *ngIf="denied">{{ 'ADMIN.NOT_ALLOWED' | translate }}</p>
+  <div class="notice failed" *ngIf="failed && !denied">
+    <span>{{ 'ADMIN.TABLE_FAILED' | translate }}</span>
+    <button type="button" class="retry" (click)="load(page)">{{ 'ADMIN.RETRY' | translate }}</button>
+  </div>
+
+  <form class="filters" (ngSubmit)="load(1)" *ngIf="!denied">
+    <label class="field search">
+      <span class="visually-hidden">{{ 'ADMIN.SEARCH_PLACEHOLDER' | translate }}</span>
+      <input type="search" name="q" [(ngModel)]="q" (ngModelChange)="onSearch()"
+             [attr.placeholder]="'ADMIN.SEARCH_PLACEHOLDER' | translate"
+             [attr.aria-label]="'ADMIN.SEARCH_PLACEHOLDER' | translate" />
+    </label>
+
+    <label class="field">
+      <span class="visually-hidden">{{ 'ADMIN.FILTER_CATEGORY' | translate }}</span>
+      <select name="category" [(ngModel)]="category" (ngModelChange)="load(1)"
+              [attr.aria-label]="'ADMIN.FILTER_CATEGORY' | translate">
+        <option [ngValue]="null">{{ 'ADMIN.FILTER_ALL_CATEGORIES' | translate }}</option>
+        <option *ngFor="let group of groups" [ngValue]="group.id">{{ group.title }}</option>
+        <ng-container *ngFor="let group of groups">
+          <option *ngFor="let child of group.children" [ngValue]="child.id">
+            {{ categoryLabel(child, true) }}
+          </option>
+        </ng-container>
+      </select>
+    </label>
+
+    <label class="field">
+      <span class="visually-hidden">{{ 'ADMIN.FILTER_VISIBILITY' | translate }}</span>
+      <select name="active" [(ngModel)]="active" (ngModelChange)="load(1)"
+              [attr.aria-label]="'ADMIN.FILTER_VISIBILITY' | translate">
+        <option value="all">{{ 'ADMIN.VISIBILITY_ALL' | translate }}</option>
+        <option value="1">{{ 'ADMIN.VISIBILITY_ON' | translate }}</option>
+        <option value="0">{{ 'ADMIN.VISIBILITY_OFF' | translate }}</option>
+      </select>
+    </label>
+
+    <button type="button" class="link" (click)="clearFilters()">{{ 'ADMIN.CLEAR_FILTERS' | translate }}</button>
+  </form>
+
+  <p class="copied" *ngIf="copied">{{ 'ADMIN.DUPLICATED' | translate }} <strong>{{ copied }}</strong></p>
+
+  <p class="muted loading" *ngIf="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+
+  <div class="table-wrap" *ngIf="!loading && !denied && !failed">
+    <table class="table table-sm align-middle">
+      <caption class="visually-hidden">{{ 'ADMIN.TABLE_TITLE' | translate }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'ADMIN.COL_CODE' | translate }}</th>
+          <th scope="col">{{ 'ADMIN.COL_PHOTO' | translate }}</th>
+          <th scope="col">{{ 'ADMIN.COL_CATEGORY' | translate }}</th>
+          <th scope="col">{{ 'ADMIN.COL_SIZE' | translate }}</th>
+          <th scope="col" class="right">{{ 'ADMIN.COL_PRICE' | translate }}</th>
+          <th scope="col">{{ 'ADMIN.COL_STATUS' | translate }}</th>
+          <th scope="col" class="right">{{ 'ADMIN.COL_ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows" [class.off]="!row.is_active">
+          <th scope="row" class="code">{{ row.code }}</th>
+          <td>
+            <img *ngIf="row.thumbnail" [src]="row.thumbnail" [alt]="row.code" class="thumb" loading="lazy" />
+            <span *ngIf="!row.thumbnail" class="thumb none" aria-hidden="true">—</span>
+          </td>
+          <td>
+            <span class="cat">{{ row.category || '—' }}</span>
+            <span class="group" *ngIf="row.group">{{ row.group }}</span>
+          </td>
+          <td>
+            <!-- No unit and no count without a word: the catalogue does not agree on units, and a
+                 bare number beside a dash reads as noise. A product with no size says so in the
+                 status column instead. -->
+            <span *ngIf="row.thickness !== null">{{ row.thickness }} mm</span>
+            <span class="muted" *ngIf="row.thickness === null">—</span>
+          </td>
+          <td class="right">{{ priceOf(row) }}</td>
+          <td>
+            <span class="chip" *ngFor="let key of statusOf(row)" [class.off]="key === 'ADMIN.STATUS_OFF'">
+              {{ key | translate }}
+            </span>
+            <span class="chip warn" *ngIf="missingLanguage(row) as lang">
+              {{ 'ADMIN.STATUS_NO_LANGUAGE' | translate }} {{ lang }}
+            </span>
+            <span class="chip ok" *ngIf="!statusOf(row).length && !missingLanguage(row)">
+              {{ 'ADMIN.STATUS_OK' | translate }}
+            </span>
+          </td>
+          <td class="right actions">
+            <!-- The existing editor, in the catalogue, until the panel beside this table replaces it. -->
+            <a class="link" [routerLink]="['/products']" [queryParams]="{ product: row.id }">
+              {{ 'ADMIN.OPEN' | translate }}
+            </a>
+            <button type="button" class="link" (click)="duplicate(row)"
+                    [disabled]="duplicating === row.id">
+              {{ (duplicating === row.id ? 'ADMIN.DUPLICATING' : 'ADMIN.DUPLICATE') | translate }}
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="!rows.length">
+          <td colspan="7" class="muted empty">{{ 'ADMIN.NO_RESULTS' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="pager" *ngIf="!loading && !denied && !failed && pages > 1" [attr.aria-label]="'ADMIN.PAGES' | translate">
+    <button type="button" (click)="goTo(page - 1)" [disabled]="page <= 1">{{ 'ADMIN.PREV' | translate }}</button>
+    <span>{{ 'ADMIN.PAGE_OF' | translate }} {{ page }} / {{ pages }}</span>
+    <button type="button" (click)="goTo(page + 1)" [disabled]="page >= pages">{{ 'ADMIN.NEXT' | translate }}</button>
+  </nav>
+</section>

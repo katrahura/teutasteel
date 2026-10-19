@@ -19,6 +19,11 @@ export const appRoutes: Routes = [
     data: { animation: 'ProductsPage' },
   },
   {
+    path: 'request',
+    loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent),
+    data: { animation: 'ContactPage', requestPage: true },
+  },
+  {
     path: 'contact',
     loadComponent: () =>
       import('./pages/contact/contact.component').then((m) => m.ContactComponent),
@@ -51,13 +56,36 @@ export const appRoutes: Routes = [
     data: { animation: 'AboutPage' },
   },
   {
-    path: 'admin-dashboard',
+    // One place for the owner's work, with tabs. Përmbledhja is the dashboard as it was, moved here
+    // unchanged; Produktet is the catalogue table. The rest of the tabs are named in the shell and
+    // marked as coming rather than left as links that lead nowhere.
+    path: 'admin',
     loadComponent: () =>
-      import('./pages/admin-dashboard/admin-dashboard.component').then(
-        (m) => m.AdminDashboardComponent
-      ),
+      import('./pages/admin/admin-shell.component').then((m) => m.AdminShellComponent),
     canActivate: [AuthGuard],
-    data: { animation: 'AboutPage' },
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'overview' },
+      {
+        path: 'overview',
+        loadComponent: () =>
+          import('./pages/admin-dashboard/admin-dashboard.component').then(
+            (m) => m.AdminDashboardComponent
+          ),
+      },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./pages/admin/products/admin-products.component').then(
+            (m) => m.AdminProductsComponent
+          ),
+      },
+    ],
+  },
+  {
+    // The address everything already links to. Kept as a redirect so no existing link breaks.
+    path: 'admin-dashboard',
+    redirectTo: 'admin/overview',
+    pathMatch: 'full',
   },
   {
     path: 'user-dashboard',

@@ -1,0 +1,60 @@
+/* The catalogue table. Dense on purpose: this is a tool somebody works through, not a page to read. */
+.admin-products { max-width: 1180px; margin: 0 auto; padding: 18px 16px 40px; }
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+.head h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.01em; }
+.muted { color: #4b5563; font-size: 13.5px; margin: 0; }
+.count { margin: 0; font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; }
+
+.notice { margin: 14px 0 0; padding: 10px 14px; border-radius: 8px; font-size: 14px; }
+.notice.denied { background: #fef3c7; border: 1px solid #fcd34d; }
+.notice.failed { background: #fee2e2; border: 1px solid #fca5a5; display: flex; gap: 12px; align-items: center; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0 6px; }
+.field { margin: 0; }
+.field input, .field select {
+  padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #fff;
+}
+.field.search input { min-width: 260px; }
+.field input:focus, .field select:focus { outline: 2px solid #f59e0b; outline-offset: 1px; }
+
+.copied { margin: 8px 0 0; font-size: 13.5px; color: #15803d; }
+.loading { margin: 18px 0; }
+
+.table-wrap { overflow-x: auto; margin-top: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid #eef2f7; vertical-align: middle; text-align: left; }
+thead th { font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; border-bottom: 1px solid #cbd5e1; }
+.right { text-align: right; }
+.code { font-weight: 800; white-space: nowrap; }
+/* A row a customer cannot see is toned down, so a wall of them does not read as the live catalogue. */
+tr.off .code { color: #64748b; }
+.thumb { width: 34px; height: 34px; object-fit: cover; border-radius: 5px; border: 1px solid #e2e8f0; }
+.thumb.none { display: inline-block; text-align: center; line-height: 34px; color: #94a3b8; }
+.cat { display: block; }
+.group { display: block; font-size: 11.5px; color: #94a3b8; }
+.dims { margin-left: 6px; font-size: 11px; color: #64748b; }
+
+.chip {
+  display: inline-block; margin: 1px 4px 1px 0; padding: 2px 7px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 600; background: #eef2f7; color: #334155; white-space: nowrap;
+}
+.chip.warn { background: #fef3c7; color: #854d0e; }
+.chip.ok { background: #dcfce7; color: #166534; }
+.chip.off { background: #e2e8f0; color: #475569; }
+
+.actions { white-space: nowrap; }
+.link { background: none; border: none; padding: 0 6px; color: #0a58ca; font-size: 13px; font-weight: 600; cursor: pointer; }
+.link:hover { text-decoration: underline; }
+.link:disabled { color: #94a3b8; cursor: wait; }
+.retry { background: #fff; border: 1px solid #fca5a5; border-radius: 6px; padding: 4px 10px; font-size: 13px; cursor: pointer; }
+.empty { padding: 22px 10px; text-align: center; }
+
+.pager { display: flex; align-items: center; gap: 14px; margin-top: 14px; font-size: 13.5px; }
+.pager button { padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; }
+.pager button:disabled { color: #94a3b8; cursor: not-allowed; }
+
+@media (max-width: 640px) {
+  .field.search input { min-width: 0; width: 100%; }
+  .filters { flex-direction: column; align-items: stretch; }
+  .table-wrap { overflow-x: auto; }
+}

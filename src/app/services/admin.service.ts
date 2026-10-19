@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { getToken } from './token-storage';
@@ -68,6 +68,45 @@ export interface GapPage {
   products: GapProduct[];
 }
 
+/** One row of the catalogue table: enough to read at a glance, light enough for fifty of them. */
+export interface CatalogueRow {
+  id: number;
+  code: string;
+  is_active: boolean;
+  new_product: boolean;
+  category_id: number | null;
+  category: string | null;
+  group: string | null;
+  /** Whether the category above it is switched on. A product can be on and still be invisible. */
+  category_active: boolean;
+  /** Whether there is a photograph somebody can actually see, not merely an image row. */
+  has_photo: boolean;
+  thumbnail: string | null;
+  dimensions_count: number;
+  price: number | null;
+  currency: string | null;
+  thickness: number | null;
+  /** The languages that carry a translation, so a missing one is visible in the table. */
+  languages: string[];
+}
+
+export interface CataloguePage {
+  total: number;
+  page: number;
+  pages: number;
+  per_page: number;
+  products: CatalogueRow[];
+}
+
+/** What the table asks the API for. */
+export interface CatalogueQuery {
+  q?: string;
+  category?: number | null;
+  active?: 'all' | '1' | '0';
+  page?: number;
+  perPage?: number;
+}
+
 /**
  * The owner's own view of the shop.
  *
@@ -118,5 +157,43 @@ export class AdminService {
   private authHeaders(): HttpHeaders {
     const token = getToken();
     return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
+  }
+
+  /**
+   * The catalogue, for the table.
+   *
+   * Every product, including the ones a customer cannot see: a table that hid the switched-off
+   * items could not be used to switch them back on, which is half of why the owner opens it.
+   */
+  getCatalogue(query: CatalogueQuery): Observable<CataloguePage> {
+    let params = new HttpParams()
+      .set('page', String(query.page ?? 1))
+      .set('per_page', String(query.perPage ?? 50))
+      .set('active', query.active ?? 'all');
+    const term = (query.q || '').trim();
+    if (term) {
+      params = params.set('q', term);
+    }
+    if (query.category) {
+      params = params.set('category', String(query.category));
+    }
+    return this.http.get<CataloguePage>(`${this.baseUrl}/admin/catalogue`, {
+      headers: this.authHeaders(),
+      params,
+    });
+  }
+
+  /**
+   * Copy a product, switched off.
+   *
+   * An empty body is sent because the API refuses a POST without JSON at all - the app's own rule,
+   * not this route's - so a body of nothing is what a client has to send.
+   */
+  duplicateProduct(id: number): Observable<{ id: number; code: string; is_active: boolean }> {
+    return this.http.post<{ id: number; code: string; is_active: boolean }>(
+      `${this.baseUrl}/admin/products/${id}/duplicate`,
+      {},
+      { headers: this.authHeaders() }
+    );
   }
 }
