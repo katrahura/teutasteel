@@ -136,10 +136,12 @@ h1.text-center, h2.text-center {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* The dialog's picture panel is a flex row, and a child with no width of its own is squeezed to
-     nothing: the drawing inside is width 100%, which then has nothing to be a percentage of. */
-  flex: 0 0 auto;
-  width: 210px;
+  /* A fixed slice, but a smaller one: it sits inside the picture panel, so the photograph beside it
+     gets what is left. It never shrinks to nothing, because for a product without a picture the
+     drawing is the reason the panel exists. */
+  flex: 0 0 170px;
+  width: 170px;
+  min-width: 0;
   padding: 8px;
   background: #f8fafc;
 }
@@ -260,10 +262,15 @@ h1.text-center, h2.text-center {
    sides so a large photograph cannot push the dialog off the screen either. */
 .product-modal .image-container {
   height: auto;
-  max-height: 58vh;
+  max-height: 56vh;
   width: auto;
-  max-width: 42%;
-  flex: 0 1 auto;
+  /* A share of the row, with a floor of zero. A percentage plus a fixed width plus another
+     percentage is more than the row holds - 42% + 210px + 50% is over 100% before the gaps - and a
+     centred row that overflows spills out of the dialog on both sides: the photograph hung outside
+     the white box and the drawing was cut off by the details beside it. */
+  min-width: 0;
+  max-width: 46%;
+  flex: 1 1 auto;
 }
 
 .product-image {
@@ -470,7 +477,12 @@ h1.text-center, h2.text-center {
 
 /* Premium Modal Info Section */
 .product-modal .info-container {
-  width: 50%;
+  /* A share of the row, with a floor of zero so it gives room to the picture instead of pushing the
+     row wider than the dialog. */
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+  max-width: 46%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -545,7 +557,7 @@ h1.text-center, h2.text-center {
 /* On a phone the chips wrapped onto four lines and took the row from 110px to 300px, which is more
    scrolling before the first product than the names are worth. One line, and it scrolls sideways. */
 @media (max-width: 700px) {
-  .group-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 18px; }
+  .group-chips { flex-wrap: wrap; overflow: visible; padding-bottom: 14px; }
   .group-chips .chip { flex: none; }
 }
 
@@ -737,3 +749,32 @@ h1.text-center, h2.text-center {
     max-width: 100%;
   }
 }
+
+/* Size diagrams must stay complete, including their dimension annotations. */
+.product-modal .image-container { overflow: visible; flex-shrink: 0; }
+.product-modal .section-chip-lg { min-height: 0; height: auto; padding: 14px; }
+.product-modal .section-chip-lg app-section-drawing { display: block; width: 100%; }
+.product-description { font-size: 14px; line-height: 1.45; }
+@media(max-width:768px) {
+  .product-modal .image-container { height: auto; max-height: none; }
+  .product-modal .section-chip-lg { min-height: 0; }
+  .product-modal .modal-body { padding: 16px; gap: 18px; }
+  .product-modal .info-container { padding: 18px; }
+  .product-modal .modal-close { z-index: 2; background-color: #fff; border-radius: 50%; }
+  .group-chips .chip { flex: 0 1 auto; max-width: 100%; white-space: normal; }
+}
+
+@media(max-width:768px) { .product-modal .modal-body { justify-content:flex-start; max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px); } .product-modal .modal-body > * { flex-shrink:0; } }
+
+/* The group image is part of the existing expansion button. Its title supplies the accessible name. */
+.parent-toggle { gap: 16px; text-align: left; }
+.parent-toggle .group-name { flex: 1; min-width: 0; }
+.group-illustration { width: 96px; height: 96px; flex: 0 0 96px; object-fit: contain; border-radius: 12px; background: #f1f5f9; }
+@media(max-width:600px) {
+  .parent-toggle { gap: 12px; }
+  .group-illustration { width: 72px; height: 72px; flex-basis: 72px; }
+}
+
+/* Keep category illustrations complete at every card width. */
+.child-card .category-image-container { height:auto; aspect-ratio: 1; background:#f1f5f9; }
+.child-card .category-image { width:100%; height:100%; object-fit:contain; }
