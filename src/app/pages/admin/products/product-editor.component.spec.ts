@@ -138,4 +138,19 @@ describe('ProductEditorComponent', () => {
     component.product.code = 'Ø 42 x 3';
     expect(component.isRound()).toBeTrue();
   });
+  it('puts a rejected field message under that field, not only in the map', () => {
+    create();
+    load();
+
+    component.updateProduct();
+    const put = httpMock.expectOne((req) => req.method === 'PUT');
+    put.flush(
+      { error: 'Validation Error', details: { 'dimensions.0.price': ['Not a valid number.'] } },
+      { status: 400, statusText: 'Bad Request' }
+    );
+    fixture.detectChanges();
+
+    const shown = Array.from(fixture.nativeElement.querySelectorAll('.field-error')) as HTMLElement[];
+    expect(shown.some((el) => (el.textContent || '').includes('Not a valid number.'))).toBeTrue();
+  });
 });

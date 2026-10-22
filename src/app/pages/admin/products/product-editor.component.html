@@ -29,6 +29,7 @@
                 [(ngModel)]="product.code"
                 name="code"
               />
+              <p class="field-error" *ngIf="errorFor('code')">{{ errorFor('code') }}</p>
             </div>
             <div class="col-md-6 mb-3">
               <label for="editProductCutType" class="form-label">{{
@@ -227,6 +228,7 @@
                   [(ngModel)]="dimension.price"
                   name="price-{{ i }}"
                 />
+              <p class="field-error" *ngIf="errorFor('dimensions.' + i + '.price')">{{ errorFor('dimensions.' + i + '.price') }}</p>
               </div>
               <div class="col-md-2">
                 <label for="currency-{{ i }}" class="form-label">{{

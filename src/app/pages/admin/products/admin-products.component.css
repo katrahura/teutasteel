@@ -79,3 +79,11 @@ tr.off .code { color: #64748b; }
 }
 .editor-head h2 { margin: 0; font-size: 15px; font-weight: 800; color: #0f172a; }
 .editor-panel .modal-dialog { margin: 0; max-width: 100%; }
+
+/* A rejected field says so where it is, rather than one sentence standing in for nineteen fields. */
+.field-error {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #b91c1c;
+}
