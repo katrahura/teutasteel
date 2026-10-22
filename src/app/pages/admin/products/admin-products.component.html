@@ -125,6 +125,29 @@
           </tbody>
         </table>
       </div>
+      <div *ngIf="importHistory.length" class="history">
+        <h3 class="h6 mt-3">{{ 'ADMIN.HISTORY_TITLE' | translate }}</h3>
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'ADMIN.HISTORY_WHEN' | translate }}</th>
+              <th scope="col">{{ 'ADMIN.HISTORY_WHO' | translate }}</th>
+              <th scope="col" class="right">{{ 'ADMIN.HISTORY_LINES' | translate }}</th>
+              <th scope="col" class="right">{{ 'ADMIN.HISTORY_SIZES' | translate }}</th>
+              <th scope="col" class="right">{{ 'ADMIN.HISTORY_REFUSED' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let record of importHistory">
+              <td>{{ record.created_at | date: 'dd.MM.yyyy HH:mm' }}</td>
+              <td>{{ record.username || '—' }}<span class="group" *ngIf="record.file_name">{{ record.file_name }}</span></td>
+              <td class="right">{{ record.lines }}</td>
+              <td class="right">{{ record.sizes }}</td>
+              <td class="right">{{ record.refused }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </details>
   </section>
 

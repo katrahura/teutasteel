@@ -98,6 +98,17 @@ export interface CataloguePage {
   products: CatalogueRow[];
 }
 
+/** One recorded import: when, by whom, and what it took or refused. */
+export interface ImportRecord {
+  id: number;
+  created_at: string | null;
+  username: string | null;
+  file_name: string | null;
+  lines: number;
+  sizes: number;
+  refused: number;
+}
+
 /** What the importer answers: what it would do, and what it refused and why. */
 export interface ImportLine {
   line: number;
@@ -216,6 +227,13 @@ export class AdminService {
    * A preview and an apply are the same call with one flag between them, so what is shown before
    * anything is written is what will happen.
    */
+  /** The last imports, newest first: a record of changes, not of clicks. */
+  getImportHistory(): Observable<{ imports: ImportRecord[] }> {
+    return this.http.get<{ imports: ImportRecord[] }>(`${this.baseUrl}/admin/imports`, {
+      headers: this.authHeaders(),
+    });
+  }
+
   importThickness(csv: string, dryRun: boolean): Observable<ImportReport> {
     return this.http.post<ImportReport>(
       `${this.baseUrl}/product/import-thickness`,

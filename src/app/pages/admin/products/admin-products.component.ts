@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
-import { AdminService, CatalogueQuery, CatalogueRow, ImportReport } from '../../../services/admin.service';
+import { AdminService, CatalogueQuery, CatalogueRow, ImportRecord, ImportReport } from '../../../services/admin.service';
 import { ProductService } from '../../../services/product.service';
 import { Product, TopCategory } from '../../../models/product.model';
 import { ProductEditorComponent } from './product-editor.component';
@@ -64,6 +64,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   importing = false;
   importError = '';
   importDone: string | null = null;
+  importHistory: ImportRecord[] = [];
 
   q = '';
   category: number | null = null;
@@ -206,8 +207,19 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
       this.importName = file.name;
       this.importReport = null;
       this.importDone = null;
+      this.loadHistory();
       this.runImport(true);
     });
+  }
+
+  /** What was imported before, so a change can be traced back to the file that made it. */
+  loadHistory(): void {
+    this.subscriptions.add(
+      this.admin.getImportHistory().subscribe({
+        next: (body) => { this.importHistory = body.imports || []; },
+        error: () => { this.importHistory = []; },
+      })
+    );
   }
 
   previewImport(): void {
@@ -234,6 +246,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
           if (!report.dry_run) {
             this.importDone = String(report.applied.length);
             this.load(this.page);
+            this.loadHistory();
           }
         },
         error: (error) => {

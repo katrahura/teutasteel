@@ -290,7 +290,13 @@
     "IMPORT_LINE": "Line",
     "IMPORT_WHAT": "What",
     "IMPORT_SIZE_LINE": "thickness {{ thickness }} mm · {{ sizes }} size(s)",
-    "VISIBILITY_HIDDEN": "Hidden by their category"
+    "VISIBILITY_HIDDEN": "Hidden by their category",
+    "HISTORY_TITLE": "Earlier imports",
+    "HISTORY_WHEN": "When",
+    "HISTORY_WHO": "Who",
+    "HISTORY_LINES": "Lines",
+    "HISTORY_SIZES": "Sizes",
+    "HISTORY_REFUSED": "Refused"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

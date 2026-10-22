@@ -329,7 +329,13 @@
     "IMPORT_LINE": "Rreshti",
     "IMPORT_WHAT": "Çka",
     "IMPORT_SIZE_LINE": "trashësia {{ thickness }} mm · {{ sizes }} masë/a",
-    "VISIBILITY_HIDDEN": "Të fshehura nga kategoria"
+    "VISIBILITY_HIDDEN": "Të fshehura nga kategoria",
+    "HISTORY_TITLE": "Importet e mëparshme",
+    "HISTORY_WHEN": "Kur",
+    "HISTORY_WHO": "Kush",
+    "HISTORY_LINES": "Rreshta",
+    "HISTORY_SIZES": "Masa",
+    "HISTORY_REFUSED": "Të refuzuara"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
