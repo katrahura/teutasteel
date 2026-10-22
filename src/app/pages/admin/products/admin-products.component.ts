@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
-import { AdminService, CatalogueQuery, CatalogueRow, ImportRecord, ImportReport } from '../../../services/admin.service';
+import { AdminService, BulkPriceReport, CatalogueQuery, CatalogueRow, ImportRecord, ImportReport } from '../../../services/admin.service';
 import { ProductService } from '../../../services/product.service';
 import { Product, TopCategory } from '../../../models/product.model';
 import { ProductEditorComponent } from './product-editor.component';
@@ -68,6 +68,14 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
 
   /** The rows ticked for a bulk change. Cleared on every load: a selection is for one page's work. */
   selectedIds = new Set<number>();
+
+  /** A bulk price change: what was asked, what the preview said, and what happened. */
+  bulkMode: 'percent' | 'amount' | 'set' = 'percent';
+  bulkValue: number | null = null;
+  bulkReport: BulkPriceReport | null = null;
+  bulkBusy = false;
+  bulkError = '';
+  bulkDone = '';
 
   q = '';
   category: number | null = null;

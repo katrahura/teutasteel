@@ -337,7 +337,20 @@
     "HISTORY_SIZES": "Masa",
     "HISTORY_REFUSED": "Të refuzuara",
     "IMPORT_EXPORT_ERRORS": "Shkarko të refuzuarat",
-    "SELECT_ALL": "Zgjidh të gjithë faqen"
+    "SELECT_ALL": "Zgjidh të gjithë faqen",
+    "BULK_TITLE": "Ndryshim masiv i çmimeve",
+    "BULK_MODE": "Mënyra",
+    "BULK_PERCENT": "Përqindje (%)",
+    "BULK_AMOUNT": "Shumë fikse",
+    "BULK_SET": "Çmim i re",
+    "BULK_VALUE": "Vlera",
+    "BULK_PREVIEW": "Paraqit",
+    "BULK_APPLY": "Zbato",
+    "BULK_WOULD": "Do të ndryshojnë",
+    "BULK_REFUSED": "të refuzuara",
+    "BULK_BEFORE": "Para",
+    "BULK_AFTER": "Pas",
+    "BULK_DONE": "U zbatua."
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

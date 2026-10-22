@@ -99,3 +99,7 @@ tr.off .code { color: #64748b; }
 /* Ticking rows is the first step of a bulk change; the box belongs at the edge so the codes stay first. */
 .tick { width: 30px; text-align: center; }
 .tick input { cursor: pointer; }
+
+/* A bulk price change, above the table: it only exists while rows are ticked. */
+.bulk-panel { margin: 14px 0 4px; border: 1px solid #fcd34d; border-radius: 10px; padding: 10px 14px; background: #fffbeb; }
+.bulk-panel h2 { font-size: 14px; font-weight: 800; margin: 0 0 8px; color: #78350f; }

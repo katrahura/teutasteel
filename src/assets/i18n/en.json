@@ -298,7 +298,20 @@
     "HISTORY_SIZES": "Sizes",
     "HISTORY_REFUSED": "Refused",
     "IMPORT_EXPORT_ERRORS": "Download refused lines",
-    "SELECT_ALL": "Select every row on this page"
+    "SELECT_ALL": "Select every row on this page",
+    "BULK_TITLE": "Bulk price change",
+    "BULK_MODE": "Mode",
+    "BULK_PERCENT": "Percent (%)",
+    "BULK_AMOUNT": "Fixed amount",
+    "BULK_SET": "New price",
+    "BULK_VALUE": "Value",
+    "BULK_PREVIEW": "Preview",
+    "BULK_APPLY": "Apply",
+    "BULK_WOULD": "Would change",
+    "BULK_REFUSED": "refused",
+    "BULK_BEFORE": "Before",
+    "BULK_AFTER": "After",
+    "BULK_DONE": "Applied."
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",
