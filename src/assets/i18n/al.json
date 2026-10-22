@@ -336,7 +336,8 @@
     "HISTORY_LINES": "Rreshta",
     "HISTORY_SIZES": "Masa",
     "HISTORY_REFUSED": "Të refuzuara",
-    "IMPORT_EXPORT_ERRORS": "Shkarko të refuzuarat"
+    "IMPORT_EXPORT_ERRORS": "Shkarko të refuzuarat",
+    "SELECT_ALL": "Zgjidh të gjithë faqen"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

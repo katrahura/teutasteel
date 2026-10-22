@@ -297,7 +297,8 @@
     "HISTORY_LINES": "Lines",
     "HISTORY_SIZES": "Sizes",
     "HISTORY_REFUSED": "Refused",
-    "IMPORT_EXPORT_ERRORS": "Download refused lines"
+    "IMPORT_EXPORT_ERRORS": "Download refused lines",
+    "SELECT_ALL": "Select every row on this page"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

@@ -111,7 +111,11 @@
           <thead>
             <tr>
               <th scope="col">{{ 'ADMIN.IMPORT_LINE' | translate }}</th>
-              <th scope="col">{{ 'ADMIN.COL_CODE' | translate }}</th>
+              <th scope="col" class="tick">
+            <input type="checkbox" [checked]="selectedIds.size >= rows.length && rows.length > 0"
+                   (change)="toggleAllRows()" [attr.aria-label]="'ADMIN.SELECT_ALL' | translate" />
+          </th>
+          <th scope="col">{{ 'ADMIN.COL_CODE' | translate }}</th>
               <th scope="col">{{ 'ADMIN.IMPORT_WHAT' | translate }}</th>
             </tr>
           </thead>
@@ -175,6 +179,10 @@
       </thead>
       <tbody>
         <tr *ngFor="let row of rows" [class.off]="!row.is_active">
+          <td class="tick">
+            <input type="checkbox" [checked]="selectedIds.has(row.id)" (change)="toggleRow(row)"
+                   [attr.aria-label]="row.code" />
+          </td>
           <th scope="row" class="code">{{ row.code }}</th>
           <td>
             <img *ngIf="row.thumbnail" [src]="row.thumbnail" [alt]="row.code" class="thumb" loading="lazy" />
@@ -214,7 +222,7 @@
           </td>
         </tr>
         <tr *ngIf="!rows.length">
-          <td colspan="7" class="muted empty">{{ 'ADMIN.NO_RESULTS' | translate }}</td>
+          <td colspan="8" class="muted empty">{{ 'ADMIN.NO_RESULTS' | translate }}</td>
         </tr>
       </tbody>
     </table>

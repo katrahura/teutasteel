@@ -66,6 +66,9 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   importDone: string | null = null;
   importHistory: ImportRecord[] = [];
 
+  /** The rows ticked for a bulk change. Cleared on every load: a selection is for one page's work. */
+  selectedIds = new Set<number>();
+
   q = '';
   category: number | null = null;
   active: 'all' | '1' | '0' | 'hidden' = 'all';
@@ -128,6 +131,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
           this.page = result.page;
           this.pages = Math.max(result.pages, 1);
           this.loading = false;
+          this.selectedIds.clear();
           this.remember();
         },
         error: (error) => {
