@@ -98,6 +98,16 @@ export interface CataloguePage {
   products: CatalogueRow[];
 }
 
+/** One recorded change: who, what, on what, and when. */
+export interface ActivityRecord {
+  id: number;
+  created_at: string | null;
+  username: string | null;
+  action: string;
+  subject: string | null;
+  detail: string | null;
+}
+
 /** One recorded import: when, by whom, and what it took or refused. */
 export interface ImportRecord {
   id: number;
@@ -266,6 +276,13 @@ export class AdminService {
       { products: query.products, mode: query.mode, value: query.value, dry_run: query.dryRun },
       { headers: this.authHeaders() }
     );
+  }
+
+  /** The last changes made through the panel, newest first. */
+  getActivity(): Observable<{ activity: ActivityRecord[] }> {
+    return this.http.get<{ activity: ActivityRecord[] }>(`${this.baseUrl}/admin/activity`, {
+      headers: this.authHeaders(),
+    });
   }
 
   /** The last imports, newest first: a record of changes, not of clicks. */

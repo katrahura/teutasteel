@@ -125,6 +125,35 @@
     </div>
   </section>
 
+  <!-- What changed, and who changed it. Read when opened: a history nobody asked for should not cost
+       a request on every visit. -->
+  <section class="import-panel" *ngIf="!denied">
+    <details (toggle)="loadActivity()">
+      <summary>{{ 'ADMIN.ACTIVITY_TITLE' | translate }}</summary>
+      <table class="table table-sm align-middle mt-2">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'ADMIN.HISTORY_WHEN' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.HISTORY_WHO' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.ACTIVITY_WHAT' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.ACTIVITY_ON' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of activity">
+            <td>{{ row.created_at | date: 'dd.MM.yyyy HH:mm' }}</td>
+            <td>{{ row.username || '—' }}</td>
+            <td>{{ row.action }}<span class="group" *ngIf="row.detail">{{ row.detail }}</span></td>
+            <td class="code">{{ row.subject || '—' }}</td>
+          </tr>
+          <tr *ngIf="!activity.length">
+            <td colspan="4" class="muted">{{ 'ADMIN.ACTIVITY_EMPTY' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
+  </section>
+
   <!-- The importer. A preview first, always: a spreadsheet of 258 codes is not something to apply
        blind, and the preview and the apply are the same call with one flag between them. -->
   <section class="import-panel" *ngIf="!denied">

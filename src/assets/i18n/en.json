@@ -311,7 +311,11 @@
     "BULK_REFUSED": "refused",
     "BULK_BEFORE": "Before",
     "BULK_AFTER": "After",
-    "BULK_DONE": "Applied."
+    "BULK_DONE": "Applied.",
+    "ACTIVITY_TITLE": "Recent changes",
+    "ACTIVITY_WHAT": "What",
+    "ACTIVITY_ON": "On",
+    "ACTIVITY_EMPTY": "No changes recorded."
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

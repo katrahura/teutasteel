@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
-import { AdminService, BulkPriceReport, CatalogueQuery, CatalogueRow, ImportRecord, ImportReport } from '../../../services/admin.service';
+import { ActivityRecord, AdminService, BulkPriceReport, CatalogueQuery, CatalogueRow, ImportRecord, ImportReport } from '../../../services/admin.service';
 import { ProductService } from '../../../services/product.service';
 import { Product, TopCategory } from '../../../models/product.model';
 import { ProductEditorComponent } from './product-editor.component';
@@ -65,6 +65,8 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   importError = '';
   importDone: string | null = null;
   importHistory: ImportRecord[] = [];
+  activity: ActivityRecord[] = [];
+  activityLoaded = false;
 
   /** The rows ticked for a bulk change. Cleared on every load: a selection is for one page's work. */
   selectedIds = new Set<number>();
@@ -222,6 +224,20 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
       this.loadHistory();
       this.runImport(true);
     });
+  }
+
+  /** The last changes, read when the list is opened rather than on every visit. */
+  loadActivity(): void {
+    if (this.activityLoaded) {
+      return;
+    }
+    this.activityLoaded = true;
+    this.subscriptions.add(
+      this.admin.getActivity().subscribe({
+        next: (body) => { this.activity = body.activity || []; },
+        error: () => { this.activityLoaded = false; },
+      })
+    );
   }
 
   /** What was imported before, so a change can be traced back to the file that made it. */

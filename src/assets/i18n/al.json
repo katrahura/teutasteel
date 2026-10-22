@@ -350,7 +350,11 @@
     "BULK_REFUSED": "të refuzuara",
     "BULK_BEFORE": "Para",
     "BULK_AFTER": "Pas",
-    "BULK_DONE": "U zbatua."
+    "BULK_DONE": "U zbatua.",
+    "ACTIVITY_TITLE": "Ndryshimet e fundit",
+    "ACTIVITY_WHAT": "Çka",
+    "ACTIVITY_ON": "Mbi",
+    "ACTIVITY_EMPTY": "Asnjë ndryshim i regjistruar."
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
