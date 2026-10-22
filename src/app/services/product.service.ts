@@ -207,6 +207,13 @@ export class ProductService {
    * used to create for every new product) must fall through to the placeholder
    * instead of becoming a URL that points at nothing.
    */
+  private deliveryUrl(value: string, folder: string): string {
+    const path = value.trim();
+    if (/^https?:\/\//i.test(path)) return path;
+    const relative = path.replace(/^\/+/, '');
+    return this.cloudinaryBaseUrl + '/' + (relative.startsWith(folder + '/') ? relative : folder + '/' + relative);
+  }
+
   private withDeliveredImage<T extends { image_asset?: ImageAsset }>(
     item: T,
     folder: string
@@ -218,10 +225,10 @@ export class ProductService {
 
     const delivered: ImageAsset = { ...asset };
     if (asset.original_path) {
-      delivered.original_path = `${this.cloudinaryBaseUrl}/${folder}/${asset.original_path}`;
+      delivered.original_path = this.deliveryUrl(asset.original_path, folder);
     }
     if (asset.thumbnail_path) {
-      delivered.thumbnail_path = `${this.cloudinaryBaseUrl}/${folder}/${asset.thumbnail_path}`;
+      delivered.thumbnail_path = this.deliveryUrl(asset.thumbnail_path, folder);
     }
 
     const hasImage = !!(

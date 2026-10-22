@@ -44,10 +44,10 @@
           <a class="search-link" [routerLink]="['/products']"
              [attr.aria-label]="'SHELL.SEARCH_PLACEHOLDER' | translate"
              [title]="'SHELL.SEARCH_PLACEHOLDER' | translate">
-            <span aria-hidden="true">&#9906;</span>
+            <i class="bi bi-search" aria-hidden="true"></i>
           </a>
 
-          <a class="basket" [routerLink]="['/contact']"
+          <a class="basket" [routerLink]="['/request']"
              [attr.aria-label]="'SHELL.REQUEST' | translate">
             {{ 'SHELL.REQUEST' | translate }}
             <span class="count" *ngIf="quoteCount > 0">{{ quoteCount }}</span>

@@ -5,8 +5,6 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { SERVICES, ServiceOffering } from '../../shared/services';
 import { PROJECTS } from '../../shared/projects';
-import { PhotoSlotComponent } from '../../shared/photo-slot/photo-slot.component';
-import { SHOW_PLACEHOLDERS } from '../../shared/placeholders';
 
 /**
  * What the company does beyond selling stock: cutting, bending and decorating to the customer's
@@ -19,14 +17,14 @@ import { SHOW_PLACEHOLDERS } from '../../shared/placeholders';
 @Component({
   selector: 'app-services',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, PhotoSlotComponent],
+  imports: [CommonModule, RouterModule, TranslateModule ],
   templateUrl: './services.component.html',
 })
 export class ServicesComponent {
   readonly services = SERVICES;
 
   /** Draws the empty photograph places while there are no photographs to put in them. */
-  readonly showPlaceholders = SHOW_PLACEHOLDERS;
+
 
   /**
    * What to send for a price that does not have to be asked about twice.

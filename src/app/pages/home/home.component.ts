@@ -23,6 +23,7 @@ import { environment } from '../../../environments/environment';
 export class HomeComponent implements OnDestroy {
   private subscriptions = new Subscription();
   topCategories: TopCategory[] = [];
+  catalogueLoaded = false;
 
   /**
    * The products in the "Featured products" row.
@@ -102,6 +103,7 @@ export class HomeComponent implements OnDestroy {
     const sub = this.productService.getCategoryTree().subscribe({
       next: (data) => {
         this.topCategories = data;
+        this.catalogueLoaded = true;
       },
       error: (error) => {
         console.error('Error occurred while fetching categories:', error);

@@ -370,3 +370,4 @@ button.nav-link {
 @media (max-width: 899.98px) {
   .desktop-nav { display: none !important; }
 }
+.topbar-right > a { display:inline-flex; gap:5px; align-items:center; }

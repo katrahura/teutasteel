@@ -52,7 +52,7 @@
     </span>
     <!-- The way to the request is the primary action here too, not a green button on a green
          panel, where it read as part of the background. -->
-    <a class="btn btn-sm btn-add-to-request ms-auto" [routerLink]="['/contact']">
+    <a class="btn btn-sm btn-add-to-request ms-auto" [routerLink]="['/request']">
       {{ "PRODUCTS.REQUEST_OPEN" | translate }}
     </a>
   </div>
@@ -94,6 +94,11 @@
   [attr.aria-expanded]="expandedParentId === parent.id"
   [attr.aria-controls]="'children-' + parent.id"
 >
+  <img *ngIf="parent.image_asset?.thumbnail_path || parent.image_asset?.original_path"
+       class="group-illustration"
+       [src]="parent.image_asset?.thumbnail_path || parent.image_asset?.original_path"
+       alt="" width="96" height="96" loading="lazy"
+       appImageFallback="assets/images/placeholder_category.jpg" />
   <span class="group-name">
     <span class="fw-semibold">{{ getTranslatedCategoryTitle(parent) }}</span>
     <!-- How big the group is. The number was already in the payload and never shown, and it is the
@@ -147,11 +152,11 @@
                  in that row they sat beside the title and, on a phone, pushed it into three
                  wrapped lines with the chips hanging off the right edge. -->
             <div class="group-chips" *ngIf="expandedParentId !== parent.id">
-              <span class="chip" *ngFor="let child of (childrenMap.get(parent.id!) || []) | slice:0:4">
+              <span class="chip" *ngFor="let child of (childrenMap.get(parent.id!) || []) | slice:0:2">
                 {{ getTranslatedCategoryTitle(child) }}
               </span>
-              <span class="chip chip-more" *ngIf="(childrenMap.get(parent.id!) || []).length > 4">
-                +{{ (childrenMap.get(parent.id!) || []).length - 4 }}
+              <span class="chip chip-more" *ngIf="(childrenMap.get(parent.id!) || []).length > 2">
+                +{{ (childrenMap.get(parent.id!) || []).length - 2 }}
               </span>
             </div>
 
@@ -174,10 +179,12 @@
                     <!-- ✅ use same structure as old HTML -->
                     <div class="category-image-container">
                       <img
-                        appImageFallback="assets/images/placeholder_category.jpg"
+                        [appImageFallback]="parent.image_asset?.thumbnail_path || parent.image_asset?.original_path || 'assets/images/placeholder_category.jpg'"
                         [src]="
                           child.image_asset?.thumbnail_path ||
                           child.image_asset?.original_path ||
+                          parent.image_asset?.thumbnail_path ||
+                          parent.image_asset?.original_path ||
                           'assets/images/placeholder_category.jpg'
                         "
                         class="category-image"
@@ -865,7 +872,7 @@
           <strong class="small me-1">{{ "PRODUCTS.FILTERS" | translate }}</strong>
 
           <ng-container *ngIf="facets.thicknesses.length">
-            <label class="form-label visually-hidden" for="filterThickness">
+            <label class="form-label mb-0" for="filterThickness">
               {{ "PRODUCTS.FILTER_THICKNESS" | translate }}
             </label>
             <select id="filterThickness" class="form-select form-select-sm w-auto"
@@ -982,7 +989,7 @@
             </div>
             <div class="card-body text-center">
               <h5 class="card-title" (click)="openModal(product, $event)">{{ product?.code }}</h5>
-              <p class="card-text" *ngIf="product.description">{{ product.description }}</p>
+              <p class="card-text product-description" *ngIf="product.description && product.description.trim() !== product.code">{{ product.description }}</p>
               <!-- Where nothing is written about a product, the size line below is the useful
                    answer and this stays out of its way. Where there is no size either, inviting
                    the question beats printing "No description available". -->
@@ -996,12 +1003,12 @@
               <p
                 class="card-text"
                 *ngIf="
-                  showsValue(getProductDimension(product, 'price')) &&
+                  lowestPrice(product) > 0 &&
                   hasAnyDimension(product.dimensions ? product.dimensions[0] : null)
                 "
               >
                 <strong>{{ "MISC.PRICE" | translate }}:</strong>
-                {{ getProductDimension(product, "price") }}
+                <span *ngIf="(product.dimensions || []).length > 1">{{ 'PRODUCTS.PRICE_FROM' | translate }} </span>{{ lowestPrice(product) | number:'1.2-2' }}
                 {{ getProductDimension(product, "currency") }}
                 <span class="price-unit" *ngIf="priceUnit(product)">/ {{ priceUnit(product) }}</span>
               </p>
@@ -1039,7 +1046,7 @@
                 (click)="addOrOpen(product, $event)"
               >
                 <i class="bi bi-plus-lg" aria-hidden="true"></i>
-                {{ "PRODUCTS.ADD_TO_REQUEST" | translate }}
+                {{ ((product.dimensions || []).length > 1 ? 'PRODUCTS.CHOOSE_OPTIONS' : 'PRODUCTS.ADD_TO_REQUEST') | translate }}
               </button>
               <a
                 [href]="getWhatsAppLink(product)"
@@ -1047,7 +1054,7 @@
                 target="_blank"
                 (click)="$event.stopPropagation()"
               >
-                <i class="fab fa-whatsapp"></i>
+                <i class="bi bi-whatsapp" aria-hidden="true"></i>
                 {{ "MODAL.CONTACT_WHATSAPP" | translate }}
               </a>
             </div>
@@ -1337,7 +1344,7 @@
           </p>
 
           <a
-            [href]="getWhatsAppLink(selectedProduct)"
+            [href]="getWhatsAppLink(selectedProduct, true)"
             class="btn btn-whatsapp mt-2"
             [class.disabled]="!canContact()"
             [attr.aria-disabled]="!canContact()"

@@ -8,4 +8,4 @@
  *
  * Set to false when the photographs are in, and every slot disappears at once.
  */
-export const SHOW_PLACEHOLDERS = true;
+export const SHOW_PLACEHOLDERS = false;

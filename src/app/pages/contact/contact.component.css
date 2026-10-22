@@ -47,3 +47,23 @@ h2 {
 body {
   background-color: #eef2f5; /* Light background to contrast with the form */
 }
+
+/* Requests use the full phone width; contact information keeps its quieter panel. */
+:host { display: block; }
+.container { max-width: 900px; padding: 24px; box-shadow: none; background: transparent; }
+.request-card { max-width: 760px; border-radius: 14px; }
+.request-card .card-body { padding: 28px; }
+.request-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding-block: 18px; }
+.request-description { grid-column: 1 / -1; min-width: 0; overflow-wrap: anywhere; }
+.request-description .small { margin-top: 5px; }
+.request-quantity { min-width: 0; }
+.request-quantity .btn { min-width: 40px; min-height: 40px; }
+.request-quantity .form-control { width: 76px; min-height: 40px; }
+.request-remove { justify-self: end; align-self: center; min-height: 40px; }
+@media(max-width: 600px) {
+  .container { padding: 0; }
+  .request-card .card-body { padding: 18px; }
+  .request-row { gap: 10px; }
+}
+
+@media(max-width:360px) { .request-row { grid-template-columns:1fr; } .request-description { grid-column:1; } .request-remove { grid-column:1; justify-self:start; } }

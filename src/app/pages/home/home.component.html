@@ -27,18 +27,13 @@
              search box - so a visitor who wanted either had to find it in the navigation. The
              telephone keeps the one filled amber button; these two are outlines beside it. -->
         <div class="cta-row">
-          <a class="btn btn-accent" [href]="'tel:' + phone">
-            <span aria-hidden="true">&#9990;</span> {{ 'HOME.CALL' | translate }}
-          </a>
-          <a class="btn btn-outline-accent" routerLink="/products">
-            {{ 'MISC.VIEW_PRODUCTS' | translate }}
-          </a>
-          <a class="btn btn-outline-accent" routerLink="/contact">
-            {{ 'QUOTE.TITLE' | translate }}
-          </a>
-          <a class="btn btn-ghost" [href]="whatsappLink" target="_blank" rel="noopener noreferrer">
-            WhatsApp
-          </a>
+          <a class="btn btn-accent" routerLink="/products">{{ 'MISC.VIEW_PRODUCTS' | translate }}</a>
+          <a class="btn btn-outline-accent" routerLink="/request">{{ 'QUOTE.TITLE' | translate }}</a>
+        </div>
+        <div class="hero-contact">
+          <a [href]="'tel:' + phone">{{ 'HOME.CALL' | translate }}</a>
+          <span aria-hidden="true">·</span>
+          <a [href]="whatsappLink" target="_blank" rel="noopener noreferrer">WhatsApp</a>
         </div>
         <form class="hero-search" (submit)="goToSearch($event, heroSearch.value)">
           <input #heroSearch type="search" name="heroSearch"
@@ -89,14 +84,15 @@
     </div>
   </section>
 
+  <ng-template #countLoading><span class="count-loading" [attr.aria-label]="'MISC.LOADING' | translate">—</span></ng-template>
   <!-- What is certainly true -->
   <div class="trust">
     <div class="shell">
       <div class="item">
-        <b>{{ catalogueTotal }}</b><span>{{ 'HOME.TRUST_PRODUCTS' | translate }}</span>
+        <b *ngIf="catalogueLoaded; else countLoading">{{ catalogueTotal }}</b><span>{{ 'HOME.TRUST_PRODUCTS' | translate }}</span>
       </div>
       <div class="item">
-        <b>{{ topCategories.length }}</b><span>{{ 'HOME.TRUST_GROUPS' | translate }}</span>
+        <b *ngIf="catalogueLoaded; else countLoading">{{ topCategories.length }}</b><span>{{ 'HOME.TRUST_GROUPS' | translate }}</span>
       </div>
       <div class="item">
         <b>{{ 'HOME.TRUST_CUT_SHORT' | translate }}</b><span>{{ 'HOME.TRUST_CUT' | translate }}</span>
@@ -190,7 +186,7 @@
         <a class="btn btn-dark" [href]="whatsappLink" target="_blank" rel="noopener noreferrer">
           {{ 'HOME.QUOTE_WHATSAPP' | translate }}
         </a>
-        <a class="btn btn-light" routerLink="/contact">{{ 'HOME.QUOTE_FORM' | translate }}</a>
+        <a class="btn btn-light" routerLink="/request">{{ 'HOME.QUOTE_FORM' | translate }}</a>
       </div>
     </div>
   </div>

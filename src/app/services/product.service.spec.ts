@@ -286,4 +286,20 @@ describe('ProductService', () => {
     expect(asset?.original_path).toBe('');
     expect(asset?.thumbnail_path).toBe('');
   });
+
+  it('keeps complete Cloudinary URLs instead of prefixing them twice', () => {
+    const url=environment.cloudinaryBaseUrl+'/category_images/group.webp';
+    let delivered:any;
+    service.getTopCategories().subscribe(categories=>delivered=categories[0].image_asset);
+    httpMock.expectOne(topCategoriesUrl).flush([{...categoryPayload[0], image_asset:{...categoryPayload[0].image_asset,original_path:url,thumbnail_path:url}}]);
+    expect(delivered.original_path).toBe(url);
+    expect(delivered.thumbnail_path).toBe(url);
+  });
+  it('resolves folder-qualified paths without duplicating the category folder', () => {
+    let delivered:any;
+    service.getTopCategories().subscribe(categories=>delivered=categories[0].image_asset);
+    httpMock.expectOne(topCategoriesUrl).flush([{...categoryPayload[0], image_asset:{...categoryPayload[0].image_asset,original_path:'category_images/group.webp',thumbnail_path:'/category_images/group.webp'}}]);
+    expect(delivered.original_path).toBe(environment.cloudinaryBaseUrl+'/category_images/group.webp');
+    expect(delivered.thumbnail_path).toBe(environment.cloudinaryBaseUrl+'/category_images/group.webp');
+  });
 });

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
@@ -18,6 +19,7 @@ export class ContactComponent implements OnInit {
   private translate = inject(TranslateService);
   private quoteList = inject(QuoteListService);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   /**
    * The service the visitor pressed on the services page, if they came from there.
@@ -28,6 +30,8 @@ export class ContactComponent implements OnInit {
    * somebody can open the quote form directly, and the request list is what carries the products.
    */
   selectedService: ServiceOffering | null = null;
+  readonly requestPage = this.route.snapshot.data?.['requestPage'] === true;
+  hasDrawing = false;
 
   /**
    * What the visitor added while browsing.
@@ -82,8 +86,10 @@ export class ContactComponent implements OnInit {
    */
   ngOnInit(): void {
     this.split();
-    const asked = (this.route.snapshot.queryParamMap.get('service') || '').trim();
-    this.selectedService = SERVICES.find((service) => service.id === asked) || null;
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      const asked = (params.get('service') || '').trim();
+      this.selectedService = SERVICES.find(service => service.id === asked) || null;
+    });
   }
 
   /** The chosen service's name, in the language the visitor is reading. */
@@ -202,6 +208,7 @@ export class ContactComponent implements OnInit {
     // The work itself, when a service was chosen. The quantity is above, with the rest of the
     // reply's labels, so it is not repeated here.
     if (this.selectedService) {
+      if (this.hasDrawing) lines.push(this.translate.instant('QUOTE.DRAWING_MESSAGE'));
       const details: [string, string][] = [
         ['QUOTE.THICKNESS', this.quote.thickness],
         ['QUOTE.DIMENSIONS', this.quote.dimensions],

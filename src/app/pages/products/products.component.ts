@@ -1493,8 +1493,13 @@ this.showProducts(this.selectedCategory)
     return `${base}/products${query}`;
   }
 
+  lowestPrice(product: Product): number {
+    const prices = (product.dimensions || []).map(d => Number(d.price)).filter(n => Number.isFinite(n) && n > 0);
+    return prices.length ? Math.min(...prices) : 0;
+  }
+
   // Generate WhatsApp link
-  getWhatsAppLink(product: Product): string {
+  getWhatsAppLink(product: Product, useDialogSelection: boolean = false): string {
     // Say which thickness, or the enquiry is "tell me about 100x100" with no idea which wall.
     // When a product has only one dimension there is nothing to tick, so that one is what the
     // customer means.
@@ -1503,7 +1508,7 @@ this.showProducts(this.selectedCategory)
       ? [{ dimension: dimensions[0] }]
       : dimensions
           .map((dimension: ProductDimension, index: number) => ({ dimension, index }))
-          .filter(({ index }: { index: number }) => this.isChosen(index));
+          .filter(({ index }: { index: number }) => useDialogSelection && this.selectedProduct?.id === product.id && this.isChosen(index));
     const wanted = chosen
       .map(({ dimension }: { dimension: ProductDimension }) => {
         const parts = [];

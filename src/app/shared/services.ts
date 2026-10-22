@@ -28,7 +28,7 @@ export const SERVICES: ServiceOffering[] = [
     id: 'cnc',
     titleKey: 'MISC.CNC_METAL_CUTTING',
     textKey: 'MISC.SERVICE_CNC_DESC',
-    image: 'assets/images/cnc.jpg',
+    image: 'assets/images/services/cnc-fiber-laser-cutting.webp',
     // The cut plates and the decorative panels: both are CNC work.
     sampleIndexes: [3, 6],
   },
@@ -36,7 +36,7 @@ export const SERVICES: ServiceOffering[] = [
     id: 'shears',
     titleKey: 'MISC.SHEET_METAL_CUTTING',
     textKey: 'MISC.SERVICE_PLATES_DESC',
-    image: 'assets/images/hyd.webp',
+    image: 'assets/images/services/hydraulic-shearing.webp',
     // The folded cover is cut on the guillotine before it is folded, and so is the tray.
     sampleIndexes: [4, 9],
   },
@@ -44,7 +44,7 @@ export const SERVICES: ServiceOffering[] = [
     id: 'profiles',
     titleKey: 'MISC.PROFILE_AND_PIPE_CUTTING',
     textKey: 'MISC.SERVICE_PROFILES_DESC',
-    image: 'assets/images/profiles.jpg',
+    image: 'assets/images/services/profile-pipe-cutting.webp',
     // Cut tubes for a gate, for a railing, and cut before being bent.
     sampleIndexes: [1, 2, 12],
   },
@@ -52,7 +52,7 @@ export const SERVICES: ServiceOffering[] = [
     id: 'bending',
     titleKey: 'MISC.PIPE_BENDING',
     textKey: 'MISC.SERVICE_BENDING_DESC',
-    image: 'assets/images/bend.webp',
+    image: 'assets/images/services/pipe-bending-simple.webp',
     // The five tubes bent to one template.
     sampleIndexes: [12],
   },
@@ -62,7 +62,7 @@ export const SERVICES: ServiceOffering[] = [
     id: 'pressbrake',
     titleKey: 'MISC.PRESS_BRAKE_BENDING',
     textKey: 'MISC.SERVICE_PRESS_BRAKE_DESC',
-    image: '',
+    image: 'assets/images/services/press-brake-sheet-bending-simple.webp',
     // U-channels, a tray and a run of L-brackets. Three is enough to show the range.
     sampleIndexes: [7, 9, 11],
   },
@@ -78,7 +78,7 @@ export const SERVICES: ServiceOffering[] = [
     id: 'decoration',
     titleKey: 'MISC.PIPE_DECORATION',
     textKey: 'MISC.SERVICE_DECORATION_DESC',
-    image: 'assets/images/decor.webp',
+    image: 'assets/images/services/pipe-decoration-simple.webp',
     // The decorative panels are the decorative work in the gallery.
     sampleIndexes: [6],
   },
