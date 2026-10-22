@@ -61,13 +61,17 @@
        survives a phone 320px wide. -->
   <aside class="editor-panel" *ngIf="openId" [attr.aria-label]="'ADMIN.EDITING' | translate">
     <header class="editor-head">
-      <h2>{{ 'ADMIN.EDITING' | translate }}</h2>
+      <h2>
+        {{ 'ADMIN.EDITING' | translate }}<span *ngIf="openedCode"> — {{ openedCode }}</span>
+      </h2>
       <button type="button" class="link" (click)="closeEditor()">{{ 'ADMIN.CLOSE' | translate }}</button>
     </header>
     <app-product-editor [productId]="openId" (saved)="onSaved($event)" (closed)="closeEditor()"></app-product-editor>
   </aside>
 
-  <p class="copied" *ngIf="savedCode">{{ 'ADMIN.SAVED' | translate }} <strong>{{ savedCode }}</strong></p>
+  <!-- role="status" so a screen reader announces the save: a line of text appearing on the page
+       says nothing to somebody who cannot see it appear. -->
+  <p class="copied" *ngIf="savedCode" role="status" aria-live="polite">{{ 'ADMIN.SAVED' | translate }} <strong>{{ savedCode }}</strong></p>
 
   <div class="table-wrap" *ngIf="!loading && !denied && !failed">
     <table class="table table-sm align-middle">

@@ -53,6 +53,8 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   duplicating: number | null = null;
   /** The product open in the panel, and the code of the one just saved. */
   openId: number | null = null;
+  /** The code of the product in the panel, so the panel can say which one it is. */
+  openedCode: string | null = null;
   savedCode: string | null = null;
 
   q = '';
@@ -193,16 +195,19 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     this.savedCode = null;
     this.copied = null;
     this.openId = row.id;
+    this.openedCode = row.code;
   }
 
   closeEditor(): void {
     this.openId = null;
+    this.openedCode = null;
   }
 
   /** After a save: close the panel, keep the filters and the page, and say what was saved. */
   onSaved(product: Product): void {
     this.savedCode = product && product.code ? product.code : null;
     this.openId = null;
+    this.openedCode = null;
     this.load(this.page);
   }
 
