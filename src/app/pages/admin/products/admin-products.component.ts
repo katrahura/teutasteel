@@ -352,4 +352,70 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     const title = (category as unknown as { title?: string }).title || '';
     return nested ? '— ' + title : title;
   }
+
+  /** Tick or untick one row. */
+  toggleRow(row: CatalogueRow): void {
+    if (this.selectedIds.has(row.id)) {
+      this.selectedIds.delete(row.id);
+    } else {
+      this.selectedIds.add(row.id);
+    }
+  }
+
+  /** Tick every row on this page, or clear them all. */
+  toggleAllRows(): void {
+    if (!this.rows.length) {
+      return;
+    }
+    if (this.selectedIds.size >= this.rows.length) {
+      this.selectedIds.clear();
+      return;
+    }
+    this.rows.forEach((row) => this.selectedIds.add(row.id));
+  }
+
+  /** What a bulk change would do, before it does it. */
+  previewBulk(): void {
+    this.runBulk(true);
+  }
+
+  /** Write what the preview showed. */
+  applyBulk(): void {
+    this.runBulk(false);
+  }
+
+  private runBulk(dryRun: boolean): void {
+    if (!this.selectedIds.size || this.bulkValue === null || this.bulkBusy) {
+      return;
+    }
+    this.bulkBusy = true;
+    this.bulkError = '';
+    this.bulkDone = '';
+    this.subscriptions.add(
+      this.admin.bulkPrices({
+        products: Array.from(this.selectedIds),
+        mode: this.bulkMode,
+        value: Number(this.bulkValue),
+        dryRun,
+      }).subscribe({
+        next: (report) => {
+          this.bulkBusy = false;
+          this.bulkReport = report;
+          if (!report.dry_run) {
+            this.bulkDone = String(report.count);
+            this.bulkReport = null;
+            this.selectedIds.clear();
+            this.load(this.page);
+          }
+        },
+        error: (error) => {
+          this.bulkBusy = false;
+          const status = error && error.status;
+          this.bulkError = status === 401 || status === 403
+            ? 'ADMIN.NOT_ALLOWED'
+            : (error && error.error && error.error.error) || 'ADMIN.TABLE_FAILED';
+        },
+      })
+    );
+  }
 }
