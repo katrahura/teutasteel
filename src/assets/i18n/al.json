@@ -335,7 +335,8 @@
     "HISTORY_WHO": "Kush",
     "HISTORY_LINES": "Rreshta",
     "HISTORY_SIZES": "Masa",
-    "HISTORY_REFUSED": "Të refuzuara"
+    "HISTORY_REFUSED": "Të refuzuara",
+    "IMPORT_EXPORT_ERRORS": "Shkarko të refuzuarat"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

@@ -87,6 +87,10 @@
         <button type="button" class="link" (click)="previewImport()" [disabled]="!importCsv || importing">
           {{ 'ADMIN.IMPORT_PREVIEW' | translate }}
         </button>
+        <button type="button" class="link" (click)="downloadRejected()"
+                [disabled]="!importReport || !importReport.rejected.length">
+          {{ 'ADMIN.IMPORT_EXPORT_ERRORS' | translate }}
+        </button>
         <button type="button" class="apply" (click)="applyImport()"
                 [disabled]="!importReport || !importReport.applied.length || importing">
           {{ 'ADMIN.IMPORT_APPLY' | translate }}

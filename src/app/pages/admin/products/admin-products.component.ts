@@ -222,6 +222,24 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     );
   }
 
+  /** The refused lines as a spreadsheet, so the file can be fixed and offered again. */
+  downloadRejected(): void {
+    const refused = (this.importReport && this.importReport.rejected) || [];
+    if (!refused.length || typeof window === 'undefined') {
+      return;
+    }
+    const lines = ['line,code,reason'].concat(
+      refused.map((row) => [row.line, row.code, '"' + String(row.reason || '').replace(/"/g, '""') + '"'].join(','))
+    );
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'refused-lines.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   previewImport(): void {
     this.runImport(true);
   }
