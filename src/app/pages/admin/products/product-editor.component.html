@@ -1,0 +1,359 @@
+<!-- Edit Product Modal -->
+<div class="editor-form">
+  <!-- the bindings below read product.*, so the dialog only exists once a
+       product has been chosen; otherwise every change detection threw
+       "Cannot read properties of null" -->
+  <div class="modal-dialog modal-xl" *ngIf="product">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ "MISC.EDIT_PRODUCT" | translate }}</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          [attr.aria-label]="'MODAL.CLOSE' | translate"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <h5>{{ "MISC.GENERAL_INFORMATION" | translate }}</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="editProductCode" class="form-label">{{
+                "MISC.PRODUCT_CODE" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="editProductCode"
+                [(ngModel)]="product.code"
+                name="code"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="editProductCutType" class="form-label">{{
+                "MISC.CUT_TYPE" | translate
+              }}</label>
+              <input
+                type="number"
+                class="form-control"
+                id="editProductCutType"
+                [(ngModel)]="product.cut_type"
+                name="cut_type"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="editProductActive"
+                  [(ngModel)]="product.is_active"
+                  name="is_active"
+                />
+                <label class="form-check-label" for="editProductActive">
+                  {{ "MISC.IS_ACTIVE" | translate }}
+                </label>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="productNew"
+                  [(ngModel)]="product.new_product"
+                  name="new_product"
+                />
+                <label class="form-check-label" for="productNew">
+                  {{ "MISC.NEW_PRODUCT" | translate }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- This dialog renders whenever product is set, which the *details*
+               dialog also does. Binding image_asset.file_name here therefore threw for any
+               product with no image - including on the details view, for a customer. The
+               `!` marks below are compile-time only; openEditModal still fills in an empty
+               asset so these fields exist while editing. -->
+          <ng-container *ngIf="product?.image_asset">
+          <h5 class="mt-4">{{ "MISC.IMAGE_ASSET" | translate }}</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="editImageFileName" class="form-label">{{
+                "MISC.IMAGE_FILE_NAME" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="editImageFileName"
+                [(ngModel)]="image.file_name!"
+                name="image_file_name"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="imageAltText" class="form-label">{{
+                "MISC.ALTERNATIVE_TEXT" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="imageAltText"
+                [(ngModel)]="image.alternative_text"
+                name="image_alt_text"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="imageThumbnailPath" class="form-label">{{
+                "MISC.THUMBNAIL_PATH" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="imageThumbnailPath"
+                [(ngModel)]="thumbnailPath"
+                name="thumbnail_path"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="imageOriginalPath" class="form-label">{{
+                "MISC.ORIGINAL_PATH" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="imageOriginalPath"
+                [(ngModel)]="originalPath"
+                name="original_path"
+              />
+            </div>
+          </div>
+          </ng-container>
+
+          <h5 class="mt-4">{{ "PRODUCTS.DIMENSIONS" | translate }}</h5>
+          <div *ngIf="(product?.dimensions?.length || 0) > 0">
+            <div
+              class="row mb-3"
+              *ngFor="
+                let dimension of (product.dimensions || []);
+                let i = index
+              "
+            >
+              <div class="col-md-2">
+                <label for="height-{{ i }}" class="form-label">{{
+                  (isRound(product) ? "PRODUCTS.DIAMETER" : "PRODUCTS.HEIGHT")
+                    | translate
+                }}</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="height-{{ i }}"
+                  [placeholder]="
+                    (isRound(product) ? 'PRODUCTS.DIAMETER' : 'PRODUCTS.HEIGHT')
+                      | translate
+                  "
+                  [(ngModel)]="dimension.height"
+                  name="height-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="width-{{ i }}" class="form-label">{{
+                  "PRODUCTS.WIDTH" | translate
+                }}</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="width-{{ i }}"
+                  [placeholder]="'PRODUCTS.WIDTH' | translate"
+                  [(ngModel)]="dimension.width"
+                  name="width-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="length-{{ i }}" class="form-label">{{
+                  "PRODUCTS.LENGTH" | translate
+                }}</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="length-{{ i }}"
+                  [placeholder]="'PRODUCTS.LENGTH' | translate"
+                  [(ngModel)]="dimension.length"
+                  name="length-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="thickness-{{ i }}" class="form-label">{{
+                  "PRODUCTS.THICKNESS" | translate
+                }}</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="thickness-{{ i }}"
+                  [placeholder]="'PRODUCTS.THICKNESS' | translate"
+                  [(ngModel)]="dimension.thickness"
+                  name="thickness-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="weight-{{ i }}" class="form-label">{{
+                  "MISC.WEIGHT" | translate
+                }}</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="weight-{{ i }}"
+                  [placeholder]="'MISC.WEIGHT' | translate"
+                  [(ngModel)]="dimension.weight"
+                  name="weight-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="price-{{ i }}" class="form-label">{{
+                  "MISC.PRICE" | translate
+                }}</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="price-{{ i }}"
+                  [placeholder]="'MISC.PRICE' | translate"
+                  [(ngModel)]="dimension.price"
+                  name="price-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="currency-{{ i }}" class="form-label">{{
+                  "MISC.CURRENCY" | translate
+                }}</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="currency-{{ i }}"
+                  [placeholder]="'MISC.CURRENCY' | translate"
+                  [(ngModel)]="dimension.currency"
+                  name="currency-{{ i }}"
+                />
+              </div>
+              <div class="col-md-1">
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  (click)="removeDimension(i)"
+                >
+                  {{ "MISC.REMOVE" | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="addNewDimension()"
+            >
+              {{ "MISC.ADD_DIMENSION" | translate }}
+            </button>
+          </div>
+
+          <h5 class="mt-4">{{ "MISC.PRODUCT_TRANSLATIONS" | translate }}</h5>
+          <div *ngIf="(product?.translations?.length || 0) > 0">
+            <div
+              class="row mb-3"
+              *ngFor="
+                let translation of (product.translations || []);
+                let i = index
+              "
+            >
+              <div class="col-md-3">
+                <label for="language-{{ i }}" class="form-label">{{
+                  "MISC.LANGUAGE" | translate
+                }}</label>
+                <select
+                  class="form-select"
+                  id="language-{{ i }}"
+                  [(ngModel)]="translation.language"
+                  name="language-{{ i }}"
+                >
+                  <option value="al">Shqip</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="content-{{ i }}" class="form-label">{{
+                  "MISC.CONTENT" | translate
+                }}</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="content-{{ i }}"
+                  [placeholder]="'MISC.CONTENT' | translate"
+                  [(ngModel)]="translation.content"
+                  name="content-{{ i }}"
+                />
+              </div>
+              <div class="col-md-3">
+                <label for="slug-{{ i }}" class="form-label">{{
+                  "MISC.SLUG" | translate
+                }}</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="slug-{{ i }}"
+                  [placeholder]="'MISC.SLUG' | translate"
+                  [(ngModel)]="translation.slug"
+                  name="slug-{{ i }}"
+                />
+              </div>
+              <div class="col-md-2">
+                <label for="description-{{ i }}" class="form-label">{{
+                  "MISC.DESCRIPTION" | translate
+                }}</label>
+                <textarea
+                  class="form-control"
+                  id="description-{{ i }}"
+                  [placeholder]="'MISC.DESCRIPTION' | translate"
+                  [(ngModel)]="translation.description"
+                  name="description-{{ i }}"
+                ></textarea>
+              </div>
+              <div class="col-md-1">
+                <label class="form-label d-block">&nbsp;</label>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  (click)="removeTranslation(i)"
+                >
+                  {{ "MISC.REMOVE" | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="addNewTranslation()"
+            >
+              {{ "MISC.ADD_TRANSLATION" | translate }}
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          {{ "MODAL.CLOSE" | translate }}
+        </button>
+        <button type="button" class="btn btn-primary" (click)="updateProduct()">
+          {{ "MISC.SAVE_CHANGES" | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

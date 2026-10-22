@@ -7,7 +7,8 @@ import { Subscription } from 'rxjs';
 
 import { AdminService, CatalogueQuery, CatalogueRow } from '../../../services/admin.service';
 import { ProductService } from '../../../services/product.service';
-import { TopCategory } from '../../../models/product.model';
+import { Product, TopCategory } from '../../../models/product.model';
+import { ProductEditorComponent } from './product-editor.component';
 
 /**
  * The catalogue, as a table.
@@ -27,7 +28,7 @@ import { TopCategory } from '../../../models/product.model';
 @Component({
   selector: 'app-admin-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslateModule],
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule, ProductEditorComponent],
   templateUrl: './admin-products.component.html',
   styleUrls: ['./admin-products.component.css'],
 })
@@ -50,6 +51,9 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   /** The copy that was just made, so the table can say which one it was. */
   copied: string | null = null;
   duplicating: number | null = null;
+  /** The product open in the panel, and the code of the one just saved. */
+  openId: number | null = null;
+  savedCode: string | null = null;
 
   q = '';
   category: number | null = null;
@@ -174,6 +178,24 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
         },
       })
     );
+  }
+
+  /** Open a product in the panel beside the table, without leaving the list. */
+  open(row: CatalogueRow): void {
+    this.savedCode = null;
+    this.copied = null;
+    this.openId = row.id;
+  }
+
+  closeEditor(): void {
+    this.openId = null;
+  }
+
+  /** After a save: close the panel, keep the filters and the page, and say what was saved. */
+  onSaved(product: Product): void {
+    this.savedCode = product && product.code ? product.code : null;
+    this.openId = null;
+    this.load(this.page);
   }
 
   /** The chips a row carries: what is wrong with it, or that it is on and complete. */

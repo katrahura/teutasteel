@@ -58,3 +58,24 @@ tr.off .code { color: #64748b; }
   .filters { flex-direction: column; align-items: stretch; }
   .table-wrap { overflow-x: auto; }
 }
+
+/* The editor, on the page. A border and a tint, so it reads as a panel opened over the table rather
+   than as another section of the list. */
+.editor-panel {
+  margin: 14px 0 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  padding: 12px 14px 16px;
+}
+.editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+.editor-head h2 { margin: 0; font-size: 15px; font-weight: 800; color: #0f172a; }
+.editor-panel .modal-dialog { margin: 0; max-width: 100%; }

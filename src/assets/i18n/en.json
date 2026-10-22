@@ -274,7 +274,9 @@
     "STATUS_NO_SIZE": "no size",
     "STATUS_NO_LANGUAGE": "missing",
     "STATUS_OK": "complete",
-    "STATUS_OFF_CATEGORY": "category hidden"
+    "STATUS_OFF_CATEGORY": "category hidden",
+    "EDITING": "Editing the product",
+    "SAVED": "Saved"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

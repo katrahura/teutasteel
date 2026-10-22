@@ -313,7 +313,9 @@
     "STATUS_NO_SIZE": "pa masë",
     "STATUS_NO_LANGUAGE": "mungon",
     "STATUS_OK": "i plotë",
-    "STATUS_OFF_CATEGORY": "kategoria e fikur"
+    "STATUS_OFF_CATEGORY": "kategoria e fikur",
+    "EDITING": "Redakto produktin",
+    "SAVED": "U ruajt"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
