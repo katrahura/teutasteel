@@ -165,7 +165,7 @@ def main() -> int:
     # what a static host must be able to serve, checked rather than assumed
     required = [
         "index.html", "products/index.html", "about/index.html", "contact/index.html",
-        "login/index.html", "admin-dashboard/index.html", "user-dashboard/index.html",
+        "login/index.html", "admin/index.html", "admin/overview/index.html", "admin/products/index.html", "user-dashboard/index.html",
         "robots.txt", "sitemap.xml", "manifest.json", "favicon.ico",
         "icons/icon-192.png", "icons/icon-512.png", "assets/logo.svg",
     ]
