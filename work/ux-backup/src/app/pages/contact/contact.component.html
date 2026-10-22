@@ -1,0 +1,239 @@
+<section class="py-5 px-3 mb-5 mt-5">
+  <h1 class="h2 text-center mb-4">{{ 'CONTACT.TITLE' | translate }}</h1>
+  <div class="container text-center">
+
+    <p class="lead">{{ 'CONTACT.REACH_US' | translate }}</p>
+
+    <div class="mb-4">
+      <!-- The space after each colon is written as &nbsp; inside the label, not left as whitespace in
+           the template. Angular drops whitespace-only text nodes between two elements, so
+           "Telefoni: <a>" was rendering as "Telefoni:+383 44 133 208" - and the address below, whose
+           value is text rather than an element, was the only line that looked right, which is what
+           gave the cause away. The note about drawings is on its own line for the same reason: it was
+           running into the email address, "info@teutasteel.comPër vizatime dhe DXF". -->
+      <p><strong>{{ 'CONTACT.PHONE' | translate }}:&nbsp;</strong><a [href]="'tel:' + phone">{{ phoneDisplay }}</a></p>
+      <!-- Both of these were labelled "Telefoni", and this one's link was built from the
+           digits-only WhatsApp value, so it had no + and would not dial internationally. -->
+      <p><strong>{{ 'CONTACT.WHATSAPP' | translate }}:&nbsp;</strong><a [href]="'tel:+' + whatsappNumber">{{ whatsappDisplay }}</a></p>
+      <p><strong>{{ 'CONTACT.EMAIL' | translate }}:&nbsp;</strong><a [href]="'mailto:' + email">{{ email }}</a>
+        <span class="text-muted small d-block">{{ 'CONTACT.EMAIL_FOR_DRAWINGS' | translate }}</span></p>
+      <p>
+        <strong>{{ 'CONTACT.ADDRESS' | translate }}:&nbsp;</strong>{{ location.street }} {{ location.number }}, {{ location.city }}
+      </p>
+    </div>
+
+    <!-- The quote form. The site had no way to ask for anything: no cart, no quote, and this
+         page had no inputs at all. It hands the enquiry to WhatsApp the way the product cards
+         do, so nothing has to be checked anywhere else. -->
+    <div class="card mx-auto my-4 text-start" style="max-width: 640px">
+      <div class="card-body">
+        <h5 class="card-title">{{ 'QUOTE.TITLE' | translate }}</h5>
+        <p class="text-muted small">{{ 'QUOTE.INTRO' | translate }}</p>
+
+        <!-- The choice made on the services page, kept. That card has always passed ?service= and
+             nothing ever read it, so pressing "request a quote" on a service lost the service. -->
+        <p class="small mb-2" *ngIf="selectedService">
+          {{ 'QUOTE.SERVICE' | translate }}: <strong>{{ serviceName }}</strong>
+        </p>
+
+        <div class="row g-2">
+          <div class="col-md-6">
+            <label class="form-label" for="quoteName">{{ 'QUOTE.NAME' | translate }} *</label>
+            <input id="quoteName" class="form-control" type="text"
+                   [(ngModel)]="quote.name" name="quoteName" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="quotePhone">{{ 'QUOTE.PHONE' | translate }} *</label>
+            <input id="quotePhone" class="form-control" type="tel"
+                   [(ngModel)]="quote.phone" name="quotePhone" />
+          </div>
+          <!-- The product and quantity boxes are gone. With the request list carrying both - a line
+               per product, with its size and its quantity - they asked the customer to type again
+               what the site already knew, and the asterisk told them it was compulsory. -->
+          <div class="col-12">
+            <label class="form-label" for="quoteNotes">{{ 'QUOTE.NOTES' | translate }}</label>
+            <textarea id="quoteNotes" class="form-control" rows="3"
+                      [(ngModel)]="quote.notes" name="quoteNotes"></textarea>
+          </div>
+
+          <!-- The work itself, once a service has been chosen. A cutting or bending job cannot be
+               priced without these, and asking here saves the shop writing back to ask. -->
+          <ng-container *ngIf="selectedService">
+            <div class="col-12">
+              <div class="small text-uppercase text-muted mt-2">
+                {{ 'QUOTE.SERVICE_DETAILS' | translate }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="quoteThickness">{{ 'QUOTE.THICKNESS' | translate }}</label>
+              <input id="quoteThickness" class="form-control" type="text"
+                     [(ngModel)]="quote.thickness" name="quoteThickness" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="quoteDimensions">{{ 'QUOTE.DIMENSIONS' | translate }}</label>
+              <input id="quoteDimensions" class="form-control" type="text"
+                     [(ngModel)]="quote.dimensions" name="quoteDimensions" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="quoteQuantity">{{ 'QUOTE.QUANTITY' | translate }}</label>
+              <input id="quoteQuantity" class="form-control" type="text"
+                     [(ngModel)]="quote.quantity" name="quoteQuantity" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="quoteDrawing">{{ 'QUOTE.DRAWING' | translate }}</label>
+              <input id="quoteDrawing" class="form-control" type="text"
+                     [(ngModel)]="quote.drawing" name="quoteDrawing" />
+            </div>
+          </ng-container>
+
+          <!-- For everybody: where it goes, and when it is needed. -->
+          <div class="col-md-6">
+            <label class="form-label" for="quoteDeliveryPlace">
+              {{ 'QUOTE.DELIVERY_PLACE' | translate }}
+            </label>
+            <input id="quoteDeliveryPlace" class="form-control" type="text"
+                   [(ngModel)]="quote.deliveryPlace" name="quoteDeliveryPlace" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="quoteRequiredDate">
+              {{ 'QUOTE.REQUIRED_DATE' | translate }}
+            </label>
+            <input id="quoteRequiredDate" class="form-control" type="date"
+                   [(ngModel)]="quote.requiredDate" name="quoteRequiredDate" />
+          </div>
+        </div>
+
+        <!-- What they added while browsing, in the two groups the owner asked for: what we can
+             price, with a total, and what we will price ourselves. A single total that quietly left
+             the unpriced lines out would be worse than no total. -->
+        <div class="mt-3" *ngIf="requested.length">
+          <div class="d-flex align-items-center">
+            <strong>{{ "PRODUCTS.REQUEST_TITLE" | translate }}</strong>
+            <button
+              type="button"
+              class="btn btn-sm btn-link ms-auto p-0"
+              (click)="clearRequested()"
+            >{{ "PRODUCTS.REQUEST_CLEAR" | translate }}</button>
+          </div>
+
+          <ng-template #requestRow let-item let-i="i">
+            <li class="list-group-item d-flex align-items-center px-0">
+              <span>
+                <strong>{{ item.code }}</strong>
+                <span class="text-muted small" *ngIf="item.detail"> — {{ item.detail }}</span>
+              </span>
+              <span class="d-flex align-items-center gap-1 ms-auto me-2">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  [attr.aria-label]="'PRODUCTS.QUANTITY' | translate"
+                  (click)="bumpRequested(item, -1)"
+                >&minus;</button>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  class="form-control form-control-sm text-center"
+                  style="max-width: 78px"
+                  [ngModel]="item.quantity"
+                  (ngModelChange)="setRequestedQuantity(item, $event)"
+                  [name]="'quantity-' + i"
+                />
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  [attr.aria-label]="'PRODUCTS.QUANTITY' | translate"
+                  (click)="bumpRequested(item, 1)"
+                >+</button>
+              </span>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                (click)="removeRequested(item)"
+              >{{ "PRODUCTS.REQUEST_REMOVE" | translate }}</button>
+            </li>
+          </ng-template>
+
+          <div *ngIf="pricedItems.length">
+            <div class="small text-uppercase text-muted mt-3 mb-1">
+              {{ "PRODUCTS.REQUEST_PRICED" | translate }}
+            </div>
+            <ul class="list-group list-group-flush">
+              <ng-container
+                *ngFor="let item of pricedItems; let i = index"
+                [ngTemplateOutlet]="requestRow"
+                [ngTemplateOutletContext]="{ $implicit: item, i: i }"
+              ></ng-container>
+            </ul>
+            <!-- A subtotal, and it says so. It adds up only the lines that carry a price; the
+                 unpriced ones below are quoted by the shop, so calling this a total was wrong. -->
+            <div class="d-flex align-items-center border-top pt-2 mt-1">
+              <strong>{{ "QUOTE.SUBTOTAL" | translate }}</strong>
+              <strong class="ms-auto">{{ pricedTotal }} Eur</strong>
+            </div>
+          </div>
+
+          <div *ngIf="unpricedItems.length">
+            <div class="small text-uppercase text-muted mt-4 mb-1">
+              {{ "PRODUCTS.REQUEST_UNPRICED" | translate }}
+            </div>
+            <ul class="list-group list-group-flush">
+              <ng-container
+                *ngFor="let item of unpricedItems; let i = index"
+                [ngTemplateOutlet]="requestRow"
+                [ngTemplateOutletContext]="{ $implicit: item, i: 100 + i }"
+              ></ng-container>
+            </ul>
+            <p class="small text-muted mb-0">{{ "PRODUCTS.REQUEST_UNPRICED_NOTE" | translate }}</p>
+          </div>
+        </div>
+
+        <p class="text-muted small mt-3 mb-2" *ngIf="!isQuoteValid()">
+          {{ 'QUOTE.REQUIRED' | translate }}
+        </p>
+        <a
+          class="btn btn-success"
+          [href]="getQuoteLink()"
+          target="_blank"
+          rel="noopener noreferrer"
+          [class.disabled]="!isQuoteValid()"
+          [attr.aria-disabled]="!isQuoteValid()"
+          (click)="isQuoteValid() || $event.preventDefault()"
+        >{{ 'QUOTE.SEND' | translate }}</a>
+        <!-- What happens next. Without it, sending the enquiry into WhatsApp is a blank: the visitor
+             has no idea whether anyone is there. -->
+        <p class="text-muted small mt-2 mb-0">{{ 'QUOTE.REPLY_EXPECTATION' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-4 mb-5">
+      <!-- These pointed at the profile pages, which is a dead end: a visitor lands on the page and
+           has to find the message button themselves. m.me and ig.me open a conversation. -->
+      <a href="https://m.me/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Messenger"><i class="bi bi-facebook fs-2" aria-hidden="true"></i></a>
+      <a href="https://ig.me/m/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram fs-2" aria-hidden="true"></i></a>
+      <a [href]="'https://wa.me/' + whatsappNumber" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp fs-2" aria-hidden="true"></i></a>
+      <a href="https://www.tiktok.com/@teutasteel" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="bi bi-tiktok fs-2" aria-hidden="true"></i></a>
+    </div>
+    <div class="map-responsive mt-4">
+      <h5 class="mt-5">{{ 'CONTACT.VISIT_US' | translate }}</h5>
+
+  <!-- The pin is the pair the old site used and the place OpenStreetMap knows as
+       "Teuta Steel"; this embed used to point 221 m away, at a different street.
+       The same coordinates are in index.html's structured data. -->
+  <iframe 
+    src="https://www.google.com/maps?q=42.454842,21.463374&z=17&hl=sq&output=embed"
+    width="100%" 
+    height="350" 
+    style="border:0;" 
+    allowfullscreen="" 
+    loading="lazy" 
+    [title]="'CONTACT.MAP_TITLE' | translate"
+    referrerpolicy="no-referrer-when-downgrade">
+  </iframe>
+</div>
+
+    <hr class="my-4">
+    <small>{{ 'CONTACT.AVAILABILITY' | translate }}</small>
+
+  </div>
+</section>

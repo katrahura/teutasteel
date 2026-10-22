@@ -1,0 +1,198 @@
+<!-- The home page, to the design in mockups/redesign-2026.html.
+
+     Two things are deliberately not from the mockup:
+       - the group tiles read their counts from the API's `product_count`, so "118 products" is a
+         fact rather than a sentence typed into a template. Only active branches count, so nobody is
+         promised products they cannot reach;
+       - the trust strip states only what is certainly true. The mockup's "25+ vite", "3 m" and
+         "48 h" were invented, and invented facts do not belong on a shop's front page.
+
+     The featured-products carousel that used to sit here showed the six categories, not products,
+     with a "new" badge on every one. It is gone until there is something real to feature. -->
+<section class="home">
+
+  <!-- Hero -->
+  <div class="hero">
+    <!-- Under the gradient, not instead of it. The alt text carries the same admission the note
+         does, because a photograph on the front page reads as "this is us". -->
+    <img class="hero-photo" [src]="heroPhoto" [alt]="'HOME.SAMPLE_PHOTO' | translate" />
+    <span class="hero-sample" *ngIf="samplePhoto">{{ 'HOME.SAMPLE_PHOTO' | translate }}</span>
+    <div class="shell grid">
+      <div>
+        <span class="kicker">{{ 'HOME.KICKER' | translate }}</span>
+        <h1>{{ 'HOME.HERO_TITLE' | translate }}</h1>
+        <p class="lead">{{ 'HOME.HERO_SUBTITLE' | translate }}</p>
+        <!-- The two things a steel supplier's front page is for: seeing what is stocked, and asking
+             what it costs. They were missing - the hero offered the telephone, WhatsApp and the
+             search box - so a visitor who wanted either had to find it in the navigation. The
+             telephone keeps the one filled amber button; these two are outlines beside it. -->
+        <div class="cta-row">
+          <a class="btn btn-accent" [href]="'tel:' + phone">
+            <span aria-hidden="true">&#9990;</span> {{ 'HOME.CALL' | translate }}
+          </a>
+          <a class="btn btn-outline-accent" routerLink="/products">
+            {{ 'MISC.VIEW_PRODUCTS' | translate }}
+          </a>
+          <a class="btn btn-outline-accent" routerLink="/contact">
+            {{ 'QUOTE.TITLE' | translate }}
+          </a>
+          <a class="btn btn-ghost" [href]="whatsappLink" target="_blank" rel="noopener noreferrer">
+            WhatsApp
+          </a>
+        </div>
+        <form class="hero-search" (submit)="goToSearch($event, heroSearch.value)">
+          <input #heroSearch type="search" name="heroSearch"
+                 [placeholder]="'SHELL.SEARCH_PLACEHOLDER' | translate"
+                 [attr.aria-label]="'SHELL.SEARCH_PLACEHOLDER' | translate">
+          <!-- Slate, not amber: the hero already has one amber primary action, the telephone. A
+               second filled amber button beside it made the eye choose between two things that
+               answer the same question. The search field is a control. -->
+          <button class="btn btn-dark" type="submit">{{ 'HOME.SEARCH_BUTTON' | translate }}</button>
+        </form>
+      </div>
+      <div class="hero-card">
+        <h3>{{ 'HOME.WHY_TITLE' | translate }}</h3>
+        <ul>
+          <li *ngFor="let key of whyPoints">
+            <span class="tick" aria-hidden="true">&#10003;</span> {{ key | translate }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- The six groups, with what each really holds -->
+  <section class="groups" *ngIf="topCategories.length">
+    <div class="shell">
+      <div class="sec-head">
+        <div>
+          <h2>{{ 'HOME.GROUPS_TITLE' | translate }}</h2>
+          <p class="muted">{{ 'HOME.GROUPS_SUBTITLE' | translate }}</p>
+        </div>
+        <a class="btn btn-outline btn-sm" routerLink="/products">{{ 'HOME.ALL_GROUPS' | translate }} &rarr;</a>
+      </div>
+      <div class="tiles">
+        <a class="tile" *ngFor="let category of topCategories"
+           [routerLink]="['/products']" (click)="navigateToProducts(category)">
+          <img *ngIf="category.image_asset?.original_path"
+               [src]="category.image_asset?.original_path"
+               [alt]="category.image_asset?.alternative_text || categoryTitle(category)"
+               appImageFallback="assets/images/placeholder_category.jpg"
+               loading="lazy" class="tile-img">
+          <span class="ico" *ngIf="!category.image_asset?.original_path" aria-hidden="true">&#9638;</span>
+          <span class="tile-text">
+            <h3>{{ categoryTitle(category) }}</h3>
+            <span class="n">{{ category.product_count || 0 }} {{ 'HOME.PRODUCTS_UNIT' | translate }}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- What is certainly true -->
+  <div class="trust">
+    <div class="shell">
+      <div class="item">
+        <b>{{ catalogueTotal }}</b><span>{{ 'HOME.TRUST_PRODUCTS' | translate }}</span>
+      </div>
+      <div class="item">
+        <b>{{ topCategories.length }}</b><span>{{ 'HOME.TRUST_GROUPS' | translate }}</span>
+      </div>
+      <div class="item">
+        <b>{{ 'HOME.TRUST_CUT_SHORT' | translate }}</b><span>{{ 'HOME.TRUST_CUT' | translate }}</span>
+      </div>
+      <div class="item">
+        <b>{{ 'HOME.TRUST_QUOTE_SHORT' | translate }}</b><span>{{ 'HOME.TRUST_QUOTE' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services -->
+  <section class="services-wrap">
+    <div class="shell">
+      <div class="sec-head">
+        <div>
+          <h2>{{ 'HOME.SERVICES_TITLE' | translate }}</h2>
+          <p class="muted">{{ 'HOME.SERVICES_SUBTITLE' | translate }}</p>
+        </div>
+        <a class="btn btn-outline btn-sm" routerLink="/services">{{ 'HOME.ALL_SERVICES' | translate }} &rarr;</a>
+      </div>
+      <div class="services">
+        <div class="service" *ngFor="let service of services">
+          <img *ngIf="service.image" [src]="service.image" [alt]="service.titleKey | translate"
+               class="service-img" loading="lazy">
+          <span class="ico" *ngIf="!service.image" aria-hidden="true">&#9873;</span>
+          <h3>{{ service.titleKey | translate }}</h3>
+          <p>{{ service.textKey | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured: priced products, photographs sorted first. Hidden rather than shown empty when
+       nothing qualifies, and each card links to a search for its own code so the customer lands on
+       the product. -->
+  <section class="featured" *ngIf="featured.length">
+    <div class="shell">
+      <div class="sec-head">
+        <div>
+          <h2>{{ 'HOME.FEATURED_TITLE' | translate }}</h2>
+          <p class="muted">{{ 'HOME.FEATURED_SUBTITLE' | translate }}</p>
+        </div>
+        <a class="btn btn-outline btn-sm" routerLink="/products">{{ 'HOME.ALL_PRODUCTS' | translate }} &rarr;</a>
+      </div>
+      <div class="cards">
+        <a class="pcard" *ngFor="let product of featured"
+           [routerLink]="['/products']" [queryParams]="{ q: product.code }">
+          <span class="pcard-photo">
+            <!-- A photograph where there is one, and the section drawn from the product's own numbers
+                 where there is not - the same choice the products page makes, and the one the review
+                 asked for. This used to be a single character, a box with a cross through it, which
+                 at this size reads as a photograph that failed to load. The character stays for the
+                 products whose section is unknown: there is nothing to draw for those. -->
+            <img *ngIf="product.image_asset?.original_path"
+                 [src]="product.image_asset?.original_path"
+                 [alt]="product.image_asset?.alternative_text || product.code"
+                 appImageFallback="assets/images/placeholder_category.jpg"
+                 loading="lazy">
+            <app-section-drawing
+              *ngIf="!product.image_asset?.original_path && hasShape(product)"
+              [categoryId]="product.category_id || null"
+              [code]="product.code"
+              [thickness]="dimensionOf(product, 'thickness')"
+              [width]="dimensionOf(product, 'width')"
+              [height]="dimensionOf(product, 'height')"
+              [length]="dimensionOf(product, 'length')"
+            ></app-section-drawing>
+            <span class="pcard-none" *ngIf="!product.image_asset?.original_path && !hasShape(product)"
+                  aria-hidden="true">&#9638;</span>
+          </span>
+          <span class="pcard-body">
+            <span class="pcard-code">{{ product.code }}</span>
+            <span class="pcard-price" *ngIf="priceOf(product)">{{ priceOf(product) }}</span>
+            <span class="pcard-desc" *ngIf="product.translations?.length">
+              {{ product.translations[0].description }}
+            </span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quote band -->
+  <div class="quote">
+    <div class="shell">
+      <div>
+        <h2>{{ 'HOME.QUOTE_TITLE' | translate }}</h2>
+        <p>{{ 'HOME.QUOTE_TEXT' | translate }}</p>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-dark" [href]="whatsappLink" target="_blank" rel="noopener noreferrer">
+          {{ 'HOME.QUOTE_WHATSAPP' | translate }}
+        </a>
+        <a class="btn btn-light" routerLink="/contact">{{ 'HOME.QUOTE_FORM' | translate }}</a>
+      </div>
+    </div>
+  </div>
+
+</section>

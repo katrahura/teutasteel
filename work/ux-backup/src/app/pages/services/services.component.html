@@ -1,0 +1,68 @@
+<section class="py-5 px-3">
+  <div class="container">
+    <!-- 90px: this header is position absolute, so content starts underneath it. -->
+    <h1 class="h2 text-center mb-3" style="margin-top: 90px">
+      {{ "SERVICES.TITLE" | translate }}
+    </h1>
+    <p class="lead text-center mb-5">{{ "SERVICES.INTRO" | translate }}</p>
+
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-6 col-lg-4" *ngFor="let service of services">
+        <div class="card h-100 shadow-sm">
+          <!-- The image is optional: two services have no photograph yet, and a card with the
+               name and the description alone is better than one with the wrong machine on it. -->
+          <img
+            *ngIf="service.image"
+            [src]="service.image"
+            [alt]="service.titleKey | translate"
+            loading="lazy"
+            style="height: 210px; object-fit: cover"
+          />
+          <!-- No photograph of this one exists yet. A slot in the same place and shape shows where
+               it will sit, which is more useful than a blank strip and more honest than a picture of
+               a different machine. -->
+          <app-photo-slot
+            *ngIf="!service.image && showPlaceholders"
+            labelKey="SERVICES.PHOTO_SLOT"
+            size="1200 × 675 px · 16:9"
+            ratio="16 / 9"
+          ></app-photo-slot>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ service.titleKey | translate }}</h5>
+            <p class="card-text flex-grow-1">{{ service.textKey | translate }}</p>
+            <!-- Examples of this service, from the gallery: the jobs that used this machine. One
+                 set of photographs, used in both places, and the link lands on the entry. -->
+            <p class="samples small mb-2" *ngIf="samplesFor(service).length">
+              <span class="text-muted">{{ "SERVICES.SAMPLES" | translate }}:</span>
+              <ng-container *ngFor="let sample of samplesFor(service); let last = last">
+                <a class="ms-1" [routerLink]="['/projects']" [fragment]="sample.anchor">{{
+                  sample.titleKey | translate
+                }}</a><span *ngIf="!last"> ·</span>
+              </ng-container>
+            </p>
+            <a
+              class="btn btn-success mt-2"
+              [routerLink]="['/contact']"
+              [queryParams]="{ service: service.id }"
+            >{{ "SERVICES.ASK" | translate }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What an accurate quote needs. The review asked for this on the service pages, and none of it
+         is a claim about this company: it is what any workshop needs in order to price a job. The
+         one part that is theirs - what each machine can actually do - stays in the cards above, and
+         is for the owner to confirm rather than for me to state. -->
+    <div class="alert alert-light border mt-4">
+      <strong>{{ "SERVICES.DRAWING_TITLE" | translate }}</strong>
+      <p>{{ "SERVICES.DRAWING_TEXT" | translate }}</p>
+      <ol class="mb-3">
+        <li *ngFor="let key of sendKeys">{{ key | translate }}</li>
+      </ol>
+      <a class="btn btn-sm btn-outline-secondary" routerLink="/guides">
+        {{ "SERVICES.DRAWING_GUIDE" | translate }}
+      </a>
+    </div>
+  </div>
+</section>

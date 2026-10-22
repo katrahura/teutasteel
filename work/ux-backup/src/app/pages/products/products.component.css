@@ -1,0 +1,739 @@
+/* ---- The page's own chrome, so it stops looking like a different site.
+
+   The container carried margin-top: 90px to clear the old navbar, which was position: absolute and
+   sat over the content. The shell's navigation is sticky, so that margin is now a gap of empty page
+   under the header. ---- */
+.container[style] { margin-top: 0 !important; }
+
+/* Bootstrap's secondary grey (#6c757d) reads as a disabled control. These are ordinary buttons. */
+.btn-secondary {
+  background: #fff;
+  color: var(--ink, #111827);
+  border: 1px solid var(--line, #e5e7eb);
+  border-radius: 8px;
+  font-weight: 600;
+}
+.btn-secondary:hover, .btn-secondary:focus {
+  background: #f5f7f9;
+  color: var(--ink, #111827);
+  border-color: var(--accent, #f59e0b);
+}
+.btn-secondary:disabled { background: #f5f7f9; color: #9ca3af; }
+
+/* The page headings, matching the home page's section headings. There are three of them: the groups
+   view uses h2, the category view uses h1.h2 (with one for a search and one without), and the main
+   heading is an h1.h2 too. The first version of this rule named h2 alone, so it styled the heading
+   nobody was looking at. */
+h1.text-center, h2.text-center {
+  text-align: left !important;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  margin: 0 0 26px !important;
+}
+
+/* ---- The product cards, to mockups/redesign-2026.html.
+
+   Scoped with .card.h-100 rather than .card because the rules further down this file set the card
+   to #f8f9fa with a 20% black shadow, and at equal specificity the later rule wins. The shell
+   defines --ink, --accent and --line, and the tokens cascade in, so a card wears the same slate and
+   amber as the rest of the site. ---- */
+/* The dialog's description, below the choice: muted and separated by a rule, so it reads as the
+   small print rather than as the introduction to a form. */
+.product-description {
+  color: #4b5563;
+  border-top: 1px solid var(--line, #e5e7eb);
+  padding-top: 12px;
+  margin: 16px 0 4px !important;
+}
+
+/* ---- A drawn section instead of the "No product image" plate.
+
+   429 products have no photograph. What they got was a grey box carrying the logo and the words
+   "No product image" - in English, on an Albanian site - which reads as unfinished work rather than
+   as information. A section drawn in the page, with its size beside it, reads as what the catalogue
+   actually is: a technical list. */
+.section-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 100%;
+  min-height: 150px;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--line, #e5e7eb);
+}
+.section-chip-lg { min-height: 260px; border-bottom: 0; border-radius: 8px; }
+/* In the dialog the panel is large and the section is the whole of it, so draw it bigger rather
+   than leave a small shape adrift in the middle. Three classes, because the base rules below are
+   two and would otherwise tie and win on order. */
+.section-chip.section-chip-lg .p-round { width: 96px; height: 96px; border-width: 16px; }
+.section-chip.section-chip-lg .p-square { width: 92px; height: 92px; border-width: 14px; }
+.section-chip.section-chip-lg .p-flat { width: 120px; height: 22px; }
+.section-chip.section-chip-lg .p-angle { width: 84px; height: 84px; border-width: 18px; }
+/* The size is not repeated here: it stands on its own line below, whether or not there is a
+   photograph, so the chip carries the section and nothing else. */
+.section-chip .profile { display: block; background: #cbd5e1; flex: none; }
+.section-chip .p-round { width: 54px; height: 54px; border-radius: 50%; background: none; border: 9px solid #cbd5e1; }
+.section-chip .p-square { width: 52px; height: 52px; background: none; border: 8px solid #cbd5e1; }
+.section-chip .p-flat { width: 68px; height: 14px; border-radius: 2px; }
+.section-chip .p-angle {
+  width: 48px;
+  height: 48px;
+  background: none;
+  border-left: 11px solid #cbd5e1;
+  border-bottom: 11px solid #cbd5e1;
+}
+
+/* The two size boxes belong to one filter and are narrow enough to sit side by side, so the pair
+   wraps as a unit rather than each box finding its own line. At the default width a Bootstrap input
+   takes about twenty characters and the four pieces of this filter spent four lines on a phone. */
+.size-input {
+  width: 5.5rem;
+  flex: 0 0 auto;
+}
+
+/* The picture and the title open the detail view, so they have to look like something to press.
+   The cursor change was missing and the picture read as decoration. */
+.image-container {
+  cursor: pointer;
+}
+.card-title {
+  cursor: pointer;
+}
+.image-container:focus-visible,
+.card-title:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+/* Why the add button is dim, said in words. A greyed button with no reason is the same silence the
+   button itself was guilty of. */
+.add-hint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* A fact the catalogue cannot supply, said rather than left as a blank line. Not an error message:
+   it is what the catalogue holds, and somebody about to ask for a price should know it. */
+.missing-thickness {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: #78350f;
+}
+
+/* The section beside a photograph, in the dialog. The review asked for a representative photograph
+   combined with an accurate dimension drawing, and this is where it matters: nearly every product
+   in the decorative group has both, and a photograph of a laser-cut sheet does not say what size it
+   is. The picture and the drawing then sit side by side, each saying what the other cannot. */.drawing-with-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* The dialog's picture panel is a flex row, and a child with no width of its own is squeezed to
+     nothing: the drawing inside is width 100%, which then has nothing to be a percentage of. */
+  flex: 0 0 auto;
+  width: 210px;
+  padding: 8px;
+  background: #f8fafc;
+}
+/* With no photograph it is the whole panel, so it takes the room the photograph would have had. */
+.drawing-with-photo.alone {
+  width: 100%;
+  min-height: 260px;
+  border-radius: 8px;
+}
+
+/* The card's size, on one line rather than three labelled ones. */
+.card.h-100 .size-line {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -.01em;
+  margin: 0 0 8px !important;
+}
+
+.price-unit { color: #4b5563; font-size: .85em; font-weight: 600; white-space: nowrap; }
+
+.card.h-100 {
+  background: #fff;
+  border: 1px solid var(--line, #e5e7eb);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(16, 21, 27, .05), 0 8px 24px rgba(16, 21, 27, .06);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card.h-100:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent, #f59e0b);
+  box-shadow: 0 2px 4px rgba(16, 21, 27, .06), 0 14px 32px rgba(16, 21, 27, .10);
+}
+.card.h-100 .card-title { font-weight: 700; letter-spacing: -.01em; }
+.card.h-100 .btn { border-radius: 8px; font-weight: 700; }
+
+/* One primary action per card: adding to the request is the shop's own amber and now carries the
+   weight, filled rather than outlined. WhatsApp keeps its green, because that is WhatsApp's colour
+   and people look for it, but as an outline - a filled green button outweighed the action that
+   actually builds the enquiry, and the enquiry is what saves the shop a dozen messages.
+
+   .btn.btn- keeps these ahead of Bootstrap's own .btn background. */
+.btn.btn-add-to-request {
+  background: var(--accent, #f59e0b);
+  border-color: var(--accent, #f59e0b);
+  color: #111827;
+}
+.btn.btn-add-to-request:hover {
+  background: var(--accent-dark, #b45309);
+  border-color: var(--accent-dark, #b45309);
+  color: #fff;
+}
+.btn.btn-add-to-request.disabled,
+.btn.btn-add-to-request[aria-disabled="true"] {
+  opacity: .5;
+}
+.btn.btn-whatsapp {
+  background: #fff;
+  border-color: #15803d;
+  color: #15803d;
+}
+.btn.btn-whatsapp:hover {
+  background: #15803d;
+  border-color: #15803d;
+  color: #fff;
+}
+
+/* In the dialog, stated outright.
+   The dialog's buttons were painted by an older rule that gave every button in the panel a green
+   WhatsApp gradient, and a stale copy of that rule kept winning inside the modal even after the
+   element stopped carrying the class. These two lines decide it here rather than by precedence:
+   adding to the request is the shop's amber, and WhatsApp is a quiet outline. */
+.info-container .btn.btn-add-to-request {
+  background: var(--accent, #f59e0b) !important;
+  border: 1px solid var(--accent, #f59e0b) !important;
+  color: #111827 !important;
+}
+.info-container .btn.btn-whatsapp {
+  background: #fff !important;
+  border: 1px solid #15803d !important;
+  color: #15803d !important;
+}
+
+/* Global card styling */
+.card, .product-modal .card {
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #f8f9fa;
+}
+
+ .product-modal .card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+.card:hover{
+  transform: scale(1.01);
+
+
+}
+.rotate-90 { transform: rotate(90deg); }
+
+/* Product image adjustments */
+.image-container, .product-modal .image-container {
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The picture's panel used to take half the dialog's width and four fifths of its height whatever it
+   had to show, so the dialog ran off the bottom of the screen and left the drawing stranded in the
+   middle of a wide gap. The panel takes the room its picture needs now, with a ceiling on both
+   sides so a large photograph cannot push the dialog off the screen either. */
+.product-modal .image-container {
+  height: auto;
+  max-height: 58vh;
+  width: auto;
+  max-width: 42%;
+  flex: 0 1 auto;
+}
+
+.product-image {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+.product-modal .image-container img {
+  object-fit: contain;
+}
+
+/* Badge Styling */
+.badge {
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 0.75rem;
+}
+.groups-section h2 {
+  color: #333;
+}
+/* Buttons (Global Styling) */
+.btn-success {
+  background-color: #25d366; /* Fallback for older browsers */
+  background: linear-gradient(45deg, #25d366, #20c065);
+  border: none;
+}
+
+.btn-success:hover {
+  background: linear-gradient(45deg, #20c065, #1ebd5c);
+}
+
+.btn-primary {
+  background-color: var(--brand-primary); /* Fallback for older browsers */
+  background: linear-gradient(45deg, var(--brand-primary), var(--brand-primary-dark));
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  color: #fff;
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(45deg, var(--brand-primary-dark), #003a7b);
+  color: #fff;
+}
+
+/* Category image container */
+.category-image-container {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-image {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+/* Title and text styling */
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.card-text {
+  color: #6c757d;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* Background styling */
+.groups-section {
+  padding: 30px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    margin: 10px auto;
+  }
+
+  .category-image-container {
+    height: 200px;
+  }
+
+  .card-title {
+    font-size: 1.2rem;
+  }
+}
+
+.modal-content {
+  border-radius: 10px;
+}
+
+.modal-header {
+  background-color: #f8f9fa;
+}
+
+/* The details dialog's close button, floated into the corner: the dialog could be left only with
+   Escape or by clicking outside it, and a telephone has no Escape key. */
+.product-modal .modal-content {
+  position: relative;
+}
+
+.product-modal .modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 5;
+}
+
+/* Modal Body Styling for Left (Image) and Right (Info) Layout */
+.product-modal .modal-body {
+  display: flex;
+  align-items: center;
+  /* The three pieces belong together. They were spread across the width of a large dialog - the
+     picture far left, the drawing in the middle, the details far right - with wide empty gaps
+     between them. */
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  flex-wrap: nowrap;
+  background-color: #f8f9fa;
+}
+
+/* The dialog's phone rules are at the end of this file, after the rules they override. They were
+   here once, and being here is why they did not work; leaving a second copy behind would be a trap
+   for whoever reads this next. */
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1050;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px; /* Adjust width for the button size */
+  height: 60px; /* Adjust height for the button size */
+  border: none;
+  z-index: 10;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.nav-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.nav-btn.prev-btn {
+  left: -1%; /* Adjust as needed */
+}
+
+.nav-btn.next-btn {
+  right: -1%; /* Adjust as needed */
+}
+
+.nav-btn i {
+  display: none; /* Hide icon since we're creating arrows */
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 20px; /* Width of the arrow */
+  height: 20px; /* Height of the arrow */
+  border: solid #333; /* Arrow color */
+  border-width: 0 6px 6px 0; /* Thickness of the arrow */
+}
+
+.nav-btn.prev-btn::before {
+  transform: translate(-50%, -50%) rotate(135deg); /* Rotate to point left */
+}
+
+.nav-btn.next-btn::before {
+  transform: translate(-50%, -50%) rotate(-45deg); /* Rotate to point right */
+}
+
+
+/* Premium Modal Info Section */
+.product-modal .info-container {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, #ffffff, #f1f1f1);
+  border: 1px solid #ddd;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.info-container h5 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center;
+}
+
+.info-container p {
+  font-size: 1.1rem;
+  color: #212529;
+  margin: 5px 0;
+}
+
+.info-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.info-container ul li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #212529;
+}
+.parent-toggle {
+  background-color: transparent;
+  border: none;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  text-align: left;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.parent-toggle:hover {
+  background-color: #f1f3f5;
+}
+
+.parent-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(100,150,250,.3);
+}
+
+/* A collapsed group reads as a map rather than as a name: how many products it holds, and which
+   sub-categories are inside it. The rows were never as tall as they looked - 116px measured - so
+   nothing needed squeezing; this is information added, not space saved. */
+.group-name { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
+.group-meta { color: #6b7280; font-size: 13.5px; font-weight: 600; }
+.group-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 20px 14px; }
+.group-chips .chip {
+  background: #f1f5f9;
+  border: 1px solid var(--line, #e5e7eb);
+  color: #475569;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.group-chips .chip-more { background: #fff; color: #6b7280; }
+
+/* On a phone the chips wrapped onto four lines and took the row from 110px to 300px, which is more
+   scrolling before the first product than the names are worth. One line, and it scrolls sideways. */
+@media (max-width: 700px) {
+  .group-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 18px; }
+  .group-chips .chip { flex: none; }
+}
+
+.arrow {
+  transition: transform 0.2s;
+  font-size: 1.25rem;
+}
+.rotate-90 {
+  transform: rotate(90deg);
+}
+
+/* The shape only. The green gradient that used to sit here painted every button in the dialog
+   WhatsApp-green, including the one that adds to the request, so the two were indistinguishable at
+   a glance. Colours come from the button classes now. */
+.info-container .btn {
+  align-self: flex-start;
+  margin-top: 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.info-container .btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Pagination */
+.products-pagination-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/**
+ * The grid must fill the container, whatever is in it.
+ *
+ * This container is a column flexbox, and `align-items: center` above applies to the *horizontal*
+ * axis in a column - so every child shrinks to the width of its own content. With a page full of
+ * products the content pushed the grid out to its full 1320px and nothing looked wrong; with one
+ * product the grid collapsed to 430px and the card to 84px, wrapped one letter per line. The
+ * pagination is meant to be centred, so the fix is aimed at the grid rather than at the container.
+ */
+.products-pagination-container > .row {
+  width: 100%;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+}
+
+.pagination-controls .btn {
+  border-radius: 20px;
+  padding: 8px 15px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.pagination-controls .btn:hover {
+  transform: scale(1.1);
+}
+
+.pagination-controls .pagination-info {
+  font-size: 1rem;
+  margin: 0 15px;
+  font-weight: bold;
+}
+
+/* Skeleton Loader Styles */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 300px;
+}
+
+.skeleton-image {
+  height: 200px;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 80%;
+}
+
+.skeleton-text {
+  height: 15px;
+  width: 60%;
+}
+
+.skeleton-desc {
+  height: 15px;
+  width: 40%;
+}
+.edit-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+/* Card shape and hover (like old categories) */
+.child-card {
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.child-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,.10);
+}
+
+/* Image size to match old grid */
+.child-card__img {
+  width: 100%;
+  height: 160px;          /* same visual height as before */
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* Title sizing like old cards */
+.child-card__title {
+  font-size: 0.95rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Optional: bump image a bit taller on larger screens like old layout */
+@media (min-width: 992px) {
+  .child-card__img { height: 180px; }
+}
+
+/* The dialog on a phone, at the end of the file because that is where it has to be.
+   Two rules above are written for the wide dialog and set a width for each half of it - the picture
+   panel is capped at 42%, the details take 50%. Overriding them from further up the file does not
+   work: at equal specificity the later rule wins, and both of those sit below. So the phone's
+   overrides live here, after everything they are overriding.
+
+   What it looked like when they did not: the picture panel was 139px and the details 166px inside a
+   372px dialog, the photograph cut off at the left edge, the section's caption reading "1000 x 20(",
+   "Shto ne kerkese" wrapped onto three lines and an empty column down the right. A visual check at
+   390px found it, and the cause was mine - the 42% ceiling was added for the wide dialog two rounds
+   earlier. */
+@media (max-width: 768px) {
+  .product-modal .modal-body {
+    flex-direction: column;
+    align-items: stretch;
+    /* A dialog taller than the screen has to be able to scroll, or whatever falls below the fold
+       cannot be reached at all. At 320px the body was 780px tall in a 700px screen with its overflow
+       visible and nothing scrollable: the three buttons were reachable and the section's description
+       was not. The matrix check found it. */
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+  .product-modal .image-container {
+    width: 100%;
+    max-width: 100%;
+    height: 180px;
+    max-height: 180px;
+  }
+  .product-modal .info-container {
+    width: 100%;
+    max-width: 100%;
+  }
+}

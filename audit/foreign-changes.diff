@@ -1,0 +1,533 @@
+﻿diff --git a/src/app/models/product.model.ts b/src/app/models/product.model.ts
+index f495814..d3ca3b7 100644
+--- a/src/app/models/product.model.ts
++++ b/src/app/models/product.model.ts
+@@ -6,6 +6,7 @@
+     }
+ 
+     export interface ProductDimension {
++      id?: number;
+       height?: number;
+       width?: number;
+       length?: number;
+diff --git a/src/app/pages/contact/contact.component.spec.ts b/src/app/pages/contact/contact.component.spec.ts
+index f6a3ced..41645b9 100644
+--- a/src/app/pages/contact/contact.component.spec.ts
++++ b/src/app/pages/contact/contact.component.spec.ts
+@@ -1,3 +1,4 @@
++import { QuoteListService } from '../../shared/quote-list.service';
+ import { ComponentFixture, TestBed } from '@angular/core/testing';
+ 
+ import { ContactComponent } from './contact.component';
+@@ -22,4 +23,15 @@ describe('ContactComponent', () => {
+   it('should create', () => {
+     expect(component).toBeTruthy();
+   });
++
++  it('calculates the EUR subtotal from structured prices rather than display text', () => {
++    const list=TestBed.inject(QuoteListService);list.clear();
++    list.setQuantity({productId:1,variantKey:'id:1',code:'A',detail:'arbitrary text 999 EUR',unitPrice:4,currency:'EUR',quantity:1},3);
++    list.setQuantity({productId:2,variantKey:'id:2',code:'B',detail:'5 EUR',unitPrice:5,currency:'USD',quantity:1},2);
++    const local=TestBed.createComponent(ContactComponent);local.detectChanges();
++    expect(local.componentInstance.pricedTotal).toBe(12);
++    expect(local.componentInstance.unpricedItems.length).toBe(1);
++    list.clear();local.destroy();
++  });
++
+ });
+diff --git a/src/app/pages/contact/contact.component.ts b/src/app/pages/contact/contact.component.ts
+index dce40a2..e96cd30 100644
+--- a/src/app/pages/contact/contact.component.ts
++++ b/src/app/pages/contact/contact.component.ts
+@@ -72,14 +72,10 @@ export class ContactComponent implements OnInit {
+     this.split();
+   }
+ 
+-  /** The price inside a line - "Trashesia 1.3 mm - 4.20 Eur" is 4.20 - or null when there is none. */
++  /** Only EUR lines contribute to the EUR subtotal. Other currencies require a quote. */
+   private priceOf(item: QuoteItem): number | null {
+-    const found = /([\d.]+)\s*(?:Eur|EUR|\u20ac)/.exec(item.detail || '');
+-    if (!found) {
+-      return null;
+-    }
+-    const value = Number(found[1]);
+-    return Number.isFinite(value) && value > 0 ? value : null;
++    const value = Number(item.unitPrice);
++    return (item.currency || '').toUpperCase() === 'EUR' && Number.isFinite(value) && value > 0 ? value : null;
+   }
+ 
+   removeRequested(item: QuoteItem): void {
+diff --git a/src/app/pages/products/products.component.html b/src/app/pages/products/products.component.html
+index 63488e1..c90a224 100644
+--- a/src/app/pages/products/products.component.html
++++ b/src/app/pages/products/products.component.html
+@@ -25,13 +25,18 @@
+         <button
+           class="btn btn-outline-secondary"
+           type="button"
+-          *ngIf="searchTerm"
++          *ngIf="searchQuery || searchTerm"
+           (click)="clearSearch()"
+         >{{ "PRODUCTS.SEARCH_CLEAR" | translate }}</button>
+       </div>
+     </div>
+   </div>
+ 
++  <div *ngIf="searchError" class="alert alert-danger mt-3" role="alert">
++    {{ 'PRODUCTS.SEARCH_ERROR' | translate }}
++    <button type="button" class="btn btn-outline-danger ms-2" (click)="runSearch()">{{ 'PRODUCTS.SEARCH_RETRY' | translate }}</button>
++  </div>
++
+   <!-- What is on the request list. A customer building an order of a tube, its bends and a sheet
+        needs to see that it is being collected, and a way to send it. -->
+   <div
+@@ -796,7 +801,7 @@
+     <button class="btn btn-secondary mb-1" (click)="clearSearch()">
+       {{ "PRODUCTS.BACK_TO_GROUPS_BUTTON" | translate }}
+     </button>
+-    <div class="text-center text-muted my-5" *ngIf="searchTerm && !searching && products.length === 0">
++    <div class="text-center text-muted my-5" *ngIf="searchTerm && !searching && !searchError && products.length === 0">
+       {{ "PRODUCTS.NO_RESULTS" | translate }}
+     </div>
+     <div class="container" *ngIf="!showingGroups && isLoading">
+diff --git a/src/app/pages/products/products.component.spec.ts b/src/app/pages/products/products.component.spec.ts
+index b12561e..fed4899 100644
+--- a/src/app/pages/products/products.component.spec.ts
++++ b/src/app/pages/products/products.component.spec.ts
+@@ -263,4 +263,37 @@ describe('ProductsComponent', () => {
+     expect(localFixture.nativeElement.querySelector('#topCategory')).toBeNull();
+     clearToken();
+   });
++
++  it('cancels an older search before accepting newer results', () => {
++    httpMock.expectOne(groupsUrl).flush([]);
++    component.searchQuery='old';component.runSearch();
++    const old=httpMock.expectOne(req=>req.url.includes('/product/search?q=old'));
++    component.searchQuery='new';component.runSearch();
++    expect(old.cancelled).toBeTrue();
++    httpMock.expectOne(req=>req.url.includes('/product/search?q=new')).flush([]);
++    expect(component.searchTerm).toBe('new');
++  });
++  it('cancels a search on clear and distinguishes failures from no matches', () => {
++    httpMock.expectOne(groupsUrl).flush([]);
++    component.searchQuery='steel';component.runSearch();
++    const pending=httpMock.expectOne(req=>req.url.includes('/product/search?'));
++    component.clearSearch();expect(pending.cancelled).toBeTrue();
++    expect(component.showingGroups).toBeTrue();
++    component.searchQuery='steel';component.runSearch();
++    httpMock.expectOne(req=>req.url.includes('/product/search?')).flush('missing',{status:404,statusText:'Not Found'});
++    expect(component.searchError).toBeTrue();
++    fixture.detectChanges();
++    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeTruthy();
++    expect(fixture.nativeElement.textContent).not.toContain('PRODUCTS.NO_RESULTS');
++  });
++  it('cancels a pending debounce when leaving the page', () => {
++    httpMock.expectOne(groupsUrl).flush([]);
++    const clock=jasmine.clock();clock.install();
++    try {
++      component.searchQuery='steel';component.onSearchInput();
++      component.ngOnDestroy();clock.tick(400);
++      httpMock.expectNone(req=>req.url.includes('/product/search?'));
++    } finally { clock.uninstall(); }
++  });
++
+ });
+diff --git a/src/app/pages/products/products.component.ts b/src/app/pages/products/products.component.ts
+index 97cb109..81a78e3 100644
+--- a/src/app/pages/products/products.component.ts
++++ b/src/app/pages/products/products.component.ts
+@@ -21,7 +21,7 @@ import {
+ import { FormsModule } from '@angular/forms';
+ import { AuthService } from '../../services/auth.service';
+ import { SharedService } from '../../shared.service';
+-import { QuoteListService } from '../../shared/quote-list.service';
++import { QuoteListService, QuoteItem } from '../../shared/quote-list.service';
+ import { describeWeight, shapeForCategory } from '../../shared/steel-weight';
+ type DimensionKey =
+   | 'height'
+@@ -78,6 +78,8 @@ toggleParent(parentId: number) {
+   searchTerm = '';
+   searching = false;
+   private searchTimer: any = null;
++  private searchSubscription?: Subscription;
++  searchError = false;
+ 
+   /** The group to scroll to once the list has rendered, when the visitor arrived from a card. */
+   private scrollToGroupId: number | null = null;
+@@ -165,7 +167,7 @@ toggleParent(parentId: number) {
+    * the dimension it is showing. The dialog passes the thicknesses the customer ticked, and each
+    * becomes its own line so the shop can price them separately.
+    */
+-  /** Lines of the open product that are already on the request list, keyed by their description. */
++  /** Lines of the open product that are already on the request list, keyed by stable variant identity. */
+   onList: { [detail: string]: number } = {};
+ 
+   /** What the last add put in, shown under the thicknesses. */
+@@ -173,10 +175,11 @@ toggleParent(parentId: number) {
+ 
+   /** Which lines of this product are on the request list. Built once, never read per pass. */
+   private linesOnList(product: Product): { [detail: string]: number } {
++    this.migrateLegacyQuote(product);
+     const map: { [detail: string]: number } = {};
+     this.quoteList.items().forEach((item) => {
+       if (item.productId === (product.id || 0)) {
+-        map[item.detail || ''] = item.quantity;
++        map[item.variantKey || item.detail || ''] = item.quantity;
+       }
+     });
+     return map;
+@@ -184,7 +187,7 @@ toggleParent(parentId: number) {
+ 
+   /** How many of this thickness are already on the request list, for the badge beside it. */
+   onListQuantity(dimension: ProductDimension): number {
+-    return this.onList[this.describeDimension(dimension)] || 0;
++    return this.onList[this.variantKey(dimension)] || 0;
+   }
+ 
+   /**
+@@ -201,7 +204,7 @@ toggleParent(parentId: number) {
+     const chosen: { [index: number]: boolean } = {};
+     const quantities: { [index: number]: number } = {};
+     (product.dimensions || []).forEach((dimension, index) => {
+-      const quantity = this.onList[this.describeDimension(dimension)];
++      const quantity = this.onList[this.variantKey(dimension)];
+       if (quantity) {
+         chosen[index] = true;
+         quantities[index] = quantity;
+@@ -212,6 +215,7 @@ toggleParent(parentId: number) {
+   }
+ 
+   addToQuote(product: Product, dimensions?: ProductDimension[]): void {
++    this.migrateLegacyQuote(product);
+     // With nothing passed - the card, which has no picker - add the dimension it is showing rather
+     // than every thickness the product carries, which for a merged sheet would be fourteen lines.
+     const chosen = dimensions && dimensions.length
+@@ -224,13 +228,13 @@ toggleParent(parentId: number) {
+     // numbers came from the list - so lowering twenty to fifteen has to mean fifteen. Adding would
+     // make it thirty-five, which is how this was wrong before. A thickness they have unticked is
+     // taken off; one they left ticked keeps its new number.
+-    const ticked = chosen.map((dimension) => this.describeDimension(dimension));
++    const ticked = chosen.map((dimension) => this.variantKey(dimension));
+     (product.dimensions || []).forEach((dimension) => {
+-      const detail = this.describeDimension(dimension);
+-      const item = { productId: product.id || 0, code: product.code, detail, quantity: 0 };
+-      if (ticked.indexOf(detail) >= 0) {
++      const item = this.quoteItem(product, dimension);
++      const key = this.variantKey(dimension);
++      if (ticked.indexOf(key) >= 0) {
+         this.quoteList.setQuantity(item, this.quantityFor(product, dimension));
+-      } else if (this.onList[detail]) {
++      } else if (this.onList[key]) {
+         this.quoteList.setQuantity(item, 0);
+       }
+     });
+@@ -249,13 +253,38 @@ toggleParent(parentId: number) {
+   }
+ 
+   /** "Trashësia 1.5 mm — 4.80 Eur", or as much of that as the dimension knows. */
++  private migrateLegacyQuote(product: Product): void {
++    this.quoteList.migrateLegacy(product.id || 0, (product.dimensions || []).map(dimension => ({
++      signature: this.showsValue(dimension.thickness) ? String(Number(dimension.thickness))
++        : [dimension.height, dimension.width].filter(value => !!value).map(Number).join(':'),
++      variantKey: this.variantKey(dimension),
++    })));
++  }
++
++  private variantKey(dimension: ProductDimension): string {
++    if (dimension.id != null) return 'id:' + dimension.id;
++    return 'size:' + ['height', 'width', 'length', 'thickness', 'weight']
++      .map(key => Number((dimension as any)[key] || 0)).join(':');
++  }
++
++  private quoteItem(product: Product, dimension: ProductDimension): QuoteItem {
++    const price = Number(dimension.price);
++    return { productId: product.id || 0, code: product.code,
++      variantKey: this.variantKey(dimension), detail: this.describeDimension(dimension),
++      dimensions: { height: dimension.height, width: dimension.width, length: dimension.length, thickness: dimension.thickness, weight: dimension.weight },
++      unitPrice: Number.isFinite(price) && price > 0 ? price : null,
++      currency: dimension.currency || 'EUR', quantity: 0 };
++  }
++
+   private describeDimension(dimension: ProductDimension): string {
+     const parts: string[] = [];
+     if (this.showsValue(dimension.thickness)) {
+       parts.push(`${this.translate.instant('PRODUCTS.THICKNESS')} ${dimension.thickness} mm`);
+-    } else if (this.showsValue(dimension.height)) {
++    }
++    if (this.showsValue(dimension.height)) {
+       parts.push(`${dimension.height}${dimension.width ? ' × ' + dimension.width : ''} mm`);
+     }
++    if (this.showsValue(dimension.length)) parts.push(`${dimension.length} mm`);
+     if (this.showsValue(dimension.price)) {
+       parts.push(`${dimension.price} ${dimension.currency || ''}`.trim());
+     }
+@@ -347,6 +376,7 @@ toggleParent(parentId: number) {
+ 
+   /** A card's add for a single-dimension product: the dimension it shows, and the typed quantity. */
+   addCardToQuote(product: Product): void {
++    this.migrateLegacyQuote(product);
+     const dimension = (product.dimensions || [])[0];
+     if (!dimension) {
+       return;
+@@ -354,12 +384,7 @@ toggleParent(parentId: number) {
+     // Replace, like the dialog. The field shows what is already ordered, so adding would double it:
+     // a card reading 20 and pressed twice would mean 40.
+     this.quoteList.setQuantity(
+-      {
+-        productId: product.id || 0,
+-        code: product.code,
+-        detail: this.describeDimension(dimension),
+-        quantity: 0,
+-      },
++      this.quoteItem(product, dimension),
+       this.cardQuantity(product)
+     );
+     this.quoteCount = this.quoteList.count();
+@@ -677,7 +702,9 @@ toggleParent(parentId: number) {
+         // open product list when the visitor switches language.
+         this.subscriptions.push(
+           this.translate.onLangChange.subscribe(() => {
+-            if (this.selectedCategory?.id) {
++            if (this.searchQuery.trim().length >= 2) {
++              this.runSearch();
++            } else if (this.selectedCategory?.id) {
+               this.loadCategoryWithProducts(this.selectedCategory.id, this.currentPage);
+             }
+           })
+@@ -966,6 +993,8 @@ this.showProducts(this.selectedCategory)
+   }
+   // Show products for a specific category
+   showProducts(category: any) {
++    this.cancelSearch();
++    this.searchQuery = this.searchTerm = '';
+     this.selectedCategory = category;
+     this.showingGroups = false;
+ 
+@@ -1003,6 +1032,7 @@ this.showProducts(this.selectedCategory)
+ 
+   // Go back to showing categories
+   goBackToGroups() {
++    this.cancelSearch();
+     this.showingGroups = true;
+     this.selectedCategory = null;
+     this.expandedParentId = null;
+@@ -1017,33 +1047,45 @@ this.showProducts(this.selectedCategory)
+    * "IPE 100", "15x15" - finds it without guessing which group it was filed under.
+    */
+   onSearchInput(): void {
++    this.cancelSearch();
++    if (this.searchQuery.trim().length < 2) { this.goBackToGroups(); return; }
+     if (this.searchTimer) {
+       clearTimeout(this.searchTimer);
+     }
+     this.searchTimer = setTimeout(() => this.runSearch(), 350);
+   }
+ 
++  private cancelSearch(): void {
++    clearTimeout(this.searchTimer);
++    this.searchSubscription?.unsubscribe();
++    this.searching = false;
++    this.searchError = false;
++  }
++
+   runSearch(): void {
++    this.cancelSearch();
+     const term = this.searchQuery.trim();
+     if (term.length < 2) {
++      this.goBackToGroups();
+       return;
+     }
+     this.searching = true;
+     // The skeleton cards are for a category loading. A search that finds eight results would
+     // otherwise sit behind eight placeholders, because this flag was left true by the group load.
+     this.isLoading = false;
+-    const sub = this.productService
++    this.searchSubscription = this.productService
+       .searchProducts(term, this.translate.currentLang || 'al')
+       .subscribe({
+         next: (results) => {
+           this.products = results;
++          this.refreshCardList();
+           this.searchTerm = term;
+           this.selectedCategory = null;
+           this.showingGroups = false;
+           this.searching = false;
+         },
+         error: () => {
+-          // The service has already logged it; show the empty state rather than a stale list.
++          this.searchError = true;
+           this.products = [];
+           this.searchTerm = term;
+           this.selectedCategory = null;
+@@ -1051,11 +1093,11 @@ this.showProducts(this.selectedCategory)
+           this.searching = false;
+         },
+       });
+-    this.subscriptions.push(sub);
+   }
+ 
+   /** Leave the search results and go back to the groups. */
+   clearSearch(): void {
++    this.cancelSearch();
+     this.searchQuery = '';
+     this.searchTerm = '';
+     this.goBackToGroups();
+@@ -1127,6 +1169,7 @@ this.showProducts(this.selectedCategory)
+   }
+ 
+   ngOnDestroy(): void {
++    this.cancelSearch();
+     this.subscriptions.forEach((sub) => sub.unsubscribe());
+   }
+   loadCategoryWithProducts(category_id: number, page: number = 1) {
+diff --git a/src/app/shared/quote-list.service.spec.ts b/src/app/shared/quote-list.service.spec.ts
+index 5551e25..c2cc2b9 100644
+--- a/src/app/shared/quote-list.service.spec.ts
++++ b/src/app/shared/quote-list.service.spec.ts
+@@ -57,4 +57,29 @@ describe('QuoteListService', () => {
+     expect(service.items()).toEqual([]);
+     expect(service.count()).toBe(0);
+   });
++
++  it('keeps one variant when language and price change', () => {
++    service.setQuantity({productId:7,variantKey:'id:4',code:'A',detail:'Trashësia 2 mm — 4 EUR',unitPrice:4,currency:'EUR',quantity:1}, 5);
++    service.setQuantity({productId:7,variantKey:'id:4',code:'A',detail:'Thickness 2 mm — 6 EUR',unitPrice:6,currency:'EUR',quantity:1}, 3);
++    expect(service.items().length).toBe(1);
++    expect(service.items()[0].quantity).toBe(3);
++    expect(service.items()[0].unitPrice).toBe(6);
++  });
++  it('keeps distinct variants even when their display text is identical', () => {
++    service.setQuantity({productId:7,variantKey:'id:4',code:'A',detail:'2 mm',quantity:1}, 2);
++    service.setQuantity({productId:7,variantKey:'id:5',code:'A',detail:'2 mm',quantity:1}, 3);
++    expect(service.items().length).toBe(2);
++    service.setQuantity(service.items()[0],0);
++    expect(service.items()[0].variantKey).toBe('id:5');
++  });
++  it('preserves an old saved list and adopts only unambiguous variants', () => {
++    localStorage.setItem('quote-list',JSON.stringify([{productId:7,code:'A',detail:'Trashësia 2 mm — 4 EUR',quantity:5}]));
++    service.migrateLegacy(7,[{signature:'2',variantKey:'id:4'},{signature:'2',variantKey:'id:5'}]);
++    expect(service.items()[0].variantKey).toBeUndefined();
++    service.migrateLegacy(7,[{signature:'2',variantKey:'id:4'}]);
++    expect(service.items()[0].variantKey).toBe('id:4');
++    expect(service.items()[0].quantity).toBe(5);
++    expect(service.items()[0].unitPrice).toBe(4);
++  });
++
+ });
+diff --git a/src/app/shared/quote-list.service.ts b/src/app/shared/quote-list.service.ts
+index 7f3062e..9c91109 100644
+--- a/src/app/shared/quote-list.service.ts
++++ b/src/app/shared/quote-list.service.ts
+@@ -4,6 +4,10 @@ import { BehaviorSubject } from 'rxjs';
+ export interface QuoteItem {
+   /** The product it came from, so the same one is not added twice. */
+   productId: number;
++  variantKey?: string;
++  dimensions?: { height?: number; width?: number; length?: number; thickness?: number | string | null; weight?: number };
++  unitPrice?: number | null;
++  currency?: string;
+   code: string;
+   /** The size and thickness the customer chose, exactly as it should read in the enquiry. */
+   detail: string;
+@@ -43,7 +47,12 @@ export class QuoteListService {
+     }
+     try {
+       const parsed = JSON.parse(raw);
+-      return Array.isArray(parsed) ? (parsed as QuoteItem[]) : [];
++      return Array.isArray(parsed) ? (parsed as QuoteItem[]).map(item => {
++        // Preserve prices for lists saved before structured values were introduced.
++        if (item.unitPrice !== undefined) return item;
++        const legacy = /([\d.]+)\s*(?:Eur|EUR|€)/.exec(item.detail || '');
++        return { ...item, unitPrice: legacy ? Number(legacy[1]) : null, currency: legacy ? 'EUR' : undefined };
++      }) : [];
+     } catch {
+       // A corrupted entry must not take the page down with it.
+       this.storage()?.removeItem(this.key);
+@@ -69,10 +78,10 @@ export class QuoteListService {
+   add(item: QuoteItem): QuoteItem[] {
+     const items = this.items();
+     const existing = items.find(
+-      (other) => other.productId === item.productId && (other.detail || '') === (item.detail || '')
++      (other) => this.sameLine(other, item)
+     );
+     if (existing) {
+-      existing.quantity += item.quantity || 1;
++      Object.assign(existing, item, { quantity: existing.quantity + (item.quantity || 1) });
+     } else {
+       items.push({ ...item, quantity: item.quantity || 1 });
+     }
+@@ -94,7 +103,7 @@ export class QuoteListService {
+     const wanted = Math.floor(Number(quantity));
+     const items = this.items();
+     const at = items.findIndex(
+-      (other) => other.productId === item.productId && (other.detail || '') === (item.detail || '')
++      (other) => this.sameLine(other, item)
+     );
+     if (!Number.isFinite(wanted) || wanted < 1) {
+       // Zero takes that line off and leaves its neighbours where they are.
+@@ -105,7 +114,7 @@ export class QuoteListService {
+       // reordered the list every time a quantity was edited: the customer typed a new number against
+       // their first item and found it at the bottom. The list reads in the order things went in, and
+       // editing one must not move it.
+-      items[at] = { ...items[at], quantity: wanted };
++      items[at] = { ...items[at], ...item, quantity: wanted };
+     } else {
+       items.push({ ...item, quantity: wanted });
+     }
+@@ -121,6 +130,26 @@ export class QuoteListService {
+     return [];
+   }
+ 
++  /** Adopt old saved lines only when the old size description identifies one variant. */
++  migrateLegacy(productId: number, candidates: { signature: string; variantKey: string }[]): void {
++    let changed = false;
++    const items = this.items().map(item => {
++      if (item.productId !== productId || item.variantKey) return item;
++      const signature = ((item.detail || '').split(/—| - /)[0].match(/\d+(?:\.\d+)?/g) || []).map(Number).join(':');
++      const matches = candidates.filter(candidate => candidate.signature === signature);
++      if (matches.length !== 1) return item;
++      changed = true;
++      return { ...item, variantKey: matches[0].variantKey };
++    });
++    if (changed) this.save(items);
++  }
++
++  private sameLine(other: QuoteItem, item: QuoteItem): boolean {
++    if (other.productId !== item.productId) return false;
++    if (other.variantKey && item.variantKey) return other.variantKey === item.variantKey;
++    return (other.detail || '') === (item.detail || '');
++  }
++
+   private save(items: QuoteItem[]): QuoteItem[] {
+     this.storage()?.setItem(this.key, JSON.stringify(items));
+     // Tell anyone listening. The navigation's counter used to refresh only on a route change, so
+diff --git a/src/assets/i18n/al.json b/src/assets/i18n/al.json
+index c3a57b2..1157c39 100644
+--- a/src/assets/i18n/al.json
++++ b/src/assets/i18n/al.json
+@@ -172,7 +172,9 @@
+     "REQUEST_UNPRICED": "Artikuj pa çmim",
+     "REQUEST_UNPRICED_NOTE": "Për këta çmimin e llogarisim ne dhe ju kthejmë përgjigje me ofertën.",
+     "ON_REQUEST": "në kërkesë",
+-    "JUST_ADDED": "U shtua në kërkesë"
++    "JUST_ADDED": "U shtua në kërkesë",
++    "SEARCH_ERROR": "Kërkimi nuk u ngarkua. Ju lutemi provoni përsëri.",
++    "SEARCH_RETRY": "Provo përsëri"
+   },
+   "MODAL": {
+     "CLOSE": "Mbyll",
+diff --git a/src/assets/i18n/en.json b/src/assets/i18n/en.json
+index 8ab0b40..e7d9a13 100644
+--- a/src/assets/i18n/en.json
++++ b/src/assets/i18n/en.json
+@@ -133,7 +133,9 @@
+     "REQUEST_UNPRICED": "Items without a price",
+     "REQUEST_UNPRICED_NOTE": "We will work these out ourselves and come back to you with the quote.",
+     "ON_REQUEST": "in the request",
+-    "JUST_ADDED": "Added to the request"
++    "JUST_ADDED": "Added to the request",
++    "SEARCH_ERROR": "Search could not load. Please try again.",
++    "SEARCH_RETRY": "Try again"
+   },
+   "MODAL": {
+     "CLOSE": "Close",

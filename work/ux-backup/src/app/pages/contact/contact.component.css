@@ -1,0 +1,49 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto; /* Center the container */
+  background-color: #f8f9fa; /* Light background for the form */
+  padding: 30px;
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+.contact-form .form-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.contact-form .form-control {
+  border-radius: 5px; /* Soft rounded corners */
+}
+
+.contact-form textarea {
+  resize: none; /* Disable resize for consistency */
+}
+
+.contact-form button {
+  width: 100%; /* Make the button full width */
+  padding: 10px;
+  font-size: 1.2rem;
+}
+
+.contact-form button:hover {
+  background-color: var(--brand-primary-dark); /* Darker blue on hover */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+/* The map can be reached with the keyboard and operated from inside, so it has to
+   show when it has focus. The ring is drawn on the wrapper rather than the frame:
+   once focus is inside a cross-origin document, the frame's own outline is the
+   browser's, and not something this stylesheet controls. */
+.map-responsive:focus-within {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+h2 {
+  color: #333;
+}
+
+body {
+  background-color: #eef2f5; /* Light background to contrast with the form */
+}

@@ -1,0 +1,137 @@
+<!-- The shell: top bar, navigation and footer, shared by every page.
+     Modelled on mockups/redesign-2026.html. The colours are the shop's own: the slate and amber of
+     assets/logo.svg, and --brand-primary for buttons. -->
+<section>
+  <div class="page-wrapper">
+
+    <!-- Top bar: the hours, a phone number that dials, and the language. -->
+    <div class="topbar">
+      <div class="shell">
+        <span>{{ 'SHELL.HOURS' | translate }}</span>
+        <span class="topbar-right">
+          <a [href]="'tel:' + phone"><span class="muted">{{ 'SHELL.TEL' | translate }}</span> <b>{{ phoneDisplay }}</b></a>
+          <span class="langs">
+            <button type="button" class="lang-btn" [class.active]="shared.lang === 'al'"
+                    (click)="switchLanguage('al')">AL</button>
+            <button type="button" class="lang-btn" [class.active]="shared.lang === 'en'"
+                    (click)="switchLanguage('en')">EN</button>
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Navigation: logo, links, search, and what is on the request list. -->
+    <header class="nav">
+      <div class="shell">
+        <a class="logo" [routerLink]="['/']">
+          <img src="assets/logo.svg" alt="" width="34" height="34" aria-hidden="true">
+          <span>Teuta Steel</span>
+        </a>
+
+        <nav class="links">
+          <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'NAVBAR.HOME' | translate }}</a>
+          <a [routerLink]="['/products']" routerLinkActive="active">{{ 'NAVBAR.PRODUCTS' | translate }}</a>
+          <a [routerLink]="['/services']" routerLinkActive="active">{{ 'NAVBAR.SERVICES' | translate }}</a>
+          <a [routerLink]="['/about']" routerLinkActive="active">{{ 'NAVBAR.ABOUT_US' | translate }}</a>
+          <a [routerLink]="['/contact']" routerLinkActive="active">{{ 'NAVBAR.CONTACT' | translate }}</a>
+        </nav>
+
+        <div class="nav-tools">
+          <!-- One search box in the whole site, and it lives in the catalogue - where the results
+               appear, the term stays visible and there is a button to clear it. This is the way to
+               it. A second box here meant two of them on the products page at once, and the one in
+               the header was the smaller and less useful of the two. -->
+          <a class="search-link" [routerLink]="['/products']"
+             [attr.aria-label]="'SHELL.SEARCH_PLACEHOLDER' | translate"
+             [title]="'SHELL.SEARCH_PLACEHOLDER' | translate">
+            <span aria-hidden="true">&#9906;</span>
+          </a>
+
+          <a class="basket" [routerLink]="['/contact']"
+             [attr.aria-label]="'SHELL.REQUEST' | translate">
+            {{ 'SHELL.REQUEST' | translate }}
+            <span class="count" *ngIf="quoteCount > 0">{{ quoteCount }}</span>
+          </a>
+
+          <!-- Signing in, the panel and signing out used to stand here, three icons every visitor
+               had to read past. They are in the footer now, where the people who need them know to
+               look. See the note there. -->
+        </div>
+      </div>
+    </header>
+
+    <!-- The second navigation bar that stood here (app-mobile-nav) is gone. It repeated the brand,
+         the language switch and a search box on every phone screen, because this header used to hide
+         its own links below 980px and hand the job over. Those links live here now, scrolling
+         sideways, so there is one header rather than two. -->
+
+    <!-- Main Content -->
+    <main [@routeAnimations]="prepareRoute(outlet)">
+      <router-outlet #outlet="outlet"></router-outlet>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="shell cols">
+        <div>
+          <a class="logo on-dark" [routerLink]="['/']">
+            <img src="assets/logo.svg" alt="" width="34" height="34" aria-hidden="true">
+            <span>Teuta Steel</span>
+          </a>
+          <p class="about">{{ 'FOOTER.ABOUT' | translate }}</p>
+        </div>
+        <div>
+          <h4>{{ 'FOOTER.PRODUCTS_TITLE' | translate }}</h4>
+          <ul>
+            <li><a [routerLink]="['/products']" [queryParams]="{ group: 'sheets' }">{{ 'FOOTER.GROUP_SHEETS' | translate }}</a></li>
+            <li><a [routerLink]="['/products']" [queryParams]="{ group: 'tubes' }">{{ 'FOOTER.GROUP_TUBES' | translate }}</a></li>
+            <li><a [routerLink]="['/products']" [queryParams]="{ group: 'profiles' }">{{ 'FOOTER.GROUP_PROFILES' | translate }}</a></li>
+            <li><a [routerLink]="['/products']" [queryParams]="{ group: 'decor' }">{{ 'FOOTER.GROUP_DECOR' | translate }}</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>{{ 'FOOTER.SERVICES_TITLE' | translate }}</h4>
+          <ul>
+            <li><a [routerLink]="['/services']">{{ 'MISC.PRESS_BRAKE_BENDING' | translate }}</a></li>
+            <li><a [routerLink]="['/services']">{{ 'MISC.COMPLEX_FABRICATION' | translate }}</a></li>
+            <li><a [routerLink]="['/services']">{{ 'NAVBAR.SERVICES' | translate }}</a></li>
+            <li><a [routerLink]="['/guides']">{{ 'FOOTER.GUIDES' | translate }}</a></li>
+            <li><a [routerLink]="['/projects']">{{ 'FOOTER.PROJECTS' | translate }}</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>{{ 'FOOTER.CONTACT_TITLE' | translate }}</h4>
+          <ul>
+            <li><a [href]="'tel:' + phone">{{ phoneDisplay }}</a></li>
+            <li><a [href]="whatsappLink" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+            <li><a [href]="'mailto:' + email">{{ email }}</a></li>
+            <li>{{ 'SHELL.HOURS_SHORT' | translate }}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="shell fine">
+        <span>{{ 'FOOTER.COPYRIGHT' | translate: { year: year } }}</span>
+
+        <!-- Staff access, moved out of the navigation. Accounts are created by an administrator -
+             there is no sign-up anywhere - so the customer this site is for is not the person who
+             signs in, and a login button in the header asked every visitor to wonder why. The ids
+             stay, because the tests know them by name. -->
+        <span class="staff">
+          <a id="nav-login" [routerLink]="['/login']" [hidden]="isLoggedIn"
+             [attr.aria-label]="'NAVBAR.LOGIN' | translate">
+            <i class="bi bi-person-circle" aria-hidden="true"></i> {{ 'NAVBAR.LOGIN' | translate }}
+          </a>
+          <a id="nav-admin" [routerLink]="['/admin-dashboard']" [hidden]="!isLoggedIn"
+             [attr.aria-label]="'ADMIN.PANEL_TITLE' | translate">
+            <i class="bi bi-speedometer2" aria-hidden="true"></i> {{ 'ADMIN.PANEL_TITLE' | translate }}
+          </a>
+          <button id="nav-logout" type="button" [hidden]="!isLoggedIn" (click)="logout()"
+                  [attr.aria-label]="'MISC.LOGOUT' | translate">
+            <i class="bi bi-box-arrow-right" aria-hidden="true"></i> {{ 'MISC.LOGOUT' | translate }}
+          </button>
+        </span>
+      </div>
+    </footer>
+
+  </div>
+</section>
