@@ -1379,15 +1379,10 @@
   </div>
 </div>
 
-<!-- This is the page's own copy of the product editor. The same form also exists as
-     ProductEditorComponent, which the administrator's table opens in a panel. They are two copies on
-     purpose, and only until they can be one: an attempt did put the shared component here, and the
-     dialog then loaded the product (twenty-one controls, the right code) but never appeared - Bootstrap's
-     show() added no 'show' class, with no console error to explain it. What ruled out so far: the
-     element exists, the component renders, no NG0100, no failed request. What is left to try: a
-     MutationObserver on #editProductModal, to see whether 'show' is ever added and then removed, or
-     never added at all. Keep these two in step until then. -->
-<!-- The shared editor, for the probe. -->
+<!-- The same editor the administrator's table opens. The dialog shell stays because this page
+     opens it with Bootstrap's own API; its inside is the shared component, which says saved
+     and closed instead of reaching into this page's fields. -->
+<!-- The shared editor. -->
 <div *ngIf="!showingGroups && selectedCategory" class="modal fade" id="editProductModal" tabindex="-1"
      aria-labelledby="editProductModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl" *ngIf="selectedProduct">
