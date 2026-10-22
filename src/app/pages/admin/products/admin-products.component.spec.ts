@@ -236,4 +236,15 @@ describe('AdminProductsComponent', () => {
     expect(component.priceOf(component.rows[0])).toBe('3.80 Eur');
     expect(component.priceOf(component.rows[1])).toBe('—');
   });
+  it('lets Escape close the panel, the way a mouse does', () => {
+    create();
+    fixture.detectChanges();
+    respond(page([row()]));
+
+    component.open(component.rows[0]);
+    expect(component.openId).toBe(1);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(component.openId).toBeNull();
+  });
 });

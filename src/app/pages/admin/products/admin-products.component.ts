@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -178,6 +178,14 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
         },
       })
     );
+  }
+
+  /** Escape closes the panel: a keyboard leaves it the way a mouse does. */
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.openId) {
+      this.closeEditor();
+    }
   }
 
   /** Open a product in the panel beside the table, without leaving the list. */
