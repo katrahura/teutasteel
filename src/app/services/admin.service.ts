@@ -109,6 +109,33 @@ export interface ImportRecord {
   refused: number;
 }
 
+/** One price a bulk change would touch: what it was, what it would be. */
+export interface BulkPriceChange {
+  product_id: number;
+  code: string;
+  dimension_id: number;
+  before: number;
+  after: number;
+  currency: string | null;
+}
+
+export interface BulkPriceReport {
+  dry_run: boolean;
+  mode: string;
+  value: number | string;
+  changes: BulkPriceChange[];
+  count: number;
+  refused: { product_id: number; code: string; reason: string }[];
+}
+
+/** What a bulk price change asks for. */
+export interface BulkPriceQuery {
+  products: number[];
+  mode: 'percent' | 'amount' | 'set';
+  value: number;
+  dryRun: boolean;
+}
+
 /** What the importer answers: what it would do, and what it refused and why. */
 export interface ImportLine {
   line: number;
@@ -227,6 +254,20 @@ export class AdminService {
    * A preview and an apply are the same call with one flag between them, so what is shown before
    * anything is written is what will happen.
    */
+  /**
+   * Change many prices at once, or say what that would do.
+   *
+   * A preview and an apply are one call with a flag between them, so what the table shows before
+   * anything is written is what the apply does.
+   */
+  bulkPrices(query: BulkPriceQuery): Observable<BulkPriceReport> {
+    return this.http.post<BulkPriceReport>(
+      `${this.baseUrl}/product/prices/bulk`,
+      { products: query.products, mode: query.mode, value: query.value, dry_run: query.dryRun },
+      { headers: this.authHeaders() }
+    );
+  }
+
   /** The last imports, newest first: a record of changes, not of clicks. */
   getImportHistory(): Observable<{ imports: ImportRecord[] }> {
     return this.http.get<{ imports: ImportRecord[] }>(`${this.baseUrl}/admin/imports`, {
