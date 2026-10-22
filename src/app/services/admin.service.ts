@@ -119,6 +119,8 @@ export interface CatalogueQuery {
   q?: string;
   category?: number | null;
   active?: 'all' | '1' | '0';
+  /** Products a switched-off category hides: on themselves, invisible all the same. */
+  hidden?: boolean;
   page?: number;
   perPage?: number;
 }
@@ -192,6 +194,9 @@ export class AdminService {
     }
     if (query.category) {
       params = params.set('category', String(query.category));
+    }
+    if (query.hidden) {
+      params = params.set('hidden', '1');
     }
     return this.http.get<CataloguePage>(`${this.baseUrl}/admin/catalogue`, {
       headers: this.authHeaders(),

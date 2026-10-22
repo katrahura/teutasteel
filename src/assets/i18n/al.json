@@ -328,7 +328,8 @@
     "IMPORT_REFUSED": "të refuzuara",
     "IMPORT_LINE": "Rreshti",
     "IMPORT_WHAT": "Çka",
-    "IMPORT_SIZE_LINE": "trashësia {{ thickness }} mm · {{ sizes }} masë/a"
+    "IMPORT_SIZE_LINE": "trashësia {{ thickness }} mm · {{ sizes }} masë/a",
+    "VISIBILITY_HIDDEN": "Të fshehura nga kategoria"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

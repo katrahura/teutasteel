@@ -289,7 +289,8 @@
     "IMPORT_REFUSED": "refused",
     "IMPORT_LINE": "Line",
     "IMPORT_WHAT": "What",
-    "IMPORT_SIZE_LINE": "thickness {{ thickness }} mm · {{ sizes }} size(s)"
+    "IMPORT_SIZE_LINE": "thickness {{ thickness }} mm · {{ sizes }} size(s)",
+    "VISIBILITY_HIDDEN": "Hidden by their category"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

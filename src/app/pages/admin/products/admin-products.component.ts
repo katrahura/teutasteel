@@ -67,7 +67,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
 
   q = '';
   category: number | null = null;
-  active: 'all' | '1' | '0' = 'all';
+  active: 'all' | '1' | '0' | 'hidden' = 'all';
   groups: TopCategory[] = [];
 
   ngOnInit(): void {
@@ -82,7 +82,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
 
     const asked = this.route.snapshot.queryParamMap;
     this.q = asked.get('q') || '';
-    this.active = (asked.get('active') as 'all' | '1' | '0') || 'all';
+    this.active = (asked.get('active') as 'all' | '1' | '0' | 'hidden') || 'all';
     this.category = Number(asked.get('category')) || null;
     this.load(Number(asked.get('page')) || 1);
   }
@@ -96,7 +96,11 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
 
   /** The filters as the API takes them. */
   private query(page: number): CatalogueQuery {
-    return { q: this.q, category: this.category, active: this.active, page, perPage: this.perPage };
+    // The fourth choice is not a value of `active`: it asks for the products whose category is off,
+    // which is a different question from whether the product itself is switched on.
+    const hidden = this.active === 'hidden';
+    const active = this.active === 'hidden' ? 'all' : this.active;
+    return { q: this.q, category: this.category, active, hidden, page, perPage: this.perPage };
   }
 
   private remember(): void {
