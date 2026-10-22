@@ -10,6 +10,7 @@ import { ProductService } from '../../services/product.service';
 import { translateCategoryTitle } from '../../shared/translate-category-title';
 import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
 import { SectionDrawingComponent } from '../../shared/section-drawing/section-drawing.component';
+import { ProductEditorComponent } from '../admin/products/product-editor.component';
 import { isSheet, shapeFor } from '../../shared/section-shape';
 import { environment } from '../../../environments/environment';
 import {
@@ -39,7 +40,7 @@ type DimensionKey =
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ImageFallbackDirective, SectionDrawingComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ImageFallbackDirective, SectionDrawingComponent, ProductEditorComponent],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
   animations: [
@@ -1276,12 +1277,16 @@ this.showProducts(this.selectedCategory)
     // handing the element to Bootstrap: constructing a Modal while the dialog is
     // still missing leaves it holding a null reference and show() then fails with
     // "Illegal invocation".
-    this.changeDetector.detectChanges();
-    const modalElement = document.getElementById('editProductModal');
-    if (modalElement) {
-      bootstrap.Modal.getInstance(modalElement)?.dispose();
-      bootstrap.Modal.getOrCreateInstance(modalElement).show();
-    }
+    // Angular renders the dialog in its own turn, then Bootstrap is handed the finished element. The
+    // detectChanges() that used to be here ran change detection from inside change detection, which
+    // works with plain markup and is not needed once the dialog holds a component of its own.
+    setTimeout(() => {
+      const modalElement = document.getElementById('editProductModal');
+      if (modalElement) {
+        bootstrap.Modal.getInstance(modalElement)?.dispose();
+        bootstrap.Modal.getOrCreateInstance(modalElement).show();
+      }
+    }, 0);
   }
   
 
@@ -1299,6 +1304,11 @@ this.showProducts(this.selectedCategory)
         },
       });
     }
+  }
+
+  onEditorSaved(_product: unknown): void {
+    this.showProducts(this.selectedCategory);
+    this.closeEditModal();
   }
 
   closeEditModal(): void {
