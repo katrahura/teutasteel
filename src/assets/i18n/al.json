@@ -315,7 +315,20 @@
     "STATUS_OK": "i plotë",
     "STATUS_OFF_CATEGORY": "kategoria e fikur",
     "EDITING": "Redakto produktin",
-    "SAVED": "U ruajt"
+    "SAVED": "U ruajt",
+    "IMPORT_TITLE": "Importo trashësitë nga një skedar CSV",
+    "IMPORT_LEAD": "Skedari emërton produktin me kod. Parapamja nuk shkruan asgjë — vetëm \"Zbato\" shkruan.",
+    "IMPORT_TEMPLATE": "Shkarko shabllonin",
+    "IMPORT_CHOOSE": "Zgjidh skedarin",
+    "IMPORT_PREVIEW": "Paraqit",
+    "IMPORT_APPLY": "Zbato",
+    "IMPORT_DONE": "U zbatua.",
+    "IMPORT_WOULD": "Do të plotësohen",
+    "IMPORT_SIZES": "masa",
+    "IMPORT_REFUSED": "të refuzuara",
+    "IMPORT_LINE": "Rreshti",
+    "IMPORT_WHAT": "Çka",
+    "IMPORT_SIZE_LINE": "trashësia {{ thickness }} mm · {{ sizes }} masë/a"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

@@ -98,6 +98,22 @@ export interface CataloguePage {
   products: CatalogueRow[];
 }
 
+/** What the importer answers: what it would do, and what it refused and why. */
+export interface ImportLine {
+  line: number;
+  code: string;
+  thickness?: number;
+  sizes?: number;
+  reason?: string;
+}
+
+export interface ImportReport {
+  dry_run: boolean;
+  applied: ImportLine[];
+  rejected: ImportLine[];
+  sizes_to_fill: number;
+}
+
 /** What the table asks the API for. */
 export interface CatalogueQuery {
   q?: string;
@@ -189,6 +205,20 @@ export class AdminService {
    * An empty body is sent because the API refuses a POST without JSON at all - the app's own rule,
    * not this route's - so a body of nothing is what a client has to send.
    */
+  /**
+   * Fill in missing thicknesses from a spreadsheet.
+   *
+   * A preview and an apply are the same call with one flag between them, so what is shown before
+   * anything is written is what will happen.
+   */
+  importThickness(csv: string, dryRun: boolean): Observable<ImportReport> {
+    return this.http.post<ImportReport>(
+      `${this.baseUrl}/product/import-thickness`,
+      { csv, dry_run: dryRun },
+      { headers: this.authHeaders() }
+    );
+  }
+
   duplicateProduct(id: number): Observable<{ id: number; code: string; is_active: boolean }> {
     return this.http.post<{ id: number; code: string; is_active: boolean }>(
       `${this.baseUrl}/admin/products/${id}/duplicate`,

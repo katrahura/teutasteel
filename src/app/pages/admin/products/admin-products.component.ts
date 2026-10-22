@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
-import { AdminService, CatalogueQuery, CatalogueRow } from '../../../services/admin.service';
+import { AdminService, CatalogueQuery, CatalogueRow, ImportReport } from '../../../services/admin.service';
 import { ProductService } from '../../../services/product.service';
 import { Product, TopCategory } from '../../../models/product.model';
 import { ProductEditorComponent } from './product-editor.component';
@@ -56,6 +56,14 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   /** The code of the product in the panel, so the panel can say which one it is. */
   openedCode: string | null = null;
   savedCode: string | null = null;
+
+  /** The importer: the spreadsheet as text, what the preview said, and what the apply said. */
+  importCsv = '';
+  importName = '';
+  importReport: ImportReport | null = null;
+  importing = false;
+  importError = '';
+  importDone: string | null = null;
 
   q = '';
   category: number | null = null;
@@ -177,6 +185,59 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
           } else {
             this.failed = true;
           }
+        },
+      })
+    );
+  }
+
+  /** Read the chosen file, then show what it would do before anything is written. */
+  onImportFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files[0];
+    if (!file) {
+      return;
+    }
+    file.text().then((text) => {
+      this.importCsv = text;
+      this.importName = file.name;
+      this.importReport = null;
+      this.importDone = null;
+      this.runImport(true);
+    });
+  }
+
+  previewImport(): void {
+    this.runImport(true);
+  }
+
+  /** Write what the preview showed. Same call, one flag between them. */
+  applyImport(): void {
+    this.runImport(false);
+  }
+
+  private runImport(dryRun: boolean): void {
+    if (!this.importCsv || this.importing) {
+      return;
+    }
+    this.importing = true;
+    this.importError = '';
+    this.importDone = null;
+    this.subscriptions.add(
+      this.admin.importThickness(this.importCsv, dryRun).subscribe({
+        next: (report) => {
+          this.importing = false;
+          this.importReport = report;
+          if (!report.dry_run) {
+            this.importDone = String(report.applied.length);
+            this.load(this.page);
+          }
+        },
+        error: (error) => {
+          this.importing = false;
+          const status = error && error.status;
+          this.importError = status === 401 || status === 403
+            ? 'ADMIN.NOT_ALLOWED'
+            : (error && error.error && error.error.error) || 'ADMIN.TABLE_FAILED';
         },
       })
     );

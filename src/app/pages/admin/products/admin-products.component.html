@@ -69,6 +69,64 @@
     <app-product-editor [productId]="openId" (saved)="onSaved($event)" (closed)="closeEditor()"></app-product-editor>
   </aside>
 
+  <!-- The importer. A preview first, always: a spreadsheet of 258 codes is not something to apply
+       blind, and the preview and the apply are the same call with one flag between them. -->
+  <section class="import-panel" *ngIf="!denied">
+    <details>
+      <summary>{{ 'ADMIN.IMPORT_TITLE' | translate }}</summary>
+      <p class="muted">{{ 'ADMIN.IMPORT_LEAD' | translate }}
+        <a href="/import-template.csv" download>{{ 'ADMIN.IMPORT_TEMPLATE' | translate }}</a>
+      </p>
+      <div class="import-row">
+        <label class="field">
+          <span class="visually-hidden">{{ 'ADMIN.IMPORT_CHOOSE' | translate }}</span>
+          <input type="file" accept=".csv,text/csv" (change)="onImportFile($event)"
+                 [attr.aria-label]="'ADMIN.IMPORT_CHOOSE' | translate" />
+        </label>
+        <button type="button" class="link" (click)="previewImport()" [disabled]="!importCsv || importing">
+          {{ 'ADMIN.IMPORT_PREVIEW' | translate }}
+        </button>
+        <button type="button" class="apply" (click)="applyImport()"
+                [disabled]="!importReport || !importReport.applied.length || importing">
+          {{ 'ADMIN.IMPORT_APPLY' | translate }}
+        </button>
+      </div>
+      <p class="muted" *ngIf="importName">{{ importName }}</p>
+      <p class="notice failed" *ngIf="importError">{{ importError | translate }}</p>
+      <p class="copied" role="status" aria-live="polite" *ngIf="importDone">
+        {{ 'ADMIN.IMPORT_DONE' | translate }}
+      </p>
+      <div class="table-wrap" *ngIf="importReport">
+        <p class="muted">
+          {{ 'ADMIN.IMPORT_WOULD' | translate }} {{ importReport.sizes_to_fill }}
+          {{ 'ADMIN.IMPORT_SIZES' | translate }} · {{ importReport.rejected.length }}
+          {{ 'ADMIN.IMPORT_REFUSED' | translate }}
+        </p>
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'ADMIN.IMPORT_LINE' | translate }}</th>
+              <th scope="col">{{ 'ADMIN.COL_CODE' | translate }}</th>
+              <th scope="col">{{ 'ADMIN.IMPORT_WHAT' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let line of importReport.applied">
+              <td>{{ line.line }}</td>
+              <td class="code">{{ line.code }}</td>
+              <td>{{ 'ADMIN.IMPORT_SIZE_LINE' | translate: { thickness: line.thickness, sizes: line.sizes } }}</td>
+            </tr>
+            <tr *ngFor="let line of importReport.rejected" class="off">
+              <td>{{ line.line }}</td>
+              <td class="code">{{ line.code || '—' }}</td>
+              <td class="reason">{{ line.reason }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
   <!-- role="status" so a screen reader announces the save: a line of text appearing on the page
        says nothing to somebody who cannot see it appear. -->
   <p class="copied" *ngIf="savedCode" role="status" aria-live="polite">{{ 'ADMIN.SAVED' | translate }} <strong>{{ savedCode }}</strong></p>

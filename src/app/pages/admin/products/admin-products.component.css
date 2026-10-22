@@ -87,3 +87,11 @@ tr.off .code { color: #64748b; }
   font-weight: 600;
   color: #b91c1c;
 }
+
+/* The importer, folded away: it is used once in a while, and the table is what the panel is for. */
+.import-panel { margin: 14px 0 4px; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; background: #fff; }
+.import-panel summary { cursor: pointer; font-weight: 700; font-size: 14px; color: #0f172a; }
+.import-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 10px 0 4px; }
+.apply { background: #0f172a; color: #fff; border: none; border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.apply:disabled { background: #cbd5e1; cursor: not-allowed; }
+.reason { color: #b45309; font-size: 12.5px; }

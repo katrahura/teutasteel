@@ -276,7 +276,20 @@
     "STATUS_OK": "complete",
     "STATUS_OFF_CATEGORY": "category hidden",
     "EDITING": "Editing the product",
-    "SAVED": "Saved"
+    "SAVED": "Saved",
+    "IMPORT_TITLE": "Import thicknesses from a CSV",
+    "IMPORT_LEAD": "The file names each product by code. A preview writes nothing — only Apply writes.",
+    "IMPORT_TEMPLATE": "Download the template",
+    "IMPORT_CHOOSE": "Choose the file",
+    "IMPORT_PREVIEW": "Preview",
+    "IMPORT_APPLY": "Apply",
+    "IMPORT_DONE": "Applied.",
+    "IMPORT_WOULD": "Would fill",
+    "IMPORT_SIZES": "sizes",
+    "IMPORT_REFUSED": "refused",
+    "IMPORT_LINE": "Line",
+    "IMPORT_WHAT": "What",
+    "IMPORT_SIZE_LINE": "thickness {{ thickness }} mm · {{ sizes }} size(s)"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",
