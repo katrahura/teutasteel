@@ -40,3 +40,8 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# A backup copy of the app and a scratch extraction: neither belongs in the repository, and a
+# `git add -A` swept them in once.
+work/
+tools/harsle_extracted.txt
