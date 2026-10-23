@@ -1040,6 +1040,13 @@
                   *ngIf="onListByProduct[product.id || 0]"
                 >{{ "PRODUCTS.ON_REQUEST" | translate }}: {{ onListByProduct[product.id || 0] }}</span>
               </div>
+              <!-- The card already says what is in the request; the dialog said nothing, so a product
+                   added from the card looked absent when its dialog was opened. Same source, same number. -->
+              <div class="alert alert-light py-1 px-2 small mb-2" *ngIf="inRequestCount(selectedProduct)">
+                <strong>{{ "PRODUCTS.IN_REQUEST" | translate }}:</strong>
+                {{ inRequestCount(selectedProduct) }}
+              </div>
+
               <button
                 type="button"
                 class="btn btn-add-to-request mt-2 me-2"
