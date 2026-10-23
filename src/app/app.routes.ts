@@ -84,6 +84,11 @@ export const appRoutes: Routes = [
             (m) => m.AdminProductsComponent
           ),
       },
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./pages/admin/users/admin-users.component').then((m) => m.AdminUsersComponent),
+      },
     ],
   },
   {

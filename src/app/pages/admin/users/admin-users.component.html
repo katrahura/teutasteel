@@ -1,0 +1,64 @@
+<section class="admin-users pb-5">
+  <h1 class="h3">{{ 'ADMIN.USERS_TITLE' | translate }}</h1>
+  <p class="muted">{{ 'ADMIN.USERS_LEAD' | translate }}</p>
+
+  <p class="notice denied" *ngIf="denied">{{ 'ADMIN.USERS_DENIED' | translate }}</p>
+  <div class="notice failed" *ngIf="failed && !denied">
+    <span>{{ 'ADMIN.TABLE_FAILED' | translate }}</span>
+    <button type="button" class="retry" (click)="load()">{{ 'ADMIN.RETRY' | translate }}</button>
+  </div>
+
+  <p class="muted" *ngIf="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+
+  <div class="table-wrap" *ngIf="!loading && !denied && !failed">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'ADMIN.USERS_USERNAME' | translate }}</th>
+          <th scope="col">{{ 'ADMIN.USERS_EMAIL' | translate }}</th>
+          <th scope="col">{{ 'ADMIN.USERS_ROLE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td class="code">{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td><span class="chip">{{ user.role }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <form class="new-user" *ngIf="!denied" (ngSubmit)="create()">
+    <h2 class="h6">{{ 'ADMIN.USERS_ADD' | translate }}</h2>
+    <div class="fields">
+      <label class="field">
+        <span>{{ 'ADMIN.USERS_USERNAME' | translate }}</span>
+        <input name="username" [(ngModel)]="draft.username" autocomplete="off" />
+        <small class="field-error" *ngIf="errorFor('username')">{{ errorFor('username') }}</small>
+      </label>
+      <label class="field">
+        <span>{{ 'ADMIN.USERS_EMAIL' | translate }}</span>
+        <input name="email" type="email" [(ngModel)]="draft.email" autocomplete="off" />
+        <small class="field-error" *ngIf="errorFor('email')">{{ errorFor('email') }}</small>
+      </label>
+      <label class="field">
+        <span>{{ 'ADMIN.USERS_PASSWORD' | translate }}</span>
+        <input name="password" type="password" [(ngModel)]="draft.password" autocomplete="new-password" />
+        <small class="field-error" *ngIf="errorFor('password')">{{ errorFor('password') }}</small>
+      </label>
+      <label class="field">
+        <span>{{ 'ADMIN.USERS_ROLE' | translate }}</span>
+        <select name="role" [(ngModel)]="draft.role">
+          <option value="editor">{{ 'ADMIN.USERS_ROLE_EDITOR' | translate }}</option>
+          <option value="admin">{{ 'ADMIN.USERS_ROLE_ADMIN' | translate }}</option>
+          <option value="user">{{ 'ADMIN.USERS_ROLE_USER' | translate }}</option>
+        </select>
+        <small class="field-error" *ngIf="errorFor('role')">{{ errorFor('role') }}</small>
+      </label>
+    </div>
+    <p class="notice failed" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+    <p class="copied" role="status" aria-live="polite" *ngIf="saved">{{ 'ADMIN.USERS_SAVED' | translate }} <strong>{{ saved }}</strong></p>
+    <button type="submit" class="apply" [disabled]="saving">{{ 'ADMIN.USERS_CREATE' | translate }}</button>
+  </form>
+</section>

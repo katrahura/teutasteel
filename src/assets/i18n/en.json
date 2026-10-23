@@ -316,7 +316,21 @@
     "ACTIVITY_TITLE": "Recent changes",
     "ACTIVITY_WHAT": "What",
     "ACTIVITY_ON": "On",
-    "ACTIVITY_EMPTY": "No changes recorded."
+    "ACTIVITY_EMPTY": "No changes recorded.",
+    "NAV_USERS": "Users",
+    "USERS_TITLE": "Users",
+    "USERS_LEAD": "Who may sign in to the panel, and with which right.",
+    "USERS_DENIED": "Only an administrator adds users.",
+    "USERS_USERNAME": "Username",
+    "USERS_EMAIL": "Email",
+    "USERS_PASSWORD": "Password",
+    "USERS_ROLE": "Role",
+    "USERS_ROLE_EDITOR": "Editor — changes products and prices",
+    "USERS_ROLE_ADMIN": "Administrator — everything",
+    "USERS_ROLE_USER": "No panel rights",
+    "USERS_ADD": "Add a user",
+    "USERS_CREATE": "Create",
+    "USERS_SAVED": "Added"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

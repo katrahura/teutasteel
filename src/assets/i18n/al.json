@@ -389,7 +389,21 @@
     "ACTIVITY_TITLE": "Ndryshimet e fundit",
     "ACTIVITY_WHAT": "Çka",
     "ACTIVITY_ON": "Mbi",
-    "ACTIVITY_EMPTY": "Asnjë ndryshim i regjistruar."
+    "ACTIVITY_EMPTY": "Asnjë ndryshim i regjistruar.",
+    "NAV_USERS": "Përdoruesit",
+    "USERS_TITLE": "Përdoruesit",
+    "USERS_LEAD": "Kush mund të hyjë në panel, dhe me çfarë të drejte.",
+    "USERS_DENIED": "Vetëm administratori i shton përdoruesit.",
+    "USERS_USERNAME": "Emri i përdoruesit",
+    "USERS_EMAIL": "Emaili",
+    "USERS_PASSWORD": "Fjalëkalimi",
+    "USERS_ROLE": "Roli",
+    "USERS_ROLE_EDITOR": "Editor — ndryshon produktet e çmimet",
+    "USERS_ROLE_ADMIN": "Administrator — gjithçka",
+    "USERS_ROLE_USER": "Pa të drejta paneli",
+    "USERS_ADD": "Shto një përdorues",
+    "USERS_CREATE": "Krijo",
+    "USERS_SAVED": "U shtua"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
