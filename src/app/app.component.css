@@ -371,3 +371,26 @@ button.nav-link {
   .desktop-nav { display: none !important; }
 }
 .topbar-right > a { display:inline-flex; gap:5px; align-items:center; }
+
+/* A single persistent destination for an enquiry on a small screen. */
+.mobile-enquiry { display:none; }
+@media(max-width:767px) {
+  .has-mobile-enquiry { padding-bottom:calc(86px + env(safe-area-inset-bottom, 0px)); }
+  .mobile-enquiry { position:fixed; z-index:1030; left:12px; right:12px; bottom:calc(12px + env(safe-area-inset-bottom, 0px)); display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; border-radius:14px; background:#111827; color:#fff; text-decoration:none; box-shadow:0 4px 20px #11182726; min-height:60px; }
+  .mobile-enquiry>span:first-child { display:grid; gap:2px; }
+  .enquiry-count { font-size:12px; color:#d1d5db; }
+  .mobile-enquiry>span:last-child { color:#fbbf24; font-weight:700; }
+}
+:host a:focus-visible, :host button:focus-visible { outline:3px solid #b45309; outline-offset:4px; }
+
+.skip-content { position:fixed; left:16px; top:-100px; z-index:1100; background:#111827; color:#fff; padding:12px 18px; border-radius:8px; }
+.skip-content:focus { top:12px; }
+
+@media(max-width:620px) {
+  .topbar .shell { padding:5px 16px; }
+  .topbar .shell>span:first-child { display:none; }
+  .topbar-right { width:100%; justify-content:space-between; gap:8px; }
+}
+@media(prefers-reduced-motion:reduce) { :host *, :host *::before, :host *::after { scroll-behavior:auto!important; animation:none!important; transition:none!important; } }
+
+@media(max-width:380px) { header.nav .shell { padding-inline:12px; column-gap:8px; } .nav-tools { gap:8px; } .nav-tools .search-link { display:none; } .logo { font-size:18px; gap:8px; } .logo img { width:30px; height:30px; } }

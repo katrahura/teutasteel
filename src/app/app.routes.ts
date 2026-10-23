@@ -30,6 +30,11 @@ export const appRoutes: Routes = [
     data: { animation: 'ContactPage' },
   },
   {
+    path: 'services/:id',
+    loadComponent: () => import('./pages/services/service-detail.component').then(m => m.ServiceDetailComponent),
+    data: { animation: 'ServicePage' },
+  },
+  {
     path: 'services',
     loadComponent: () =>
       import('./pages/services/services.component').then((m) => m.ServicesComponent),

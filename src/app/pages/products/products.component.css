@@ -794,3 +794,10 @@ h1.text-center, h2.text-center {
 /* Keep category illustrations complete at every card width. */
 .child-card .category-image-container { height:auto; aspect-ratio: 1; background:#f1f5f9; }
 .child-card .category-image { width:100%; height:100%; object-fit:contain; }
+
+.variant-hint { color:#475569; margin:8px 0; }
+.availability-note { color:#64748b; font-size:12px; margin:8px 0 14px; }
+.card { box-shadow:none; }
+.btn-whatsapp { background:transparent; color:#166534; border:1px solid #bbd5c4; }
+.btn-whatsapp:hover { background:#f0fdf4; color:#14532d; }
+.card-body>.btn-add-to-request { min-height:44px; }

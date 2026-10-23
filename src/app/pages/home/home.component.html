@@ -15,8 +15,8 @@
   <div class="hero">
     <!-- Under the gradient, not instead of it. The alt text carries the same admission the note
          does, because a photograph on the front page reads as "this is us". -->
-    <img class="hero-photo" [src]="heroPhoto" [alt]="'HOME.SAMPLE_PHOTO' | translate" />
-    <span class="hero-sample" *ngIf="samplePhoto">{{ 'HOME.SAMPLE_PHOTO' | translate }}</span>
+
+
     <div class="shell grid">
       <div>
         <span class="kicker">{{ 'HOME.KICKER' | translate }}</span>
@@ -46,6 +46,10 @@
         </form>
       </div>
       <div class="hero-card">
+        <figure class="hero-illustration">
+          <img src="assets/images/services/cnc-fiber-laser-cutting.webp" [alt]="'JOURNEY.HERO_ALT' | translate" width="480" height="480" fetchpriority="high">
+          <figcaption>{{ 'JOURNEY.ILLUSTRATION' | translate }}</figcaption>
+        </figure>
         <h3>{{ 'HOME.WHY_TITLE' | translate }}</h3>
         <ul>
           <li *ngFor="let key of whyPoints">
@@ -56,6 +60,13 @@
     </div>
   </div>
 
+  <div class="shell catalogue-status" *ngIf="groupsLoading || groupsError" role="status">
+    <p *ngIf="groupsLoading">{{ 'MISC.LOADING' | translate }}</p>
+    <div *ngIf="groupsError"><p>{{ 'JOURNEY.CATALOGUE_ERROR' | translate }}</p>
+      <button type="button" class="btn btn-outline btn-sm" (click)="loadGroups()">{{ 'JOURNEY.RETRY' | translate }}</button>
+      <a class="btn btn-sm" routerLink="/contact">{{ 'NAVBAR.CONTACT' | translate }}</a>
+    </div>
+  </div>
   <!-- The six groups, with what each really holds -->
   <section class="groups" *ngIf="topCategories.length">
     <div class="shell">
@@ -118,7 +129,7 @@
           <img *ngIf="service.image" [src]="service.image" [alt]="service.titleKey | translate"
                class="service-img" loading="lazy">
           <span class="ico" *ngIf="!service.image" aria-hidden="true">&#9873;</span>
-          <h3>{{ service.titleKey | translate }}</h3>
+          <h3><a [routerLink]="['/services', service.id]">{{ service.titleKey | translate }}</a></h3>
           <p>{{ service.textKey | translate }}</p>
         </div>
       </div>

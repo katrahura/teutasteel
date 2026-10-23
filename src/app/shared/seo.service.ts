@@ -4,6 +4,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { SERVICES } from './services';
 import { environment } from '../../environments/environment';
 
 /** What each public page claims to be. */
@@ -72,7 +73,9 @@ export class SeoService {
 
   /** Applies the head values for the current route in the current language. */
   apply(): void {
-    const page = PUBLIC_PAGES[this.currentPath];
+    const serviceId = /^\/services\/([^/]+)$/.exec(this.currentPath)?.[1];
+    const service = SERVICES.find(item => item.id === serviceId);
+    const page = service ? { titleKey: service.titleKey, descriptionKey: service.textKey } : PUBLIC_PAGES[this.currentPath];
     const language = this.translate.currentLang || this.translate.getDefaultLang() || 'al';
 
     this.document.documentElement.lang = HTML_LANG[language] ?? 'sq';

@@ -1,0 +1,7 @@
+/services/cnc
+/services/shears
+/services/profiles
+/services/bending
+/services/pressbrake
+/services/complex
+/services/decoration

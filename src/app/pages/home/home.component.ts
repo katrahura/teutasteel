@@ -24,6 +24,8 @@ export class HomeComponent implements OnDestroy {
   private subscriptions = new Subscription();
   topCategories: TopCategory[] = [];
   catalogueLoaded = false;
+  groupsLoading = false;
+  groupsError = false;
 
   /**
    * The products in the "Featured products" row.
@@ -33,21 +35,6 @@ export class HomeComponent implements OnDestroy {
    * claiming "most asked for".
    */
   featured: Product[] = [];
-
-  /**
-   * The photograph behind the hero.
-   *
-   * The review asked for a strong photograph of the workshop, the stock or finished work, with the
-   * slate and amber identity kept - so the picture sits **under** the existing gradient rather than
-   * replacing it. This one came from an image model, which is why `samplePhoto` is true and the
-   * hero says so on the page: a photograph on the front page reads as "this is us", and until it
-   * is, the page has to say otherwise.
-   *
-   * To make it real: put your own photograph in `assets/gallery/`, change the path here, and set
-   * `samplePhoto` to false - which removes the note.
-   */
-  readonly heroPhoto = 'assets/gallery/hero-kit.jpg';
-  readonly samplePhoto = true;
 
   /**
    * The services the company advertises, from shared/services.ts.
@@ -100,14 +87,16 @@ export class HomeComponent implements OnDestroy {
     // for a catalogue-wide request would put that request's whole duration in front of four cards
     // for no reason - five seconds of it on the development backend.
     this.loadFeatured();
+    this.loadGroups();
+  }
+
+  loadGroups(): void {
+    if (this.groupsLoading) return;
+    this.groupsLoading = true;
+    this.groupsError = false;
     const sub = this.productService.getCategoryTree().subscribe({
-      next: (data) => {
-        this.topCategories = data;
-        this.catalogueLoaded = true;
-      },
-      error: (error) => {
-        console.error('Error occurred while fetching categories:', error);
-      },
+      next: data => { this.topCategories = data; this.catalogueLoaded = true; this.groupsLoading = false; },
+      error: () => { this.groupsError = true; this.groupsLoading = false; }
     });
     this.subscriptions.add(sub);
   }

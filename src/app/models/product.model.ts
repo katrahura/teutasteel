@@ -37,6 +37,7 @@
       id?: number;
       code: string;
       cut_type: number;
+      price_unit?: string;
       is_active: boolean;
       new_product:boolean;
       category_id?: number; // Added categoryId field

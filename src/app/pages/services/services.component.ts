@@ -19,6 +19,7 @@ import { PROJECTS } from '../../shared/projects';
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule ],
   templateUrl: './services.component.html',
+  styleUrl: './services.component.css',
 })
 export class ServicesComponent {
   readonly services = SERVICES;

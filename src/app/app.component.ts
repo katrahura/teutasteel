@@ -85,6 +85,11 @@ export class AppComponent {
     });
   }
 
+  skipToContent(event: Event): void {
+    event.preventDefault();
+    document.getElementById('main-content')?.focus();
+  }
+
   logout(): void {
     this.authService.logout();
     this.isLoggedIn = false;

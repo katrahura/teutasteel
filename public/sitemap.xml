@@ -30,4 +30,11 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url><loc>https://www.teutasteel.com/services/cnc</loc></url>
+  <url><loc>https://www.teutasteel.com/services/shears</loc></url>
+  <url><loc>https://www.teutasteel.com/services/profiles</loc></url>
+  <url><loc>https://www.teutasteel.com/services/bending</loc></url>
+  <url><loc>https://www.teutasteel.com/services/pressbrake</loc></url>
+  <url><loc>https://www.teutasteel.com/services/complex</loc></url>
+  <url><loc>https://www.teutasteel.com/services/decoration</loc></url>
 </urlset>

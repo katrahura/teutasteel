@@ -239,6 +239,22 @@ toggleParent(parentId: number) {
     this.quantities = quantities;
   }
 
+  /**
+   * How many of this product are in the request, across all its sizes.
+   *
+   * The card says this; the dialog says nothing, so a product added from the card looked absent when
+   * it was opened. Same answer, same source: the enquiry list.
+   */
+  inRequestCount(product: Product | null): number {
+    if (!product || product.id === undefined) {
+      return 0;
+    }
+    return this.quoteList
+      .items()
+      .filter((item) => item.productId === product.id)
+      .reduce((total, item) => total + (item.quantity || 1), 0);
+  }
+
   addToQuote(product: Product, dimensions?: ProductDimension[]): void {
     if (!product) {
       // Reachable only from the dialog's markup while the dialog is closed: see the note in
@@ -371,17 +387,18 @@ toggleParent(parentId: number) {
    * descriptions now carry it in prose, and this is the version a card can show beside the number.
    */
   priceUnit(product: Product): string {
-    const category = (product as any)?.category || (this as any).selectedCategory;
-    const shape = shapeForCategory(category ? category.title : null);
-    const keys: { [key: string]: string } = {
-      sheet: 'PRODUCTS.UNIT_SHEET',
-      round: 'PRODUCTS.UNIT_TUBE',
-      rectangular: 'PRODUCTS.UNIT_TUBE',
-      flat: 'PRODUCTS.UNIT_METRE',
-      angle: 'PRODUCTS.UNIT_BAR',
-    };
-    const key = keys[shape];
-    return key ? this.translate.instant(key) : '';
+    // A section shape cannot prove whether a price is per metre, bar or kilogram.
+    // Display an explicit catalogue unit only; otherwise ask for confirmation.
+    if (product.price_unit?.trim()) return product.price_unit.trim();
+    const declared = product.description || '';
+    const units = [
+      { expression: /(?:çmimi për gyp|price per tube)/i, key: 'PRODUCTS.UNIT_TUBE' },
+      { expression: /(?:çmimi për (?:pllakë|fletë)|price per sheet)/i, key: 'PRODUCTS.UNIT_SHEET' },
+      { expression: /(?:çmimi për shufër|price per bar)/i, key: 'PRODUCTS.UNIT_BAR' },
+      { expression: /(?:çmimi për metër|price per met(?:re|er))/i, key: 'PRODUCTS.UNIT_METRE' },
+    ];
+    const unit = units.find(item => item.expression.test(declared));
+    return unit ? this.translate.instant(unit.key).replace(/^(per|për)\s+/i, '') : '';
   }
 
   /** The dimensions the customer ticked, or the only one there is. */
@@ -1322,6 +1339,9 @@ this.showProducts(this.selectedCategory)
   showProducts(category: any, keepFilters: boolean = false) {
     this.cancelSearch();
     this.searchQuery = this.searchTerm = '';
+    this.categorySubscription?.unsubscribe();
+    this.categoryError = false;
+    this.products = [];
     this.selectedCategory = category;
     this.showingGroups = false;
 
@@ -1414,6 +1434,9 @@ this.showProducts(this.selectedCategory)
 
   // Go back to showing categories
   goBackToGroups() {
+    this.categorySubscription?.unsubscribe();
+    this.categoryError = false;
+    this.isLoading = false;
     this.cancelSearch();
     this.showingGroups = true;
     this.selectedCategory = null;
@@ -1445,6 +1468,8 @@ this.showProducts(this.selectedCategory)
   }
 
   runSearch(): void {
+    this.categorySubscription?.unsubscribe();
+    this.categoryError = false;
     this.cancelSearch();
     const term = this.searchQuery.trim();
     if (term.length < 2) {
@@ -1501,6 +1526,12 @@ this.showProducts(this.selectedCategory)
     const category = this.selectedCategory?.id;
     const query = category ? `?category=${category}&product=${product.id}` : `?product=${product.id}`;
     return `${base}/products${query}`;
+  }
+
+  lowestPriceCurrency(product: Product): string {
+    const priced = (product.dimensions || []).filter(d => Number.isFinite(Number(d.price)) && Number(d.price) > 0)
+      .sort((a,b) => Number(a.price) - Number(b.price))[0];
+    return priced?.currency || 'EUR';
   }
 
   lowestPrice(product: Product): number {
@@ -1581,7 +1612,16 @@ this.showProducts(this.selectedCategory)
     this.cancelSearch();
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
+  categoryError = false;
+  private categorySubscription?: Subscription;
+
+  retryCategory(): void {
+    if (this.selectedCategory?.id) this.loadCategoryWithProducts(this.selectedCategory.id, this.currentPage || 1);
+  }
+
   loadCategoryWithProducts(category_id: number, page: number = 1) {
+    this.categorySubscription?.unsubscribe();
+    this.categoryError = false;
     this.isLoading=true;
     // Product text (description/slug) is stored per language in the API, so the
     // requested language has to travel with the request.
@@ -1593,6 +1633,8 @@ this.showProducts(this.selectedCategory)
     }).subscribe({
       next: (categoryResponse: CategoryResponse) => {
         this.products = categoryResponse.products || [];
+        const title = (categoryResponse as any).title;
+        if (title && this.selectedCategory) this.selectedCategory = { ...this.selectedCategory, title };
         // Which of these are already on the request list, so the cards can say so.
         this.refreshCardList();
         this.currentPage = categoryResponse.pagination.page;
@@ -1606,9 +1648,12 @@ this.showProducts(this.selectedCategory)
 
       },
       error: (error) => {
-        console.error('Error occurred while fetching category:', error);
+        this.categoryError = true;
+        this.isLoading = false;
+        this.products = [];
       },
     });
+    this.categorySubscription = sub;
     this.subscriptions.push(sub);
   }
 

@@ -1,8 +1,9 @@
 <!-- The shell: top bar, navigation and footer, shared by every page.
      Modelled on mockups/redesign-2026.html. The colours are the shop's own: the slate and amber of
      assets/logo.svg, and --brand-primary for buttons. -->
+<a class="skip-content" href="#main-content" (click)="skipToContent($event)">{{ 'JOURNEY.SKIP_CONTENT' | translate }}</a>
 <section>
-  <div class="page-wrapper">
+  <div class="page-wrapper" [class.has-mobile-enquiry]="quoteCount > 0 && !currentRoute.startsWith('/request') && !currentRoute.startsWith('/admin')">
 
     <!-- Top bar: the hours, a phone number that dials, and the language. -->
     <div class="topbar">
@@ -66,9 +67,17 @@
          sideways, so there is one header rather than two. -->
 
     <!-- Main Content -->
-    <main [@routeAnimations]="prepareRoute(outlet)">
+    <main id="main-content" tabindex="-1" [@routeAnimations]="prepareRoute(outlet)">
       <router-outlet #outlet="outlet"></router-outlet>
     </main>
+
+    <a class="mobile-enquiry" routerLink="/request"
+       *ngIf="quoteCount > 0 && !currentRoute.startsWith('/request') && !currentRoute.startsWith('/admin')"
+       [attr.aria-label]="('JOURNEY.REVIEW_ENQUIRY' | translate) + ': ' + quoteCount">
+      <span><strong>{{ 'JOURNEY.YOUR_ENQUIRY' | translate }}</strong>
+        <span class="enquiry-count" aria-live="polite">{{ quoteCount }} {{ 'JOURNEY.ITEMS' | translate }}</span></span>
+      <span>{{ 'JOURNEY.REVIEW' | translate }} <span aria-hidden="true">→</span></span>
+    </a>
 
     <!-- Footer -->
     <footer class="site-footer">
@@ -92,8 +101,8 @@
         <div>
           <h4>{{ 'FOOTER.SERVICES_TITLE' | translate }}</h4>
           <ul>
-            <li><a [routerLink]="['/services']">{{ 'MISC.PRESS_BRAKE_BENDING' | translate }}</a></li>
-            <li><a [routerLink]="['/services']">{{ 'MISC.COMPLEX_FABRICATION' | translate }}</a></li>
+            <li><a [routerLink]="['/services', 'pressbrake']">{{ 'MISC.PRESS_BRAKE_BENDING' | translate }}</a></li>
+            <li><a [routerLink]="['/services', 'complex']">{{ 'MISC.COMPLEX_FABRICATION' | translate }}</a></li>
             <li><a [routerLink]="['/services']">{{ 'NAVBAR.SERVICES' | translate }}</a></li>
             <li><a [routerLink]="['/guides']">{{ 'FOOTER.GUIDES' | translate }}</a></li>
             <li><a [routerLink]="['/projects']">{{ 'FOOTER.PROJECTS' | translate }}</a></li>

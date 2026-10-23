@@ -87,6 +87,8 @@ export class ContactComponent implements OnInit {
   ngOnInit(): void {
     this.split();
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      const product = (params.get('product') || '').trim();
+      if (product && !this.quote.product) this.quote.product = product;
       const asked = (params.get('service') || '').trim();
       this.selectedService = SERVICES.find(service => service.id === asked) || null;
     });
