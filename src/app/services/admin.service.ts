@@ -98,6 +98,15 @@ export interface CataloguePage {
   products: CatalogueRow[];
 }
 
+/** A person who can sign in. Never carries a password. */
+export interface AdminUser {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  created_at: string | null;
+}
+
 /** One recorded change: who, what, on what, and when. */
 export interface ActivityRecord {
   id: number;
@@ -276,6 +285,21 @@ export class AdminService {
       { products: query.products, mode: query.mode, value: query.value, dry_run: query.dryRun },
       { headers: this.authHeaders() }
     );
+  }
+
+  /** The people who can sign in. */
+  getUsers(): Observable<{ users: AdminUser[] }> {
+    return this.http.get<{ users: AdminUser[] }>(`${this.baseUrl}/admin/users`, {
+      headers: this.authHeaders(),
+    });
+  }
+
+  /** Add one. Administrator only, as the API says in its refusal. */
+  createUser(body: { username: string; email: string; password: string; role: string }):
+    Observable<AdminUser> {
+    return this.http.post<AdminUser>(`${this.baseUrl}/admin/users`, body, {
+      headers: this.authHeaders(),
+    });
   }
 
   /** The last changes made through the panel, newest first. */
