@@ -28,9 +28,9 @@ import { TranslateModule } from '@ngx-translate/core';
         <a routerLink="/admin/users" routerLinkActive="active">
           {{ 'ADMIN.NAV_USERS' | translate }}
         </a>
-        <span class="soon" aria-disabled="true" [attr.title]="'ADMIN.SOON' | translate">
+        <a routerLink="/admin/categories" routerLinkActive="active">
           {{ 'ADMIN.NAV_CATEGORIES' | translate }}
-        </span>
+        </a>
         <span class="soon" aria-disabled="true" [attr.title]="'ADMIN.SOON' | translate">
           {{ 'ADMIN.NAV_MEDIA' | translate }}
         </span>

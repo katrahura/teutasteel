@@ -1,0 +1,50 @@
+<section class="admin-categories pb-5">
+  <div class="head">
+    <div>
+      <h1 class="h3">{{ 'ADMIN.CATEGORIES_TITLE' | translate }}</h1>
+      <p class="muted">{{ 'ADMIN.CATEGORIES_LEAD' | translate }}</p>
+    </div>
+    <p class="count" *ngIf="!loading && !denied && !failed">
+      {{ offCount }} {{ 'ADMIN.CATEGORIES_OFF' | translate }}
+    </p>
+  </div>
+
+  <p class="notice denied" *ngIf="denied">{{ 'ADMIN.NOT_ALLOWED' | translate }}</p>
+  <div class="notice failed" *ngIf="failed && !denied">
+    <span>{{ 'ADMIN.TABLE_FAILED' | translate }}</span>
+    <button type="button" class="retry" (click)="load()">{{ 'ADMIN.RETRY' | translate }}</button>
+  </div>
+  <p class="muted" *ngIf="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+
+  <div class="table-wrap" *ngIf="!loading && !denied && !failed">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'ADMIN.CATEGORIES_NAME' | translate }}</th>
+          <th scope="col">{{ 'ADMIN.CATEGORIES_PARENT' | translate }}</th>
+          <th scope="col">{{ 'ADMIN.CATEGORIES_VISIBLE' | translate }}</th>
+          <th scope="col">{{ 'ADMIN.COL_ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows" [class.off]="!row.category.is_active">
+          <th scope="row" [class.child]="row.category.parent_id">{{ row.category.title }}</th>
+          <td class="muted">
+            {{ row.category.parent_id ? ('ADMIN.CATEGORIES_SECTION' | translate) : ('ADMIN.CATEGORIES_GROUP' | translate) }}
+          </td>
+          <td>
+            <span class="chip" [class.ok]="row.category.is_active" [class.gray]="!row.category.is_active">
+              {{ (row.category.is_active ? 'ADMIN.VISIBILITY_ON' : 'ADMIN.STATUS_OFF') | translate }}
+            </span>
+          </td>
+          <td class="right">
+            <button type="button" class="link" (click)="toggle(row)" [disabled]="row.saving">
+              {{ (row.category.is_active ? 'ADMIN.CATEGORIES_SWITCH_OFF' : 'ADMIN.CATEGORIES_SWITCH_ON') | translate }}
+            </button>
+            <span class="note" *ngIf="row.note">{{ row.note | translate }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

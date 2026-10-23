@@ -202,7 +202,7 @@
     "PRICED_WITHOUT_PHOTO": "Priced, no photograph",
     "PRICED_WITHOUT_SIZE": "Priced, no size at all",
     "CATEGORIES_TOTAL": "Categories in total",
-    "CATEGORIES_OFF": "Switched off",
+    "CATEGORIES_OFF": "switched off",
     "OFF_LIST": "The categories that are off",
     "SEARCHES_TITLE": "What customers searched for",
     "SEARCHES_HINT": "The ones that found nothing come first: either the product does not exist, or it is named differently.",
@@ -330,7 +330,18 @@
     "USERS_ROLE_USER": "No panel rights",
     "USERS_ADD": "Add a user",
     "USERS_CREATE": "Create",
-    "USERS_SAVED": "Added"
+    "USERS_SAVED": "Added",
+    "CATEGORIES_TITLE": "Categories",
+    "CATEGORIES_LEAD": "Every category, and whether a customer sees it — groups and their sections.",
+    "CATEGORIES_NAME": "Category",
+    "CATEGORIES_PARENT": "Kind",
+    "CATEGORIES_SECTION": "section",
+    "CATEGORIES_GROUP": "group",
+    "CATEGORIES_VISIBLE": "Visibility",
+    "CATEGORIES_SWITCH_ON": "Switch on",
+    "CATEGORIES_SWITCH_OFF": "Switch off",
+    "CATEGORY_ON": "switched on",
+    "CATEGORY_OFF": "switched off"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

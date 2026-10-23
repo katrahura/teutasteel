@@ -85,6 +85,13 @@ export const appRoutes: Routes = [
           ),
       },
       {
+        path: 'categories',
+        loadComponent: () =>
+          import('./pages/admin/categories/admin-categories.component').then(
+            (m) => m.AdminCategoriesComponent
+          ),
+      },
+      {
         path: 'users',
         loadComponent: () =>
           import('./pages/admin/users/admin-users.component').then((m) => m.AdminUsersComponent),

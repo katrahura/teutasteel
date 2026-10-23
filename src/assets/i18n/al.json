@@ -275,7 +275,7 @@
     "PRICED_WITHOUT_PHOTO": "Me çmim, pa foto",
     "PRICED_WITHOUT_SIZE": "Me çmim, pa asnjë masë",
     "CATEGORIES_TOTAL": "Kategori gjithsej",
-    "CATEGORIES_OFF": "Të fikura",
+    "CATEGORIES_OFF": "të fikura",
     "OFF_LIST": "Kategoritë e fikura",
     "SEARCHES_TITLE": "Kërkimet e klientëve",
     "SEARCHES_HINT": "Atë që nuk gjetën gjë janë të parët: ose produkti nuk ekziston, ose e quani ndryshe.",
@@ -403,7 +403,18 @@
     "USERS_ROLE_USER": "Pa të drejta paneli",
     "USERS_ADD": "Shto një përdorues",
     "USERS_CREATE": "Krijo",
-    "USERS_SAVED": "U shtua"
+    "USERS_SAVED": "U shtua",
+    "CATEGORIES_TITLE": "Kategoritë",
+    "CATEGORIES_LEAD": "Çdo kategori, dhe a e sheh klienti — grupet e seksionet e tyre.",
+    "CATEGORIES_NAME": "Kategoria",
+    "CATEGORIES_PARENT": "Lloji",
+    "CATEGORIES_SECTION": "seksion",
+    "CATEGORIES_GROUP": "grup",
+    "CATEGORIES_VISIBLE": "Dukshmëria",
+    "CATEGORIES_SWITCH_ON": "Ndez",
+    "CATEGORIES_SWITCH_OFF": "Fik",
+    "CATEGORY_ON": "u ndez",
+    "CATEGORY_OFF": "u fik"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
