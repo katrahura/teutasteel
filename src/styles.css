@@ -95,3 +95,66 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------------------------------------------------------------------------------------------
+   The product dialog's layout.
+
+   These rules were in the catalogue page's stylesheet while the dialog was the page's own markup.
+   Now the dialog holds a component, the page's styles no longer reach it, and the dialog collapsed
+   into one column 1,192px tall inside a 1,000px screen. Scoped to the dialog by its id, they apply to
+   whatever renders inside it.
+   --------------------------------------------------------------------------------------------- */
+#editProductModal .modal-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+  padding: 16px;
+}
+
+#editProductModal .image-container {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 46%;
+  max-height: 56vh;
+  height: auto;
+  width: auto;
+}
+
+#editProductModal .image-container img {
+  max-height: 56vh;
+  width: auto;
+  object-fit: contain;
+}
+
+#editProductModal .drawing-with-photo {
+  flex: 0 0 170px;
+  width: 170px;
+  min-width: 0;
+  padding: 8px;
+  background: #f8fafc;
+}
+
+#editProductModal .info-container {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 46%;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: linear-gradient(to bottom, #ffffff, #f1f1f1);
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  #editProductModal .modal-body { flex-direction: column; align-items: stretch; }
+  #editProductModal .image-container,
+  #editProductModal .info-container { max-width: 100%; width: 100%; }
+  #editProductModal .image-container { flex-direction: column; max-height: none; }
+  #editProductModal .image-container img { max-height: 42vh; }
+  #editProductModal .drawing-with-photo { width: 100%; flex: 0 0 auto; }
+}

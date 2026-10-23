@@ -39,6 +39,7 @@ interface FieldErrors {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './product-editor.component.html',
+  styleUrls: ['./product-editor.component.css'],
 })
 export class ProductEditorComponent implements OnChanges {
   private products = inject(ProductService);
