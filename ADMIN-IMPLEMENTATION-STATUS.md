@@ -82,8 +82,12 @@ after it was verified to build and pass; it was not line-by-line reviewed.
   tabs rendered from capabilities. Commit `9a5c6a5`, 193 tests green, 25 routes.
 - **Phase 1, increment 3** — guard spec: five tests covering all three outcomes and the stale-answer case.
   Commit on the next line, 198 tests green.
-- Phase 1 acceptance is **not yet verified**: 320px navigation, the header (account, role, language, View
-  website), editor read-only settings, and the mobile drawer are still open.
+- **Phase 1, increment 4** — the header carries the account and the role the server reported plus a View
+  website link, and below 520px the tabs wrap instead of the page scrolling sideways. Measured at 320px:
+  `scrollWidth 320 / clientWidth 320` on `/admin/products`, `/admin/categories`, `/admin/settings`.
+- Phase 1 acceptance is **not yet verified**: the language control, the editor read-only settings view and a phone drawer are still open, and the
+  browser-side render of the header was not observed settling (`/admin/me` answers 200 with capabilities;
+  the probe still showed the loading line, which points at the probe or a stale bundle, not at the API).
 
 ## Next
 
