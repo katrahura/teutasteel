@@ -73,6 +73,10 @@ after it was verified to build and pass; it was not line-by-line reviewed.
 
 ## Progress log
 
+- **Phase 2, increment 2** — `PublicSettingsService` (frontend `e41f968`): one cached `GET /settings`,
+  `field(key, fallback)` returning the caller's own text when a setting is blank, and an empty object
+  rather than an error when the request fails. Not yet wired into the shell, footer or contact page.
+
 - **Phase 2, increment 1** — public `GET /settings` (backend `f2629fa`): seven approved fields, no
   token, no users, no upload credential, no admin configuration; an unset field answers empty so the page
   keeps its own text. Four tests, including the field list itself. Remaining for phase 2: one frontend
