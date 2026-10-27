@@ -444,7 +444,8 @@
     "SETTINGS_VAT_TEXT": "Çka përfshin çmimi (TVSH, njësia)",
     "SETTINGS_EMPTY_MEANS": "Fusha bosh do të thotë: faqja mban tekstin që ka tani.",
     "SETTINGS_SAVED": "U ruajt.",
-    "SETTINGS_SAVE": "Ruaj"
+    "SETTINGS_SAVE": "Ruaj",
+    "VIEW_SITE": "Shiko faqen"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

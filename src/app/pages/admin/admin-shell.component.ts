@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AdminMe } from '../../services/admin.service';
 import { AdminSessionService } from '../../services/admin-session.service';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -19,7 +20,18 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [CommonModule, RouterModule, TranslateModule],
   template: `
     <div class="container admin-shell pt-3">
-      <nav class="admin-tabs" [attr.aria-label]="'ADMIN.NAV' | translate">
+      <!-- Who you are, and the way out to the website. A panel reached by signing in should say whose
+         panel it is; the role is the server's word, not the browser's. -->
+    <header class="admin-bar">
+      <p class="who" *ngIf="me">
+        <strong>{{ me.username }}</strong>
+        <span class="role">{{ me.role }}</span>
+      </p>
+      <p class="who" *ngIf="!me">{{ 'ADMIN.LOADING' | translate }}</p>
+      <a class="view-site" routerLink="/">{{ 'ADMIN.VIEW_SITE' | translate }}</a>
+    </header>
+
+    <nav class="admin-tabs" [attr.aria-label]="'ADMIN.NAV' | translate">
         <ng-container *ngIf="can('products.read')">
         <a routerLink="/admin/overview" routerLinkActive="active">
           {{ 'ADMIN.NAV_OVERVIEW' | translate }}
@@ -57,7 +69,49 @@ import { TranslateModule } from '@ngx-translate/core';
   styles: [
     `
       .admin-shell { max-width: 1180px; }
-      .admin-tabs {
+      .admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .admin-bar .who {
+    margin: 0;
+    font-size: 13px;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .admin-bar .who strong { font-weight: 800; }
+  .admin-bar .role {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    background: #eef2f7;
+    border-radius: 20px;
+    padding: 2px 8px;
+    color: #475569;
+  }
+  .admin-bar .view-site {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0a58ca;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Three hundred and twenty pixels is the width the brief names. The tabs wrap onto more lines
+     instead of the page growing a horizontal scrollbar: no fixed widths, no nowrap. */
+  @media (max-width: 520px) {
+    .admin-tabs { flex-wrap: wrap; gap: 6px; }
+    .admin-tabs a, .admin-tabs .soon { flex: 1 1 auto; text-align: center; min-height: 44px; }
+  }
+
+  .admin-tabs {
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
@@ -96,8 +150,14 @@ export class AdminShellComponent {
    */
   private session = inject(AdminSessionService);
 
+  /** The signed-in account, as the server described it. Null until the answer arrives. */
+  me: AdminMe | null = null;
+
   ngOnInit(): void {
-    this.session.me().subscribe({ error: () => undefined });
+    this.session.me().subscribe({
+      next: (answer) => { this.me = answer; },
+      error: () => { this.me = null; },
+    });
   }
 
   can(capability: string): boolean {

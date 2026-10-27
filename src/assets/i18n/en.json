@@ -371,7 +371,8 @@
     "SETTINGS_VAT_TEXT": "What a price includes (VAT, unit)",
     "SETTINGS_EMPTY_MEANS": "An empty field means: the page keeps the text it has now.",
     "SETTINGS_SAVED": "Saved.",
-    "SETTINGS_SAVE": "Save"
+    "SETTINGS_SAVE": "Save",
+    "VIEW_SITE": "View website"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",
