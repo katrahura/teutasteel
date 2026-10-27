@@ -73,6 +73,12 @@ after it was verified to build and pass; it was not line-by-line reviewed.
 
 ## Progress log
 
+- **Phase 1, increment 6 — reverted.** The AL/EN control in the admin header produced
+  `TS1128: Declaration or statement expected` and the production build failed with `Prerendered 0`. It was
+  committed before the build was read. It is reverted on the remote by `a2c9963`; the tree is green again at
+  25 prerendered routes. What changes: the build's exit code gates the commit, not a test count read
+  afterwards. The language control is still to do.
+
 - **Phase 1, increment 1** — `GET /admin/me`: id, username, email, role, capabilities, `can_enter_admin`.
   Answered for any signed-in account so 401 (not signed in) and empty capabilities (signed in, no rights)
   are distinguishable. Backend commit `8e514d6`, five tests. Capabilities mirror the routes' own checks;
