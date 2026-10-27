@@ -9,8 +9,8 @@ Baseline measured 2026-10-27 23:26 (Europe/Paris), before any phase-0 work:
 |---|---|
 | frontend tree | clean, head `8afa599` |
 | backend tree | clean, head `fade8a0` |
-| backend suite | **195 tests, OK** |
-| frontend build | **24 prerendered routes**, no errors |
+| backend suite | **195 tests, OK**, then 200 after `test_admin_me` |
+| frontend build | **24 prerendered routes**, no errors; **25** after the forbidden route |
 | migrations | 15 files, head `9a577bc5dd12 (head)` |
 | local API | `http://127.0.0.1:5000` running |
 | local frontend | `http://localhost:4200` (ng serve) and `http://127.0.0.1:4321` (built dist) |
@@ -22,7 +22,7 @@ Size warnings: the production build reports none above the configured budget; no
 | Phase | State | Files | Migrations | Checks | Open decisions |
 |---|---|---|---|---|---|
 | 0 — reconcile and baseline | **verified** | this file | none | 195 backend / 24 routes / trees clean | see "Unresolved" below |
-| 1 — role-aware access and shell | **in progress** — `GET /admin/me` done, 5 tests, backend `8a5d…`; shell and guard next | `admin-shell`, `app.routes`, `auth.guard`, `app/auth.py`, `admin_routes.py` | none expected | — | needs a server "who am I" endpoint |
+| 1 — role-aware access and shell | **in progress** — `GET /admin/me` (5 backend tests), session service, `adminGuard` (5 frontend tests), capability-driven tabs, `/admin/forbidden`. Remaining: account/role in the header, "View website", drawer at 320px, editor read-only settings | `admin-shell`, `app.routes`, `auth.guard`, `app/auth.py`, `admin_routes.py` | none expected | — | needs a server "who am I" endpoint |
 | 2 — settings reach customers | pending | `admin-settings`, public shell/contact, `admin_routes.py`, new public route | none expected (table exists) | — | which fields the public may read |
 | 3 — dashboard and quality queue | pending | `admin-overview`, `admin_routes.py` | none expected | — | — |
 | 4 — product and variant editing | pending | `product-editor`, `product_routes.py` | likely one (price unit, version) | — | price-unit vocabulary |
@@ -70,6 +70,20 @@ Server authorization is in place on every route above; the interface does **not*
 
 None at baseline: both trees were clean. `089f499` merged the earlier uncommitted customer-journey work
 after it was verified to build and pass; it was not line-by-line reviewed.
+
+## Progress log
+
+- **Phase 1, increment 1** — `GET /admin/me`: id, username, email, role, capabilities, `can_enter_admin`.
+  Answered for any signed-in account so 401 (not signed in) and empty capabilities (signed in, no rights)
+  are distinguishable. Backend commit `8e514d6`, five tests. Capabilities mirror the routes' own checks;
+  deletes and accounts stay administrator-only.
+- **Phase 1, increment 2** — `AdminSessionService` (one cached answer), `adminGuard` (three outcomes:
+  sign in / allowed / forbidden, and an unreachable server is none of them), `/admin/forbidden` page,
+  tabs rendered from capabilities. Commit `9a5c6a5`, 193 tests green, 25 routes.
+- **Phase 1, increment 3** — guard spec: five tests covering all three outcomes and the stale-answer case.
+  Commit on the next line, 198 tests green.
+- Phase 1 acceptance is **not yet verified**: 320px navigation, the header (account, role, language, View
+  website), editor read-only settings, and the mobile drawer are still open.
 
 ## Next
 
