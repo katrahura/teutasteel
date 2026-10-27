@@ -181,3 +181,26 @@ section.services-wrap { background: #f5f7f9; border-top: 1px solid var(--line, #
 .service h3 a:hover { text-decoration:underline; text-underline-offset:4px; }
 .tile, .service { box-shadow:none; }
 .hero-search:focus-within { outline:3px solid #fbbf24; outline-offset:4px; }
+
+@media (max-width: 620px) {
+  .home { display: flex; flex-direction: column; }
+  .home > * { order: 4; }
+  .hero, .hero .shell.grid { display: contents; }
+  .hero::after { display: none; }
+  .hero-main { order: 0; padding: 28px 20px; background: linear-gradient(160deg,#1b2733,#10161d); color: white; }
+  .hero h1 { font-size: 30px; line-height: 1.12; }
+  .hero p.lead { font-size: 16px; margin: 12px 0 18px; }
+  .hero .kicker { margin-bottom: 10px; font-size: 11px; }
+  .hero .cta-row { gap: 8px; }
+  .hero .cta-row .btn { padding: 11px 12px; font-size: 14px; min-height: 46px; }
+  .hero-contact { margin: 8px 0; }
+  .hero-search { margin-top: 12px; }
+  .home > .catalogue-status { order: 1; }
+  .home > .groups { order: 2; padding: 28px 0; }
+  .hero-card { order: 3; margin: 0 20px 28px; background: #f1f5f9; color: #111827; }
+  .hero-card li { color: #334155; }
+  .hero-illustration img { height: 160px; }
+  .groups .sec-head { gap: 12px; }
+  .groups .tiles { gap: 10px; }
+  .groups .tile { padding: 12px; min-height: 88px; }
+}

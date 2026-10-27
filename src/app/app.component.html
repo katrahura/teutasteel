@@ -29,7 +29,7 @@
           <span>Teuta Steel</span>
         </a>
 
-        <nav class="links">
+        <nav id="main-navigation" class="links" [class.menu-open]="mobileMenuOpen" [attr.aria-label]="'MOBILE_UI.NAVIGATION' | translate">
           <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'NAVBAR.HOME' | translate }}</a>
           <a [routerLink]="['/products']" routerLinkActive="active">{{ 'NAVBAR.PRODUCTS' | translate }}</a>
           <a [routerLink]="['/services']" routerLinkActive="active">{{ 'NAVBAR.SERVICES' | translate }}</a>
@@ -38,6 +38,10 @@
         </nav>
 
         <div class="nav-tools">
+          <button id="mobile-menu-toggle" class="menu-toggle" type="button"
+            aria-controls="main-navigation" [attr.aria-expanded]="mobileMenuOpen"
+            [attr.aria-label]="(mobileMenuOpen ? 'MODAL.CLOSE' : 'MOBILE_UI.MENU') | translate"
+            (click)="toggleMobileMenu()"><span aria-hidden="true">{{ mobileMenuOpen ? "×" : "☰" }}</span></button>
           <!-- One search box in the whole site, and it lives in the catalogue - where the results
                appear, the term stays visible and there is a button to clear it. This is the way to
                it. A second box here meant two of them on the products page at once, and the one in

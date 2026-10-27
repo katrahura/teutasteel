@@ -394,3 +394,33 @@ button.nav-link {
 @media(prefers-reduced-motion:reduce) { :host *, :host *::before, :host *::after { scroll-behavior:auto!important; animation:none!important; transition:none!important; } }
 
 @media(max-width:380px) { header.nav .shell { padding-inline:12px; column-gap:8px; } .nav-tools { gap:8px; } .nav-tools .search-link { display:none; } .logo { font-size:18px; gap:8px; } .logo img { width:30px; height:30px; } }
+
+.menu-toggle { display: none; }
+@media (max-width: 980px) {
+  header.nav .shell { min-height: 64px; height: auto; padding: 8px 16px; gap: 8px; flex-wrap: wrap; }
+  header.nav .logo { font-size: 18px; gap: 6px; }
+  header.nav .logo img { width: 30px; height: 30px; }
+  header.nav .nav-tools { gap: 4px; margin-left: auto; }
+  .menu-toggle { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #111827; font-size: 24px; order: 3; }
+  header.nav nav.links { display: none; order: 4; width: 100%; gap: 0; padding: 8px 0; border-top: 1px solid #e2e8f0; }
+  header.nav nav.links.menu-open { display: flex; flex-direction: column; align-items: stretch; }
+  header.nav nav.links a { min-height: 44px; display: flex; align-items: center; padding: 8px 12px; }
+  header.nav .nav-tools .search-link { display: inline-flex; width: 44px; height: 44px; }
+  header.nav .basket { min-height: 44px; padding: 8px; font-size: 13px; }
+  .topbar { height: auto; }
+  .topbar .lang-btn { min-width: 44px; min-height: 44px; padding: 6px; }
+  .topbar .shell { padding-top: 0; padding-bottom: 0; }
+  .topbar-right > a { min-height: 44px; display: inline-flex; align-items: center; }
+}
+@media (max-width: 360px) {
+  header.nav .shell { padding-left: 10px; padding-right: 10px; gap: 4px; }
+  header.nav .logo { font-size: 16px; }
+  header.nav .logo img { width: 24px; height: 24px; }
+  header.nav .basket { max-width: 78px; font-size: 12px; }
+}
+
+@media (max-width: 767px) {
+  main#main-content { padding-left: 0; padding-right: 0; }
+  header.nav .logo { min-height: 44px; display: inline-flex; align-items: center; }
+  footer a { min-height: 44px; display: inline-flex; align-items: center; }
+}

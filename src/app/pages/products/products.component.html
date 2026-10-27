@@ -32,6 +32,7 @@
     </div>
   </div>
 
+  <div *ngIf="sharedProductError" class="alert alert-warning mt-3" role="alert">{{ 'MOBILE_UI.PRODUCT_UNAVAILABLE' | translate }}</div>
   <div *ngIf="searchError" class="alert alert-danger mt-3" role="alert">
     {{ 'PRODUCTS.SEARCH_ERROR' | translate }}
     <button type="button" class="btn btn-outline-danger ms-2" (click)="runSearch()">{{ 'PRODUCTS.SEARCH_RETRY' | translate }}</button>
@@ -932,7 +933,7 @@
       <div class="row" *ngIf="!isLoading">
         <div class="col-md-3 mb-4" *ngFor="let product of products">
           <div
-            class="card h-100"
+            class="card h-100 product-card"
             (click)="openDetail(product, $event)"
             [style.cursor]="(product.dimensions || []).length > 1 ? 'pointer' : 'default'"
           >
@@ -1042,9 +1043,9 @@
               </div>
               <!-- The card already says what is in the request; the dialog said nothing, so a product
                    added from the card looked absent when its dialog was opened. Same source, same number. -->
-              <div class="alert alert-light py-1 px-2 small mb-2" *ngIf="inRequestCount(selectedProduct)">
+              <div class="alert alert-light py-1 px-2 small mb-2" *ngIf="inRequestCount(product)">
                 <strong>{{ "PRODUCTS.IN_REQUEST" | translate }}:</strong>
-                {{ inRequestCount(selectedProduct) }}
+                {{ inRequestCount(product) }}
               </div>
 
               <button
@@ -1062,7 +1063,7 @@
                 (click)="$event.stopPropagation()"
               >
                 <i class="bi bi-whatsapp" aria-hidden="true"></i>
-                {{ "MODAL.CONTACT_WHATSAPP" | translate }}
+                <span class="desktop-whatsapp-label">{{ "MODAL.CONTACT_WHATSAPP" | translate }}</span><span class="mobile-whatsapp-label">WhatsApp</span>
               </a>
             </div>
             <button
@@ -1172,7 +1173,7 @@
 
         <!-- Right Section -->
         <div class="info-container">
-          <h5>{{ selectedProduct?.code }}</h5>
+          <h5 id="productDetailsModalLabel">{{ selectedProduct?.code }}</h5>
           <h6 *ngIf="hasAnythingToShow()">
             {{ "PRODUCTS.DIMENSIONS" | translate }}:
           </h6>
@@ -1331,24 +1332,6 @@
             <strong>{{ "PRODUCTS.JUST_ADDED" | translate }}:</strong> {{ justAdded }}
           </div>
 
-          <button
-            type="button"
-            class="btn btn-add-to-request mt-2 me-2"
-            [class.disabled]="!canContact() || !canAddTicked()"
-            [disabled]="!canContact() || !canAddTicked()"
-            [attr.aria-disabled]="!canContact() || !canAddTicked()"
-            (click)="canContact() && canAddTicked() && addToQuote(selectedProduct, tickedDimensions(selectedProduct))"
-          >
-            <i class="bi bi-plus-lg" aria-hidden="true"></i>
-            {{ "PRODUCTS.ADD_TO_REQUEST" | translate }}
-          </button>
-          <!-- Greyed and inert is not the same as explained. Somebody who ticks nothing gets a
-               button that looks dim and does nothing when pressed, with no word about what is
-               wanted - which is how the same button came to be silently dead for 730 products
-               before it was fixed. -->
-          <p class="add-hint" *ngIf="!canAddTicked()">
-            {{ "PRODUCTS.ADD_NEEDS_A_CHOICE" | translate }}
-          </p>
 
           <a
             [href]="getWhatsAppLink(selectedProduct, true)"
@@ -1381,6 +1364,33 @@
             [innerHTML]="selectedProduct!.content"
           ></div>
         </div>
+      </div>
+      <div class="product-action-footer" *ngIf="selectedProduct">
+        <div class="selection-summary" aria-live="polite"><strong>{{ selectedProduct.code }}</strong>
+          <label class="footer-quantity" *ngFor="let dimension of tickedDimensions(selectedProduct)">
+            <span *ngIf="dimension.thickness">{{ dimension.thickness }} mm</span>
+            <span>{{ 'PRODUCTS.QUANTITY' | translate }}</span>
+            <input type="number" min="1" step="1" class="form-control" [ngModel]="selectedQuantity(dimension)"
+              (ngModelChange)="setSelectedQuantity(dimension, $event)" [attr.aria-label]="('PRODUCTS.QUANTITY' | translate) + ' ' + (dimension.thickness || '')">
+            <span>{{ 'PRODUCTS.PIECES' | translate }}</span>
+          </label>
+        </div>
+          <button
+            type="button"
+            class="btn btn-add-to-request mt-2 me-2"
+            [class.disabled]="!canContact() || !canAddTicked()"
+            [disabled]="!canContact() || !canAddTicked()"
+            [attr.aria-disabled]="!canContact() || !canAddTicked()"
+            (click)="canContact() && canAddTicked() && addToQuote(selectedProduct, tickedDimensions(selectedProduct))"
+          >
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            {{ "PRODUCTS.ADD_TO_REQUEST" | translate }}
+          </button>
+          
+          <p class="add-hint" *ngIf="!canAddTicked()">
+            {{ "PRODUCTS.ADD_NEEDS_A_CHOICE" | translate }}
+          </p>
+
       </div>
     </div>
   </div>

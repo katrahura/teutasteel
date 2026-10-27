@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener, ChangeDetectorRef } from '@angular/core';
 import { RouterModule,NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
@@ -35,6 +35,18 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent {
   currentRoute: string = '';
+  mobileMenuOpen = false;
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+    this.changeDetector.detectChanges();
+    if (this.mobileMenuOpen) document.querySelector<HTMLAnchorElement>('#main-navigation a')?.focus();
+  }
+  @HostListener('document:keydown.escape')
+  closeMobileMenu(): void {
+    if (!this.mobileMenuOpen) return;
+    this.mobileMenuOpen = false;
+    document.getElementById('mobile-menu-toggle')?.focus();
+  }
   /** Drives the Login / Logout control in the navigation bar. */
   isLoggedIn = false;
 
@@ -55,7 +67,7 @@ export class AppComponent {
     return animationData;
   }
   
-  constructor(private router: Router,private translate: TranslateService,public shared: SharedService,private authService: AuthService, seo: SeoService, private quoteList: QuoteListService) {
+  constructor(private changeDetector: ChangeDetectorRef, private router: Router,private translate: TranslateService,public shared: SharedService,private authService: AuthService, seo: SeoService, private quoteList: QuoteListService) {
     // Detect route changes and update the currentRoute variable
     const language = getStoredLanguage() ?? 'al';
     this.translate.setDefaultLang('al');
@@ -71,6 +83,7 @@ export class AppComponent {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
+      this.mobileMenuOpen = false;
       this.currentRoute = event.urlAfterRedirects;
       // signing in or out happens on /login, so the navigation follows the route
       this.isLoggedIn = this.authService.isAuthenticated();

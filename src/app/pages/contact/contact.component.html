@@ -131,14 +131,16 @@
         <h2 class="h5 mt-3">{{ 'QUOTE.CONTACT_DETAILS' | translate }}</h2>
         <div class="row g-2">
           <div class="col-md-6">
+            <div class="draft-controls"><p>{{ 'MOBILE_UI.DRAFT_NOTICE' | translate }}</p>
+              <button type="button" class="btn btn-outline-secondary" (click)="clearDraft()">{{ 'MOBILE_UI.CLEAR_DRAFT' | translate }}</button></div>
             <label class="form-label" for="quoteName">{{ 'QUOTE.NAME' | translate }} *</label>
             <input id="quoteName" class="form-control" type="text"
-                   [(ngModel)]="quote.name" name="quoteName" autocomplete="name" />
+                   [(ngModel)]="quote.name" (ngModelChange)="saveDraft()" name="quoteName" autocomplete="name" />
           </div>
           <div class="col-md-6">
             <label class="form-label" for="quotePhone">{{ 'QUOTE.PHONE' | translate }} *</label>
             <input id="quotePhone" class="form-control" type="tel"
-                   [(ngModel)]="quote.phone" name="quotePhone" autocomplete="tel" />
+                   [(ngModel)]="quote.phone" (ngModelChange)="saveDraft()" name="quotePhone" autocomplete="tel" />
           </div>
           <!-- The product and quantity boxes are gone. With the request list carrying both - a line
                per product, with its size and its quantity - they asked the customer to type again
@@ -146,7 +148,7 @@
           <div class="col-12">
             <label class="form-label" for="quoteNotes">{{ 'QUOTE.NOTES' | translate }}</label>
             <textarea id="quoteNotes" class="form-control" rows="3"
-                      [(ngModel)]="quote.notes" name="quoteNotes"></textarea>
+                      [(ngModel)]="quote.notes" (ngModelChange)="saveDraft()" name="quoteNotes"></textarea>
           </div>
 
           <!-- The work itself, once a service has been chosen. A cutting or bending job cannot be
@@ -160,21 +162,21 @@
             <div class="col-md-6">
               <label class="form-label" for="quoteThickness">{{ 'QUOTE.THICKNESS' | translate }}</label>
               <input id="quoteThickness" class="form-control" type="text"
-                     [(ngModel)]="quote.thickness" name="quoteThickness" />
+                     [(ngModel)]="quote.thickness" (ngModelChange)="saveDraft()" name="quoteThickness" />
             </div>
             <div class="col-md-6">
               <label class="form-label" for="quoteDimensions">{{ 'QUOTE.DIMENSIONS' | translate }}</label>
               <input id="quoteDimensions" class="form-control" type="text"
-                     [(ngModel)]="quote.dimensions" name="quoteDimensions" />
+                     [(ngModel)]="quote.dimensions" (ngModelChange)="saveDraft()" name="quoteDimensions" />
             </div>
             <div class="col-md-6">
               <label class="form-label" for="quoteQuantity">{{ 'QUOTE.QUANTITY' | translate }}</label>
               <input id="quoteQuantity" class="form-control" type="text"
-                     [(ngModel)]="quote.quantity" name="quoteQuantity" />
+                     [(ngModel)]="quote.quantity" (ngModelChange)="saveDraft()" name="quoteQuantity" />
             </div>
             <div class="col-md-6">
               <div class="form-check mt-4">
-                <input id="quoteDrawing" class="form-check-input" type="checkbox" [(ngModel)]="hasDrawing" name="quoteDrawing" />
+                <input id="quoteDrawing" class="form-check-input" type="checkbox" [(ngModel)]="hasDrawing" (ngModelChange)="saveDraft()" name="quoteDrawing" />
                 <label class="form-check-label" for="quoteDrawing">{{ 'QUOTE.HAS_DRAWING' | translate }}</label>
               </div>
               <p class="small text-muted mt-2">{{ 'QUOTE.DRAWING_HELP' | translate }}</p>
@@ -187,14 +189,14 @@
               {{ 'QUOTE.DELIVERY_PLACE' | translate }}
             </label>
             <input id="quoteDeliveryPlace" class="form-control" type="text"
-                   [(ngModel)]="quote.deliveryPlace" name="quoteDeliveryPlace" />
+                   [(ngModel)]="quote.deliveryPlace" (ngModelChange)="saveDraft()" name="quoteDeliveryPlace" />
           </div>
           <div class="col-md-6">
             <label class="form-label" for="quoteRequiredDate">
               {{ 'QUOTE.REQUIRED_DATE' | translate }}
             </label>
             <input id="quoteRequiredDate" class="form-control" type="date"
-                   [(ngModel)]="quote.requiredDate" name="quoteRequiredDate" />
+                   [(ngModel)]="quote.requiredDate" (ngModelChange)="saveDraft()" name="quoteRequiredDate" />
           </div>
         </div>
 

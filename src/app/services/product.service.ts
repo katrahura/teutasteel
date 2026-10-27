@@ -337,6 +337,13 @@ export class ProductService {
    * category rather than the whole product the dialog needs. The API asks for a token here, unlike
    * the category pages, so the headers go with it.
    */
+  getPublicProductById(id: number, lang: string = 'al'): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/product/public/${id}`, {params: {lang}}).pipe(
+      map(product => this.withDeliveredImage(product, 'product_images')),
+      catchError(this.handleError)
+    );
+  }
+
   getProductById(id: number, lang: string = 'al'): Observable<Product> {
     const url = `${this.apiUrl}/product/${id}?lang=${lang}`;
     return this.http.get<Product>(url, { headers: this.getAuthHeaders() }).pipe(

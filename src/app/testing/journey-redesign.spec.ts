@@ -18,6 +18,7 @@ describe('Redesigned customer journey', () => {
       providers:[provideTestConfig()]
     }).compileComponents();
     localStorage.removeItem('quote-list');
+    localStorage.removeItem('teutasteel-enquiry-draft-v1');
   });
   afterEach(() => TestBed.inject(QuoteListService).clear());
 

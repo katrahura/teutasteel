@@ -88,6 +88,7 @@ toggleParent(parentId: number) {
   private openedEditorFor: number | null = null;
   /** A product named in the address, waiting for its category to load. */
   private pendingProductId: number | null = null;
+  sharedProductError = false;
   /** The same, for a category's editor. A separate field: a product and a category can share an id. */
   private openedCategoryEditorFor: number | null = null;
 
@@ -629,6 +630,16 @@ toggleParent(parentId: number) {
     this.addCardToQuote(product);
   }
 
+  setSelectedQuantity(dimension: ProductDimension, value: unknown): void {
+    const index = this.selectedProduct?.dimensions?.indexOf(dimension) ?? -1;
+    if (index >= 0) this.setQuantity(index, value);
+  }
+
+  selectedQuantity(dimension: ProductDimension): number {
+    const index = this.selectedProduct?.dimensions?.indexOf(dimension) ?? -1;
+    return this.quantities[index] || 1;
+  }
+
   tickedDimensions(product: Product): ProductDimension[] {
     const dimensions = (product?.dimensions || []) as ProductDimension[];
     if (dimensions.length <= 1) {
@@ -970,11 +981,17 @@ toggleParent(parentId: number) {
     if (startMinHeight) { this.filterMinHeight = startMinHeight; }
     if (startMaxHeight) { this.filterMaxHeight = startMaxHeight; }
 
-    // A link to one product - somebody shared it, or bookmarked it. Opened once its category has
-    // arrived, which is why the category travels in the link too.
+    // Resolve public links directly, even when the product is beyond page one.
     const shared = Number(start.get('product'));
-    if (shared) {
-      this.pendingProductId = shared;
+    if (Number.isSafeInteger(shared) && shared > 0) {
+      this.subscriptions.push(this.productService.getPublicProductById(shared, this.currentLanguage()).subscribe({
+        next: product => {
+          this.changeDetector.detectChanges();
+          this.openModal(product, new Event('click'));
+          this.changeDetector.detectChanges();
+        },
+        error: () => { this.sharedProductError = true; }
+      }));
     }
 // A search handed over from the header, the hero or a featured product's card arrives as ?q=.
 // A subscription, not a snapshot: the header's box is used while already on the products page,

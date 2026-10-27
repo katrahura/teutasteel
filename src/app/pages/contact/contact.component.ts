@@ -85,13 +85,45 @@ export class ContactComponent implements OnInit {
    * reading.
    */
   ngOnInit(): void {
+    this.restoreDraft();
     this.split();
+    let firstParams = true;
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       const product = (params.get('product') || '').trim();
       if (product && !this.quote.product) this.quote.product = product;
       const asked = (params.get('service') || '').trim();
-      this.selectedService = SERVICES.find(service => service.id === asked) || null;
+      if (!firstParams || params.has('service')) this.selectedService = SERVICES.find(service => service.id === asked) || null;
+      firstParams = false;
+      if (this.requestPage) this.saveDraft();
     });
+  }
+
+  private readonly draftKey = 'teutasteel-enquiry-draft-v1';
+
+  private restoreDraft(): void {
+    try {
+      if (typeof localStorage === 'undefined') return;
+      const saved = JSON.parse(localStorage.getItem(this.draftKey) || 'null');
+      if (!saved || typeof saved !== 'object') return;
+      for (const key of Object.keys(this.quote) as (keyof typeof this.quote)[]) {
+        if (typeof saved.quote?.[key] === 'string') this.quote[key] = saved.quote[key].slice(0, 10000);
+      }
+      this.hasDrawing = saved.hasDrawing === true;
+      this.selectedService = SERVICES.find(service => service.id === saved.service) || null;
+    } catch { /* Unavailable storage must never prevent an enquiry. */ }
+  }
+
+  saveDraft(): void {
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.setItem(this.draftKey,
+        JSON.stringify({ quote: this.quote, hasDrawing: this.hasDrawing, service: this.selectedService?.id || null }));
+    } catch { /* The form remains usable when storage is full or disabled. */ }
+  }
+
+  clearDraft(): void {
+    for (const key of Object.keys(this.quote) as (keyof typeof this.quote)[]) this.quote[key] = '';
+    this.hasDrawing = false;
+    this.saveDraft();
   }
 
   /** The chosen service's name, in the language the visitor is reading. */

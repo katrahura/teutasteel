@@ -414,72 +414,6 @@ h1.text-center, h2.text-center {
    here once, and being here is why they did not work; leaving a second copy behind would be a trap
    for whoever reads this next. */
 
-.nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1050;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 60px; /* Adjust width for the button size */
-  height: 60px; /* Adjust height for the button size */
-  border: none;
-  z-index: 10;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.nav-btn:hover {
-  transform: translateY(-50%) scale(1.1);
-}
-
-.nav-btn.prev-btn {
-  left: -1%; /* Adjust as needed */
-}
-
-.nav-btn.next-btn {
-  right: -1%; /* Adjust as needed */
-}
-
-.nav-btn i {
-  display: none; /* Hide icon since we're creating arrows */
-}
-
-.nav-btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
-  width: 20px; /* Width of the arrow */
-  height: 20px; /* Height of the arrow */
-  border: solid #333; /* Arrow color */
-  border-width: 0 6px 6px 0; /* Thickness of the arrow */
-}
-
-.nav-btn.prev-btn::before {
-  transform: translate(-50%, -50%) rotate(135deg); /* Rotate to point left */
-}
-
-.nav-btn.next-btn::before {
-  transform: translate(-50%, -50%) rotate(-45deg); /* Rotate to point right */
-}
-
-
 /* Premium Modal Info Section */
 .product-modal .info-container {
   /* A share of the row, with a floor of zero so it gives room to the picture instead of pushing the
@@ -699,27 +633,13 @@ h1.text-center, h2.text-center {
 }
 
 /* Image size to match old grid */
-.child-card__img {
-  width: 100%;
-  height: 160px;          /* same visual height as before */
-  object-fit: cover;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-}
+
 
 /* Title sizing like old cards */
-.child-card__title {
-  font-size: 0.95rem;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+
 
 /* Optional: bump image a bit taller on larger screens like old layout */
-@media (min-width: 992px) {
-  .child-card__img { height: 180px; }
-}
+
 
 /* The dialog on a phone, at the end of the file because that is where it has to be.
    Two rules above are written for the wide dialog and set a width for each half of it - the picture
@@ -801,3 +721,56 @@ h1.text-center, h2.text-center {
 .btn-whatsapp { background:transparent; color:#166534; border:1px solid #bbd5c4; }
 .btn-whatsapp:hover { background:#f0fdf4; color:#14532d; }
 .card-body>.btn-add-to-request { min-height:44px; }
+
+.product-action-footer { padding: 14px 20px; border-top: 1px solid #e2e8f0; background: white; border-radius: 0 0 12px 12px; }
+.selection-summary { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 14px; }
+.product-action-footer .add-hint { margin: 8px 0 0; }
+@media (max-width: 767px) {
+  :host > .container:first-child { margin-top: 24px !important; }
+  .product-card { display: grid; grid-template-columns: 88px minmax(0,1fr); gap: 12px; padding: 12px; }
+  .product-card > .position-relative { position: absolute !important; }
+  .product-card > .image-container { width: 88px; height: 100px; min-height: 0; padding: 4px; margin: 0; align-self: start; }
+  .product-card .product-image { max-height: 92px; object-fit: contain; }
+  .product-card .section-chip { min-height: 0; height: 92px; padding: 0; }
+  .product-card .card-body { padding: 0; text-align: left !important; min-width: 0; }
+  .product-card .card-title { font-size: 17px; margin-bottom: 6px; overflow-wrap: anywhere; }
+  .product-card .card-text { font-size: 13px; margin-bottom: 6px; }
+  .product-card .product-description { display: none; }
+  .product-card .btn-add-to-request { width: 100%; margin-right: 0 !important; font-size: 14px; padding: 8px; }
+  .product-card .btn-whatsapp { background: transparent; color: #166534; border: 0; padding: 8px 0; font-size: 13px; text-align: left; }
+  .product-card .card-body > .d-flex { flex-wrap: wrap; gap: 4px !important; }
+  #productDetailsModal .modal-dialog { margin: 8px; }
+  #productDetailsModal .modal-content { max-height: calc(100dvh - 16px); display: flex; flex-direction: column; overflow: hidden; }
+  #productDetailsModal .modal-body { min-height: 0; max-height: none; overflow-y: auto; flex: 1 1 auto; padding-bottom: 16px; }
+  #productDetailsModal .modal-header { flex: 0 0 auto; }
+  #productDetailsModal .image-container { max-height: 180px; min-height: 0; }
+  #productDetailsModal .image-container img { max-height: 160px; }
+  #productDetailsModal .product-action-footer { flex: 0 0 auto; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); }
+  #productDetailsModal .product-action-footer .btn { width: 100%; margin-right: 0 !important; }
+  #productDetailsModal .selection-summary { max-height: 58px; overflow-y: auto; }
+}
+
+.selection-summary { align-items: center; }
+.footer-quantity { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 13px; }
+.footer-quantity input { width: 74px; }
+@media (max-width: 767px) {
+  #productDetailsModal .selection-summary { max-height: 144px; }
+  #productDetailsModal .selection-summary > strong { flex: 0 0 100%; }
+  #productDetailsModal .footer-quantity { width: 100%; justify-content: space-between; }
+  #productDetailsModal .info-container li > .d-flex.ms-4 { display: none !important; }
+}
+
+.mobile-whatsapp-label { display: none; }
+@media (max-width: 767px) {
+  .products-section { padding-top: 24px !important; }
+  .products-section h1 { margin-top: 16px !important; margin-bottom: 24px !important; }
+  .product-card { grid-template-columns: 72px minmax(0,1fr); gap: 10px; padding: 10px; margin: 0; }
+  .product-card > .image-container { width: 72px; }
+  .product-card .card-title, .product-card .card-text { text-align: left; }
+  .product-card .desktop-whatsapp-label { display: none; }
+  .product-card .mobile-whatsapp-label { display: inline; }
+  #productDetailsModal .info-container li > .d-flex.ms-4 { display: none !important; }
+  #productDetailsModal .info-container li label { min-height: 44px; display: flex; align-items: center; flex-wrap: nowrap; gap: 8px; }
+}
+
+@media (max-width:767px) { #productDetailsModal .info-container li label input { flex-shrink:0; } }

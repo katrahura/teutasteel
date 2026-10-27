@@ -743,5 +743,12 @@
     "ASK_HELP": "Na kërkoni ndihmë",
     "EMPTY_CATEGORY": "Asnjë produkt nuk përputhet me filtrat. Pastroni filtrat ose na tregoni çfarë ju nevojitet.",
     "SKIP_CONTENT": "Kalo te përmbajtja kryesore"
+  },
+  "MOBILE_UI": {
+    "MENU": "Hap menynë",
+    "NAVIGATION": "Navigimi kryesor",
+    "DRAFT_NOTICE": "Të dhënat e kërkesës ruhen në këtë pajisje. Pastrojini nëse pajisja përdoret nga të tjerë.",
+    "CLEAR_DRAFT": "Pastro të dhënat e formularit",
+    "PRODUCT_UNAVAILABLE": "Ky produkt nuk është i disponueshëm. Kërkoni në katalog ose na kontaktoni për ndihmë."
   }
 }

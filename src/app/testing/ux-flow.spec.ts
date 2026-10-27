@@ -10,6 +10,7 @@ describe('Customer enquiry flow', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({ imports: [ProductsComponent, ContactComponent], providers: [provideTestConfig()] }).compileComponents();
     localStorage.removeItem('quote-list');
+    localStorage.removeItem('teutasteel-enquiry-draft-v1');
   });
   afterEach(() => TestBed.inject(QuoteListService).clear());
 

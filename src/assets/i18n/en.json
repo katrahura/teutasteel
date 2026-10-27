@@ -706,5 +706,12 @@
     "ANGLES_(L-PROFIL)": "Angles (L-Profil)",
     "I-BEAMS_AND_CHANNELS_(IPE/HEA/HEB/INP/UNP)": "I-beams and channels (IPE/HEA/HEB/INP/UNP)",
     "SPACERS,_NUTS_AND_T/D_PROFILES": "Spacers, nuts and T/D profiles"
+  },
+  "MOBILE_UI": {
+    "MENU": "Open menu",
+    "NAVIGATION": "Main navigation",
+    "DRAFT_NOTICE": "Your enquiry details are saved on this device. Clear them when using a shared device.",
+    "CLEAR_DRAFT": "Clear form details",
+    "PRODUCT_UNAVAILABLE": "This product is unavailable. Search the catalogue or contact us for help."
   }
 }
