@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AdminSessionService } from '../../services/admin-session.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 /**
@@ -19,24 +20,36 @@ import { TranslateModule } from '@ngx-translate/core';
   template: `
     <div class="container admin-shell pt-3">
       <nav class="admin-tabs" [attr.aria-label]="'ADMIN.NAV' | translate">
+        <ng-container *ngIf="can('products.read')">
         <a routerLink="/admin/overview" routerLinkActive="active">
           {{ 'ADMIN.NAV_OVERVIEW' | translate }}
         </a>
+        </ng-container>
+        <ng-container *ngIf="can('products.read')">
         <a routerLink="/admin/products" routerLinkActive="active">
           {{ 'ADMIN.NAV_PRODUCTS' | translate }}
         </a>
+        </ng-container>
+        <ng-container *ngIf="can('users.manage')">
         <a routerLink="/admin/users" routerLinkActive="active">
           {{ 'ADMIN.NAV_USERS' | translate }}
         </a>
+        </ng-container>
+        <ng-container *ngIf="can('categories.read')">
         <a routerLink="/admin/categories" routerLinkActive="active">
           {{ 'ADMIN.NAV_CATEGORIES' | translate }}
         </a>
+        </ng-container>
+        <ng-container *ngIf="can('media.upload')">
         <a routerLink="/admin/media" routerLinkActive="active">
           {{ 'ADMIN.NAV_MEDIA' | translate }}
         </a>
+        </ng-container>
+        <ng-container *ngIf="can('settings.read')">
         <a routerLink="/admin/settings" routerLinkActive="active">
           {{ 'ADMIN.NAV_SETTINGS' | translate }}
         </a>
+        </ng-container>
       </nav>
     </div>
     <router-outlet></router-outlet>
@@ -75,4 +88,19 @@ import { TranslateModule } from '@ngx-translate/core';
     `,
   ],
 })
-export class AdminShellComponent {}
+export class AdminShellComponent {
+  /**
+   * What the server says this account may reach. A tab that is not allowed is not shown at all: a greyed
+   * tab in a panel the owner reaches by signing in teaches nobody anything, and the sentence it would
+   * need ("only an administrator") lives on the page it refuses.
+   */
+  private session = inject(AdminSessionService);
+
+  ngOnInit(): void {
+    this.session.me().subscribe({ error: () => undefined });
+  }
+
+  can(capability: string): boolean {
+    return this.session.can(capability);
+  }
+}

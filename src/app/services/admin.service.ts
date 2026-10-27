@@ -110,6 +110,16 @@ export interface SiteSettings {
 }
 
 /** What the browser needs to upload a photograph: both values are public by design. */
+/** The signed-in account and what the server says it may do. */
+export interface AdminMe {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  capabilities: string[];
+  can_enter_admin: boolean;
+}
+
 export interface MediaConfig {
   cloud_name: string;
   upload_preset: string;
@@ -307,6 +317,11 @@ export class AdminService {
   }
 
   /** The settings as stored, empty when they have never been set. */
+  /** Who this token belongs to. Answered for any signed-in account, including one with no rights. */
+  getMe(): Observable<AdminMe> {
+    return this.http.get<AdminMe>(`${this.baseUrl}/admin/me`, { headers: this.authHeaders() });
+  }
+
   getSettings(): Observable<{ settings: SiteSettings; keys: string[] }> {
     return this.http.get<{ settings: SiteSettings; keys: string[] }>(`${this.baseUrl}/admin/settings`, {
       headers: this.authHeaders(),

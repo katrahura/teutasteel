@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
+import { adminGuard } from './guards/admin.guard';
 import { AuthGuard } from './guards/auth.guard';
 
 /**
@@ -64,10 +65,15 @@ export const appRoutes: Routes = [
     // One place for the owner's work, with tabs. Përmbledhja is the dashboard as it was, moved here
     // unchanged; Produktet is the catalogue table. The rest of the tabs are named in the shell and
     // marked as coming rather than left as links that lead nowhere.
+    path: 'admin/forbidden',
+    loadComponent: () =>
+      import('./pages/admin/admin-forbidden.component').then((m) => m.AdminForbiddenComponent),
+  },
+  {
     path: 'admin',
     loadComponent: () =>
       import('./pages/admin/admin-shell.component').then((m) => m.AdminShellComponent),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, adminGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'overview' },
       {
