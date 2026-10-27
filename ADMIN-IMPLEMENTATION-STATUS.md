@@ -22,7 +22,7 @@ Size warnings: the production build reports none above the configured budget; no
 | Phase | State | Files | Migrations | Checks | Open decisions |
 |---|---|---|---|---|---|
 | 0 — reconcile and baseline | **verified** | this file | none | 195 backend / 24 routes / trees clean | see "Unresolved" below |
-| 1 — role-aware access and shell | pending | `admin-shell`, `app.routes`, `auth.guard`, `app/auth.py`, `admin_routes.py` | none expected | — | needs a server "who am I" endpoint |
+| 1 — role-aware access and shell | **in progress** — `GET /admin/me` done, 5 tests, backend `8a5d…`; shell and guard next | `admin-shell`, `app.routes`, `auth.guard`, `app/auth.py`, `admin_routes.py` | none expected | — | needs a server "who am I" endpoint |
 | 2 — settings reach customers | pending | `admin-settings`, public shell/contact, `admin_routes.py`, new public route | none expected (table exists) | — | which fields the public may read |
 | 3 — dashboard and quality queue | pending | `admin-overview`, `admin_routes.py` | none expected | — | — |
 | 4 — product and variant editing | pending | `product-editor`, `product_routes.py` | likely one (price unit, version) | — | price-unit vocabulary |
@@ -73,5 +73,9 @@ after it was verified to build and pass; it was not line-by-line reviewed.
 
 ## Next
 
-Phase 1: a server answer for "who am I and what may I do", child-route protection, tabs hidden by
+Phase 1: the server answer exists (`GET /admin/me`, capabilities per role, five tests). Remaining: the guard
+that tells 401 from 403, tabs driven by capabilities, a read-only settings view for an editor, a compact
+shell with a phone drawer, and the 320px check.
+
+Previously planned: a server answer for "who am I and what may I do", child-route protection, tabs hidden by
 capability, expired-session handling distinct from forbidden, and a compact shell with drawer on phones.
