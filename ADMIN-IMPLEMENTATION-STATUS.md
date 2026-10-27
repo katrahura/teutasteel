@@ -114,6 +114,76 @@ after it was verified to build and pass; it was not line-by-line reviewed.
   browser-side render of the header was not observed settling (`/admin/me` answers 200 with capabilities;
   the probe still showed the loading line, which points at the probe or a stale bundle, not at the API).
 
+## Next (read this first)
+
+**Phase 2 wiring** - the reader exists (`PublicSettingsService`), nothing calls it yet:
+1. `shared.service.ts` or a small `ContactService`: expose `phone`, `whatsapp`, `email`, `address`,
+   `hours` as observables that fall back to the current translation keys.
+2. `app.component.html` top bar: the hours and the phone number (the `tel:` link must be built from the
+   normalised number, the display text from the setting as written).
+3. `app.component.html` footer: contact block, and the WhatsApp link destination.
+4. `contact.component` / `request` page: the same four fields, plus `delivery_text` and `vat_text` as
+   sentences with the current translation as fallback.
+5. `admin-settings.component.html`: a "View website" preview link and a line saying a change reaches the
+   public pages after a rebuild (they are prerendered), so no one is promised an instant change.
+Checks: build (25 routes) + 198 tests; then measure the top bar and the footer with a setting set and
+unset in the local database (never production).
+
+**Then** Phase 3 (dashboard "Needs attention" queue), then 4-8 in order.
+
+**Phase 1's drawer** - one open item. Re-attempt only after reading
+`getComputedStyle(document.querySelector('.admin-drawer')).display` at 1440px, because the base
+`display: none` did not take effect last time and the cause was never established.
+
+## Unfinished work owned by others
+
+
+None at baseline: both trees were clean. `089f499` merged the earlier uncommitted customer-journey work
+after it was verified to build and pass; it was not line-by-line reviewed.
+
+## Progress log
+
+- **Phase 2, increment 2** — `PublicSettingsService` (frontend `e41f968`): one cached `GET /settings`,
+  `field(key, fallback)` returning the caller's own text when a setting is blank, and an empty object
+  rather than an error when the request fails. Not yet wired into the shell, footer or contact page.
+
+- **Phase 2, increment 1** — public `GET /settings` (backend `f2629fa`): seven approved fields, no
+  token, no users, no upload credential, no admin configuration; an unset field answers empty so the page
+  keeps its own text. Four tests, including the field list itself. Remaining for phase 2: one frontend
+  service reading it once and feeding shell, footer, contact/request pages and the two wording fields,
+  with the current translations as fallback; read-only/public-preview state on the settings page; and the
+  documented refresh story (the public pages are prerendered, so a settings change reaches them after a
+  rebuild unless the shell fetches at runtime).
+
+- **Phase 1, increment 8 — reverted.** A phone drawer rendered from the same `ng-template` as the strip.
+  At 320px it measured correctly (320/320, no overflow, six links). At 1440px the drawer was still visible,
+  so the panel showed the navigation twice; the base `display: none` did not take effect and the cause was
+  not established before the round ran out. Reverted rather than shipped: a duplicated navigation is worse
+  than no drawer. The 320px acceptance criterion is met without it, by the tabs wrapping. Next attempt
+  should read the computed style of `.admin-drawer` first.
+
+- **Phase 1, increment 6 — reverted.** The AL/EN control in the admin header produced
+  `TS1128: Declaration or statement expected` and the production build failed with `Prerendered 0`. It was
+  committed before the build was read. It is reverted on the remote by `a2c9963`; the tree is green again at
+  25 prerendered routes. What changes: the build's exit code gates the commit, not a test count read
+  afterwards. The language control is still to do.
+
+- **Phase 1, increment 1** — `GET /admin/me`: id, username, email, role, capabilities, `can_enter_admin`.
+  Answered for any signed-in account so 401 (not signed in) and empty capabilities (signed in, no rights)
+  are distinguishable. Backend commit `8e514d6`, five tests. Capabilities mirror the routes' own checks;
+  deletes and accounts stay administrator-only.
+- **Phase 1, increment 2** — `AdminSessionService` (one cached answer), `adminGuard` (three outcomes:
+  sign in / allowed / forbidden, and an unreachable server is none of them), `/admin/forbidden` page,
+  tabs rendered from capabilities. Commit `9a5c6a5`, 193 tests green, 25 routes.
+- **Phase 1, increment 3** — guard spec: five tests covering all three outcomes and the stale-answer case.
+  Commit on the next line, 198 tests green.
+- **Phase 1, increment 4** — the header carries the account and the role the server reported plus a View
+  website link, and below 520px the tabs wrap instead of the page scrolling sideways. Measured at 320px:
+  `scrollWidth 320 / clientWidth 320` on `/admin/products`, `/admin/categories`, `/admin/settings`.
+- Phase 1 acceptance is **not yet verified**: the language control, the editor read-only settings view and a phone drawer are still open, and the
+  browser-side render of the header was not observed settling (`/admin/me` answers 200 with capabilities;
+  the probe still showed the loading line, which points at the probe or a stale bundle, not at the API).
+
 ## Next
 
 Phase 1: the server answer exists (`GET /admin/me`, capabilities per role, five tests). Remaining: the guard
