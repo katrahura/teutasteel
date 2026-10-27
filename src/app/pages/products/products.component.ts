@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { forkJoin, of, switchMap } from 'rxjs';
 
 import { ProductService } from '../../services/product.service';
+import { ContactService } from '../../services/contact.service';
 import { translateCategoryTitle } from '../../shared/translate-category-title';
 import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
 import { SectionDrawingComponent } from '../../shared/section-drawing/section-drawing.component';
@@ -175,7 +176,7 @@ toggleParent(parentId: number) {
     3: 'Type C',
     // Add other mappings as needed
   };
-  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private route: ActivatedRoute,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService, private changeDetector: ChangeDetectorRef, private quoteList: QuoteListService) {
+  constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private route: ActivatedRoute,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService, private changeDetector: ChangeDetectorRef, private quoteList: QuoteListService, private contact: ContactService) {
     // Read once on construction; the service guards its storage, so the prerender is safe here.
     this.quoteCount = this.quoteList.count();
   }
@@ -1600,7 +1601,7 @@ this.showProducts(this.selectedCategory)
     // shareable directly rather than found again.
     const link = this.productLink(product);
     const message = `${intro}${want}${ask}${link ? ' ' + link : ''}`;
-    const whatsappNumber = environment.whatsappNumber;
+    const whatsappNumber = this.contact.whatsappNumber();
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
       message
     )}`;

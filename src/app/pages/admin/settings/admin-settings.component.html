@@ -1,6 +1,14 @@
 <section class="admin-settings pb-5">
-  <h1 class="h3">{{ 'ADMIN.SETTINGS_TITLE' | translate }}</h1>
-  <p class="muted">{{ 'ADMIN.SETTINGS_LEAD' | translate }}</p>
+  <div class="settings-head">
+    <div>
+      <h1 class="h3">{{ 'ADMIN.SETTINGS_TITLE' | translate }}</h1>
+      <p class="muted">{{ 'ADMIN.SETTINGS_LEAD' | translate }}</p>
+    </div>
+    <!-- Where the words land. A settings page that cannot show the result asks the owner to trust it. -->
+    <a class="preview" routerLink="/contact" target="_blank" rel="noopener noreferrer">
+      {{ 'ADMIN.SETTINGS_PREVIEW' | translate }}
+    </a>
+  </div>
 
   <p class="notice denied" *ngIf="denied">{{ 'ADMIN.SETTINGS_DENIED' | translate }}</p>
   <div class="notice failed" *ngIf="failed && !denied">
@@ -20,19 +28,35 @@
       <div class="fields">
         <label class="field">
           <span>{{ 'ADMIN.SETTINGS_PHONE' | translate }}</span>
-          <input name="phone" [(ngModel)]="values.contact_phone" />
+          <input name="phone" inputmode="tel" [(ngModel)]="values.contact_phone"
+                 [attr.aria-invalid]="fieldErrors['contact_phone'] ? 'true' : null" />
+          <p class="field-error" role="alert" *ngIf="fieldErrors['contact_phone'] as reason">
+            {{ messageFor(reason) | translate }}
+          </p>
         </label>
         <label class="field">
           <span>{{ 'ADMIN.SETTINGS_WHATSAPP' | translate }}</span>
-          <input name="whatsapp" [(ngModel)]="values.contact_whatsapp" />
+          <input name="whatsapp" inputmode="tel" [(ngModel)]="values.contact_whatsapp"
+                 [attr.aria-invalid]="fieldErrors['contact_whatsapp'] ? 'true' : null" />
+          <p class="field-error" role="alert" *ngIf="fieldErrors['contact_whatsapp'] as reason">
+            {{ messageFor(reason) | translate }}
+          </p>
         </label>
         <label class="field">
           <span>{{ 'ADMIN.SETTINGS_EMAIL' | translate }}</span>
-          <input name="email" type="email" [(ngModel)]="values.contact_email" />
+          <input name="email" type="email" [(ngModel)]="values.contact_email"
+                 [attr.aria-invalid]="fieldErrors['contact_email'] ? 'true' : null" />
+          <p class="field-error" role="alert" *ngIf="fieldErrors['contact_email'] as reason">
+            {{ messageFor(reason) | translate }}
+          </p>
         </label>
         <label class="field">
           <span>{{ 'ADMIN.SETTINGS_ADDRESS' | translate }}</span>
-          <input name="address" [(ngModel)]="values.contact_address" />
+          <input name="address" [(ngModel)]="values.contact_address"
+                 [attr.aria-invalid]="fieldErrors['contact_address'] ? 'true' : null" />
+          <p class="field-error" role="alert" *ngIf="fieldErrors['contact_address'] as reason">
+            {{ messageFor(reason) | translate }}
+          </p>
         </label>
       </div>
     </fieldset>
@@ -41,8 +65,20 @@
       <legend>{{ 'ADMIN.SETTINGS_HOURS' | translate }}</legend>
       <div class="fields">
         <label class="field wide">
-          <span>{{ 'ADMIN.SETTINGS_HOURS' | translate }}</span>
-          <input name="hours" [(ngModel)]="values.opening_hours" />
+          <span>{{ 'ADMIN.SETTINGS_LANG_AL' | translate }}</span>
+          <input name="hoursAl" [(ngModel)]="values.opening_hours_al"
+                 [attr.aria-invalid]="fieldErrors['opening_hours_al'] ? 'true' : null" />
+          <p class="field-error" role="alert" *ngIf="fieldErrors['opening_hours_al'] as reason">
+            {{ messageFor(reason) | translate }}
+          </p>
+        </label>
+        <label class="field wide">
+          <span>{{ 'ADMIN.SETTINGS_LANG_EN' | translate }}</span>
+          <input name="hoursEn" [(ngModel)]="values.opening_hours_en"
+                 [attr.aria-invalid]="fieldErrors['opening_hours_en'] ? 'true' : null" />
+          <p class="field-error" role="alert" *ngIf="fieldErrors['opening_hours_en'] as reason">
+            {{ messageFor(reason) | translate }}
+          </p>
         </label>
       </div>
     </fieldset>
@@ -51,12 +87,36 @@
       <legend>{{ 'ADMIN.SETTINGS_DELIVERY' | translate }}</legend>
       <div class="fields">
         <label class="field wide">
-          <span>{{ 'ADMIN.SETTINGS_DELIVERY_TEXT' | translate }}</span>
-          <textarea name="delivery" rows="3" [(ngModel)]="values.delivery_text"></textarea>
+          <span>{{ 'ADMIN.SETTINGS_DELIVERY_TEXT' | translate }} — {{ 'ADMIN.SETTINGS_LANG_AL' | translate }}</span>
+          <textarea name="deliveryAl" rows="3" [(ngModel)]="values.delivery_text_al"
+                    [attr.aria-invalid]="fieldErrors['delivery_text_al'] ? 'true' : null"></textarea>
+          <p class="field-error" role="alert" *ngIf="fieldErrors['delivery_text_al'] as reason">
+            {{ messageFor(reason) | translate }}
+          </p>
         </label>
         <label class="field wide">
-          <span>{{ 'ADMIN.SETTINGS_VAT_TEXT' | translate }}</span>
-          <textarea name="vat" rows="3" [(ngModel)]="values.vat_text"></textarea>
+          <span>{{ 'ADMIN.SETTINGS_DELIVERY_TEXT' | translate }} — {{ 'ADMIN.SETTINGS_LANG_EN' | translate }}</span>
+          <textarea name="deliveryEn" rows="3" [(ngModel)]="values.delivery_text_en"
+                    [attr.aria-invalid]="fieldErrors['delivery_text_en'] ? 'true' : null"></textarea>
+          <p class="field-error" role="alert" *ngIf="fieldErrors['delivery_text_en'] as reason">
+            {{ messageFor(reason) | translate }}
+          </p>
+        </label>
+        <label class="field wide">
+          <span>{{ 'ADMIN.SETTINGS_VAT_TEXT' | translate }} — {{ 'ADMIN.SETTINGS_LANG_AL' | translate }}</span>
+          <textarea name="vatAl" rows="3" [(ngModel)]="values.vat_text_al"
+                    [attr.aria-invalid]="fieldErrors['vat_text_al'] ? 'true' : null"></textarea>
+          <p class="field-error" role="alert" *ngIf="fieldErrors['vat_text_al'] as reason">
+            {{ messageFor(reason) | translate }}
+          </p>
+        </label>
+        <label class="field wide">
+          <span>{{ 'ADMIN.SETTINGS_VAT_TEXT' | translate }} — {{ 'ADMIN.SETTINGS_LANG_EN' | translate }}</span>
+          <textarea name="vatEn" rows="3" [(ngModel)]="values.vat_text_en"
+                    [attr.aria-invalid]="fieldErrors['vat_text_en'] ? 'true' : null"></textarea>
+          <p class="field-error" role="alert" *ngIf="fieldErrors['vat_text_en'] as reason">
+            {{ messageFor(reason) | translate }}
+          </p>
         </label>
       </div>
     </fieldset>
@@ -64,6 +124,9 @@
     </fieldset>
 
     <p class="muted">{{ 'ADMIN.SETTINGS_EMPTY_MEANS' | translate }}</p>
+    <!-- The pages are prerendered, so this sentence is not "it appears immediately everywhere". -->
+    <p class="muted small">{{ 'ADMIN.SETTINGS_REFRESH' | translate }}</p>
+    <p class="notice unsaved" *ngIf="dirty && canWrite" role="status">{{ 'ADMIN.SETTINGS_UNSAVED' | translate }}</p>
     <p class="notice failed" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
     <p class="copied" role="status" aria-live="polite" *ngIf="saved">{{ 'ADMIN.SETTINGS_SAVED' | translate }}</p>
     <button type="submit" class="apply" *ngIf="canWrite" [disabled]="saving">

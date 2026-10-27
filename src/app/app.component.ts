@@ -12,7 +12,7 @@ import { AuthService } from './services/auth.service';
 import { SeoService } from './shared/seo.service';
 import { getStoredLanguage, setStoredLanguage } from './shared/language-storage';
 import { QuoteListService } from './shared/quote-list.service';
-import { environment } from '../environments/environment';
+import { ContactService } from './services/contact.service';
 
 @Component({
   selector: 'app-root',
@@ -50,11 +50,11 @@ export class AppComponent {
   /** Drives the Login / Logout control in the navigation bar. */
   isLoggedIn = false;
 
-  /** Contact details come from the environment, so a changed number is changed in one place. */
-  readonly phone = environment.phone;
-  readonly phoneDisplay = environment.phoneDisplay;
-  readonly email = environment.contactEmail;
-  readonly whatsappLink = 'https://wa.me/' + environment.whatsappNumber;
+  /**
+   * Contact details come from the shop's saved settings, and fall back to the environment when the
+   * owner has not written them. They used to be read straight from the environment, so changing the
+   * number in the panel changed nothing a customer could see.
+   */
 
   /** The copyright year, worked out rather than written down: the footer said 2024. */
   readonly year = new Date().getFullYear();
@@ -67,7 +67,7 @@ export class AppComponent {
     return animationData;
   }
   
-  constructor(private changeDetector: ChangeDetectorRef, private router: Router,private translate: TranslateService,public shared: SharedService,private authService: AuthService, seo: SeoService, private quoteList: QuoteListService) {
+  constructor(private changeDetector: ChangeDetectorRef, private router: Router,private translate: TranslateService,public shared: SharedService,private authService: AuthService, seo: SeoService, private quoteList: QuoteListService, public contact: ContactService) {
     // Detect route changes and update the currentRoute variable
     const language = getStoredLanguage() ?? 'al';
     this.translate.setDefaultLang('al');

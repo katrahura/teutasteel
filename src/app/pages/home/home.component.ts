@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnDestroy, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
 import { SERVICES } from '../../shared/services';
 import { shapeFor } from '../../shared/section-shape';
 import { SectionDrawingComponent } from '../../shared/section-drawing/section-drawing.component';
-import { environment } from '../../../environments/environment';
+import { ContactService } from '../../services/contact.service';
 
 @Component({
   selector: 'app-home',
@@ -44,9 +44,8 @@ export class HomeComponent implements OnDestroy {
    */
   readonly services = SERVICES;
 
-  /** Contact details from the environment, so a changed number is changed in one place. */
-  readonly phone = environment.phone;
-  readonly whatsappLink = 'https://wa.me/' + environment.whatsappNumber;
+  /** The shop's own details: the saved settings, with the built-in values as fallback. */
+  readonly contact = inject(ContactService);
 
   /**
    * The hero card's claims, as translation keys.

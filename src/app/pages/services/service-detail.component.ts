@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SERVICES, ServiceOffering } from '../../shared/services';
 import { PROJECTS } from '../../shared/projects';
 import { environment } from '../../../environments/environment';
+import { ContactService } from '../../services/contact.service';
 
 @Component({
   selector: 'app-service-detail', standalone: true,
@@ -41,8 +42,8 @@ import { environment } from '../../../environments/environment';
         </a></div>
       </section>
       <section class="contact-strip"><div><h2>{{ 'JOURNEY.CONTACT_TITLE' | translate }}</h2>
-        <p>{{ location.street }} {{ location.number }}, {{ location.city }} · {{ 'SHELL.HOURS' | translate }}</p></div>
-        <a [href]="'tel:' + phone">{{ phoneDisplay }}</a>
+        <p>{{ contact.address() }} · {{ contact.hours() || ('SHELL.HOURS' | translate) }}</p></div>
+        <a [href]="'tel:' + contact.phoneDial()">{{ contact.phoneDisplay() }}</a>
       </section>
       <a routerLink="/services">← {{ 'JOURNEY.BACK_SERVICES' | translate }}</a>
     </article>
@@ -68,8 +69,8 @@ import { environment } from '../../../environments/environment';
 export class ServiceDetailComponent {
   service?: ServiceOffering;
   readonly location = environment.location;
-  readonly phone = environment.phone;
-  readonly phoneDisplay = environment.phoneDisplay;
+  /** The shop's saved details, with the built-in ones as fallback. */
+  readonly contact = inject(ContactService);
   constructor() {
     inject(ActivatedRoute).paramMap.pipe(takeUntilDestroyed()).subscribe(params => {
       this.service = SERVICES.find(service => service.id === params.get('id'));

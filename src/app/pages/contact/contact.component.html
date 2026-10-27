@@ -12,14 +12,14 @@
            value is text rather than an element, was the only line that looked right, which is what
            gave the cause away. The note about drawings is on its own line for the same reason: it was
            running into the email address, "info@teutasteel.comPër vizatime dhe DXF". -->
-      <p><strong>{{ 'CONTACT.PHONE' | translate }}:&nbsp;</strong><a [href]="'tel:' + phone">{{ phoneDisplay }}</a></p>
+      <p><strong>{{ 'CONTACT.PHONE' | translate }}:&nbsp;</strong><a [href]="'tel:' + contact.phoneDial()">{{ contact.phoneDisplay() }}</a></p>
       <!-- Both of these were labelled "Telefoni", and this one's link was built from the
            digits-only WhatsApp value, so it had no + and would not dial internationally. -->
-      <p><strong>{{ 'CONTACT.WHATSAPP' | translate }}:&nbsp;</strong><a [href]="'https://wa.me/' + whatsappNumber" target="_blank" rel="noopener noreferrer">{{ whatsappDisplay }}</a></p>
-      <p><strong>{{ 'CONTACT.EMAIL' | translate }}:&nbsp;</strong><a [href]="'mailto:' + email">{{ email }}</a>
+      <p><strong>{{ 'CONTACT.WHATSAPP' | translate }}:&nbsp;</strong><a [href]="contact.whatsappLink()" target="_blank" rel="noopener noreferrer">{{ contact.whatsappDisplay() }}</a></p>
+      <p><strong>{{ 'CONTACT.EMAIL' | translate }}:&nbsp;</strong><a [href]="'mailto:' + contact.email()">{{ contact.email() }}</a>
         <span class="text-muted small d-block">{{ 'CONTACT.EMAIL_FOR_DRAWINGS' | translate }}</span></p>
       <p>
-        <strong>{{ 'CONTACT.ADDRESS' | translate }}:&nbsp;</strong>{{ location.street }} {{ location.number }}, {{ location.city }}
+        <strong>{{ 'CONTACT.ADDRESS' | translate }}:&nbsp;</strong>{{ contact.address() }}
       </p>
     </div>
 
@@ -32,6 +32,12 @@
     <div *ngIf="requestPage" class="card request-card mx-auto my-4 text-start">
       <div class="card-body">
         <p class="text-muted small">{{ 'QUOTE.INTRO' | translate }}</p>
+
+        <!-- The owner's own sentences about delivery and about what a price includes. Written in the
+             panel, in each language; nothing is shown until they are written, because a delivery
+             promise and a tax statement are the shop's to make, not this page's to invent. -->
+        <p class="small mb-2" *ngIf="contact.deliveryText()">{{ contact.deliveryText() }}</p>
+        <p class="small mb-2" *ngIf="contact.vatText()">{{ contact.vatText() }}</p>
 
         <!-- The choice made on the services page, kept. That card has always passed ?service= and
              nothing ever read it, so pressing "request a quote" on a service lost the service. -->
@@ -224,7 +230,7 @@
            has to find the message button themselves. m.me and ig.me open a conversation. -->
       <a href="https://m.me/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Messenger"><i class="bi bi-facebook fs-2" aria-hidden="true"></i></a>
       <a href="https://ig.me/m/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram fs-2" aria-hidden="true"></i></a>
-      <a [href]="'https://wa.me/' + whatsappNumber" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp fs-2" aria-hidden="true"></i></a>
+      <a [href]="contact.whatsappLink()" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp fs-2" aria-hidden="true"></i></a>
       <a href="https://www.tiktok.com/@teutasteel" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="bi bi-tiktok fs-2" aria-hidden="true"></i></a>
     </div>
     <div class="map-responsive mt-4">
@@ -246,6 +252,8 @@
 </div>
 
     <hr class="my-4">
+    <p class="mb-2" *ngIf="contact.deliveryText()">{{ contact.deliveryText() }}</p>
+    <p class="mb-2" *ngIf="contact.vatText()">{{ contact.vatText() }}</p>
     <small>{{ 'CONTACT.AVAILABILITY' | translate }}</small>
 
     </ng-container>

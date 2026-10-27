@@ -451,7 +451,15 @@
     "FORBIDDEN_BODY": "Jeni i kyçur, po ky seksion i panelit është për administratorin. Çka ju nevojitet i takon atij.",
     "FORBIDDEN_HOME": "Kthehu te faqja",
     "FORBIDDEN_LOGIN": "Kyçu me llogari tjetër",
-    "LANGUAGE": "Gjuha"
+    "LANGUAGE": "Gjuha",
+    "SETTINGS_LANG_AL": "Shqip",
+    "SETTINGS_LANG_EN": "Anglisht",
+    "SETTINGS_PREVIEW": "Shihni faqen e kontaktit",
+    "SETTINGS_REFRESH": "Të dhënat e ruajtura shfaqen në faqet publike herën tjetër që hapet njëra. Kopja statike që sheh së pari një motor kërkimi shkruhet në ndërtimin tjetër.",
+    "SETTINGS_UNSAVED": "Këto ndryshime nuk janë ruajtur ende.",
+    "SETTINGS_INVALID_EMAIL": "Kjo nuk duket si një adresë email.",
+    "SETTINGS_INVALID_NUMBER": "Vetëm numra, hapësira, +, -, ( ) dhe pika, me 6 deri në 15 numra.",
+    "SETTINGS_TOO_LONG": "Kjo është më e gjatë se sa lejon fusha."
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

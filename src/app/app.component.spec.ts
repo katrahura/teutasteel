@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 import { AppComponent } from './app.component';
 import { provideTestConfig } from './testing/test-providers';
@@ -56,6 +57,35 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance.isLoggedIn).toBeTrue();
     expect((fixture.nativeElement.querySelector('#nav-login') as HTMLElement).hidden).toBeTrue();
     expect((fixture.nativeElement.querySelector('#nav-logout') as HTMLElement).hidden).toBeFalse();
+  });
+
+  it('shows the details the owner saved instead of the built-in ones', () => {
+    // The shell used to read the number and the opening hours from the environment, so changing
+    // them in the panel changed nothing a customer could see. This is the join between the two.
+    const httpMock = TestBed.inject(HttpTestingController);
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+
+    httpMock.expectOne((request) => request.url.endsWith('/settings')).flush({
+      settings: {
+        contact_phone: '+383 44 000 111',
+        contact_address: 'Rruga e Re 5, Gjilan',
+        opening_hours: 'Hën–Sht 09:00–18:00',
+        contact_email: 'shop@example.test',
+      },
+    });
+    fixture.detectChanges();
+
+    const top = (fixture.nativeElement as HTMLElement).querySelector('.topbar') as HTMLElement;
+    expect(top.textContent).toContain('Hën–Sht 09:00–18:00');
+    expect(top.textContent).toContain('+383 44 000 111');
+    // What is read is the written number; what is dialled is its digits, with the plus kept.
+    expect((top.querySelector('a') as HTMLAnchorElement).getAttribute('href'))
+      .toBe('tel:+38344000111');
+
+    const footer = (fixture.nativeElement as HTMLElement).querySelector('.site-footer') as HTMLElement;
+    expect(footer.textContent).toContain('Rruga e Re 5, Gjilan');
+    expect(footer.textContent).toContain('shop@example.test');
   });
 
   it('clears the token and returns to the login page on logout', () => {

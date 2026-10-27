@@ -31,9 +31,9 @@
           <a class="btn btn-outline-accent" routerLink="/request">{{ 'QUOTE.TITLE' | translate }}</a>
         </div>
         <div class="hero-contact">
-          <a [href]="'tel:' + phone">{{ 'HOME.CALL' | translate }}</a>
+          <a [href]="'tel:' + contact.phoneDial()">{{ 'HOME.CALL' | translate }}</a>
           <span aria-hidden="true">·</span>
-          <a [href]="whatsappLink" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <a [href]="contact.whatsappLink()" target="_blank" rel="noopener noreferrer">WhatsApp</a>
         </div>
         <form class="hero-search" (submit)="goToSearch($event, heroSearch.value)">
           <input #heroSearch type="search" name="heroSearch"
@@ -194,7 +194,7 @@
         <p>{{ 'HOME.QUOTE_TEXT' | translate }}</p>
       </div>
       <div class="cta-row">
-        <a class="btn btn-dark" [href]="whatsappLink" target="_blank" rel="noopener noreferrer">
+        <a class="btn btn-dark" [href]="contact.whatsappLink()" target="_blank" rel="noopener noreferrer">
           {{ 'HOME.QUOTE_WHATSAPP' | translate }}
         </a>
         <a class="btn btn-light" routerLink="/request">{{ 'HOME.QUOTE_FORM' | translate }}</a>

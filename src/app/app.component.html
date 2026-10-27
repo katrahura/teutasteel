@@ -8,9 +8,9 @@
     <!-- Top bar: the hours, a phone number that dials, and the language. -->
     <div class="topbar">
       <div class="shell">
-        <span>{{ 'SHELL.HOURS' | translate }}</span>
+        <span>{{ contact.hours() || ('SHELL.HOURS' | translate) }}</span>
         <span class="topbar-right">
-          <a [href]="'tel:' + phone"><span class="muted">{{ 'SHELL.TEL' | translate }}</span> <b>{{ phoneDisplay }}</b></a>
+          <a [href]="'tel:' + contact.phoneDial()"><span class="muted">{{ 'SHELL.TEL' | translate }}</span> <b>{{ contact.phoneDisplay() }}</b></a>
           <span class="langs">
             <button type="button" class="lang-btn" [class.active]="shared.lang === 'al'"
                     (click)="switchLanguage('al')">AL</button>
@@ -115,10 +115,11 @@
         <div>
           <h4>{{ 'FOOTER.CONTACT_TITLE' | translate }}</h4>
           <ul>
-            <li><a [href]="'tel:' + phone">{{ phoneDisplay }}</a></li>
-            <li><a [href]="whatsappLink" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-            <li><a [href]="'mailto:' + email">{{ email }}</a></li>
-            <li>{{ 'SHELL.HOURS_SHORT' | translate }}</li>
+            <li><a [href]="'tel:' + contact.phoneDial()">{{ contact.phoneDisplay() }}</a></li>
+            <li><a [href]="contact.whatsappLink()" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+            <li><a [href]="'mailto:' + contact.email()">{{ contact.email() }}</a></li>
+            <li>{{ contact.address() }}</li>
+            <li>{{ contact.hours() || ('SHELL.HOURS_SHORT' | translate) }}</li>
           </ul>
         </div>
       </div>

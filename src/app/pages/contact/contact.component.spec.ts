@@ -1,6 +1,8 @@
 import { QuoteListService } from '../../shared/quote-list.service';
 import { SERVICES } from '../../shared/services';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
+import { TranslateService } from '@ngx-translate/core';
 
 import { ContactComponent } from './contact.component';
 import { provideTestConfig } from '../../testing/test-providers';
@@ -88,6 +90,24 @@ describe('ContactComponent', () => {
     message = decodeURIComponent(component.getQuoteLink());
     expect(message).not.toContain('QUOTE.DELIVERY_PLACE');
     expect(message).not.toContain('QUOTE.REQUIRED_DATE');
+  });
+
+  it('shows the owner’s sentences about delivery and about what a price includes', () => {
+    // Nothing is invented when the boxes are empty; this is the other half - when they are filled,
+    // the customer reads them on the page they were meant for.
+    const httpMock = TestBed.inject(HttpTestingController);
+    TestBed.inject(TranslateService).use('en');
+    httpMock.expectOne((request) => request.url.endsWith('/settings')).flush({
+      settings: {
+        delivery_text_en: 'Delivery is agreed with the order.',
+        vat_text_en: 'Prices include VAT.',
+      },
+    });
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent || '';
+    expect(text).toContain('Delivery is agreed with the order.');
+    expect(text).toContain('Prices include VAT.');
   });
 
 });

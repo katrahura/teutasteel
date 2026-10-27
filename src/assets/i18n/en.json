@@ -378,7 +378,15 @@
     "FORBIDDEN_BODY": "You are signed in, but this part of the panel belongs to the administrator. What you need here is theirs to give.",
     "FORBIDDEN_HOME": "Back to the website",
     "FORBIDDEN_LOGIN": "Sign in with another account",
-    "LANGUAGE": "Language"
+    "LANGUAGE": "Language",
+    "SETTINGS_LANG_AL": "Albanian",
+    "SETTINGS_LANG_EN": "English",
+    "SETTINGS_PREVIEW": "See the contact page",
+    "SETTINGS_REFRESH": "Saved details appear on the public pages the next time one is opened. The static copy that a search engine first sees is written at the next build.",
+    "SETTINGS_UNSAVED": "These changes are not saved yet.",
+    "SETTINGS_INVALID_EMAIL": "This does not look like an email address.",
+    "SETTINGS_INVALID_NUMBER": "Digits, spaces, +, -, ( ) and dots only, with 6 to 15 digits.",
+    "SETTINGS_TOO_LONG": "This is longer than the box allows."
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

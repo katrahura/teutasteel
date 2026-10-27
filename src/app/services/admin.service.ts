@@ -104,9 +104,16 @@ export interface SiteSettings {
   contact_whatsapp: string;
   contact_email: string;
   contact_address: string;
+  /** The pre-pair sentence. Read as a fallback for a language left empty; cleared when both are written. */
   opening_hours: string;
   delivery_text: string;
   vat_text: string;
+  opening_hours_al: string;
+  opening_hours_en: string;
+  delivery_text_al: string;
+  delivery_text_en: string;
+  vat_text_al: string;
+  vat_text_en: string;
 }
 
 /** What the browser needs to upload a photograph: both values are public by design. */

@@ -4,9 +4,9 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { environment } from '../../../environments/environment';
 import { QuoteListService, QuoteItem } from '../../shared/quote-list.service';
 import { SERVICES, ServiceOffering } from '../../shared/services';
+import { ContactService } from '../../services/contact.service';
 
 @Component({
   selector: 'app-contact',
@@ -20,6 +20,9 @@ export class ContactComponent implements OnInit {
   private quoteList = inject(QuoteListService);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
+
+  /** The shop's own details: what the owner saved, and the built-in value when nothing is saved. */
+  readonly contact = inject(ContactService);
 
   /**
    * The service the visitor pressed on the services page, if they came from there.
@@ -157,26 +160,13 @@ export class ContactComponent implements OnInit {
   }
 
   /**
-   * Address comes from the environment, next to the other contact details.
-   *
    * The map itself is a static `src` in the template: Angular's sanitizer refuses a
    * bound value in an iframe's resource URL context (NG0904), and a static
    * attribute is what ends up in the prerendered HTML as well.
-   */
-  readonly location = environment.location;
-
-  /**
-   * The contact details, from the environment rather than written into the markup.
    *
-   * They used to be hardcoded in four places here and two in the mobile menu, so changing
-   * a number meant finding all six - and the environment comment promising "one place" was
-   * only true for the WhatsApp link on a product card.
+   * The address beside it is `contact.address()`: the owner's saved line when there is one, the
+   * built-in street when there is not.
    */
-  readonly phone = environment.phone;
-  readonly phoneDisplay = environment.phoneDisplay;
-  readonly whatsappNumber = environment.whatsappNumber;
-  readonly whatsappDisplay = environment.whatsappDisplay;
-  readonly email = environment.contactEmail;
 
   /**
    * What the visitor types into the quote form.
@@ -275,6 +265,6 @@ export class ContactComponent implements OnInit {
         lines.push(`${index + 1}. ${item.code}${detail} (${item.quantity})`);
       });
     }
-    return `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent(lines.join('\n'))}`;
+    return `https://wa.me/${this.contact.whatsappNumber()}?text=${encodeURIComponent(lines.join('\n'))}`;
   }
 }
