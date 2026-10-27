@@ -73,6 +73,13 @@ after it was verified to build and pass; it was not line-by-line reviewed.
 
 ## Progress log
 
+- **Phase 1, increment 8 — reverted.** A phone drawer rendered from the same `ng-template` as the strip.
+  At 320px it measured correctly (320/320, no overflow, six links). At 1440px the drawer was still visible,
+  so the panel showed the navigation twice; the base `display: none` did not take effect and the cause was
+  not established before the round ran out. Reverted rather than shipped: a duplicated navigation is worse
+  than no drawer. The 320px acceptance criterion is met without it, by the tabs wrapping. Next attempt
+  should read the computed style of `.admin-drawer` first.
+
 - **Phase 1, increment 6 — reverted.** The AL/EN control in the admin header produced
   `TS1128: Declaration or statement expected` and the production build failed with `Prerendered 0`. It was
   committed before the build was read. It is reverted on the remote by `a2c9963`; the tree is green again at
