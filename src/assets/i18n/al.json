@@ -450,7 +450,8 @@
     "FORBIDDEN_TITLE": "Nuk keni të drejtë për këtë faqe",
     "FORBIDDEN_BODY": "Jeni i kyçur, po ky seksion i panelit është për administratorin. Çka ju nevojitet i takon atij.",
     "FORBIDDEN_HOME": "Kthehu te faqja",
-    "FORBIDDEN_LOGIN": "Kyçu me llogari tjetër"
+    "FORBIDDEN_LOGIN": "Kyçu me llogari tjetër",
+    "LANGUAGE": "Gjuha"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

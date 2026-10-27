@@ -377,7 +377,8 @@
     "FORBIDDEN_TITLE": "You do not have permission for this page",
     "FORBIDDEN_BODY": "You are signed in, but this part of the panel belongs to the administrator. What you need here is theirs to give.",
     "FORBIDDEN_HOME": "Back to the website",
-    "FORBIDDEN_LOGIN": "Sign in with another account"
+    "FORBIDDEN_LOGIN": "Sign in with another account",
+    "LANGUAGE": "Language"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",
