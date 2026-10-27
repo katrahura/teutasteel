@@ -3,6 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { AdminSessionService } from '../../../services/admin-session.service';
 import { AdminService, SiteSettings } from '../../../services/admin.service';
 
 /**
@@ -23,6 +24,11 @@ import { AdminService, SiteSettings } from '../../../services/admin.service';
 })
 export class AdminSettingsComponent implements OnInit {
   private admin = inject(AdminService);
+  private session = inject(AdminSessionService);
+
+  /** An editor may read these and may not change them: the form is rendered read-only, not disabled
+      behind an error they would only discover by pressing Save. */
+  canWrite = false;
 
   values: SiteSettings = {
     contact_phone: '', contact_whatsapp: '', contact_email: '', contact_address: '',
@@ -36,6 +42,12 @@ export class AdminSettingsComponent implements OnInit {
   errorMessage = '';
 
   ngOnInit(): void {
+    this.session.me().subscribe({
+      next: (answer) => {
+        this.canWrite = (answer.capabilities || []).indexOf('settings.write') !== -1;
+      },
+      error: () => { this.canWrite = false; },
+    });
     this.load();
   }
 
@@ -57,7 +69,7 @@ export class AdminSettingsComponent implements OnInit {
   }
 
   save(): void {
-    if (this.saving) {
+    if (this.saving || !this.canWrite) {
       return;
     }
     this.saving = true;

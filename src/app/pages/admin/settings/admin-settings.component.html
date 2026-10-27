@@ -9,7 +9,12 @@
   </div>
   <p class="muted" *ngIf="loading">{{ 'ADMIN.LOADING' | translate }}</p>
 
+  <p class="notice read-only" *ngIf="!loading && !denied && !failed && !canWrite">
+    {{ 'ADMIN.SETTINGS_READ_ONLY' | translate }}
+  </p>
+
   <form *ngIf="!loading && !denied && !failed" (ngSubmit)="save()">
+    <fieldset class="readonly-group" [disabled]="!canWrite">
     <fieldset class="group">
       <legend>{{ 'ADMIN.SETTINGS_CONTACT' | translate }}</legend>
       <div class="fields">
@@ -56,9 +61,13 @@
       </div>
     </fieldset>
 
+    </fieldset>
+
     <p class="muted">{{ 'ADMIN.SETTINGS_EMPTY_MEANS' | translate }}</p>
     <p class="notice failed" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
     <p class="copied" role="status" aria-live="polite" *ngIf="saved">{{ 'ADMIN.SETTINGS_SAVED' | translate }}</p>
-    <button type="submit" class="apply" [disabled]="saving">{{ 'ADMIN.SETTINGS_SAVE' | translate }}</button>
+    <button type="submit" class="apply" *ngIf="canWrite" [disabled]="saving">
+      {{ 'ADMIN.SETTINGS_SAVE' | translate }}
+    </button>
   </form>
 </section>

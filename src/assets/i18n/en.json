@@ -372,7 +372,8 @@
     "SETTINGS_EMPTY_MEANS": "An empty field means: the page keeps the text it has now.",
     "SETTINGS_SAVED": "Saved.",
     "SETTINGS_SAVE": "Save",
-    "VIEW_SITE": "View website"
+    "VIEW_SITE": "View website",
+    "SETTINGS_READ_ONLY": "Read only for you; only an administrator changes these."
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

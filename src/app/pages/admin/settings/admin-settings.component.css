@@ -14,3 +14,8 @@
 .apply:disabled { background: #cbd5e1; cursor: wait; }
 .retry { background: #fff; border: 1px solid #fca5a5; border-radius: 6px; padding: 4px 10px; font-size: 13px; cursor: pointer; }
 @media (max-width: 640px) { .field { min-width: 0; flex: 1 1 100%; } }
+/* A fieldset, disabled as one: the browser greys every control inside it and stops them from taking focus,
+   which is what "read-only" should look like rather than seven disabled attributes kept in step by hand. */
+.readonly-group { border: none; padding: 0; margin: 0; min-width: 0; }
+.readonly-group:disabled { opacity: .85; }
+.notice.read-only { background: #eef2f7; border: 1px solid #cbd5e1; }
