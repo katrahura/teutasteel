@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 
-import { ProductService } from './product.service';
+import { IMAGE_TRANSFORM, ProductService } from './product.service';
 import { provideTestConfig } from '../testing/test-providers';
 import { clearToken, setToken } from './token-storage';
 import { environment } from '../../environments/environment';
@@ -90,7 +90,7 @@ describe('ProductService', () => {
     httpMock.expectOne((req) => req.url === topCategoriesUrl).flush(categoryPayload);
 
     expect(delivered).toBe(
-      `${environment.cloudinaryBaseUrl}/category_images/orig.jpg`
+      `${environment.cloudinaryBaseUrl}/${IMAGE_TRANSFORM}/category_images/orig.jpg`
     );
   });
 
@@ -288,7 +288,7 @@ describe('ProductService', () => {
   });
 
   it('keeps complete Cloudinary URLs instead of prefixing them twice', () => {
-    const url=environment.cloudinaryBaseUrl+'/category_images/group.webp';
+    const url=environment.cloudinaryBaseUrl+'/'+IMAGE_TRANSFORM+'/category_images/group.webp';
     let delivered:any;
     service.getTopCategories().subscribe(categories=>delivered=categories[0].image_asset);
     httpMock.expectOne(topCategoriesUrl).flush([{...categoryPayload[0], image_asset:{...categoryPayload[0].image_asset,original_path:url,thumbnail_path:url}}]);
@@ -299,7 +299,7 @@ describe('ProductService', () => {
     let delivered:any;
     service.getTopCategories().subscribe(categories=>delivered=categories[0].image_asset);
     httpMock.expectOne(topCategoriesUrl).flush([{...categoryPayload[0], image_asset:{...categoryPayload[0].image_asset,original_path:'category_images/group.webp',thumbnail_path:'/category_images/group.webp'}}]);
-    expect(delivered.original_path).toBe(environment.cloudinaryBaseUrl+'/category_images/group.webp');
-    expect(delivered.thumbnail_path).toBe(environment.cloudinaryBaseUrl+'/category_images/group.webp');
+    expect(delivered.original_path).toBe(environment.cloudinaryBaseUrl+'/'+IMAGE_TRANSFORM+'/category_images/group.webp');
+    expect(delivered.thumbnail_path).toBe(environment.cloudinaryBaseUrl+'/'+IMAGE_TRANSFORM+'/category_images/group.webp');
   });
 });

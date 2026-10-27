@@ -1,3 +1,20 @@
+/**
+ * What every photograph is asked for, in one place.
+ *
+ * Two things at once, both of them the owner's answer to "how do we stop people taking the pictures":
+ *
+ * c_limit,w_900  - never wider than 900 pixels. Nothing here is printed, so a copy that is saved is a
+ *                  copy that cannot be printed either. c_limit rather than c_fill because a photograph
+ *                  of a cut part must not be cropped to fit a box.
+ * q_auto,f_auto  - Cloudinary's own choice of quality and format, which is both smaller and sharper
+ *                  than anything we could pick by hand.
+ * l_text:...     - "teutasteel.com" across the bottom right, white at 55% so it sits on a photograph
+ *                  without hiding it. It is placed on delivery, not burnt into the file, so removing it
+ *                  is one line here - and a photograph saved from the site carries it.
+ */
+export const IMAGE_TRANSFORM =
+  'c_limit,w_900,q_auto,f_auto/l_text:Arial_34:teutasteel.com,co_white,o_55,g_south_east,x_18,y_14';
+
 import { Injectable } from '@angular/core';
 import {
   HttpClient,
@@ -211,7 +228,10 @@ export class ProductService {
     const path = value.trim();
     if (/^https?:\/\//i.test(path)) return path;
     const relative = path.replace(/^\/+/, '');
-    return this.cloudinaryBaseUrl + '/' + (relative.startsWith(folder + '/') ? relative : folder + '/' + relative);
+    const named = relative.startsWith(folder + '/') ? relative : folder + '/' + relative;
+    // One display size and a word across the corner. See IMAGE_TRANSFORM: the same picture is never
+    // served larger than it is shown, and what does get saved carries the shop's name on it.
+    return this.cloudinaryBaseUrl + '/' + IMAGE_TRANSFORM + '/' + named;
   }
 
   private withDeliveredImage<T extends { image_asset?: ImageAsset }>(
