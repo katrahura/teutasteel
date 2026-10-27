@@ -34,9 +34,9 @@ import { TranslateModule } from '@ngx-translate/core';
         <a routerLink="/admin/media" routerLinkActive="active">
           {{ 'ADMIN.NAV_MEDIA' | translate }}
         </a>
-        <span class="soon" aria-disabled="true" [attr.title]="'ADMIN.SOON' | translate">
+        <a routerLink="/admin/settings" routerLinkActive="active">
           {{ 'ADMIN.NAV_SETTINGS' | translate }}
-        </span>
+        </a>
       </nav>
     </div>
     <router-outlet></router-outlet>

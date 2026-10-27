@@ -429,7 +429,22 @@
     "MEDIA_SAVED": "U ruajt fotografia e",
     "MEDIA_FAILED": "Ngarkimi dështoi.",
     "MEDIA_ADD": "Shto foto",
-    "MEDIA_EMPTY": "Asnjë produkt pa foto në këtë faqe."
+    "MEDIA_EMPTY": "Asnjë produkt pa foto në këtë faqe.",
+    "SETTINGS_TITLE": "Cilësimet",
+    "SETTINGS_LEAD": "Fjalët e faqes që ndryshojnë pa e prekur kodin.",
+    "SETTINGS_DENIED": "Vetëm administratori i ndryshon këto.",
+    "SETTINGS_CONTACT": "Kontakti",
+    "SETTINGS_PHONE": "Telefoni",
+    "SETTINGS_WHATSAPP": "WhatsApp",
+    "SETTINGS_EMAIL": "Emaili",
+    "SETTINGS_ADDRESS": "Adresa",
+    "SETTINGS_HOURS": "Oraret",
+    "SETTINGS_DELIVERY": "Dorëzimi dhe çmimi",
+    "SETTINGS_DELIVERY_TEXT": "Si dorëzohet",
+    "SETTINGS_VAT_TEXT": "Çka përfshin çmimi (TVSH, njësia)",
+    "SETTINGS_EMPTY_MEANS": "Fusha bosh do të thotë: faqja mban tekstin që ka tani.",
+    "SETTINGS_SAVED": "U ruajt.",
+    "SETTINGS_SAVE": "Ruaj"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

@@ -85,6 +85,13 @@ export const appRoutes: Routes = [
           ),
       },
       {
+        path: 'settings',
+        loadComponent: () =>
+          import('./pages/admin/settings/admin-settings.component').then(
+            (m) => m.AdminSettingsComponent
+          ),
+      },
+      {
         path: 'media',
         loadComponent: () =>
           import('./pages/admin/media/admin-media.component').then((m) => m.AdminMediaComponent),

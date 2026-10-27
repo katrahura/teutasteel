@@ -1,0 +1,16 @@
+.admin-settings { max-width: 900px; margin: 0 auto; padding: 18px 16px 40px; }
+.muted { color: #4b5563; font-size: 13.5px; }
+.notice { margin: 12px 0; padding: 10px 14px; border-radius: 8px; font-size: 14px; }
+.notice.denied { background: #fef3c7; border: 1px solid #fcd34d; }
+.notice.failed { background: #fee2e2; border: 1px solid #fca5a5; }
+.group { border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px 16px; margin: 0 0 16px; background: #fff; }
+.group legend { font-size: 14px; font-weight: 800; padding: 0 6px; color: #0f172a; }
+.fields { display: flex; flex-wrap: wrap; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: 13px; min-width: 200px; flex: 1 1 200px; }
+.field.wide { flex: 1 1 100%; }
+.field input, .field textarea { padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; font-family: inherit; }
+.copied { color: #15803d; font-size: 13.5px; }
+.apply { background: #0f172a; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.apply:disabled { background: #cbd5e1; cursor: wait; }
+.retry { background: #fff; border: 1px solid #fca5a5; border-radius: 6px; padding: 4px 10px; font-size: 13px; cursor: pointer; }
+@media (max-width: 640px) { .field { min-width: 0; flex: 1 1 100%; } }

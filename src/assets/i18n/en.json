@@ -356,7 +356,22 @@
     "MEDIA_SAVED": "Saved the photograph of",
     "MEDIA_FAILED": "The upload failed.",
     "MEDIA_ADD": "Add a photo",
-    "MEDIA_EMPTY": "No product without a picture on this page."
+    "MEDIA_EMPTY": "No product without a picture on this page.",
+    "SETTINGS_TITLE": "Settings",
+    "SETTINGS_LEAD": "The words on the site that change without the code.",
+    "SETTINGS_DENIED": "Only an administrator changes these.",
+    "SETTINGS_CONTACT": "Contact",
+    "SETTINGS_PHONE": "Phone",
+    "SETTINGS_WHATSAPP": "WhatsApp",
+    "SETTINGS_EMAIL": "Email",
+    "SETTINGS_ADDRESS": "Address",
+    "SETTINGS_HOURS": "Opening hours",
+    "SETTINGS_DELIVERY": "Delivery and price",
+    "SETTINGS_DELIVERY_TEXT": "How delivery works",
+    "SETTINGS_VAT_TEXT": "What a price includes (VAT, unit)",
+    "SETTINGS_EMPTY_MEANS": "An empty field means: the page keeps the text it has now.",
+    "SETTINGS_SAVED": "Saved.",
+    "SETTINGS_SAVE": "Save"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

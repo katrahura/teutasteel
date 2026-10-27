@@ -98,6 +98,17 @@ export interface CataloguePage {
   products: CatalogueRow[];
 }
 
+/** The words on the public site that the owner may change. */
+export interface SiteSettings {
+  contact_phone: string;
+  contact_whatsapp: string;
+  contact_email: string;
+  contact_address: string;
+  opening_hours: string;
+  delivery_text: string;
+  vat_text: string;
+}
+
 /** What the browser needs to upload a photograph: both values are public by design. */
 export interface MediaConfig {
   cloud_name: string;
@@ -293,6 +304,20 @@ export class AdminService {
       { products: query.products, mode: query.mode, value: query.value, dry_run: query.dryRun },
       { headers: this.authHeaders() }
     );
+  }
+
+  /** The settings as stored, empty when they have never been set. */
+  getSettings(): Observable<{ settings: SiteSettings; keys: string[] }> {
+    return this.http.get<{ settings: SiteSettings; keys: string[] }>(`${this.baseUrl}/admin/settings`, {
+      headers: this.authHeaders(),
+    });
+  }
+
+  /** Save some of them. Administrator only, as the API says. */
+  saveSettings(values: Partial<SiteSettings>): Observable<{ settings: SiteSettings }> {
+    return this.http.put<{ settings: SiteSettings }>(`${this.baseUrl}/admin/settings`, values, {
+      headers: this.authHeaders(),
+    });
   }
 
   /** The Cloudinary cloud and preset, and whether they are set at all. */

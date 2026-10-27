@@ -1,0 +1,64 @@
+<section class="admin-settings pb-5">
+  <h1 class="h3">{{ 'ADMIN.SETTINGS_TITLE' | translate }}</h1>
+  <p class="muted">{{ 'ADMIN.SETTINGS_LEAD' | translate }}</p>
+
+  <p class="notice denied" *ngIf="denied">{{ 'ADMIN.SETTINGS_DENIED' | translate }}</p>
+  <div class="notice failed" *ngIf="failed && !denied">
+    <span>{{ 'ADMIN.TABLE_FAILED' | translate }}</span>
+    <button type="button" class="retry" (click)="load()">{{ 'ADMIN.RETRY' | translate }}</button>
+  </div>
+  <p class="muted" *ngIf="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+
+  <form *ngIf="!loading && !denied && !failed" (ngSubmit)="save()">
+    <fieldset class="group">
+      <legend>{{ 'ADMIN.SETTINGS_CONTACT' | translate }}</legend>
+      <div class="fields">
+        <label class="field">
+          <span>{{ 'ADMIN.SETTINGS_PHONE' | translate }}</span>
+          <input name="phone" [(ngModel)]="values.contact_phone" />
+        </label>
+        <label class="field">
+          <span>{{ 'ADMIN.SETTINGS_WHATSAPP' | translate }}</span>
+          <input name="whatsapp" [(ngModel)]="values.contact_whatsapp" />
+        </label>
+        <label class="field">
+          <span>{{ 'ADMIN.SETTINGS_EMAIL' | translate }}</span>
+          <input name="email" type="email" [(ngModel)]="values.contact_email" />
+        </label>
+        <label class="field">
+          <span>{{ 'ADMIN.SETTINGS_ADDRESS' | translate }}</span>
+          <input name="address" [(ngModel)]="values.contact_address" />
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="group">
+      <legend>{{ 'ADMIN.SETTINGS_HOURS' | translate }}</legend>
+      <div class="fields">
+        <label class="field wide">
+          <span>{{ 'ADMIN.SETTINGS_HOURS' | translate }}</span>
+          <input name="hours" [(ngModel)]="values.opening_hours" />
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="group">
+      <legend>{{ 'ADMIN.SETTINGS_DELIVERY' | translate }}</legend>
+      <div class="fields">
+        <label class="field wide">
+          <span>{{ 'ADMIN.SETTINGS_DELIVERY_TEXT' | translate }}</span>
+          <textarea name="delivery" rows="3" [(ngModel)]="values.delivery_text"></textarea>
+        </label>
+        <label class="field wide">
+          <span>{{ 'ADMIN.SETTINGS_VAT_TEXT' | translate }}</span>
+          <textarea name="vat" rows="3" [(ngModel)]="values.vat_text"></textarea>
+        </label>
+      </div>
+    </fieldset>
+
+    <p class="muted">{{ 'ADMIN.SETTINGS_EMPTY_MEANS' | translate }}</p>
+    <p class="notice failed" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+    <p class="copied" role="status" aria-live="polite" *ngIf="saved">{{ 'ADMIN.SETTINGS_SAVED' | translate }}</p>
+    <button type="submit" class="apply" [disabled]="saving">{{ 'ADMIN.SETTINGS_SAVE' | translate }}</button>
+  </form>
+</section>
