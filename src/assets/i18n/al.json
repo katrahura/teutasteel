@@ -459,7 +459,8 @@
     "SETTINGS_UNSAVED": "Këto ndryshime nuk janë ruajtur ende.",
     "SETTINGS_INVALID_EMAIL": "Kjo nuk duket si një adresë email.",
     "SETTINGS_INVALID_NUMBER": "Vetëm numra, hapësira, +, -, ( ) dhe pika, me 6 deri në 15 numra.",
-    "SETTINGS_TOO_LONG": "Kjo është më e gjatë se sa lejon fusha."
+    "SETTINGS_TOO_LONG": "Kjo është më e gjatë se sa lejon fusha.",
+    "MENU": "Menyja"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

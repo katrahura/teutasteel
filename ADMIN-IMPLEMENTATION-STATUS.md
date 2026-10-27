@@ -28,7 +28,7 @@ whole backend suite must pass before a backend commit. A test count read after t
 | Phase | State | Files | Migrations | Checks | Open decisions |
 |---|---|---|---|---|---|
 | 0 — reconcile and baseline | **verified** | this file | none | 195 backend / 24 routes / trees clean | see "Unresolved" |
-| 1 — role-aware access and shell | **in progress** — `/admin/me`, session service, `adminGuard`, capability tabs, `/admin/forbidden`, header account/role, View website, AL/EN control, read-only settings for an editor. Open: the phone drawer was reverted; 320px is met by tabs wrapping | `admin-shell`, `app.routes`, `auth.guard`, `app/auth.py`, `admin_routes.py` | none | 5 guard tests | see "Limitations" |
+| 1 — role-aware access and shell | **verified** — `/admin/me`, session service, `adminGuard`, capability tabs, `/admin/forbidden`, header account/role, View website, AL/EN control, read-only settings for an editor, one navigation that becomes a phone panel | `admin-shell`, `app.routes`, `auth.guard`, `app/auth.py`, `admin_routes.py` | none | 5 guard + 6 shell tests | see "Limitations" |
 | 2 — settings reach customers | **verified** — 13 public keys, AL/EN sentence pairs, server + client validation, `ContactService` wired into shell/footer/contact/request/service/home/product enquiries, preview + refresh note in the panel | `public-settings.service`, `contact.service`, `app.component`, `contact`, `home`, `service-detail`, `products`, `admin-settings`, `admin.service` | none (key/value table) | 213 backend, 211 frontend, build 25 routes | see "Phase 2 — the path a setting takes" |
 | 3 — dashboard and quality queue | pending | `admin-overview`, `admin_routes.py` | none expected | — | — |
 | 4 — product and variant editing | pending | `product-editor`, `product_routes.py` | likely one (price unit, version) | — | price-unit vocabulary |
@@ -104,13 +104,14 @@ cannot reappear later; one language written keeps it as the other's fallback.
 
 ## Limitations recorded rather than hidden
 
-- The admin phone drawer was attempted and reverted (increment 8): at 1440px it stayed visible beside the
-  strip, so the navigation appeared twice. The base `display: none` did not take effect and the cause was
-  never established. The 320px acceptance criterion is met without it by the tabs wrapping; a drawer
-  remains an improvement, not a blocker.
+- The admin phone navigation is one element that the CSS shows as a strip or as a panel behind one
+  button; a spec asserts there is exactly one `.admin-tabs`, that it is displayed at desktop width, and
+  that the button toggles it, closes on Escape and on choosing a tab. This is the failure that was
+  reverted before (a second copy rendered from an `ng-template` stayed visible at 1440px). It was not
+  observed in a real phone browser, and the 320px measurement in this file predates the panel.
 - The admin header's render was not observed settling in a real browser: `/admin/me` answers 200 with
   capabilities, but the probe still showed the loading line. The probe or a stale bundle is the likely
-  cause; the header is covered by the session service and its guard spec, not by a browser observation.
+  cause; the header is covered by the session service and the shell spec, not by a browser observation.
 - `index.html` structured data is static. A changed telephone reaches it only at the next build, so a
   search result can name the old number until then.
 - `mobile-nav.component.ts` is no longer rendered (the header carries the links) and still reads the
@@ -119,6 +120,16 @@ cannot reappear later; one language written keeps it as the other's fallback.
 ## Progress log
 
 Newest first.
+
+- **Phase 1, increment 9 — verified.** The phone navigation is one `<nav class="admin-tabs">`: a strip
+  at desktop width, and below 520px a panel behind a button, opened with the button, closed with Escape
+  (focus returned to the button) or by choosing a tab. No second copy is rendered, which is what went
+  wrong in increment 8. A new shell spec answers `/admin/me` with each role's capabilities and asserts
+  the visible tabs: six for an administrator, five for an editor (no accounts), none for an ordinary
+  account; it also asserts exactly one navigation, that it is displayed at desktop width, and the
+  open/Escape/choose behaviour. Frontend **217 tests**, build **25 routes, exit 0**. Phase 1 acceptance:
+  the three role outcomes are the guard spec, the tabs are the shell spec, and the server still checks
+  every request (existing `test_roles`).
 
 - **Phase 2, increment 6 — verified.** The mapping is now proved in specs, not just by construction:
   the shell test flushes a saved phone/address/hours and asserts the top bar and footer; the contact
@@ -168,6 +179,6 @@ counts and search reports; the phase turns them into a "Needs attention" list wh
 to a matching, filtered worklist, with the current catalogue APIs (`GET /admin/catalogue?gap=…`) rather
 than new ones where they exist. Then phases 4–8 in order.
 
-Before phase 3, close phase 1: prove the four roles in the shell (a spec that answers `/admin/me` with
-each role's capabilities and asserts the visible tabs), and either ship the drawer with a computed-style
-check first or record the wrapping as the accepted phone navigation.
+Phases 0–2 are verified. The open items that are not blockers are listed under "Unresolved" and
+"Limitations"; the owner's decisions there (Cloudinary, stale production build, price rounding,
+delivery wording) are documented rather than guessed.

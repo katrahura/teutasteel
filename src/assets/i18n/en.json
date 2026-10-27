@@ -386,7 +386,8 @@
     "SETTINGS_UNSAVED": "These changes are not saved yet.",
     "SETTINGS_INVALID_EMAIL": "This does not look like an email address.",
     "SETTINGS_INVALID_NUMBER": "Digits, spaces, +, -, ( ) and dots only, with 6 to 15 digits.",
-    "SETTINGS_TOO_LONG": "This is longer than the box allows."
+    "SETTINGS_TOO_LONG": "This is longer than the box allows.",
+    "MENU": "Menu"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",
