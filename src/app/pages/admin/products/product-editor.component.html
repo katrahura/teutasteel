@@ -85,7 +85,27 @@
           <h5 class="mt-4">{{ "MISC.IMAGE_ASSET" | translate }}</h5>
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="editImageFileName" class="form-label">{{
+              <div class="mb-3">
+            <label for="editImageUpload" class="form-label">{{ "MISC.IMAGE_UPLOAD" | translate }}</label>
+            <input
+              id="editImageUpload"
+              type="file"
+              accept="image/*"
+              class="form-control"
+              (click)="ensureMediaConfig()"
+              (change)="onImage($event)"
+              [disabled]="uploading"
+            />
+            <small class="text-muted" *ngIf="uploading">
+              {{ "MISC.IMAGE_UPLOADING" | translate }} {{ uploadProgress }}%
+            </small>
+            <small class="field-error" *ngIf="uploadError">{{ uploadError | translate }}</small>
+            <small class="text-muted" *ngIf="mediaConfig && !mediaConfig.configured">
+              {{ "MISC.IMAGE_UPLOAD_UNSET" | translate }}
+            </small>
+          </div>
+
+          <label for="editImageFileName" class="form-label">{{
                 "MISC.IMAGE_FILE_NAME" | translate
               }}</label>
               <input

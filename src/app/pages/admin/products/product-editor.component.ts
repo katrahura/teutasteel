@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
+import { AdminService, MediaConfig } from '../../../services/admin.service';
+import { CloudinaryService } from '../../../services/cloudinary.service';
 import { ProductService } from '../../../services/product.service';
 import { ImageAsset, Product, ProductDimension, ProductTranslation } from '../../../models/product.model';
 
@@ -41,8 +43,17 @@ interface FieldErrors {
   templateUrl: './product-editor.component.html',
   styleUrls: ['./product-editor.component.css'],
 })
-export class ProductEditorComponent implements OnChanges {
+export class ProductEditorComponent implements OnChanges, OnInit {
   private products = inject(ProductService);
+  private admin = inject(AdminService);
+  private cloudinary = inject(CloudinaryService);
+
+  /** What the browser needs to upload, fetched once; null until it arrives, empty when unset. */
+  mediaConfig: MediaConfig | null = null;
+  private mediaConfigLoaded = false;
+  uploading = false;
+  uploadProgress = 0;
+  uploadError = '';
   private translate = inject(TranslateService);
 
   /** Which product to edit. Changing it reloads; the panel stays where it is. */
@@ -80,6 +91,54 @@ export class ProductEditorComponent implements OnChanges {
    * typing and drop it on the next cycle.
    */
   image: ImageAsset = { file_name: '', alternative_text: '', thumbnail_path: '', original_path: '' };
+
+  ngOnInit(): void {
+    // Nothing is asked for until somebody reaches for the file field: the form must not open a request
+    // just by existing, and a test that only reads the form should not have to answer one.
+  }
+
+  /** Ask once what uploading needs, when the file field is first reached for. */
+  ensureMediaConfig(): void {
+    if (this.mediaConfigLoaded) {
+      return;
+    }
+    this.mediaConfigLoaded = true;
+    this.admin.getMediaConfig().subscribe({
+      next: (config) => { this.mediaConfig = config; },
+      error: () => { this.mediaConfig = null; },
+    });
+  }
+
+  /**
+   * Take a photograph the way the Media page does - from this browser straight to Cloudinary - and
+   * write the address it returns into the three fields the form already has.
+   */
+  onImage(event: Event): void {
+    this.ensureMediaConfig();
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files[0];
+    if (!file || this.uploading || !this.mediaConfig || !this.mediaConfig.configured) {
+      return;
+    }
+    this.uploading = true;
+    this.uploadProgress = 0;
+    this.uploadError = '';
+    this.cloudinary.upload(file, this.mediaConfig, (percent) => { this.uploadProgress = percent; })
+      .then((url) => {
+        this.uploading = false;
+        this.image = {
+          ...this.image,
+          file_name: url.split('/').pop() || '',
+          thumbnail_path: url,
+          original_path: url,
+          alternative_text: this.image.alternative_text || (this.product.code || ''),
+        };
+      })
+      .catch(() => {
+        this.uploading = false;
+        this.uploadError = 'MISC.IMAGE_UPLOAD_FAILED';
+      });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['productId'] && this.productId) {

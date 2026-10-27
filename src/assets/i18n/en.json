@@ -454,7 +454,11 @@
     "PRESS_BRAKE_BENDING": "Press Brake Bending (Sheet)",
     "SERVICE_PRESS_BRAKE_DESC": "Folding sheet and plate on a hydraulic press brake to your angle and drawing. Tell us the thickness and the length.",
     "COMPLEX_FABRICATION": "Complex Fabrication",
-    "SERVICE_COMPLEX_DESC": "Awkward jobs to your own drawing, the ones you cannot buy off a shelf. Send the drawing or a photograph and we will look."
+    "SERVICE_COMPLEX_DESC": "Awkward jobs to your own drawing, the ones you cannot buy off a shelf. Send the drawing or a photograph and we will look.",
+    "IMAGE_UPLOAD": "Upload the photograph",
+    "IMAGE_UPLOADING": "Uploading…",
+    "IMAGE_UPLOAD_FAILED": "The upload failed — try again.",
+    "IMAGE_UPLOAD_UNSET": "Uploading is not connected; type the paths by hand."
   },
   "LOGIN": {
     "LOGIN": "Login",
