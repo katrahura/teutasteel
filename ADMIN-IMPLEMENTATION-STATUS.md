@@ -74,7 +74,7 @@ after it was verified to build and pass; it was not line-by-line reviewed.
 ## Progress log
 
 - **Baseline re-check after phase 2's backend change** — full backend suite re-run, not just the focused
-  file: 199 tests, OK. The public settings route did not disturb the existing behaviour.
+  file: **204 tests, OK**. The public settings route did not disturb the existing behaviour.
 
 - **Phase 2, increment 2** — `PublicSettingsService` (frontend `e41f968`): one cached `GET /settings`,
   `field(key, fallback)` returning the caller's own text when a setting is blank, and an empty object
