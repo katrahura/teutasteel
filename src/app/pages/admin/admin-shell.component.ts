@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AdminMe } from '../../services/admin.service';
 import { AdminSessionService } from '../../services/admin-session.service';
+import { SharedService } from '../../shared.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 /**
@@ -28,7 +29,13 @@ import { TranslateModule } from '@ngx-translate/core';
         <span class="role">{{ me.role }}</span>
       </p>
       <p class="who" *ngIf="!me">{{ 'ADMIN.LOADING' | translate }}</p>
-      <a class="view-site" routerLink="/">{{ 'ADMIN.VIEW_SITE' | translate }}</a>
+      <span class="bar-right">
+        <span class="lang" role="group" [attr.aria-label]="'ADMIN.LANGUAGE' | translate">
+          <button type="button" [class.on]="shared.lang === 'al'" (click)="shared.setLang('al')">AL</button>
+          <button type="button" [class.on]="shared.lang === 'en'" (click)="shared.setLang('en')">EN</button>
+        </span>
+        <a class="view-site" routerLink="/">{{ 'ADMIN.VIEW_SITE' | translate }}</a>
+      </span>
     </header>
 
     <nav class="admin-tabs" [attr.aria-label]="'ADMIN.NAV' | translate">
@@ -149,6 +156,9 @@ export class AdminShellComponent {
    * need ("only an administrator") lives on the page it refuses.
    */
   private session = inject(AdminSessionService);
+
+  /** The same language state the customer pages use: one service, one answer. */
+  shared = inject(SharedService);
 
   /** The signed-in account, as the server described it. Null until the answer arrives. */
   me: AdminMe | null = null;
