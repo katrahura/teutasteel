@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AdminMe } from '../../services/admin.service';
 import { AdminSessionService } from '../../services/admin-session.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core' } from '@ngx-translate/core';
 
 /**
  * The administrator's area: one place, with tabs.
@@ -28,7 +28,13 @@ import { TranslateModule } from '@ngx-translate/core';
         <span class="role">{{ me.role }}</span>
       </p>
       <p class="who" *ngIf="!me">{{ 'ADMIN.LOADING' | translate }}</p>
-      <a class="view-site" routerLink="/">{{ 'ADMIN.VIEW_SITE' | translate }}</a>
+      <span class="bar-right">
+        <span class="lang" role="group" [attr.aria-label]="'ADMIN.LANGUAGE' | translate">
+          <button type="button" [class.on]="lang === 'al'" (click)="setLang('al')">AL</button>
+          <button type="button" [class.on]="lang === 'en'" (click)="setLang('en')">EN</button>
+        </span>
+        <a class="view-site" routerLink="/">{{ 'ADMIN.VIEW_SITE' | translate }}</a>
+      </span>
     </header>
 
     <nav class="admin-tabs" [attr.aria-label]="'ADMIN.NAV' | translate">
@@ -95,6 +101,20 @@ import { TranslateModule } from '@ngx-translate/core';
     padding: 2px 8px;
     color: #475569;
   }
+  .bar-right { display: inline-flex; align-items: center; gap: 14px; }
+  .lang { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; }
+  .lang button {
+    border: none;
+    background: #fff;
+    color: #334155;
+    font-size: 12.5px;
+    font-weight: 800;
+    padding: 0 12px;
+    min-height: 44px;
+    cursor: pointer;
+  }
+  .lang button.on { background: #f59e0b; color: #0f172a; }
+  .lang button:focus-visible { outline: 2px solid #0f172a; outline-offset: -2px; }
   .admin-bar .view-site {
     font-size: 13px;
     font-weight: 700;
@@ -149,6 +169,26 @@ export class AdminShellComponent {
    * need ("only an administrator") lives on the page it refuses.
    */
   private session = inject(AdminSessionService);
+  private translate = inject(TranslateService);
+
+  /**
+   * The same two languages the customer pages offer, switched in the panel.
+   *
+   * It sets the language in one place - the translation service - and lets the rest of the application
+   * follow, rather than writing a copy of the key into localStorage and hoping the other reader agrees.
+   */
+  setLang(lang: string): void {
+    this.translate.use(lang);
+    try {
+      localStorage.setItem('lang', lang);
+    } catch {
+      // A browser that refuses storage still gets the language for this visit.
+    }
+  }
+
+  get lang(): string {
+    return this.translate.currentLang || 'al';
+  }
 
   /** The signed-in account, as the server described it. Null until the answer arrives. */
   me: AdminMe | null = null;

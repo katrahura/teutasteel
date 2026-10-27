@@ -373,7 +373,8 @@
     "SETTINGS_SAVED": "Saved.",
     "SETTINGS_SAVE": "Save",
     "VIEW_SITE": "View website",
-    "SETTINGS_READ_ONLY": "Read only for you; only an administrator changes these."
+    "SETTINGS_READ_ONLY": "Read only for you; only an administrator changes these.",
+    "LANGUAGE": "Language"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",
