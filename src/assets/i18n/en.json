@@ -373,7 +373,11 @@
     "SETTINGS_SAVED": "Saved.",
     "SETTINGS_SAVE": "Save",
     "VIEW_SITE": "View website",
-    "SETTINGS_READ_ONLY": "Read only for you; only an administrator changes these."
+    "SETTINGS_READ_ONLY": "Read only for you; only an administrator changes these.",
+    "FORBIDDEN_TITLE": "You do not have permission for this page",
+    "FORBIDDEN_BODY": "You are signed in, but this part of the panel belongs to the administrator. What you need here is theirs to give.",
+    "FORBIDDEN_HOME": "Back to the website",
+    "FORBIDDEN_LOGIN": "Sign in with another account"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

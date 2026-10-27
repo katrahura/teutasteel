@@ -446,7 +446,11 @@
     "SETTINGS_SAVED": "U ruajt.",
     "SETTINGS_SAVE": "Ruaj",
     "VIEW_SITE": "Shiko faqen",
-    "SETTINGS_READ_ONLY": "I lexoni vetëm; ndryshimi është i administratorit."
+    "SETTINGS_READ_ONLY": "I lexoni vetëm; ndryshimi është i administratorit.",
+    "FORBIDDEN_TITLE": "Nuk keni të drejtë për këtë faqe",
+    "FORBIDDEN_BODY": "Jeni i kyçur, po ky seksion i panelit është për administratorin. Çka ju nevojitet i takon atij.",
+    "FORBIDDEN_HOME": "Kthehu te faqja",
+    "FORBIDDEN_LOGIN": "Kyçu me llogari tjetër"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
