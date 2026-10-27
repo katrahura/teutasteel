@@ -38,49 +38,38 @@ import { TranslateModule } from '@ngx-translate/core';
       </span>
     </header>
 
-    <!-- One source for the navigation, rendered twice: a strip on a desk and a drawer on a phone.
-         Two copies of six links is how a phone loses the tab somebody added to the desk. -->
-    <ng-template #adminTabs>
-      <nav class="admin-tabs" [attr.aria-label]="'ADMIN.NAV' | translate">
-          <ng-container *ngIf="can('products.read')">
-          <a routerLink="/admin/overview" routerLinkActive="active">
-            {{ 'ADMIN.NAV_OVERVIEW' | translate }}
-          </a>
-          </ng-container>
-          <ng-container *ngIf="can('products.read')">
-          <a routerLink="/admin/products" routerLinkActive="active">
-            {{ 'ADMIN.NAV_PRODUCTS' | translate }}
-          </a>
-          </ng-container>
-          <ng-container *ngIf="can('users.manage')">
-          <a routerLink="/admin/users" routerLinkActive="active">
-            {{ 'ADMIN.NAV_USERS' | translate }}
-          </a>
-          </ng-container>
-          <ng-container *ngIf="can('categories.read')">
-          <a routerLink="/admin/categories" routerLinkActive="active">
-            {{ 'ADMIN.NAV_CATEGORIES' | translate }}
-          </a>
-          </ng-container>
-          <ng-container *ngIf="can('media.upload')">
-          <a routerLink="/admin/media" routerLinkActive="active">
-            {{ 'ADMIN.NAV_MEDIA' | translate }}
-          </a>
-          </ng-container>
-          <ng-container *ngIf="can('settings.read')">
-          <a routerLink="/admin/settings" routerLinkActive="active">
-            {{ 'ADMIN.NAV_SETTINGS' | translate }}
-          </a>
-          </ng-container>
-        </nav>
-    </ng-template>
-
-    <ng-container *ngTemplateOutlet="adminTabs"></ng-container>
-
-    <details class="admin-drawer">
-      <summary>{{ 'ADMIN.NAV' | translate }}</summary>
-      <ng-container *ngTemplateOutlet="adminTabs"></ng-container>
-    </details>
+    <nav class="admin-tabs" [attr.aria-label]="'ADMIN.NAV' | translate">
+        <ng-container *ngIf="can('products.read')">
+        <a routerLink="/admin/overview" routerLinkActive="active">
+          {{ 'ADMIN.NAV_OVERVIEW' | translate }}
+        </a>
+        </ng-container>
+        <ng-container *ngIf="can('products.read')">
+        <a routerLink="/admin/products" routerLinkActive="active">
+          {{ 'ADMIN.NAV_PRODUCTS' | translate }}
+        </a>
+        </ng-container>
+        <ng-container *ngIf="can('users.manage')">
+        <a routerLink="/admin/users" routerLinkActive="active">
+          {{ 'ADMIN.NAV_USERS' | translate }}
+        </a>
+        </ng-container>
+        <ng-container *ngIf="can('categories.read')">
+        <a routerLink="/admin/categories" routerLinkActive="active">
+          {{ 'ADMIN.NAV_CATEGORIES' | translate }}
+        </a>
+        </ng-container>
+        <ng-container *ngIf="can('media.upload')">
+        <a routerLink="/admin/media" routerLinkActive="active">
+          {{ 'ADMIN.NAV_MEDIA' | translate }}
+        </a>
+        </ng-container>
+        <ng-container *ngIf="can('settings.read')">
+        <a routerLink="/admin/settings" routerLinkActive="active">
+          {{ 'ADMIN.NAV_SETTINGS' | translate }}
+        </a>
+        </ng-container>
+      </nav>
     </div>
     <router-outlet></router-outlet>
   `,
