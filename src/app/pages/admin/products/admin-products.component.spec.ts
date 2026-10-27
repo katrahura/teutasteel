@@ -134,6 +134,24 @@ describe('AdminProductsComponent', () => {
     request.flush(page([]));
   });
 
+  it('applies the quality check the dashboard sent it, and names it on the page', () => {
+    // The dashboard's queue links here with the check in the address: the same products, and the
+    // filter stays through paging and through returning from an editor.
+    create({ gap: 'no_photo' });
+    fixture.detectChanges();
+    httpMock.expectOne((req) => req.url.startsWith(treeUrl)).flush([]);
+
+    const request = httpMock.expectOne((req) => req.url === catalogueUrl);
+    expect(request.request.params.get('gap')).toBe('no_photo');
+    request.flush(page([]));
+    fixture.detectChanges();
+
+    expect(component.gapLabelKey()).toBe('ADMIN.PRICED_WITHOUT_PHOTO');
+    const chip = (fixture.nativeElement as HTMLElement).querySelector('.gap-filter');
+    expect(chip).toBeTruthy();
+    expect(chip!.textContent).toContain('ADMIN.QUALITY_FILTER');
+  });
+
   it('keeps the filters when moving to another page', () => {
     create();
     fixture.detectChanges();

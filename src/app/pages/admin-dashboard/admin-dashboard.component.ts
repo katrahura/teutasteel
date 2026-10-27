@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription, forkJoin } from 'rxjs';
 import {
+  ActivityRecord,
   AdminService,
   CatalogueSummary,
   GapProduct,
@@ -39,6 +40,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   summary: CatalogueSummary | null = null;
   report: SearchReport | null = null;
+  /** The last few changes, for the compact list here; the full history stays on the products page. */
+  activity: ActivityRecord[] = [];
   loading = true;
   /** Signed in without the right, or not signed in at all. */
   denied = false;
@@ -98,6 +101,43 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     if (gap) {
       this.openGap(gap, Number(asked.get('page')) || 1);
     }
+
+    // Compact on this page, full history on the products page: the dashboard says what changed
+    // lately, not everything that ever did.
+    this.subscriptions.add(
+      this.admin.getActivity().subscribe({
+        next: (body) => { this.activity = (body.activity || []).slice(0, 6); },
+        error: () => { this.activity = []; },
+      })
+    );
+  }
+
+  /**
+   * The quality checks worth showing, with the figure behind each.
+   *
+   * Only the ones that are not zero: a queue that lists seven things and then says "0" beside five of
+   * them is a report, not a call to work. Each is the server's own definition, the same one the
+   * worklist and the table filter use.
+   */
+  get attention(): { gap: string; label: string; count: number }[] {
+    const products = this.summary && this.summary.products;
+    if (!products) {
+      return [];
+    }
+    return [
+      { gap: 'hidden_by_category', label: 'ADMIN.HIDDEN_BY_CATEGORY',
+        count: products.hidden_by_category || 0 },
+      { gap: 'no_photo', label: 'ADMIN.PRICED_WITHOUT_PHOTO',
+        count: products.priced_without_photo || 0 },
+      { gap: 'no_thickness', label: 'ADMIN.PRICED_WITHOUT_THICKNESS',
+        count: products.priced_without_thickness || 0 },
+      { gap: 'no_size', label: 'ADMIN.PRICED_WITHOUT_SIZE',
+        count: products.priced_without_size || 0 },
+      { gap: 'no_details', label: 'ADMIN.NO_DETAILS', count: products.no_details || 0 },
+      { gap: 'missing_language', label: 'ADMIN.MISSING_LANGUAGE',
+        count: products.missing_language || 0 },
+      { gap: 'bad_price', label: 'ADMIN.BAD_PRICE', count: products.bad_price || 0 },
+    ].filter((item) => item.count > 0);
   }
 
   /**
@@ -304,6 +344,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
     if (this.gap === 'no_details') {
       return 'ADMIN.NO_DETAILS';
+    }
+    if (this.gap === 'hidden_by_category') {
+      return 'ADMIN.HIDDEN_BY_CATEGORY';
+    }
+    if (this.gap === 'missing_language') {
+      return 'ADMIN.MISSING_LANGUAGE';
+    }
+    if (this.gap === 'bad_price') {
+      return 'ADMIN.BAD_PRICE';
     }
     return '';
   }

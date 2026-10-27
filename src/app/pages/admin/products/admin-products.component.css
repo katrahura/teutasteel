@@ -10,6 +10,12 @@
 .notice.failed { background: #fee2e2; border: 1px solid #fca5a5; display: flex; gap: 12px; align-items: center; }
 
 .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0 6px; }
+/* The quality check the dashboard opened, on its own line above the other filters. */
+.gap-filter {
+  flex: 1 1 100%; margin: 0; padding: 8px 12px; border-radius: 8px;
+  background: #fffbeb; border: 1px solid #fcd34d; font-size: 13.5px; color: #78350f;
+}
+.gap-filter .link { margin-left: 8px; }
 .field { margin: 0; }
 .field input, .field select {
   padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #fff;

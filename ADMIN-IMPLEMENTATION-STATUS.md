@@ -30,7 +30,7 @@ whole backend suite must pass before a backend commit. A test count read after t
 | 0 — reconcile and baseline | **verified** | this file | none | 195 backend / 24 routes / trees clean | see "Unresolved" |
 | 1 — role-aware access and shell | **verified** — `/admin/me`, session service, `adminGuard`, capability tabs, `/admin/forbidden`, header account/role, View website, AL/EN control, read-only settings for an editor, one navigation that becomes a phone panel | `admin-shell`, `app.routes`, `auth.guard`, `app/auth.py`, `admin_routes.py` | none | 5 guard + 6 shell tests | see "Limitations" |
 | 2 — settings reach customers | **verified** — 13 public keys, AL/EN sentence pairs, server + client validation, `ContactService` wired into shell/footer/contact/request/service/home/product enquiries, preview + refresh note in the panel | `public-settings.service`, `contact.service`, `app.component`, `contact`, `home`, `service-detail`, `products`, `admin-settings`, `admin.service` | none (key/value table) | 213 backend, 211 frontend, build 25 routes | see "Phase 2 — the path a setting takes" |
-| 3 — dashboard and quality queue | pending | `admin-overview`, `admin_routes.py` | none expected | — | — |
+| 3 — dashboard and quality queue | **verified** — "Needs attention" queue first (seven checks, each linking to the worklist and to the filtered table), reachable-vs-active counted separately, missing-language and negative-price checks, gap filter on `/admin/products` kept in the URL, compact recent changes with a link to the full history | `admin-dashboard`, `admin-products`, `admin.service`, `admin_routes.py` | none | 220 frontend, 221 backend, build 25 routes | see "Phase 3 — what each count means" |
 | 4 — product and variant editing | pending | `product-editor`, `product_routes.py` | likely one (price unit, version) | — | price-unit vocabulary |
 | 5 — category and image management | pending | `admin-categories`, `admin-media`, `category_routes.py` | none expected | — | category depth policy |
 | 6 — bulk prices, imports, history | pending | `admin-products`, `product_routes.py`, `admin_routes.py` | possible | — | preview/apply staleness token |
@@ -90,6 +90,28 @@ control characters stripped, empty always allowed. Client validation mirrors it 
 beside the box. When both languages are written for a sentence the old single value is cleared, so it
 cannot reappear later; one language written keeps it as the other's fallback.
 
+## Phase 3 — what each count means
+
+Every figure has one definition, in `_gap_condition()` / the summary, and the table's `?gap=` uses the
+same function as the worklist. The tests assert the figure equals the list.
+
+| Check | Means | Does not mean |
+|---|---|---|
+| `hidden_by_category` | Active, and some category above it (or its own) is off | Not "the product is switched off" — that one is not work |
+| `no_photo` | Priced, and no image row carrying a path | Not "no visual": a drawn section is intentional, so the label says *photograph* |
+| `no_thickness` | Priced, and no thickness > 0 anywhere (0 is "not filled in") | Not "unpriced" |
+| `no_size` | Priced, and a row with no height/width/length/thickness | — |
+| `no_details` | No dimension rows at all | — |
+| `missing_language` | No Albanian or no English translation | Not "the text is poor" |
+| `bad_price` | A dimension with a negative price | **Not zero**: zero is an item sold by enquiry |
+| `off_category` (legacy) | Any product whose direct category is off | Kept for pages built against it; the queue uses `hidden_by_category` |
+
+`publicly_reachable` is active products whose whole category chain is on. A product that is off is
+neither reachable nor "hidden by its category", so the two figures do not double-count it.
+
+Price units are **not** checked yet: the field does not exist until phase 4. A check invented before
+the data would be a guess.
+
 ## Unresolved (need the owner)
 
 - Cloudinary *Strict Transformations* is enabled in the account but **not enforced**: a never-requested
@@ -120,6 +142,20 @@ cannot reappear later; one language written keeps it as the other's fallback.
 ## Progress log
 
 Newest first.
+
+- **Phase 3 — verified.** The dashboard leads with "Needs attention": seven checks, only the non-zero
+  ones, each row opening the existing worklist (export, paging, empty state kept) and offering the same
+  check on `/admin/products?gap=…`, where the record is edited. The table reads `gap` from the address,
+  shows it, keeps it through paging and a save, and clears it with the other filters. Catalogue totals
+  now distinguish switched-on (2,300-type figure) from reachable through every enabled ancestor, and
+  `category_active` on a row walks the whole chain rather than the direct parent. New checks:
+  missing language, negative price. `no_photo` now requires an image row with a path, so an empty-path
+  row is not a photograph; the label and the help text say photograph rather than visual, so a drawn
+  profile is not called broken. Recent changes are six lines with a link to the full history
+  (`/admin/products?activity=1` opens it). Backend tests assert each figure equals its worklist and
+  that the table returns the same rows. Frontend **220 tests**, build **25 routes, exit 0**.
+  Deliberately not done: a price-unit check (no field yet, phase 4) and sortable columns (the table is
+  ordered by code, so there is no sort to preserve).
 
 - **Phase 1, increment 9 — verified.** The phone navigation is one `<nav class="admin-tabs">`: a strip
   at desktop width, and below 520px a panel behind a button, opened with the button, closed with Escape
@@ -174,11 +210,12 @@ Newest first.
 
 ## Next (read this first)
 
-**Phase 3 — a focused dashboard and actionable quality queue.** The panel's dashboard already has gap
-counts and search reports; the phase turns them into a "Needs attention" list whose every count links
-to a matching, filtered worklist, with the current catalogue APIs (`GET /admin/catalogue?gap=…`) rather
-than new ones where they exist. Then phases 4–8 in order.
+**Phase 4 — faster, safer product and variant editing.** Read the shared editor
+(`product-editor.component`) and the product/variant routes first. The largest open questions are the
+price-unit vocabulary (a typed field end to end, unknown stays unknown) and optimistic concurrency
+(a version or update token checked in the transaction, with a conflict that offers reload rather
+than overwriting). Then phases 5–8 in order.
 
-Phases 0–2 are verified. The open items that are not blockers are listed under "Unresolved" and
+Phases 0–3 are verified. The open items that are not blockers are listed under "Unresolved" and
 "Limitations"; the owner's decisions there (Cloudinary, stale production build, price rounding,
 delivery wording) are documented rather than guessed.

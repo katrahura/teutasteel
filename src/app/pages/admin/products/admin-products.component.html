@@ -18,6 +18,12 @@
   </div>
 
   <form class="filters" (ngSubmit)="load(1)" *ngIf="!denied">
+    <!-- The quality check the dashboard sent us here for. It goes in the address, so returning from
+         an editor keeps both the issue and the page. -->
+    <p class="gap-filter" *ngIf="gapLabelKey() as label">
+      {{ 'ADMIN.QUALITY_FILTER' | translate }}: <strong>{{ label | translate }}</strong>
+      <button type="button" class="link" (click)="gap = null; load(1)">{{ 'ADMIN.CLEAR_FILTERS' | translate }}</button>
+    </p>
     <label class="field search">
       <span class="visually-hidden">{{ 'ADMIN.SEARCH_PLACEHOLDER' | translate }}</span>
       <input type="search" name="q" [(ngModel)]="q" (ngModelChange)="onSearch()"
@@ -126,9 +132,10 @@
   </section>
 
   <!-- What changed, and who changed it. Read when opened: a history nobody asked for should not cost
-       a request on every visit. -->
-  <section class="import-panel" *ngIf="!denied">
-    <details (toggle)="loadActivity()">
+       a request on every visit. `?activity=1` opens it, which is how the dashboard's compact list
+       leads to the full one without moving the history into the product workflow. -->
+  <section class="import-panel" id="activity" *ngIf="!denied">
+    <details (toggle)="loadActivity()" [open]="activityOpen">
       <summary>{{ 'ADMIN.ACTIVITY_TITLE' | translate }}</summary>
       <table class="table table-sm align-middle mt-2">
         <thead>

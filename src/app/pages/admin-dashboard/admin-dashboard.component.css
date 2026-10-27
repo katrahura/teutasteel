@@ -161,3 +161,109 @@ h2 {
   padding: 6px 12px;
   border-radius: 5px;
 }
+
+/* The queue at the top of the page: what needs doing, in the order it costs the shop. */
+.attention-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.attention-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1px solid var(--line, #e5e7eb);
+  border-left: 3px solid var(--accent, #f59e0b);
+  border-radius: 8px;
+  padding: 4px 12px 4px 4px;
+}
+
+.attention-row {
+  flex: 1 1 320px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.attention-row:hover { background: #fef3c7; }
+.attention-row.active { box-shadow: inset 0 0 0 2px rgba(245, 158, 11, .35); }
+.attention-row:focus-visible, .table-link:focus-visible, .more:focus-visible {
+  outline: 3px solid var(--accent, #f59e0b);
+  outline-offset: 2px;
+}
+
+.attention-row .n {
+  min-width: 46px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+  text-align: right;
+}
+
+.attention-row .l { flex: 1 1 auto; font-size: 14px; color: #374151; }
+.attention-row .go { font-size: 12px; font-weight: 700; color: var(--accent-dark, #b45309); white-space: nowrap; }
+
+/* The same check on the table, where the record is actually edited. */
+.table-link {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0a58ca;
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.table-link:hover { text-decoration: underline; }
+
+.all-clear {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  font-size: 14px;
+}
+
+/* Recent changes: one line each, not a log to read. */
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.more { font-size: 13px; font-weight: 700; color: #0a58ca; text-decoration: none; }
+.more:hover { text-decoration: underline; }
+
+.activity-list { list-style: none; margin: 0; padding: 0; }
+.activity-list li {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line, #e5e7eb);
+  font-size: 13px;
+}
+.activity-list .when { color: #6b7280; min-width: 130px; }
+.activity-list .who { font-weight: 700; color: #111827; }
+.activity-list .what { flex: 1 1 240px; color: #374151; }
+.activity-list .subject { color: #6b7280; }
+
+/* 320px: the count and the label stay on one line, the two actions wrap under them. */
+@media (max-width: 520px) {
+  .attention-list li { padding: 8px; }
+  .attention-row { flex: 1 1 100%; }
+  .attention-row .go { display: none; }
+  .table-link { margin-left: 58px; }
+  .activity-list .when { min-width: 0; width: 100%; }
+}

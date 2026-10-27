@@ -29,6 +29,14 @@ export interface CatalogueSummary {
   products: {
     total: number;
     active: number;
+    /** Active with every category above it on: what the public catalogue can actually show. */
+    publicly_reachable: number;
+    /** Active and invisible because a category above it is switched off. */
+    hidden_by_category: number;
+    /** Products missing an Albanian or an English translation. */
+    missing_language: number;
+    /** A negative price: malformed, unlike zero, which is how an enquiry-only item is written. */
+    bad_price: number;
     in_off_categories: number;
     priced_without_photo: number;
     priced_without_size: number;
@@ -214,6 +222,8 @@ export interface CatalogueQuery {
   active?: 'all' | '1' | '0';
   /** Products a switched-off category hides: on themselves, invisible all the same. */
   hidden?: boolean;
+  /** One of the dashboard's quality checks, applied by the same definition the worklist uses. */
+  gap?: string | null;
   page?: number;
   perPage?: number;
 }
@@ -290,6 +300,9 @@ export class AdminService {
     }
     if (query.hidden) {
       params = params.set('hidden', '1');
+    }
+    if (query.gap) {
+      params = params.set('gap', query.gap);
     }
     return this.http.get<CataloguePage>(`${this.baseUrl}/admin/catalogue`, {
       headers: this.authHeaders(),

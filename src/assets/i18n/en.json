@@ -387,7 +387,18 @@
     "SETTINGS_INVALID_EMAIL": "This does not look like an email address.",
     "SETTINGS_INVALID_NUMBER": "Digits, spaces, +, -, ( ) and dots only, with 6 to 15 digits.",
     "SETTINGS_TOO_LONG": "This is longer than the box allows.",
-    "MENU": "Menu"
+    "MENU": "Menu",
+    "ATTENTION_TITLE": "Needs attention",
+    "ATTENTION_HINT": "What the panel can act on, largest first. Each count opens the products behind it, or the catalogue table filtered to them.",
+    "ATTENTION_EMPTY": "Nothing needs attention: every check is clean.",
+    "OPEN_IN_TABLE": "In the products table",
+    "GAP_EMPTY": "Nothing here — this check is clean.",
+    "PRODUCTS_REACHABLE": "Reachable by a customer",
+    "HIDDEN_BY_CATEGORY": "On, but under a switched-off category",
+    "MISSING_LANGUAGE": "Missing an Albanian or English text",
+    "BAD_PRICE": "A negative price",
+    "ACTIVITY_ALL": "All changes",
+    "QUALITY_FILTER": "Quality check"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

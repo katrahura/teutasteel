@@ -67,6 +67,8 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   importHistory: ImportRecord[] = [];
   activity: ActivityRecord[] = [];
   activityLoaded = false;
+  /** Opened from the dashboard's compact "recent changes" link. */
+  activityOpen = false;
 
   /** The rows ticked for a bulk change. Cleared on every load: a selection is for one page's work. */
   selectedIds = new Set<number>();
@@ -82,6 +84,8 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   q = '';
   category: number | null = null;
   active: 'all' | '1' | '0' | 'hidden' = 'all';
+  /** A dashboard quality check, applied by the API's own definition of it. */
+  gap: string | null = null;
   groups: TopCategory[] = [];
 
   ngOnInit(): void {
@@ -98,6 +102,11 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     this.q = asked.get('q') || '';
     this.active = (asked.get('active') as 'all' | '1' | '0' | 'hidden') || 'all';
     this.category = Number(asked.get('category')) || null;
+    this.gap = asked.get('gap');
+    this.activityOpen = asked.get('activity') === '1';
+    if (this.activityOpen) {
+      this.loadActivity();
+    }
     this.load(Number(asked.get('page')) || 1);
   }
 
@@ -114,7 +123,8 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     // which is a different question from whether the product itself is switched on.
     const hidden = this.active === 'hidden';
     const active = this.active === 'hidden' ? 'all' : this.active;
-    return { q: this.q, category: this.category, active, hidden, page, perPage: this.perPage };
+    return { q: this.q, category: this.category, active, hidden, gap: this.gap,
+             page, perPage: this.perPage };
   }
 
   private remember(): void {
@@ -125,6 +135,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     if (this.q.trim()) { queryParams['q'] = this.q.trim(); }
     if (this.category) { queryParams['category'] = this.category; }
     if (this.active !== 'all') { queryParams['active'] = this.active; }
+    if (this.gap) { queryParams['gap'] = this.gap; }
     if (this.page > 1) { queryParams['page'] = this.page; }
     this.router.navigate([], { queryParams, replaceUrl: true });
   }
@@ -169,7 +180,23 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     this.q = '';
     this.category = null;
     this.active = 'all';
+    this.gap = null;
     this.load(1);
+  }
+
+  /** The heading of the quality filter the dashboard sent us to, or '' when none is applied. */
+  gapLabelKey(): string {
+    const keys: Record<string, string> = {
+      no_photo: 'ADMIN.PRICED_WITHOUT_PHOTO',
+      no_size: 'ADMIN.PRICED_WITHOUT_SIZE',
+      no_thickness: 'ADMIN.PRICED_WITHOUT_THICKNESS',
+      off_category: 'ADMIN.IN_OFF_CATEGORIES',
+      hidden_by_category: 'ADMIN.HIDDEN_BY_CATEGORY',
+      no_details: 'ADMIN.NO_DETAILS',
+      missing_language: 'ADMIN.MISSING_LANGUAGE',
+      bad_price: 'ADMIN.BAD_PRICE',
+    };
+    return this.gap ? (keys[this.gap] || '') : '';
   }
 
   goTo(page: number): void {

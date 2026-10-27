@@ -12,14 +12,20 @@ describe('AdminDashboardComponent', () => {
 
   const summaryUrl = `${environment.apiUrl}/admin/summary`;
   const searchesUrl = `${environment.apiUrl}/admin/searches?limit=100`;
+  const activityUrl = `${environment.apiUrl}/admin/activity`;
 
   const summary = {
     products: {
       total: 2368,
       active: 2300,
+      publicly_reachable: 2100,
+      hidden_by_category: 1133,
+      missing_language: 12,
+      bad_price: 2,
       in_off_categories: 1133,
       priced_without_photo: 429,
       priced_without_size: 55,
+      priced_without_thickness: 256,
       no_details: 49,
     },
     categories: {
@@ -43,6 +49,13 @@ describe('AdminDashboardComponent', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
+    // The compact "recent changes" list.
+    httpMock.expectOne(activityUrl).flush({
+      activity: [
+        { id: 1, created_at: '2026-10-27T10:00:00', username: 'ana',
+          action: 'product.update', subject: 'IPE-100', detail: '' },
+      ],
+    });
   });
 
   it('should create', () => {
@@ -56,10 +69,15 @@ describe('AdminDashboardComponent', () => {
     fixture.detectChanges();
 
     const text = (fixture.nativeElement as HTMLElement).textContent || '';
-    expect(text).toContain('2368');
-    expect(text).toContain('429');   // priced, no photograph
-    expect(text).toContain('1133');  // under a category that is switched off
-    expect(text).toContain('49');    // nothing on the row at all
+    expect(text).toContain('2368');   // total
+    expect(text).toContain('2300');   // switched on
+    expect(text).toContain('2100');   // switched on and reachable through every category above it
+    expect(text).toContain('429');    // priced, no photograph
+    expect(text).toContain('1133');   // on, but under a category that is switched off
+    expect(text).toContain('49');     // nothing on the row at all
+    expect(text).toContain('256');    // priced, no thickness
+    expect(text).toContain('12');     // missing a language
+    expect(text).toContain('2');      // a negative price
     expect(text).toContain('Old stock');
     // A blank tile on the shop's own front page, named rather than counted alone - and the name is
     // a way into that category's editor, which is where its image is set.
@@ -191,16 +209,16 @@ describe('AdminDashboardComponent', () => {
     httpMock.expectOne(searchesUrl).flush({ empty: 0, total: 0, searches: [] });
     fixture.detectChanges();
 
-    const figures = Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll('button.stat')
+    const rows = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('button.attention-row')
     ) as HTMLButtonElement[];
-    expect(figures.length).toBe(5);
+    expect(rows.length).toBeGreaterThan(0);
 
-    const photoFigure = figures.find((figure) =>
-      (figure.textContent || '').includes('ADMIN.PRICED_WITHOUT_PHOTO')
+    const photoRow = rows.find((row) =>
+      (row.textContent || '').includes('ADMIN.PRICED_WITHOUT_PHOTO')
     ) as HTMLButtonElement;
-    expect(photoFigure).toBeTruthy();
-    photoFigure.click();
+    expect(photoRow).toBeTruthy();
+    photoRow.click();
 
     const gap = httpMock.expectOne((req) =>
       req.url.startsWith(`${environment.apiUrl}/admin/products?gap=no_photo`)
@@ -226,6 +244,37 @@ describe('AdminDashboardComponent', () => {
     expect(link.getAttribute('href')).toContain('edit=11');
     expect(link.getAttribute('href')).toContain('category=3');
     expect(link.getAttribute('target')).toBe('_blank');
+  });
+
+  it('links each issue into the catalogue table with the filter in the address', () => {
+    // The same check on the table, where the record is edited: the owner must not have to find the
+    // product again by hand after reading the figure.
+    httpMock.expectOne(summaryUrl).flush(summary);
+    httpMock.expectOne(searchesUrl).flush({ empty: 0, total: 0, searches: [] });
+    fixture.detectChanges();
+
+    const links = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('a.table-link')
+    ) as HTMLAnchorElement[];
+    const photo = links.find((link) =>
+      (link.getAttribute('href') || '').includes('gap=no_photo')
+    );
+    expect(photo).toBeTruthy();
+    expect(photo!.getAttribute('href')).toContain('/admin/products');
+  });
+
+  it('shows the latest changes briefly, and says where the full history is', () => {
+    httpMock.expectOne(summaryUrl).flush(summary);
+    httpMock.expectOne(searchesUrl).flush({ empty: 0, total: 0, searches: [] });
+    fixture.detectChanges();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent || '';
+    expect(text).toContain('product.update');
+    expect(text).toContain('IPE-100');
+
+    const more = (fixture.nativeElement as HTMLElement).querySelector('a.more') as HTMLAnchorElement;
+    expect(more).toBeTruthy();
+    expect(more.getAttribute('href')).toContain('activity=1');
   });
 
   it('can narrow the searches to the ones that found nothing', () => {

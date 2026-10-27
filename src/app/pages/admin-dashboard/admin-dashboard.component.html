@@ -14,8 +14,84 @@
       <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
     </div>
 
-    <!-- How much of the catalogue a customer can actually reach, and what is missing from it. -->
-    <section *ngIf="summary" class="mt-4">
+    <!-- What needs doing, first. Each row is the server's own count and opens the list behind it;
+         the second link puts the same check on the catalogue table, where the record is edited. -->
+    <section class="attention" *ngIf="summary">
+      <h2 class="h5">{{ 'ADMIN.ATTENTION_TITLE' | translate }}</h2>
+      <p class="text-muted small mb-2">{{ 'ADMIN.ATTENTION_HINT' | translate }}</p>
+
+      <p class="all-clear" *ngIf="!attention.length">{{ 'ADMIN.ATTENTION_EMPTY' | translate }}</p>
+
+      <ul class="attention-list" *ngIf="attention.length">
+        <li *ngFor="let item of attention">
+          <button type="button" class="attention-row" [class.active]="gap === item.gap"
+                  (click)="openGap(item.gap)">
+            <span class="n">{{ item.count }}</span>
+            <span class="l">{{ item.label | translate }}</span>
+            <span class="go">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
+          </button>
+          <!-- The same issue, on the table, with its filter in the address. -->
+          <a class="table-link" [routerLink]="['/admin/products']" [queryParams]="{ gap: item.gap }">
+            {{ 'ADMIN.OPEN_IN_TABLE' | translate }} <span aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- The worklist behind whichever row was pressed. It keeps the export, the paging and the
+           clear empty state the dashboard already had. -->
+      <div class="gap-list mt-3" *ngIf="gap">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <strong class="small">{{ gapLabelKey() | translate }}</strong>
+          <span class="text-muted small">
+            {{ gapProducts.length ? ((gapPage - 1) * 20 + 1) : 0 }}–{{ (gapPage - 1) * 20 + gapProducts.length }}
+            / {{ gapTotal }}
+          </span>
+          <button type="button" class="btn btn-sm btn-outline-secondary ms-auto"
+                  [disabled]="exporting || !gapTotal" (click)="downloadOpenGap()">
+            {{ 'ADMIN.DOWNLOAD_CSV' | translate }}
+          </button>
+          <button type="button" class="btn-close" [attr.aria-label]="'ADMIN.CLOSE' | translate"
+                  (click)="closeGap()"></button>
+        </div>
+
+        <div class="text-muted small" *ngIf="gapLoading">
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        </div>
+
+        <p class="text-muted small" *ngIf="!gapLoading && !gapProducts.length">
+          {{ 'ADMIN.GAP_EMPTY' | translate }}
+        </p>
+
+        <ul class="gap-items" *ngIf="!gapLoading && gapProducts.length">
+          <li *ngFor="let product of gapProducts">
+            <!-- The list says which products; this is the way to one, straight into its editor.
+                 A new tab, so the list stays open where it was left. -->
+            <a class="code" [routerLink]="['/products']"
+               [queryParams]="{ edit: product.id, category: product.category_id }"
+               target="_blank" rel="noopener"
+               [title]="'ADMIN.OPEN_PRODUCT' | translate">{{ product.code }}</a>
+            <span class="cat text-muted">
+              <span *ngIf="product.group">{{ product.group }} &rsaquo; </span>{{ product.category }}
+            </span>
+          </li>
+        </ul>
+
+        <div class="d-flex gap-2 mt-2" *ngIf="gapPages > 1">
+          <button type="button" class="btn btn-sm btn-outline-secondary"
+                  [disabled]="gapPage <= 1" (click)="openGap(gap, gapPage - 1)">
+            {{ 'ADMIN.PREVIOUS' | translate }}
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary"
+                  [disabled]="gapPage >= gapPages" (click)="openGap(gap, gapPage + 1)">
+            {{ 'ADMIN.NEXT' | translate }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- How much of the catalogue a customer can actually reach. The figures that mean work to do
+         live in the queue above; these are the totals that give them a denominator. -->
+    <section *ngIf="summary" class="mt-5">
       <h2 class="h5">{{ 'ADMIN.CATALOGUE_TITLE' | translate }}</h2>
       <p class="text-muted small mb-3">{{ 'ADMIN.CATALOGUE_HINT' | translate }}</p>
 
@@ -28,65 +104,31 @@
           <span class="n">{{ summary.products.active }}</span>
           <span class="l">{{ 'ADMIN.PRODUCTS_ACTIVE' | translate }}</span>
         </div>
-        <!-- The three that mean work to do are buttons: a figure says how many, and the owner needs
-             to know which. -->
-        <button type="button" class="stat warn" [class.active]="gap === 'off_category'"
-                (click)="openGap('off_category')">
-          <span class="n">{{ summary.products.in_off_categories }}</span>
-          <span class="l">{{ 'ADMIN.IN_OFF_CATEGORIES' | translate }}</span>
-          <span class="hint">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
-        </button>
-        <button type="button" class="stat warn" [class.active]="gap === 'no_photo'"
-                (click)="openGap('no_photo')">
-          <span class="n">{{ summary.products.priced_without_photo }}</span>
-          <span class="l">{{ 'ADMIN.PRICED_WITHOUT_PHOTO' | translate }}</span>
-          <span class="hint">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
-        </button>
-        <button type="button" class="stat warn" [class.active]="gap === 'no_size'"
-                (click)="openGap('no_size')">
-          <span class="n">{{ summary.products.priced_without_size }}</span>
-          <span class="l">{{ 'ADMIN.PRICED_WITHOUT_SIZE' | translate }}</span>
-          <span class="hint">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
-        </button>
-        <!-- Priced and no thickness: the customer can see the price and not what they are buying.
-             The largest gap in the catalogue, and the one that stops somebody ordering. -->
-        <button type="button" class="stat warn" [class.active]="gap === 'no_thickness'"
-                (click)="openGap('no_thickness')">
-          <span class="n">{{ summary.products.priced_without_thickness }}</span>
-          <span class="l">{{ 'ADMIN.PRICED_WITHOUT_THICKNESS' | translate }}</span>
-          <span class="hint">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
-        </button>
-        <!-- Nothing on the row at all: no size, no weight, no price. -->
-        <button type="button" class="stat warn" [class.active]="gap === 'no_details'"
-                (click)="openGap('no_details')">
-          <span class="n">{{ summary.products.no_details }}</span>
-          <span class="l">{{ 'ADMIN.NO_DETAILS' | translate }}</span>
-          <span class="hint">{{ 'ADMIN.SEE_WHICH' | translate }}</span>
-        </button>
+        <!-- Switched on is not the same as reachable: a product under a category that is off cannot
+             be found by a customer whatever its own flag says. -->
+        <div class="stat">
+          <span class="n">{{ summary.products.publicly_reachable }}</span>
+          <span class="l">{{ 'ADMIN.PRODUCTS_REACHABLE' | translate }}</span>
+        </div>
         <div class="stat">
           <span class="n">{{ summary.categories.total }}</span>
           <span class="l">{{ 'ADMIN.CATEGORIES_TOTAL' | translate }}</span>
         </div>
-        <div class="stat warn">
+        <div class="stat">
           <span class="n">{{ summary.categories.off }}</span>
           <span class="l">{{ 'ADMIN.CATEGORIES_OFF' | translate }}</span>
         </div>
       </div>
 
       <!-- The optional chaining on the list lengths is not decoration. The frontend and the API are
-           deployed separately, and the API needs restarting where the frontend does not - so a
-           panel one version ahead of the running API is the normal state of this project, not an
-           accident. Missing a field should cost the panel that section, not the whole page. -->
+           deployed separately, so a panel one version ahead of the running API is the normal state
+           of this project, not an accident. Missing a field should cost the panel that section. -->
       <div class="mt-3" *ngIf="summary.categories.off_categories?.length">
         <strong class="small d-block mb-1">{{ 'ADMIN.OFF_LIST' | translate }}</strong>
         <div class="off-list">
           <span class="chip" *ngFor="let category of summary.categories.off_categories || []">
-            <!-- What is in it, before deciding whether to switch it back on. The panel remembers
-                 its own place in the address, so the back button returns to this list. -->
             <a [routerLink]="['/products']" [queryParams]="{ category: category.id }"
                [title]="'ADMIN.SEE_PRODUCTS' | translate">{{ category.title }}</a>
-            <!-- Twenty-seven categories are off, and finding the one you mean on the products page
-                 means opening groups until it turns up. -->
             <button
               type="button"
               class="switch-on"
@@ -109,7 +151,6 @@
             <a [routerLink]="['/products']" [queryParams]="{ editCategory: category.id }"
                [title]="'ADMIN.EDIT_CATEGORY' | translate">{{ category.title }}</a>
           </span>
-          <!-- For a page built before the ids arrived. -->
           <ng-container *ngIf="!summary.categories.without_image_categories?.length">
             <span class="chip" *ngFor="let title of summary.categories.without_image_titles || []">
               {{ title }}
@@ -117,58 +158,26 @@
           </ng-container>
         </div>
       </div>
+    </section>
 
-      <!-- The worklist behind whichever figure was pressed. -->
-      <div class="gap-list mt-4" *ngIf="gap">
-        <div class="d-flex align-items-center gap-2 mb-2">
-          <strong class="small">{{ gapLabelKey() | translate }}</strong>
-          <span class="text-muted small">
-            {{ gapProducts.length ? ((gapPage - 1) * 20 + 1) : 0 }}–{{ (gapPage - 1) * 20 + gapProducts.length }}
-            / {{ gapTotal }}
-          </span>
-          <!-- The pictures for these are not added here - they go up through the hosting panel - so
-               this is a shopping list for whoever takes them. It has to be able to leave the
-               screen. -->
-          <button type="button" class="btn btn-sm btn-outline-secondary ms-auto"
-                  [disabled]="exporting" (click)="downloadOpenGap()">
-            {{ 'ADMIN.DOWNLOAD_CSV' | translate }}
-          </button>
-          <button type="button" class="btn-close" [attr.aria-label]="'ADMIN.CLOSE' | translate"
-                  (click)="closeGap()"></button>
-        </div>
-
-        <div class="text-muted small" *ngIf="gapLoading">
-          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        </div>
-
-        <ul class="gap-items" *ngIf="!gapLoading && gapProducts.length">
-          <li *ngFor="let product of gapProducts">
-            <!-- The list says which products; this is the way to one, straight into its editor.
-                 The category goes with it because the product's own endpoint does not return one,
-                 and the editor's dialog only exists while a category is being shown. A new tab, so
-                 the list stays open where it was left: working through 396 of these one at a time
-                 should not mean finding your place again after every one. -->
-            <a class="code" [routerLink]="['/products']"
-               [queryParams]="{ edit: product.id, category: product.category_id }"
-               target="_blank" rel="noopener"
-               [title]="'ADMIN.OPEN_PRODUCT' | translate">{{ product.code }}</a>
-            <span class="cat text-muted">
-              <span *ngIf="product.group">{{ product.group }} &rsaquo; </span>{{ product.category }}
-            </span>
-          </li>
-        </ul>
-
-        <div class="d-flex gap-2 mt-2" *ngIf="gapPages > 1">
-          <button type="button" class="btn btn-sm btn-outline-secondary"
-                  [disabled]="gapPage <= 1" (click)="openGap(gap, gapPage - 1)">
-            {{ 'ADMIN.PREVIOUS' | translate }}
-          </button>
-          <button type="button" class="btn btn-sm btn-outline-secondary"
-                  [disabled]="gapPage >= gapPages" (click)="openGap(gap, gapPage + 1)">
-            {{ 'ADMIN.NEXT' | translate }}
-          </button>
-        </div>
+    <!-- What changed lately, kept short. The full history is on the products page: a long log has no
+         place in the middle of the product workflow. -->
+    <section class="mt-5" *ngIf="activity.length && !denied">
+      <div class="section-head">
+        <h2 class="h5">{{ 'ADMIN.ACTIVITY_TITLE' | translate }}</h2>
+        <a class="more" [routerLink]="['/admin/products']" [queryParams]="{ activity: 1 }">
+          {{ 'ADMIN.ACTIVITY_ALL' | translate }} <span aria-hidden="true">→</span>
+        </a>
       </div>
+      <ul class="activity-list">
+        <li *ngFor="let row of activity">
+          <span class="when">{{ row.created_at ? (row.created_at | date: 'short') : '—' }}</span>
+          <span class="who">{{ row.username || '—' }}</span>
+          <span class="what">
+            {{ row.action }}<span class="subject" *ngIf="row.subject"> — {{ row.subject }}</span>
+          </span>
+        </li>
+      </ul>
     </section>
 
     <!-- What customers typed, the terms that found nothing first. -->

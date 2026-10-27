@@ -460,7 +460,18 @@
     "SETTINGS_INVALID_EMAIL": "Kjo nuk duket si një adresë email.",
     "SETTINGS_INVALID_NUMBER": "Vetëm numra, hapësira, +, -, ( ) dhe pika, me 6 deri në 15 numra.",
     "SETTINGS_TOO_LONG": "Kjo është më e gjatë se sa lejon fusha.",
-    "MENU": "Menyja"
+    "MENU": "Menyja",
+    "ATTENTION_TITLE": "Nevojitet vëmendje",
+    "ATTENTION_HINT": "Ato që paneli mund t'i rregullojë, më të mëdhatë së pari. Çdo numër hap produktet përkatëse, ose tabelën e katalogut të filtruar.",
+    "ATTENTION_EMPTY": "Asgjë nuk kërkon vëmendje: të gjitha kontrollet janë të pastra.",
+    "OPEN_IN_TABLE": "Në tabelën e produkteve",
+    "GAP_EMPTY": "Asgjë këtu — ky kontroll është i pastër.",
+    "PRODUCTS_REACHABLE": "Të arritshme nga klienti",
+    "HIDDEN_BY_CATEGORY": "Aktive, por nën një kategori të fikur",
+    "MISSING_LANGUAGE": "Mungon teksti shqip ose anglisht",
+    "BAD_PRICE": "Çmim negativ",
+    "ACTIVITY_ALL": "Të gjitha ndryshimet",
+    "QUALITY_FILTER": "Kontroll cilësie"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
