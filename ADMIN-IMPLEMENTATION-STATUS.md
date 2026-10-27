@@ -23,7 +23,7 @@ Size warnings: the production build reports none above the configured budget; no
 |---|---|---|---|---|---|
 | 0 — reconcile and baseline | **verified** | this file | none | 195 backend / 24 routes / trees clean | see "Unresolved" below |
 | 1 — role-aware access and shell | **in progress** — `GET /admin/me` (5 backend tests), session service, `adminGuard` (5 frontend tests), capability-driven tabs, `/admin/forbidden`. Remaining: account/role in the header, "View website", drawer at 320px, editor read-only settings | `admin-shell`, `app.routes`, `auth.guard`, `app/auth.py`, `admin_routes.py` | none expected | — | needs a server "who am I" endpoint |
-| 2 — settings reach customers | pending | `admin-settings`, public shell/contact, `admin_routes.py`, new public route | none expected (table exists) | — | which fields the public may read |
+| 2 — settings reach customers | **in progress** — public `GET /settings` done, 4 tests | `admin-settings`, public shell/contact, `admin_routes.py`, new public route | none expected (table exists) | — | which fields the public may read |
 | 3 — dashboard and quality queue | pending | `admin-overview`, `admin_routes.py` | none expected | — | — |
 | 4 — product and variant editing | pending | `product-editor`, `product_routes.py` | likely one (price unit, version) | — | price-unit vocabulary |
 | 5 — category and image management | pending | `admin-categories`, `admin-media`, `category_routes.py` | none expected | — | category depth policy |
@@ -72,6 +72,14 @@ None at baseline: both trees were clean. `089f499` merged the earlier uncommitte
 after it was verified to build and pass; it was not line-by-line reviewed.
 
 ## Progress log
+
+- **Phase 2, increment 1** — public `GET /settings` (backend `f2629fa`): seven approved fields, no
+  token, no users, no upload credential, no admin configuration; an unset field answers empty so the page
+  keeps its own text. Four tests, including the field list itself. Remaining for phase 2: one frontend
+  service reading it once and feeding shell, footer, contact/request pages and the two wording fields,
+  with the current translations as fallback; read-only/public-preview state on the settings page; and the
+  documented refresh story (the public pages are prerendered, so a settings change reaches them after a
+  rebuild unless the shell fetches at runtime).
 
 - **Phase 1, increment 8 — reverted.** A phone drawer rendered from the same `ng-template` as the strip.
   At 320px it measured correctly (320/320, no overflow, six links). At 1440px the drawer was still visible,
