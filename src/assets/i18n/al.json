@@ -414,7 +414,22 @@
     "CATEGORIES_SWITCH_ON": "Ndez",
     "CATEGORIES_SWITCH_OFF": "Fik",
     "CATEGORY_ON": "u ndez",
-    "CATEGORY_OFF": "u fik"
+    "CATEGORY_OFF": "u fik",
+    "MEDIA_TITLE": "Fotografitë",
+    "MEDIA_LEAD": "Produktet me çmim e pa foto — zgjidh një e ngarko fotografinë e tij.",
+    "MEDIA_COUNT": "pa foto",
+    "MEDIA_UNSET_TITLE": "Ngarkimi nuk është i lidhur",
+    "MEDIA_UNSET": "Mungon preseti i Cloudinary-t. Tri hapa:",
+    "MEDIA_UNSET_ENV": "te skedari `env` i backend-it",
+    "MEDIA_UNSET_RESTART": "Deploy + Restart, pastaj rifresko këtë faqe.",
+    "MEDIA_CHOOSE": "Zgjidh fotografinë",
+    "MEDIA_UPLOADING": "Po ngarkohet…",
+    "MEDIA_ALT": "Teksti alternativ",
+    "MEDIA_SAVE": "Ruaj te produkti",
+    "MEDIA_SAVED": "U ruajt fotografia e",
+    "MEDIA_FAILED": "Ngarkimi dështoi.",
+    "MEDIA_ADD": "Shto foto",
+    "MEDIA_EMPTY": "Asnjë produkt pa foto në këtë faqe."
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
@@ -750,5 +765,6 @@
     "DRAFT_NOTICE": "Të dhënat e kërkesës ruhen në këtë pajisje. Pastrojini nëse pajisja përdoret nga të tjerë.",
     "CLEAR_DRAFT": "Pastro të dhënat e formularit",
     "PRODUCT_UNAVAILABLE": "Ky produkt nuk është i disponueshëm. Kërkoni në katalog ose na kontaktoni për ndihmë."
-  }
+  },
+  "MEDIA_PRESET_WORD": "Unsigned"
 }

@@ -341,7 +341,22 @@
     "CATEGORIES_SWITCH_ON": "Switch on",
     "CATEGORIES_SWITCH_OFF": "Switch off",
     "CATEGORY_ON": "switched on",
-    "CATEGORY_OFF": "switched off"
+    "CATEGORY_OFF": "switched off",
+    "MEDIA_TITLE": "Photographs",
+    "MEDIA_LEAD": "Products with a price and no picture — pick one and upload its photograph.",
+    "MEDIA_COUNT": "without a picture",
+    "MEDIA_UNSET_TITLE": "Uploading is not connected",
+    "MEDIA_UNSET": "The Cloudinary preset is missing. Three steps:",
+    "MEDIA_UNSET_ENV": "in the backend's `env` file",
+    "MEDIA_UNSET_RESTART": "Deploy + Restart, then reload this page.",
+    "MEDIA_CHOOSE": "Choose the photograph",
+    "MEDIA_UPLOADING": "Uploading…",
+    "MEDIA_ALT": "Alt text",
+    "MEDIA_SAVE": "Save to the product",
+    "MEDIA_SAVED": "Saved the photograph of",
+    "MEDIA_FAILED": "The upload failed.",
+    "MEDIA_ADD": "Add a photo",
+    "MEDIA_EMPTY": "No product without a picture on this page."
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",
@@ -713,5 +728,6 @@
     "DRAFT_NOTICE": "Your enquiry details are saved on this device. Clear them when using a shared device.",
     "CLEAR_DRAFT": "Clear form details",
     "PRODUCT_UNAVAILABLE": "This product is unavailable. Search the catalogue or contact us for help."
-  }
+  },
+  "MEDIA_PRESET_WORD": "Unsigned"
 }

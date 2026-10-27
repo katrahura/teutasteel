@@ -85,6 +85,11 @@ export const appRoutes: Routes = [
           ),
       },
       {
+        path: 'media',
+        loadComponent: () =>
+          import('./pages/admin/media/admin-media.component').then((m) => m.AdminMediaComponent),
+      },
+      {
         path: 'categories',
         loadComponent: () =>
           import('./pages/admin/categories/admin-categories.component').then(

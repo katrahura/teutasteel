@@ -98,6 +98,14 @@ export interface CataloguePage {
   products: CatalogueRow[];
 }
 
+/** What the browser needs to upload a photograph: both values are public by design. */
+export interface MediaConfig {
+  cloud_name: string;
+  upload_preset: string;
+  folder: string;
+  configured: boolean;
+}
+
 /** A person who can sign in. Never carries a password. */
 export interface AdminUser {
   id: number;
@@ -285,6 +293,13 @@ export class AdminService {
       { products: query.products, mode: query.mode, value: query.value, dry_run: query.dryRun },
       { headers: this.authHeaders() }
     );
+  }
+
+  /** The Cloudinary cloud and preset, and whether they are set at all. */
+  getMediaConfig(): Observable<MediaConfig> {
+    return this.http.get<MediaConfig>(`${this.baseUrl}/admin/media/config`, {
+      headers: this.authHeaders(),
+    });
   }
 
   /** The people who can sign in. */

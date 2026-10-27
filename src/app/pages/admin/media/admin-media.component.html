@@ -1,0 +1,84 @@
+<section class="admin-media pb-5">
+  <div class="head">
+    <div>
+      <h1 class="h3">{{ 'ADMIN.MEDIA_TITLE' | translate }}</h1>
+      <p class="muted">{{ 'ADMIN.MEDIA_LEAD' | translate }}</p>
+    </div>
+    <p class="count" *ngIf="!loading && !denied && !failed">{{ total }} {{ 'ADMIN.MEDIA_COUNT' | translate }}</p>
+  </div>
+
+  <!-- Without a preset the upload cannot work, and saying so is more useful than a button that fails. -->
+  <div class="notice failed" *ngIf="config && !config.configured">
+    <strong>{{ 'ADMIN.MEDIA_UNSET_TITLE' | translate }}</strong>
+    <p>{{ 'ADMIN.MEDIA_UNSET' | translate }}</p>
+    <ol>
+      <li>Cloudinary → Settings → Upload → Add upload preset → <em>{{ 'MEDIA_PRESET_WORD' | translate }}</em></li>
+      <li><code>CLOUDINARY_UPLOAD_PRESET=teutasteel_products</code> {{ 'ADMIN.MEDIA_UNSET_ENV' | translate }}</li>
+      <li>{{ 'ADMIN.MEDIA_UNSET_RESTART' | translate }}</li>
+    </ol>
+  </div>
+
+  <p class="notice denied" *ngIf="denied">{{ 'ADMIN.NOT_ALLOWED' | translate }}</p>
+  <div class="notice failed" *ngIf="failed && !denied">
+    <span>{{ 'ADMIN.TABLE_FAILED' | translate }}</span>
+    <button type="button" class="retry" (click)="load(page)">{{ 'ADMIN.RETRY' | translate }}</button>
+  </div>
+
+  <p class="copied" role="status" aria-live="polite" *ngIf="savedCode">
+    {{ 'ADMIN.MEDIA_SAVED' | translate }} <strong>{{ savedCode }}</strong>
+  </p>
+
+  <div class="editor-panel" *ngIf="chosen">
+    <h2 class="h6">{{ chosen.code }} — {{ chosen.category }}</h2>
+    <div class="upload">
+      <label class="field">
+        <span>{{ 'ADMIN.MEDIA_CHOOSE' | translate }}</span>
+        <input type="file" accept="image/*" (change)="onFile($event)" [disabled]="uploading" />
+      </label>
+      <p class="muted" *ngIf="uploading">{{ 'ADMIN.MEDIA_UPLOADING' | translate }} {{ progress }}%</p>
+      <img *ngIf="uploadedUrl" [src]="uploadedUrl" [alt]="altText" class="preview" />
+      <label class="field" *ngIf="uploadedUrl">
+        <span>{{ 'ADMIN.MEDIA_ALT' | translate }}</span>
+        <input name="alt" [(ngModel)]="altText" />
+      </label>
+      <button type="button" class="apply" (click)="save()" [disabled]="!uploadedUrl || saving">
+        {{ 'ADMIN.MEDIA_SAVE' | translate }}
+      </button>
+      <button type="button" class="link" (click)="chosen = null">{{ 'ADMIN.CLOSE' | translate }}</button>
+    </div>
+    <p class="notice failed" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+  </div>
+
+  <p class="muted" *ngIf="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+
+  <div class="table-wrap" *ngIf="!loading && !denied && !failed">
+    <table class="table table-sm align-middle">
+      <caption class="visually-hidden">{{ 'ADMIN.MEDIA_TITLE' | translate }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'ADMIN.COL_CODE' | translate }}</th>
+          <th scope="col">{{ 'ADMIN.COL_CATEGORY' | translate }}</th>
+          <th scope="col" class="right">{{ 'ADMIN.COL_ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows">
+          <th scope="row" class="code">{{ row.code }}</th>
+          <td>{{ row.category }}<span class="group" *ngIf="row.group">{{ row.group }}</span></td>
+          <td class="right">
+            <button type="button" class="link" (click)="pick(row)">{{ 'ADMIN.MEDIA_ADD' | translate }}</button>
+          </td>
+        </tr>
+        <tr *ngIf="!rows.length">
+          <td colspan="3" class="muted empty">{{ 'ADMIN.MEDIA_EMPTY' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="pager" *ngIf="!loading && !denied && !failed && pages > 1">
+    <button type="button" (click)="load(page - 1)" [disabled]="page <= 1">{{ 'ADMIN.PREV' | translate }}</button>
+    <span>{{ 'ADMIN.PAGE_OF' | translate }} {{ page }} / {{ pages }}</span>
+    <button type="button" (click)="load(page + 1)" [disabled]="page >= pages">{{ 'ADMIN.NEXT' | translate }}</button>
+  </nav>
+</section>
