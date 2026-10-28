@@ -68,7 +68,19 @@ repository.
 | Production build (`npx ng build`) | **26 prerendered routes**, exit 0 |
 | Build size warnings | `products.component.css` 13.90 kB against a 10.24 kB budget; two selector warnings (`.form-floating>~label`); **no budget raised** |
 | Migration upgrade → downgrade → upgrade on a throwaway DB | clean |
-| Public pages, 9 routes × 5 widths (320, 390, 430, 768, 1280) in headless Chrome, development build served statically | **no page-wide horizontal overflow on any pair**; every page carried its title and tel links; methods below |
+| Public pages, 9 routes × 5 widths (320, 390, 430, 768, 1280) in headless Chrome, development build served statically | **no page-wide horizontal overflow on any pair**; every page carried its title and tel links |
+| Signed-in admin, 7 routes × 5 widths (same widths), against a **disposable SQLite database and a disposable administrator** | **no page-wide horizontal overflow on any pair**; `app-admin-shell` and seven tabs present on every one, including 320px |
+| Product editor opened from a row, at 1280 and 320 | 1148×1439 and 288×2960; code loaded, category select populated, variant row present with the unit select (piece, tube, sheet, bar, metre, kilogram, Unknown); no page overflow |
+| Public product dialog through `?product=1` and `?product=2` | opened as `#productDetailsModal`: 800×547 (one variant) and 800×615 (two variants) at 1280; 304×784 at 320 with both thicknesses listed |
+| Enquiry link inside the dialog | `https://wa.me/…?text=…CHECK-2…<product url>`; the code and the shared link are in the message |
+| Saved business settings on the public page | telephone, address and a normalised `tel:+38344999888` in the shell and the contact page; the settings form showed the saved value |
+
+Signed-in method: the backend was started on a spare port against a **throwaway database** seeded with
+an administrator, an editor, two products (one single-variant, one two-thickness) and some settings; a
+development build pointed at that port was served statically; Chrome was driven through its own
+protocol with the token placed in `localStorage` exactly where the app keeps it. Nothing touched the
+production API, the real database or any published site. The temporary environment values were
+reverted before committing.
 
 Measurement method: a development build (`environment.apiUrl` pointing at the local API) served by a
 small static server; Chrome driven through its own protocol with device metrics overridden per width;
@@ -78,20 +90,16 @@ page. Routes: `/`, `/products`, `/products?product=1`, `/request`, `/contact`, `
 
 ## Not verified here (read before claiming more)
 
-- **Authenticated admin screens were not measured at the five widths in this pass.** The guard sends an
-  unauthenticated browser to `/login`, and this pass did not create a disposable account in the local
-  database. The earlier session measured `/admin/products`, `/admin/categories` and `/admin/settings`
-  at 320px as `scrollWidth 320 / clientWidth 320`; the new drawer, content page and category editor
-  were not measured in a browser. This is the largest verification gap.
-- **The product dialog was not opened.** `/products?product=1` was requested, but no local product with
-  that id exists in the running data, so the dialog was not rendered or measured. The old note that it
-  once measured 1140×1194px is still unverified.
 - **Two editors at once were not driven from two browsers.** The 409 path is covered by the backend
   suite and the editor's own spec, not by a real second session.
 - **An interrupted upload was not cancelled mid-flight.** The binding to the product/category is in
   the code and in the specs; a real network interruption was not staged.
 - **Keyboard-only operation was not performed end to end.** Focus outlines, Escape handling and the
   drawer's focus return are in the specs and the markup, not in a manual pass.
+- The single-variant enquiry dialog link was not captured separately; the two-variant one was, and the
+  link is built by the same function for both.
+- The delivery sentence was only written in English in the fixture, so it correctly did **not** appear
+  on the Albanian page; the per-language selection is covered by the service spec.
 - Search synonyms (phase 7's optional half) were **not** added.
 - Batch price reversal was **not** added; single-price revert remains.
 - The content cards save one service at a time and have no page-level unsaved-changes guard.
