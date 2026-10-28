@@ -35,7 +35,7 @@ whole backend suite must pass before a backend commit. A test count read after t
 | 5 — category and image management | **implemented, verification pending** — searchable collapsible tree with branch counts and thumbnails, create/edit (AL + EN labels, parent, visibility, image + alt), effective visibility shown, impact before switching off, cycle refusal on the server, category writes now admin-only, upload bound to the edited entity, public preview | `admin-categories`, `admin-media`, `category_routes.py`, `category_schema`, `category.py`, `translate-category-title` | `a7d2c9e4f610` (`categories.title_en`) | 237 frontend, 246 backend, migrations applied to a throwaway DB, build 25 routes | browser check in phase 8; media stays product-only (category images live in the category editor) |
 | 6 — bulk prices, imports, history | **implemented, verification pending** — apply bound to a signed preview token and refused when prices/selection moved, idempotency key makes a retry change nothing, preview names variant/currency/unit, Decimal half-up money, formula-injection-safe CSV exports, searchable/filterable/paged history | `product_routes.py`, `bulk_application.py`, `admin_routes.py`, `admin-products`, `admin.service`, `shared/csv` | `b9e3f1c25a70` (`bulk_applications`) | 242 frontend, 256 backend, build 25 routes | import stays partial-apply by policy; batch reversal not added |
 | 7 — search insights and content | **implemented, verification pending** — search report gains date range, text filter, normalised spelling and "a search is not an order"; staff searches are no longer recorded as customer questions; `/admin/content` edits AL/EN title/description, picture, alt text, order and visibility for the seven services, with the shipped copy as fallback | `admin-dashboard`, `admin.service`, `content.service`, new `admin-content`, `services`, `service-detail`, `home`, `admin_routes.py`, `app/__init__.py` | none (settings key/value) | 252 frontend, 268 backend, build 26 routes | synonyms not added; content dirty-warning is per-card save only |
-| 8 — final quality and handoff | pending | `ADMIN-HANDOFF.md` | none | — | — |
+| 8 — final quality and handoff | **verified for the checks that could run; gaps listed** — `ADMIN-HANDOFF.md`, migrations up/down/up on a throwaway DB, 9 public routes × 5 widths with no page-wide overflow, exact suite/build results | `ADMIN-HANDOFF.md`, this file | tested, not applied to production | 268 backend, 252 frontend, 26 routes, 45 measurements | authenticated admin widths and the product dialog were not observed; see the handoff's "Not verified here" |
 
 ## What already exists (reuse, do not rebuild)
 
@@ -195,6 +195,16 @@ the existing single-price revert remains the undo for one row.
 
 Newest first.
 
+- **Phase 8 — the checks that could run.** `ADMIN-HANDOFF.md` records what was delivered, reused,
+  changed, the release order, the rollback and the verification gaps. The three migrations were run
+  `upgrade → downgrade 9a577bc5dd12 → upgrade` on a throwaway SQLite database without error. The public
+  pages - home, products, a product link, request, contact, services, a service detail, about, login -
+  were rendered in headless Chrome at 320, 390, 430, 768 and 1280px: **none had page-wide horizontal
+  overflow**, every one carried its title and telephone links. Backend **268 tests**, frontend **252**,
+  build **26 routes, exit 0**. Not observed: the authenticated admin screens at those widths, the
+  product dialog (no local product id 1), a real second editing session, a cancelled upload, and a
+  keyboard-only pass. Those are stated as gaps in the handoff rather than ticked.
+
 - **Phase 7 — implemented, verification pending.** The search report can be read for a date range and
   filtered by text; each row carries a normalised spelling; the page says plainly that a search is a
   question, not an order. Searches made while signed in are **not recorded at all**, so the report is
@@ -321,10 +331,14 @@ Newest first.
 
 ## Next (read this first)
 
-**Phase 8 — final quality and handoff.** The cross-device and customer-page pass for phases 4–7 is
-still owed, as are `ADMIN-HANDOFF.md`, the migration rollback notes, and a release-order note. The
-checks to run: the public home, product groups, search, a direct product link, size/quantity
-selection, an enquiry draft, a service quote context, and the contact links; the admin at 320, 390,
-430, 768 and 1280px; keyboard/focus/labels/error announcements. Record what cannot be observed here
-(a real second browser for the concurrency conflict, a real upload cancellation) rather than claiming
-it.
+All eight phases have code and tests. The remaining work is **verification and release**, not
+implementation:
+
+1. Sign in with a disposable staff account against a disposable database and measure `/admin/overview`,
+   `/admin/products` (with the editor open), `/admin/categories` (with the editor open), `/admin/content`
+   and `/admin/settings` at 320, 390, 430, 768 and 1280px; record the numbers here.
+2. Open a real product's dialog through `/products?product=<id>` and settle the long-standing size note.
+3. Drive two browsers against one product to see the 409 conflict end to end; stage a cancelled upload.
+4. Re-run the customer single-variant and multiple-thickness enquiries as regressions.
+5. Only then deploy: backend `flask db upgrade` first, frontend second (see `ADMIN-HANDOFF.md`), and
+   refresh the public copy at the next build. Do not publish from this workspace.
