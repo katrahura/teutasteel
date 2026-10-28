@@ -48,4 +48,18 @@ describe('translateCategoryTitle', () => {
     expect(translateCategoryTitle(translate, null)).toBe('');
     expect(translateCategoryTitle(translate, {})).toBe('');
   });
+
+  it('prefers the English label the owner wrote in the panel', () => {
+    // The catalogue's titles are stored once; `title_en` is the owner's own override, and it wins
+    // over both the stored title and the static CATEGORY mapping when English is being read.
+    expect(
+      translateCategoryTitle(translateStub('en', tables),
+        { title: 'Llamarina', title_en: 'Sheet metal' })
+    ).toBe('Sheet metal');
+    // An empty override is not a label.
+    expect(
+      translateCategoryTitle(translateStub('en', tables),
+        { title: 'Door Sheets', title_en: '   ' })
+    ).toBe('Door Sheets');
+  });
 });

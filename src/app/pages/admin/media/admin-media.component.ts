@@ -41,6 +41,8 @@ export class AdminMediaComponent implements OnInit {
   uploading = false;
   progress = 0;
   uploadedUrl = '';
+  /** The product the running/finished upload belongs to: an upload must never land on another one. */
+  private uploadedFor: number | null = null;
   altText = '';
   saving = false;
   savedCode: string | null = null;
@@ -77,6 +79,7 @@ export class AdminMediaComponent implements OnInit {
   pick(row: GapProduct): void {
     this.chosen = row;
     this.uploadedUrl = '';
+    this.uploadedFor = null;
     this.altText = '';
     this.progress = 0;
     this.savedCode = null;
@@ -87,9 +90,11 @@ export class AdminMediaComponent implements OnInit {
   onFile(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files[0];
-    if (!file || !this.config || !this.config.configured) {
+    if (!file || !this.config || !this.config.configured || !this.chosen) {
       return;
     }
+    const forProduct = this.chosen.id;
+    this.uploadedFor = forProduct;
     this.uploading = true;
     this.progress = 0;
     this.errorMessage = '';
@@ -112,6 +117,14 @@ export class AdminMediaComponent implements OnInit {
     xhr.onload = () => {
       this.uploading = false;
       this.progress = 100;
+      // The owner moved to another product while this was going up. Keep the address out of the
+      // form entirely rather than risk it being saved against the wrong record.
+      if (!this.chosen || this.chosen.id !== forProduct) {
+        this.uploadedUrl = '';
+        this.uploadedFor = null;
+        this.errorMessage = 'ADMIN.MEDIA_WRONG_PRODUCT';
+        return;
+      }
       try {
         const body = JSON.parse(xhr.responseText);
         if (xhr.status >= 200 && xhr.status < 300 && body.secure_url) {
@@ -133,9 +146,13 @@ export class AdminMediaComponent implements OnInit {
     xhr.send(form);
   }
 
-  /** Write the address that came back onto the product, and nothing else about it. */
+  /** Write the address that came back onto the product it was uploaded for, and nothing else. */
   save(): void {
     if (!this.chosen || !this.uploadedUrl || this.saving) {
+      return;
+    }
+    if (this.uploadedFor !== this.chosen.id) {
+      this.errorMessage = 'ADMIN.MEDIA_WRONG_PRODUCT';
       return;
     }
     this.saving = true;
@@ -146,6 +163,8 @@ export class AdminMediaComponent implements OnInit {
       thumbnail_path: this.uploadedUrl,
       original_path: this.uploadedUrl,
     };
+    // The version is not sent: this writes the image and nothing else, so it cannot overwrite an
+    // edit made elsewhere while the file was going up.
     this.products.updateProduct({ id: this.chosen.id, image_asset: asset } as unknown as Product)
       .subscribe({
         next: () => {
@@ -153,6 +172,7 @@ export class AdminMediaComponent implements OnInit {
           this.savedCode = this.chosen ? this.chosen.code : null;
           this.chosen = null;
           this.uploadedUrl = '';
+          this.uploadedFor = null;
           this.load(this.page);
         },
         error: (error) => {

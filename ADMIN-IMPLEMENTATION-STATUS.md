@@ -32,7 +32,7 @@ whole backend suite must pass before a backend commit. A test count read after t
 | 2 — settings reach customers | **verified** — 13 public keys, AL/EN sentence pairs, server + client validation, `ContactService` wired into shell/footer/contact/request/service/home/product enquiries, preview + refresh note in the panel | `public-settings.service`, `contact.service`, `app.component`, `contact`, `home`, `service-detail`, `products`, `admin-settings`, `admin.service` | none (key/value table) | 213 backend, 211 frontend, build 25 routes | see "Phase 2 — the path a setting takes" |
 | 3 — dashboard and quality queue | **verified** — "Needs attention" queue first (seven checks, each linking to the worklist and to the filtered table), reachable-vs-active counted separately, missing-language and negative-price checks, gap filter on `/admin/products` kept in the URL, compact recent changes with a link to the full history | `admin-dashboard`, `admin-products`, `admin.service`, `admin_routes.py` | none | 220 frontend, 221 backend, build 25 routes | see "Phase 3 — what each count means" |
 | 4 — product and variant editing | **implemented, verification pending** — create inside the panel (saved inactive), category reassignment, typed price unit per variant, version-checked saves (409 conflict + reload), stale loads/uploads ignored, dirty-change warnings, sectioned editor, preview link, per-field errors; backend gaps for missing price units | `product-editor`, `admin-products`, `products`, `product_routes.py`, `dimension_schema`, new migration | **one**: `products.version`, `dimensions.price_unit` (`c41f8a2d7e10`) | 227 frontend, 236 backend, migration applied to a throwaway DB, build 25 routes | desktop/phone flows and the customer enquiry regressions are checked in phase 8 |
-| 5 — category and image management | pending | `admin-categories`, `admin-media`, `category_routes.py` | none expected | — | category depth policy |
+| 5 — category and image management | **implemented, verification pending** — searchable collapsible tree with branch counts and thumbnails, create/edit (AL + EN labels, parent, visibility, image + alt), effective visibility shown, impact before switching off, cycle refusal on the server, category writes now admin-only, upload bound to the edited entity, public preview | `admin-categories`, `admin-media`, `category_routes.py`, `category_schema`, `category.py`, `translate-category-title` | `a7d2c9e4f610` (`categories.title_en`) | 237 frontend, 246 backend, migrations applied to a throwaway DB, build 25 routes | browser check in phase 8; media stays product-only (category images live in the category editor) |
 | 6 — bulk prices, imports, history | pending | `admin-products`, `product_routes.py`, `admin_routes.py` | possible | — | preview/apply staleness token |
 | 7 — search insights and content | pending | new `/admin/content`, `admin_routes.py` | possible | — | approved service copy |
 | 8 — final quality and handoff | pending | `ADMIN-HANDOFF.md` | none | — | — |
@@ -131,6 +131,22 @@ A unit outside the list is refused by the server.
 Deliberately not done: a general undo/rollback (phase 6 defines the narrower price reversal); a second
 editor for the public catalogue - both call the same component.
 
+## Phase 5 — what the category page protects
+
+| Risk | What happens now | Evidence |
+|---|---|---|
+| A category becoming its own ancestor | The server walks descendants and refuses a self-parent or a move under one's own section, with the reason | `test_a_category_cannot_be_its_own_parent`, `test_a_category_cannot_be_moved_under_its_own_section` |
+| An editor or ordinary account changing the tree | Category create/update now require **admin**; the page renders read-only for an editor, with no New/Edit controls | `test_an_editor_may_read_the_categories_and_may_not_change_them`, categories spec "shows an editor a read-only tree" |
+| Switching off a large branch blind | The editor states how many products and categories below it would be hidden; nothing is deleted, so switching back on is the undo | categories spec "says what switching a branch off would hide"; `product_total` counts switched-off rows too |
+| An enabled section hidden by a disabled group | The row says which ancestor hides it; the tree does not pretend it is visible | categories spec "says when an enabled category is hidden…" |
+| An upload landing on the wrong record | Both the product editor and the media page remember what the upload started on and discard a mismatched result; category uploads likewise | code paths; browser check in phase 8 |
+| Losing an image on an unrelated save | A category save omits `image_asset` unless the form has one, so "I did not touch the photograph" means exactly that | `update_category_without_products` behaviour; existing image tests |
+| A category with no English label | `title_en` is optional; empty falls back to the stored title and then the CATEGORY.* translation | `translate-category-title` spec |
+
+Limitations recorded: the category thumbnail uses the uploaded URL rather than a derived smaller
+rendition; the uploader has progress and retry but no cancel button; the Media page remains a
+product worklist, with category images handled inside the category editor.
+
 ## Unresolved (need the owner)
 
 - Cloudinary *Strict Transformations* is enabled in the account but **not enforced**: a never-requested
@@ -161,6 +177,22 @@ editor for the public catalogue - both call the same component.
 ## Progress log
 
 Newest first.
+
+- **Phase 5 — implemented, verification pending.** The category page is now a searchable, collapsible
+  tree with a thumbnail, the branch's product total, its descendant count and the effective
+  visibility (an enabled section under a switched-off group says which ancestor hides it). Creating
+  and editing happen in a panel on the same page: both labels (`title` + `title_en`), parent (with
+  the category's own sections excluded), visibility, image upload with alt text, and the impact of
+  switching a branch off stated as "hides N products and M categories below it, nothing is deleted".
+  The server refuses self-parenting and moves under one's own descendants, and **category writes now
+  require an administrator** - they previously required only a token, so any signed-in account could
+  create or rename categories. `categories.title_en` is the new nullable column
+  (`a7d2c9e4f610`, applied to a throwaway SQLite DB; rollback is
+  `flask db downgrade c41f8a2d7e10`). `translateCategoryTitle` prefers it in English. The media page
+  now binds an upload to the product it started on and discards a mismatched result; its save sends
+  only the image. Frontend **237 tests**, backend **246**, build **25 routes, exit 0**. Not yet
+  checked in a browser: the tree's keyboard behaviour, a real upload cancellation, and the mobile
+  layout at 320px. Marked implemented, not verified.
 
 - **Phase 4 — implemented, verification pending.** The editor gained: create mode (one empty variant,
   both language rows, saved **inactive**), a category select for reassignment, a typed `price_unit`
@@ -245,10 +277,10 @@ Newest first.
 
 ## Next (read this first)
 
-**Phase 5 — reliable category and image management.** Read `admin-categories`, `admin-media`, the
-category routes and the image asset model first. Two known traps: the category page currently links
-to the public catalogue for editing, and a parent cycle has to be refused on the server, not only in
-the form. The media uploader must bind an upload to the entity it started on, exactly as the product
-editor now does.
+**Phase 6 — dependable bulk prices, imports and audit history.** Read `admin-products`' bulk and
+import panels, `product_routes.py`'s `/prices/bulk` and `/import-thickness`, and the activity log.
+The known gaps: a preview is not bound to the inputs that produced it, apply is not idempotent, and
+CSV exports do not guard against spreadsheet formula injection. Phase 4's `expected_version` is the
+pattern for staleness.
 
-Then phases 6–8 in order. Phase 4's browser checks are done with phase 8's cross-device pass.
+Then phases 7-8, and the cross-device verification pass for phases 4-5.

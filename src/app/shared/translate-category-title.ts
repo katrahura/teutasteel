@@ -14,7 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
  */
 export function translateCategoryTitle(
   translate: TranslateService,
-  category: { title?: string } | null | undefined
+  category: { title?: string; title_en?: string | null } | null | undefined
 ): string {
   const title = category?.title ?? '';
   if (!title) {
@@ -22,6 +22,13 @@ export function translateCategoryTitle(
   }
 
   const language = translate.currentLang || translate.getDefaultLang();
+
+  // A label the owner wrote for this language in the panel wins over the static mapping. English
+  // only for now: the stored title is the Albanian one, and `title_en` is the override.
+  if (language === 'en' && category?.title_en && category.title_en.trim()) {
+    return category.title_en.trim();
+  }
+
   const tables = translate.translations as
     | Record<string, { CATEGORY?: Record<string, unknown> }>
     | undefined;

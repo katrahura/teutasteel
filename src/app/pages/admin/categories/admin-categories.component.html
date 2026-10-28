@@ -4,17 +4,105 @@
       <h1 class="h3">{{ 'ADMIN.CATEGORIES_TITLE' | translate }}</h1>
       <p class="muted">{{ 'ADMIN.CATEGORIES_LEAD' | translate }}</p>
     </div>
-    <p class="count" *ngIf="!loading && !denied && !failed">
-      {{ offCount }} {{ 'ADMIN.CATEGORIES_OFF' | translate }}
-    </p>
+    <div class="head-actions">
+      <p class="count" *ngIf="!loading && !denied && !failed">
+        {{ offCount }} {{ 'ADMIN.CATEGORIES_OFF' | translate }}
+      </p>
+      <button type="button" class="new-category" *ngIf="canWrite" (click)="startNew()">
+        {{ 'ADMIN.CATEGORY_NEW' | translate }}
+      </button>
+    </div>
   </div>
 
   <p class="notice denied" *ngIf="denied">{{ 'ADMIN.NOT_ALLOWED' | translate }}</p>
+  <p class="notice read-only" *ngIf="!denied && !loading && !canWrite">
+    {{ 'ADMIN.CATEGORIES_READ_ONLY' | translate }}
+  </p>
   <div class="notice failed" *ngIf="failed && !denied">
     <span>{{ 'ADMIN.TABLE_FAILED' | translate }}</span>
     <button type="button" class="retry" (click)="load()">{{ 'ADMIN.RETRY' | translate }}</button>
   </div>
   <p class="muted" *ngIf="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+
+  <!-- Create or edit, in place. The address is not changed: this is one panel, not a page per row. -->
+  <aside class="category-editor" *ngIf="editing" [attr.aria-label]="(isNew ? 'ADMIN.CATEGORY_NEW' : 'ADMIN.CATEGORY_EDIT') | translate">
+    <header class="editor-head">
+      <h2>{{ (isNew ? 'ADMIN.CATEGORY_NEW' : 'ADMIN.CATEGORY_EDIT') | translate }}</h2>
+      <button type="button" class="link" (click)="cancel()">{{ 'ADMIN.CLOSE' | translate }}</button>
+    </header>
+
+    <div class="editor-grid">
+      <label class="field">
+        <span>{{ 'ADMIN.CATEGORY_TITLE_AL' | translate }}</span>
+        <input name="categoryTitle" [(ngModel)]="editing.title" />
+        <span class="field-error" *ngIf="fieldErrors['title']">{{ fieldErrors['title'] | translate }}</span>
+      </label>
+      <label class="field">
+        <span>{{ 'ADMIN.CATEGORY_TITLE_EN' | translate }}</span>
+        <input name="categoryTitleEn" [(ngModel)]="editing.title_en" />
+      </label>
+      <label class="field">
+        <span>{{ 'ADMIN.CATEGORIES_PARENT' | translate }}</span>
+        <select name="categoryParent" [(ngModel)]="editing.parent_id">
+          <option [ngValue]="null">{{ 'ADMIN.CATEGORY_TOP_LEVEL' | translate }}</option>
+          <option *ngFor="let option of parentOptions" [ngValue]="option.id">
+            {{ option.depth ? '— ' : '' }}{{ option.label }}
+          </option>
+        </select>
+      </label>
+      <label class="field check">
+        <input type="checkbox" name="categoryActive" [(ngModel)]="editing.is_active" />
+        <span>{{ 'ADMIN.CATEGORIES_VISIBLE' | translate }}</span>
+      </label>
+    </div>
+
+    <!-- What the change would do, said before it is saved. Nothing here deletes a product: switching
+         a branch off hides it, and switching it back on is the whole undo. -->
+    <p class="impact" *ngIf="!isNew && !editing.is_active">
+      {{ 'ADMIN.CATEGORY_HIDE_IMPACT' | translate: { products: impact.products, categories: impact.categories } }}
+    </p>
+    <p class="impact" *ngIf="!isNew && editing.is_active && impact.products">
+      {{ 'ADMIN.CATEGORY_HOLDS' | translate: { products: impact.products, categories: impact.categories } }}
+    </p>
+
+    <div class="image-row">
+      <div class="field">
+        <span>{{ 'ADMIN.CATEGORY_IMAGE' | translate }}</span>
+        <div class="image-controls">
+          <img *ngIf="image.thumbnail_path" [src]="image.thumbnail_path" alt="" width="56" height="56" />
+          <input type="file" accept="image/*" (click)="ensureMediaConfig()" (change)="onImage($event)"
+                 [disabled]="uploading" [attr.aria-label]="'ADMIN.CATEGORY_IMAGE' | translate" />
+          <button type="button" class="link" *ngIf="image.thumbnail_path" (click)="clearImage()">
+            {{ 'ADMIN.CATEGORY_IMAGE_CLEAR' | translate }}
+          </button>
+        </div>
+        <small class="text-muted" *ngIf="uploading">{{ 'MISC.IMAGE_UPLOADING' | translate }} {{ uploadProgress }}%</small>
+        <small class="field-error" *ngIf="uploadError">{{ uploadError | translate }}</small>
+        <small class="text-muted" *ngIf="mediaConfig && !mediaConfig.configured">{{ 'MISC.IMAGE_UPLOAD_UNSET' | translate }}</small>
+      </div>
+      <label class="field">
+        <span>{{ 'MISC.ALTERNATIVE_TEXT' | translate }}</span>
+        <input name="categoryAlt" [(ngModel)]="image.alternative_text" />
+      </label>
+    </div>
+
+    <p class="field-error" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+    <div class="editor-actions">
+      <button type="button" class="link" (click)="cancel()">{{ 'ADMIN.CLOSE' | translate }}</button>
+      <button type="button" class="save" [disabled]="saving || uploading" (click)="save()">
+        {{ (isNew ? 'ADMIN.CATEGORY_CREATE' : 'ADMIN.SETTINGS_SAVE') | translate }}
+      </button>
+    </div>
+  </aside>
+
+  <p class="copied" role="status" *ngIf="note">{{ note | translate }}</p>
+
+  <label class="search" *ngIf="!loading && !denied && !failed">
+    <span class="visually-hidden">{{ 'ADMIN.CATEGORY_SEARCH' | translate }}</span>
+    <input type="search" name="categorySearch" [(ngModel)]="search"
+           [attr.placeholder]="'ADMIN.CATEGORY_SEARCH' | translate"
+           [attr.aria-label]="'ADMIN.CATEGORY_SEARCH' | translate" />
+  </label>
 
   <div class="table-wrap" *ngIf="!loading && !denied && !failed">
     <table class="table table-sm align-middle">
@@ -22,27 +110,53 @@
         <tr>
           <th scope="col">{{ 'ADMIN.CATEGORIES_NAME' | translate }}</th>
           <th scope="col">{{ 'ADMIN.CATEGORIES_PARENT' | translate }}</th>
+          <th scope="col" class="right">{{ 'ADMIN.CATEGORY_PRODUCTS' | translate }}</th>
           <th scope="col">{{ 'ADMIN.CATEGORIES_VISIBLE' | translate }}</th>
           <th scope="col">{{ 'ADMIN.COL_ACTIONS' | translate }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let row of rows" [class.off]="!row.category.is_active">
-          <th scope="row" [class.child]="row.category.parent_id">{{ row.category.title }}</th>
+        <tr *ngFor="let row of visibleRows" [class.off]="!row.category.is_active"
+            [class.hidden-by]="hiddenBy(row)">
+          <th scope="row" class="name" [style.padding-left.px]="8 + row.depth * 18">
+            <button type="button" class="twisty" *ngIf="hasChildren(row.category) && !search"
+                    [attr.aria-expanded]="!collapsed.has(row.category.id!)"
+                    [attr.aria-label]="('ADMIN.CATEGORY_TOGGLE' | translate) + ': ' + row.category.title"
+                    (click)="toggleCollapse(row.category)">
+              {{ collapsed.has(row.category.id!) ? '▸' : '▾' }}
+            </button>
+            <img *ngIf="imageOf(row.category)" class="thumb" [src]="imageOf(row.category)" alt="" width="32" height="32" />
+            <span>
+              <strong>{{ row.category.title }}</strong>
+              <span class="en" *ngIf="row.category.title_en"> · {{ row.category.title_en }}</span>
+              <span class="muted small d-block" *ngIf="row.category.is_active && hiddenBy(row)">
+                {{ 'ADMIN.CATEGORY_HIDDEN_BY' | translate }} «{{ hiddenBy(row)!.title }}»
+              </span>
+            </span>
+          </th>
           <td class="muted">
             {{ row.category.parent_id ? ('ADMIN.CATEGORIES_SECTION' | translate) : ('ADMIN.CATEGORIES_GROUP' | translate) }}
           </td>
+          <td class="right">{{ productTotal(row.category) }}</td>
           <td>
             <span class="chip" [class.ok]="row.category.is_active" [class.gray]="!row.category.is_active">
               {{ (row.category.is_active ? 'ADMIN.VISIBILITY_ON' : 'ADMIN.STATUS_OFF') | translate }}
             </span>
           </td>
-          <td class="right">
-            <button type="button" class="link" (click)="toggle(row)" [disabled]="row.saving">
-              {{ (row.category.is_active ? 'ADMIN.CATEGORIES_SWITCH_OFF' : 'ADMIN.CATEGORIES_SWITCH_ON') | translate }}
-            </button>
-            <span class="note" *ngIf="row.note">{{ row.note | translate }}</span>
+          <td class="actions">
+            <a *ngIf="row.category.id" class="link" [href]="previewLink(row.category)"
+               target="_blank" rel="noopener noreferrer">{{ 'ADMIN.PREVIEW' | translate }}</a>
+            <ng-container *ngIf="canWrite">
+              <button type="button" class="link" (click)="edit(row)">{{ 'ADMIN.CATEGORY_EDIT' | translate }}</button>
+              <button type="button" class="link" (click)="startNew(row.category)">{{ 'ADMIN.CATEGORY_ADD_CHILD' | translate }}</button>
+              <button type="button" class="link" (click)="toggle(row.category)">
+                {{ (row.category.is_active ? 'ADMIN.CATEGORIES_SWITCH_OFF' : 'ADMIN.CATEGORIES_SWITCH_ON') | translate }}
+              </button>
+            </ng-container>
           </td>
+        </tr>
+        <tr *ngIf="!visibleRows.length">
+          <td colspan="5" class="muted">{{ 'ADMIN.CATEGORY_NONE' | translate }}</td>
         </tr>
       </tbody>
     </table>

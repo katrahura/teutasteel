@@ -57,7 +57,13 @@
     export interface Category {
       id?: number;
       title: string;
+      /** The English label the owner writes in the panel; absent means "use the title". */
+      title_en?: string | null;
       is_active: boolean;
+      /** Every product in this branch, switched on or not: what switching it off would hide. */
+      product_total?: number;
+      /** Every category below this one. */
+      descendant_count?: number;
       /** Legacy flag. The API returns it and keeps it in step with parent_id; the client
        *  never sends it, because the parent is what decides the grouping. */
       top_category?: boolean;
