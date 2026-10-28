@@ -248,6 +248,8 @@ export interface ImportLine {
 }
 
 export interface ImportReport {
+  preview_token?: string;
+  replayed?: boolean;
   dry_run: boolean;
   applied: ImportLine[];
   rejected: ImportLine[];
@@ -469,10 +471,10 @@ export class AdminService {
     });
   }
 
-  importThickness(csv: string, dryRun: boolean): Observable<ImportReport> {
+  importThickness(csv: string, dryRun: boolean, previewToken?: string, idempotencyKey?: string): Observable<ImportReport> {
     return this.http.post<ImportReport>(
       `${this.baseUrl}/product/import-thickness`,
-      { csv, dry_run: dryRun },
+      { csv, dry_run: dryRun, preview_token: previewToken, idempotency_key: idempotencyKey },
       { headers: this.authHeaders() }
     );
   }

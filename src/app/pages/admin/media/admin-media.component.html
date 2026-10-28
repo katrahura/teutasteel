@@ -35,6 +35,7 @@
         <span>{{ 'ADMIN.MEDIA_CHOOSE' | translate }}</span>
         <input type="file" accept="image/*" (change)="onFile($event)" [disabled]="uploading" />
       </label>
+      <button type="button" class="link" *ngIf="uploading" (click)="cancelUpload()">{{ "ADMIN.CANCEL_UPLOAD" | translate }}</button>
       <p class="muted" *ngIf="uploading">{{ 'ADMIN.MEDIA_UPLOADING' | translate }} {{ progress }}%</p>
       <img *ngIf="uploadedUrl" [src]="uploadedUrl" [alt]="altText" class="preview" />
       <label class="field" *ngIf="uploadedUrl">
@@ -44,7 +45,7 @@
       <button type="button" class="apply" (click)="save()" [disabled]="!uploadedUrl || saving">
         {{ 'ADMIN.MEDIA_SAVE' | translate }}
       </button>
-      <button type="button" class="link" (click)="chosen = null">{{ 'ADMIN.CLOSE' | translate }}</button>
+      <button type="button" class="link" (click)="close()">{{ 'ADMIN.CLOSE' | translate }}</button>
     </div>
     <p class="notice failed" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
   </div>

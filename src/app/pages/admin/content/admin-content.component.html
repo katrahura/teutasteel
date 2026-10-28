@@ -18,7 +18,7 @@
   <p class="notice failed" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
 
   <div class="content-cards" *ngIf="!loading && !denied && !failed">
-    <article class="content-card" *ngFor="let row of rows">
+    <article (input)="saved = null" class="content-card" *ngFor="let row of rows">
       <header class="card-head">
         <h2>{{ row.id }}</h2>
         <span class="copied" role="status" *ngIf="saved === row.id">{{ 'ADMIN.CONTENT_SAVED' | translate }}</span>

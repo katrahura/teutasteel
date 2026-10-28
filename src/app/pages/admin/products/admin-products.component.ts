@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, HostListener, ViewChild, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import { ActivityRecord, AdminService, BulkPriceReport, CatalogueQuery, Catalogu
 import { ProductService } from '../../../services/product.service';
 import { Product, TopCategory } from '../../../models/product.model';
 import { ProductEditorComponent } from './product-editor.component';
+import { confirmUnsaved } from '../../../shared/unsaved-work';
 import { csvDocument } from '../../../shared/csv';
 
 /**
@@ -34,6 +35,8 @@ import { csvDocument } from '../../../shared/csv';
   styleUrls: ['./admin-products.component.css'],
 })
 export class AdminProductsComponent implements OnInit, OnDestroy {
+  @ViewChild(ProductEditorComponent) editor?: ProductEditorComponent;
+  canLeave(): boolean { return this.editor?.canLeave() ?? true; }
   private admin = inject(AdminService);
   private products = inject(ProductService);
   private route = inject(ActivatedRoute);
@@ -61,6 +64,9 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   savedCode: string | null = null;
 
   /** The importer: the spreadsheet as text, what the preview said, and what the apply said. */
+  private importPreviewToken?: string;
+  private importRetryKey?: string;
+  private reviewedCsv = '';
   importCsv = '';
   importName = '';
   importReport: ImportReport | null = null;
@@ -335,6 +341,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
 
   /** Write what the preview showed. Same call, one flag between them. */
   applyImport(): void {
+    if (!this.importPreviewToken || this.importCsv !== this.reviewedCsv) { this.importError = 'ADMIN.BULK_PREVIEW_FIRST'; return; }
     this.runImport(false);
   }
 
@@ -346,12 +353,14 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     this.importError = '';
     this.importDone = null;
     this.subscriptions.add(
-      this.admin.importThickness(this.importCsv, dryRun).subscribe({
+      this.admin.importThickness(this.importCsv, dryRun, this.importPreviewToken, this.importRetryKey).subscribe({
         next: (report) => {
           this.importing = false;
           this.importReport = report;
+          if (report.dry_run) { this.importPreviewToken = report.preview_token; this.reviewedCsv = this.importCsv; this.importRetryKey = this.newIdempotencyKey(); }
           if (!report.dry_run) {
             this.importDone = String(report.applied.length);
+            this.importPreviewToken = undefined; this.importRetryKey = undefined;
             this.load(this.page);
             this.loadHistory();
           }
@@ -359,6 +368,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.importing = false;
           const status = error && error.status;
+          if (status === 409) { this.importPreviewToken = undefined; this.importReport = null; }
           this.importError = status === 401 || status === 403
             ? 'ADMIN.NOT_ALLOWED'
             : (error && error.error && error.error.error) || 'ADMIN.TABLE_FAILED';
@@ -370,13 +380,15 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   /** Escape closes the panel: a keyboard leaves it the way a mouse does. */
   @HostListener('document:keydown.escape')
   onEscape(): void {
-    if (this.openId) {
+    if (this.openId || this.creating) {
       this.closeEditor();
     }
   }
 
   /** Open a blank product in the panel. It is saved switched off. */
   startCreate(): void {
+    if (this.creating) return;
+    if (!this.canLeave()) return;
     this.savedCode = null;
     this.copied = null;
     this.openId = null;
@@ -386,6 +398,8 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
 
   /** Open a product in the panel beside the table, without leaving the list. */
   open(row: CatalogueRow): void {
+    if (this.openId === row.id && !this.creating) return;
+    if (!this.canLeave()) return;
     this.savedCode = null;
     this.copied = null;
     this.creating = false;
@@ -394,6 +408,11 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   }
 
   closeEditor(): void {
+    if (!this.canLeave()) return;
+    this.dismissEditor();
+  }
+
+  dismissEditor(): void {
     this.openId = null;
     this.openedCode = null;
     this.creating = false;

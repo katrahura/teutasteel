@@ -76,6 +76,7 @@
             {{ 'ADMIN.CATEGORY_IMAGE_CLEAR' | translate }}
           </button>
         </div>
+        <button type="button" class="link" *ngIf="uploading" (click)="cancelUpload()">{{ "ADMIN.CANCEL_UPLOAD" | translate }}</button>
         <small class="text-muted" *ngIf="uploading">{{ 'MISC.IMAGE_UPLOADING' | translate }} {{ uploadProgress }}%</small>
         <small class="field-error" *ngIf="uploadError">{{ uploadError | translate }}</small>
         <small class="text-muted" *ngIf="mediaConfig && !mediaConfig.configured">{{ 'MISC.IMAGE_UPLOAD_UNSET' | translate }}</small>

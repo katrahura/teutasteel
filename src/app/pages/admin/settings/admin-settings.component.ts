@@ -1,5 +1,6 @@
+import { confirmUnsaved } from '../../../shared/unsaved-work';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -131,6 +132,10 @@ export class AdminSettingsComponent implements OnInit {
     this.loaded = { ...values };
     this.fieldErrors = {};
   }
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnload(event: BeforeUnloadEvent): void { if (this.dirty) { event.preventDefault(); event.returnValue = ''; } }
+  canLeave(): boolean { return !this.saving && confirmUnsaved(this.dirty); }
 
   save(): void {
     if (this.saving || !this.canWrite) {

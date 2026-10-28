@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { AdminService, ServiceContentRow } from '../../../services/admin.service';
 import { AdminSessionService } from '../../../services/admin-session.service';
+import { confirmUnsaved } from '../../../shared/unsaved-work';
 import { environment } from '../../../../environments/environment';
 
 /**
@@ -29,6 +30,11 @@ export class AdminContentComponent implements OnInit {
   private admin = inject(AdminService);
   private session = inject(AdminSessionService);
 
+  private snapshots = new Map<string, string>();
+  get dirty(): boolean { return this.rows.some(row => JSON.stringify(row) !== this.snapshots.get(row.id)); }
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnload(event: BeforeUnloadEvent): void { if (this.dirty) { event.preventDefault(); event.returnValue = ''; } }
+  canLeave(): boolean { return !this.saving && confirmUnsaved(this.dirty); }
   rows: ServiceContentRow[] = [];
   loading = true;
   failed = false;
@@ -55,6 +61,7 @@ export class AdminContentComponent implements OnInit {
     this.admin.getServiceContent().subscribe({
       next: (body) => {
         this.rows = body.services || [];
+        this.snapshots = new Map(this.rows.map(row => [row.id, JSON.stringify(row)]));
         this.loading = false;
       },
       error: (error) => {
@@ -80,6 +87,7 @@ export class AdminContentComponent implements OnInit {
         const fresh = (body.services || []).find((item) => item.id === row.id);
         if (fresh) {
           Object.assign(row, fresh);
+          this.snapshots.set(row.id, JSON.stringify(row));
         }
       },
       error: (error) => {

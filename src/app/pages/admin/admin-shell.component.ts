@@ -4,7 +4,8 @@ import { RouterModule } from '@angular/router';
 import { AdminMe } from '../../services/admin.service';
 import { AdminSessionService } from '../../services/admin-session.service';
 import { SharedService } from '../../shared.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { setStoredLanguage } from '../../shared/language-storage';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 /**
  * The administrator's area: one place, with tabs.
@@ -33,8 +34,8 @@ import { TranslateModule } from '@ngx-translate/core';
       <p class="who" *ngIf="!me">{{ 'ADMIN.LOADING' | translate }}</p>
       <span class="bar-right">
         <span class="lang" role="group" [attr.aria-label]="'ADMIN.LANGUAGE' | translate">
-          <button type="button" [class.on]="shared.lang === 'al'" (click)="shared.setLang('al')">AL</button>
-          <button type="button" [class.on]="shared.lang === 'en'" (click)="shared.setLang('en')">EN</button>
+          <button type="button" [class.on]="shared.lang === 'al'" (click)="switchLanguage('al')">AL</button>
+          <button type="button" [class.on]="shared.lang === 'en'" (click)="switchLanguage('en')">EN</button>
         </span>
         <a class="view-site" routerLink="/">{{ 'ADMIN.VIEW_SITE' | translate }}</a>
         <!-- Only on a phone; the navigation below is the same one, shown or hidden. -->
@@ -195,6 +196,12 @@ export class AdminShellComponent {
 
   /** The same language state the customer pages use: one service, one answer. */
   shared = inject(SharedService);
+  private translate = inject(TranslateService);
+  switchLanguage(language: 'al' | 'en'): void {
+    setStoredLanguage(language);
+    this.shared.setLang(language);
+    this.translate.use(language);
+  }
 
   /** The signed-in account, as the server described it. Null until the answer arrives. */
   me: AdminMe | null = null;

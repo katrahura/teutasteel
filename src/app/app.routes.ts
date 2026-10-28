@@ -1,3 +1,4 @@
+import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { adminGuard } from './guards/admin.guard';
@@ -85,6 +86,7 @@ export const appRoutes: Routes = [
       },
       {
         path: 'products',
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./pages/admin/products/admin-products.component').then(
             (m) => m.AdminProductsComponent
@@ -92,6 +94,7 @@ export const appRoutes: Routes = [
       },
       {
         path: 'settings',
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./pages/admin/settings/admin-settings.component').then(
             (m) => m.AdminSettingsComponent
@@ -99,6 +102,7 @@ export const appRoutes: Routes = [
       },
       {
         path: 'content',
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./pages/admin/content/admin-content.component').then(
             (m) => m.AdminContentComponent
@@ -106,11 +110,13 @@ export const appRoutes: Routes = [
       },
       {
         path: 'media',
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./pages/admin/media/admin-media.component').then((m) => m.AdminMediaComponent),
       },
       {
         path: 'categories',
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./pages/admin/categories/admin-categories.component').then(
             (m) => m.AdminCategoriesComponent

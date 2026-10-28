@@ -1,3 +1,4 @@
+import { AdminSessionService } from './admin-session.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -10,7 +11,7 @@ import { clearToken, getToken, getTokenUserId, setToken } from './token-storage'
 export class AuthService {
   private baseUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private session: AdminSessionService) {}
 
   // Login API Call
   login(credentials: { username: string; password: string }): Observable<any> {
@@ -19,6 +20,7 @@ export class AuthService {
 
   // Persist the JWT (SSR-safe: no direct localStorage access here)
   storeToken(token: string): void {
+    this.session.forget();
     setToken(token);
   }
 
@@ -34,6 +36,7 @@ export class AuthService {
 
   // Logout
   logout(): void {
+    this.session.forget();
     clearToken();
   }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -8,6 +8,7 @@ import { ProductService } from '../../../services/product.service';
 import { AdminService, MediaConfig } from '../../../services/admin.service';
 import { AdminSessionService } from '../../../services/admin-session.service';
 import { CloudinaryService } from '../../../services/cloudinary.service';
+import { confirmUnsaved } from '../../../shared/unsaved-work';
 import { environment } from '../../../../environments/environment';
 
 /** One line of the table: the category, how deep it sits, and what is above it. */
@@ -39,7 +40,7 @@ function emptyImage(): ImageAsset {
   templateUrl: './admin-categories.component.html',
   styleUrls: ['./admin-categories.component.css'],
 })
-export class AdminCategoriesComponent implements OnInit {
+export class AdminCategoriesComponent implements OnInit, OnDestroy {
   private products = inject(ProductService);
   private admin = inject(AdminService);
   private cloudinary = inject(CloudinaryService);
@@ -67,6 +68,16 @@ export class AdminCategoriesComponent implements OnInit {
   image: ImageAsset = emptyImage();
   mediaConfig: MediaConfig | null = null;
   private mediaConfigLoaded = false;
+  private snapshot = '';
+  private uploadAbort?: AbortController;
+  private editGeneration = 0;
+  get dirty(): boolean { return !!this.editing && JSON.stringify({editing:this.editing,image:this.image}) !== this.snapshot; }
+  private markClean(): void { this.snapshot = JSON.stringify({editing:this.editing,image:this.image}); }
+  canLeave(): boolean { return !this.saving && confirmUnsaved(this.dirty || this.uploading); }
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnload(event: BeforeUnloadEvent): void { if (this.dirty || this.uploading) { event.preventDefault(); event.returnValue = ''; } }
+  cancelUpload(): void { this.editGeneration++; this.uploadAbort?.abort(); this.uploading = false; this.uploadProgress = 0; }
+  ngOnDestroy(): void { this.cancelUpload(); }
   uploading = false;
   uploadProgress = 0;
   uploadError = '';
@@ -226,6 +237,8 @@ export class AdminCategoriesComponent implements OnInit {
   // --- the editor ---------------------------------------------------------------------------
 
   startNew(parent: Category | null = null): void {
+    if (!this.canLeave()) return;
+    this.cancelUpload();
     if (!this.canWrite) {
       return;
     }
@@ -240,9 +253,12 @@ export class AdminCategoriesComponent implements OnInit {
       is_active: true,
       parent_id: parent && parent.id ? parent.id : null,
     };
+    this.markClean();
   }
 
   edit(row: Row): void {
+    if (!this.canLeave()) return;
+    this.cancelUpload();
     if (!this.canWrite) {
       return;
     }
@@ -252,9 +268,12 @@ export class AdminCategoriesComponent implements OnInit {
     this.fieldErrors = {};
     this.editing = { ...row.category };
     this.image = { ...emptyImage(), ...(row.category.image_asset || {}) };
+    this.markClean();
   }
 
   cancel(): void {
+    if (!this.canLeave()) return;
+    this.cancelUpload();
     this.editing = null;
     this.isNew = false;
     this.image = emptyImage();
@@ -349,11 +368,14 @@ export class AdminCategoriesComponent implements OnInit {
     }
     const forCategory = this.editing && this.editing.id ? this.editing.id : 'new';
     this.uploadFor = forCategory;
+    const generation = ++this.editGeneration;
+    this.uploadAbort = new AbortController();
     this.uploading = true;
     this.uploadProgress = 0;
     this.uploadError = '';
-    this.cloudinary.upload(file, this.mediaConfig, (percent) => { this.uploadProgress = percent; })
+    this.cloudinary.upload(file, this.mediaConfig, (percent) => { if (generation === this.editGeneration) this.uploadProgress = percent; }, this.uploadAbort.signal)
       .then((url) => {
+        if (generation !== this.editGeneration) return;
         this.uploading = false;
         const current = this.editing && this.editing.id ? this.editing.id : 'new';
         if (current !== this.uploadFor) {
@@ -369,6 +391,7 @@ export class AdminCategoriesComponent implements OnInit {
         };
       })
       .catch(() => {
+        if (generation !== this.editGeneration) return;
         this.uploading = false;
         this.uploadError = 'MISC.IMAGE_UPLOAD_FAILED';
       });
@@ -379,7 +402,7 @@ export class AdminCategoriesComponent implements OnInit {
   }
 
   save(): void {
-    if (!this.editing || this.saving) {
+    if (!this.editing || this.saving || this.uploading) {
       return;
     }
     this.fieldErrors = {};
@@ -443,6 +466,7 @@ export class AdminCategoriesComponent implements OnInit {
   }
 
   imageOf(category: Category): string {
-    return category.image_asset?.thumbnail_path || '';
+    const url = category.image_asset?.thumbnail_path || '';
+    return url.includes('res.cloudinary.com/') ? url.replace('/image/upload/', '/image/upload/c_limit,w_160,h_160,f_auto,q_auto/') : url;
   }
 }

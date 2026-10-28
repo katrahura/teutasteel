@@ -455,7 +455,7 @@
     "SETTINGS_LANG_AL": "Shqip",
     "SETTINGS_LANG_EN": "Anglisht",
     "SETTINGS_PREVIEW": "Shihni faqen e kontaktit",
-    "SETTINGS_REFRESH": "Të dhënat e ruajtura shfaqen në faqet publike herën tjetër që hapet njëra. Kopja statike që sheh së pari një motor kërkimi shkruhet në ndërtimin tjetër.",
+    "SETTINGS_REFRESH": "Të dhënat e ruajtura shfaqen në ngarkimin tjetër të faqes. Metadata statike për motorët e kërkimit ruan të dhënat fillestare derisa të përditësohet shprehimisht gjatë publikimit. Vetëm rindërtimi nuk kopjon cilësimet e ruajtura.",
     "SETTINGS_UNSAVED": "Këto ndryshime nuk janë ruajtur ende.",
     "SETTINGS_INVALID_EMAIL": "Kjo nuk duket si një adresë email.",
     "SETTINGS_INVALID_NUMBER": "Vetëm numra, hapësira, +, -, ( ) dhe pika, me 6 deri në 15 numra.",
@@ -547,7 +547,8 @@
     "CONTENT_POSITION": "Renditja",
     "CONTENT_VISIBLE": "Shfaqet në faqe",
     "CONTENT_FALLBACK": "Fusha bosh mban fjalët dhe figurën që faqja ka tashmë.",
-    "CONTENT_SAVE": "Ruaj këtë shërbim"
+    "CONTENT_SAVE": "Ruaj këtë shërbim",
+    "CANCEL_UPLOAD": "Anulo ngarkimin"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

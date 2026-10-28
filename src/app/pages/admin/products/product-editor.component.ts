@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, OnDestroy, Output, SimpleChanges, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -60,7 +60,7 @@ interface FieldErrors {
   templateUrl: './product-editor.component.html',
   styleUrls: ['./product-editor.component.css'],
 })
-export class ProductEditorComponent implements OnChanges, OnInit {
+export class ProductEditorComponent implements OnChanges, OnInit, OnDestroy {
   private products = inject(ProductService);
   private admin = inject(AdminService);
   private cloudinary = inject(CloudinaryService);
@@ -68,6 +68,11 @@ export class ProductEditorComponent implements OnChanges, OnInit {
   /** What the browser needs to upload, fetched once; null until it arrives, empty when unset. */
   mediaConfig: MediaConfig | null = null;
   private mediaConfigLoaded = false;
+  private uploadAbort?: AbortController;
+  private uploadGeneration = 0;
+  cancelUpload(): void { this.uploadGeneration++; this.uploadAbort?.abort(); this.uploading = false; this.uploadProgress = 0; }
+  ngOnDestroy(): void { this.cancelUpload(); }
+  canLeave(): boolean { return !this.saving && (!(this.dirty || this.uploading) || this.confirmDiscard()); }
   uploading = false;
   uploadProgress = 0;
   uploadError = '';
@@ -160,18 +165,21 @@ export class ProductEditorComponent implements OnChanges, OnInit {
       return;
     }
     const forProduct = this.loadedId;
+    const generation = ++this.uploadGeneration;
+    this.uploadAbort = new AbortController();
     this.uploading = true;
     this.uploadProgress = 0;
     this.uploadError = '';
-    this.cloudinary.upload(file, this.mediaConfig, (percent) => { this.uploadProgress = percent; })
+    this.cloudinary.upload(file, this.mediaConfig, (percent) => { if (generation === this.uploadGeneration) this.uploadProgress = percent; }, this.uploadAbort.signal)
       .then((url) => {
-        if (this.loadedId !== forProduct) {
+        if (generation !== this.uploadGeneration || this.loadedId !== forProduct) {
           // The owner moved to another product while this was going up: drop it rather than
           // assigning a photograph to the wrong record.
-          this.uploading = false;
           return;
         }
         this.uploading = false;
+        this.thumbnailPath = url;
+        this.originalPath = url;
         this.image = {
           ...this.image,
           file_name: url.split('/').pop() || '',
@@ -181,19 +189,23 @@ export class ProductEditorComponent implements OnChanges, OnInit {
         };
       })
       .catch(() => {
+        if (generation !== this.uploadGeneration) return;
         this.uploading = false;
         this.uploadError = 'MISC.IMAGE_UPLOAD_FAILED';
       });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (this.newProduct && !this.productId && (changes['newProduct'] || changes['productId'])) {
+      this.startNew();
+      return;
+    }
     if (!changes['productId'] || !this.productId) {
       return;
     }
-    if (this.dirty && this.loaded && !this.confirmDiscard()) {
+    if (!this.adminMode && this.dirty && this.loaded && !this.confirmDiscard()) {
       // The address changed but the owner chose to keep what they typed: stay on the old product
       // rather than silently discarding it.
-      this.productId = this.loadedId;
       return;
     }
     this.load(this.productId);
@@ -201,6 +213,7 @@ export class ProductEditorComponent implements OnChanges, OnInit {
 
   /** A new product, switched off, with one empty variant and both language rows ready. */
   private startNew(): void {
+    this.cancelUpload();
     this.loadToken++;
     this.loadedId = null;
     this.product = {
@@ -229,6 +242,7 @@ export class ProductEditorComponent implements OnChanges, OnInit {
   }
 
   load(id: number): void {
+    this.cancelUpload();
     const token = ++this.loadToken;
     this.loading = true;
     this.failed = false;
@@ -409,9 +423,8 @@ export class ProductEditorComponent implements OnChanges, OnInit {
   }
 
   close(): void {
-    if (this.dirty && !this.confirmDiscard()) {
-      return;
-    }
+    if (!this.canLeave()) return;
+    this.cancelUpload();
     this.closed.emit();
   }
 

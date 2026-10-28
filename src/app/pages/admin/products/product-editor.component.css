@@ -103,3 +103,6 @@
   .modal-footer .field-error { width: 100%; }
   .modal-body { padding: 10px; }
 }
+/* Validation/conflict notices precede the form; they must never become a second column. */
+.editor-form .modal-body { display: block; }
+.editor-form .modal-body > form { width: 100%; min-width: 0; }

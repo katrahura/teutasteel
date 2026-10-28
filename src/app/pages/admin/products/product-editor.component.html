@@ -11,7 +11,6 @@
         <button
           type="button"
           class="btn-close"
-          data-bs-dismiss="modal"
           [attr.aria-label]="'MODAL.CLOSE' | translate"
           (click)="close()"
         ></button>
@@ -370,6 +369,7 @@
               (change)="onImage($event)"
               [disabled]="uploading"
             />
+            <button type="button" class="btn btn-outline-secondary" *ngIf="uploading" (click)="cancelUpload()">{{ "ADMIN.CANCEL_UPLOAD" | translate }}</button>
             <small class="text-muted" *ngIf="uploading">
               {{ "MISC.IMAGE_UPLOADING" | translate }} {{ uploadProgress }}%
             </small>

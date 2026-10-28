@@ -382,7 +382,7 @@
     "SETTINGS_LANG_AL": "Albanian",
     "SETTINGS_LANG_EN": "English",
     "SETTINGS_PREVIEW": "See the contact page",
-    "SETTINGS_REFRESH": "Saved details appear on the public pages the next time one is opened. The static copy that a search engine first sees is written at the next build.",
+    "SETTINGS_REFRESH": "Saved details reach public pages on the next page load. Static search-engine metadata keeps the built-in details until an explicit metadata update is included in a deployment. Rebuilding alone does not copy saved settings into it.",
     "SETTINGS_UNSAVED": "These changes are not saved yet.",
     "SETTINGS_INVALID_EMAIL": "This does not look like an email address.",
     "SETTINGS_INVALID_NUMBER": "Digits, spaces, +, -, ( ) and dots only, with 6 to 15 digits.",
@@ -474,7 +474,8 @@
     "CONTENT_POSITION": "Order",
     "CONTENT_VISIBLE": "Shown on the site",
     "CONTENT_FALLBACK": "A blank field keeps the words and picture the page already has.",
-    "CONTENT_SAVE": "Save this service"
+    "CONTENT_SAVE": "Save this service",
+    "CANCEL_UPLOAD": "Cancel upload"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

@@ -82,7 +82,7 @@
     </header>
     <app-product-editor [productId]="openId" [newProduct]="creating" [adminMode]="true"
                         [categories]="groups"
-                        (saved)="onSaved($event)" (closed)="closeEditor()"></app-product-editor>
+                        (saved)="onSaved($event)" (closed)="dismissEditor()"></app-product-editor>
   </aside>
 
   <!-- A bulk price change, offered only once rows are ticked. A preview first, always: the panel and

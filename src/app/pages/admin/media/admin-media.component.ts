@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { AdminService, GapProduct, MediaConfig } from '../../../services/admin.service';
 import { ProductService } from '../../../services/product.service';
+import { CloudinaryService } from '../../../services/cloudinary.service';
+import { confirmUnsaved } from '../../../shared/unsaved-work';
 import { Product } from '../../../models/product.model';
 
 /**
@@ -23,7 +25,16 @@ import { Product } from '../../../models/product.model';
   templateUrl: './admin-media.component.html',
   styleUrls: ['./admin-media.component.css'],
 })
-export class AdminMediaComponent implements OnInit {
+export class AdminMediaComponent implements OnInit, OnDestroy {
+  private cloudinary = inject(CloudinaryService);
+  private uploadAbort?: AbortController;
+  private generation = 0;
+  canLeave(): boolean { return !this.saving && confirmUnsaved(this.uploading || !!this.uploadedUrl); }
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnload(event: BeforeUnloadEvent): void { if (this.uploading || this.uploadedUrl) { event.preventDefault(); event.returnValue = ''; } }
+  cancelUpload(): void { this.generation++; this.uploadAbort?.abort(); this.uploading = false; this.progress = 0; }
+  close(): void { if (!this.canLeave()) return; this.cancelUpload(); this.chosen = null; this.uploadedUrl = ''; }
+  ngOnDestroy(): void { this.cancelUpload(); }
   private admin = inject(AdminService);
   private products = inject(ProductService);
 
@@ -77,6 +88,8 @@ export class AdminMediaComponent implements OnInit {
   }
 
   pick(row: GapProduct): void {
+    if (!this.canLeave()) return;
+    this.cancelUpload();
     this.chosen = row;
     this.uploadedUrl = '';
     this.uploadedFor = null;
@@ -100,50 +113,21 @@ export class AdminMediaComponent implements OnInit {
     this.errorMessage = '';
     this.uploadedUrl = '';
 
-    const form = new FormData();
-    form.append('file', file);
-    form.append('upload_preset', this.config.upload_preset);
-    if (this.config.folder) {
-      form.append('folder', this.config.folder);
-    }
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `https://api.cloudinary.com/v1_1/${this.config.cloud_name}/image/upload`);
-    xhr.upload.onprogress = (progressEvent) => {
-      if (progressEvent.lengthComputable) {
-        this.progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-      }
-    };
-    xhr.onload = () => {
+    const generation = ++this.generation;
+    this.uploadAbort = new AbortController();
+    this.cloudinary.upload(file, this.config, percent => {
+      if (generation === this.generation) this.progress = percent;
+    }, this.uploadAbort.signal).then(url => {
+      if (generation !== this.generation || this.chosen?.id !== forProduct) return;
       this.uploading = false;
       this.progress = 100;
-      // The owner moved to another product while this was going up. Keep the address out of the
-      // form entirely rather than risk it being saved against the wrong record.
-      if (!this.chosen || this.chosen.id !== forProduct) {
-        this.uploadedUrl = '';
-        this.uploadedFor = null;
-        this.errorMessage = 'ADMIN.MEDIA_WRONG_PRODUCT';
-        return;
-      }
-      try {
-        const body = JSON.parse(xhr.responseText);
-        if (xhr.status >= 200 && xhr.status < 300 && body.secure_url) {
-          this.uploadedUrl = body.secure_url;
-          if (!this.altText) {
-            this.altText = (this.chosen && this.chosen.code) || '';
-          }
-        } else {
-          this.errorMessage = (body && body.error && body.error.message) || 'ADMIN.MEDIA_FAILED';
-        }
-      } catch {
-        this.errorMessage = 'ADMIN.MEDIA_FAILED';
-      }
-    };
-    xhr.onerror = () => {
+      this.uploadedUrl = url;
+      this.altText ||= this.chosen.code || '';
+    }).catch(() => {
+      if (generation !== this.generation) return;
       this.uploading = false;
       this.errorMessage = 'ADMIN.MEDIA_FAILED';
-    };
-    xhr.send(form);
+    });
   }
 
   /** Write the address that came back onto the product it was uploaded for, and nothing else. */

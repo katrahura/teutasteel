@@ -12,12 +12,14 @@ import { MediaConfig } from './admin.service';
  */
 @Injectable({ providedIn: 'root' })
 export class CloudinaryService {
-  upload(file: File, config: MediaConfig, onProgress?: (percent: number) => void): Promise<string> {
+  upload(file: File, config: MediaConfig, onProgress?: (percent: number) => void, signal?: AbortSignal): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!config || !config.configured) {
         reject(new Error('not_configured'));
         return;
       }
+      if (!['image/jpeg','image/png','image/webp','image/avif','image/gif'].includes(file.type) || file.size > 10 * 1024 * 1024) { reject(new Error('Use a JPEG, PNG, WebP, AVIF or GIF under 10 MB.')); return; }
+      if (signal?.aborted) { reject(new DOMException('Upload cancelled', 'AbortError')); return; }
       const form = new FormData();
       form.append('file', file);
       form.append('upload_preset', config.upload_preset);
@@ -32,7 +34,14 @@ export class CloudinaryService {
           onProgress(Math.round((event.loaded / event.total) * 100));
         }
       };
+      const abort = () => xhr.abort();
+      const clean = () => signal?.removeEventListener('abort', abort);
+      signal?.addEventListener('abort', abort, { once: true });
+      xhr.timeout = 120000;
+      xhr.onabort = () => { clean(); reject(new DOMException('Upload cancelled', 'AbortError')); };
+      xhr.ontimeout = () => { clean(); reject(new Error('upload_timeout')); };
       xhr.onload = () => {
+        clean();
         try {
           const body = JSON.parse(xhr.responseText);
           if (xhr.status >= 200 && xhr.status < 300 && body.secure_url) {
@@ -44,7 +53,7 @@ export class CloudinaryService {
           reject(new Error('upload_failed'));
         }
       };
-      xhr.onerror = () => reject(new Error('upload_failed'));
+      xhr.onerror = () => { clean(); reject(new Error('upload_failed')); };
       xhr.send(form);
     });
   }

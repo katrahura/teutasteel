@@ -124,3 +124,12 @@ page. Routes: `/`, `/products`, `/products?product=1`, `/request`, `/contact`, `
 - Backend: `app/routes/{admin_routes,product_routes,category_routes}.py`, `app/auth.py`,
   `app/models/{product,dimension,category,setting,bulk_application}.py`, `app/schemas/**`,
   `migrations/versions/`.
+
+
+## Independent repair follow-up — 28 October 2026
+
+The later source review found functional defects beyond the manual gaps above. R1–R5 and related account/category/upload/navigation issues have now been repaired locally. Read `ADMIN-FIXES-VERIFICATION.md` for the current behavior, test evidence and rollout caveats. Full checks: 276 backend tests, 263 frontend tests, final production build with 26 routes. A two-tab conflict and single/multiple-variant phone enquiries were verified against disposable data; the admin phone menu passed the Tab/Enter/Escape focus spot-check. External Cloudinary upload/cancellation remains an integration check, with abort and payload behavior covered by mocked regression tests.
+
+Correction to earlier metadata wording: public settings are browser-fetched. An ordinary rebuild alone does not put saved values into the hardcoded index.html metadata or the prerendered built-in contact values; an explicit metadata update is required. The admin now explains that limitation.
+
+These repairs add no migration, but depend on the existing Harness migrations. Frontend and backend need a coordinated release because imports now require the reviewed preview signature. No production writes, deployment or push was performed. The new code remains uncommitted for review; do not assume the working trees are still clean as they were in the earlier handoff.
