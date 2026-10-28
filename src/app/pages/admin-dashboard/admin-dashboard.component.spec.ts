@@ -50,7 +50,7 @@ describe('AdminDashboardComponent', () => {
     httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
     // The compact "recent changes" list.
-    httpMock.expectOne(activityUrl).flush({
+    httpMock.expectOne((request) => request.url.startsWith(activityUrl)).flush({
       activity: [
         { id: 1, created_at: '2026-10-27T10:00:00', username: 'ana',
           action: 'product.update', subject: 'IPE-100', detail: '' },

@@ -518,7 +518,16 @@
     "CATEGORY_SAVED": "Kategoria u ruajt.",
     "CATEGORIES_READ_ONLY": "Vetëm për lexim; administratori i rregullon kategoritë.",
     "PREVIEW": "Pamja",
-    "MEDIA_WRONG_PRODUCT": "Ngarkimi ishte për një produkt tjetër dhe u hodh poshtë."
+    "MEDIA_WRONG_PRODUCT": "Ngarkimi ishte për një produkt tjetër dhe u hodh poshtë.",
+    "BULK_SELECTED_ON_PAGE": "të zgjedhura në këtë faqe",
+    "BULK_PREVIEW_FIRST": "Shihni paraprakisht ndryshimin përpara se ta aplikoni.",
+    "BULK_STALE_PREVIEW": "Ai parashikim është i vjetruar; shihni ndryshimin përsëri.",
+    "ACTIVITY_SEARCH": "Kërko në historik",
+    "ACTIVITY_ACTION": "Veprimi",
+    "ACTIVITY_ALL_ACTIONS": "Të gjitha veprimet",
+    "ACTIVITY_SEARCH_BUTTON": "Kërko",
+    "ACTIVITY_RECORDS": "regjistrime",
+    "IMPORT_POLICY": "Rreshtat e mirë aplikohen; rreshti i refuzuar nuk ndryshon asgjë dhe listohet me arsyen."
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",

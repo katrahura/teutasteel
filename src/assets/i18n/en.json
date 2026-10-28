@@ -445,7 +445,16 @@
     "CATEGORY_SAVED": "Category saved.",
     "CATEGORIES_READ_ONLY": "Read only for you; an administrator arranges the categories.",
     "PREVIEW": "Preview",
-    "MEDIA_WRONG_PRODUCT": "The upload was for another product and was discarded."
+    "MEDIA_WRONG_PRODUCT": "The upload was for another product and was discarded.",
+    "BULK_SELECTED_ON_PAGE": "selected on this page",
+    "BULK_PREVIEW_FIRST": "Preview the change before applying it.",
+    "BULK_STALE_PREVIEW": "That preview is out of date; preview the change again.",
+    "ACTIVITY_SEARCH": "Search the history",
+    "ACTIVITY_ACTION": "Action",
+    "ACTIVITY_ALL_ACTIONS": "All actions",
+    "ACTIVITY_SEARCH_BUTTON": "Search",
+    "ACTIVITY_RECORDS": "records",
+    "IMPORT_POLICY": "Good lines are applied; a refused line changes nothing and is listed with its reason."
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",

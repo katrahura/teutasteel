@@ -9,6 +9,7 @@ import { ActivityRecord, AdminService, BulkPriceReport, CatalogueQuery, Catalogu
 import { ProductService } from '../../../services/product.service';
 import { Product, TopCategory } from '../../../models/product.model';
 import { ProductEditorComponent } from './product-editor.component';
+import { csvDocument } from '../../../shared/csv';
 
 /**
  * The catalogue, as a table.
@@ -71,6 +72,13 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   activityLoaded = false;
   /** Opened from the dashboard's compact "recent changes" link. */
   activityOpen = false;
+  /** The history's own filters and page: a year of changes should still be findable. */
+  activityQuery = '';
+  activityAction = '';
+  activityPage = 1;
+  activityPages = 1;
+  activityTotal = 0;
+  activityActions: string[] = [];
 
   /** The rows ticked for a bulk change. Cleared on every load: a selection is for one page's work. */
   selectedIds = new Set<number>();
@@ -82,6 +90,10 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   bulkBusy = false;
   bulkError = '';
   bulkDone = '';
+  /** The token the last preview returned, and the key that makes this apply safe to retry. */
+  private bulkPreviewToken: string | null = null;
+  private bulkIdempotencyKey: string | null = null;
+  private bulkPreviewSignature = '';
 
   q = '';
   category: number | null = null;
@@ -256,15 +268,33 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     });
   }
 
-  /** The last changes, read when the list is opened rather than on every visit. */
-  loadActivity(): void {
-    if (this.activityLoaded) {
+  /** The history, read when the list is opened rather than on every visit. */
+  openActivity(): void {
+    if (!this.activityLoaded) {
+      this.loadActivity(1);
+    }
+  }
+
+  /** Read one page, optionally restarting because a filter changed. */
+  loadActivity(page = 1, reload = false): void {
+    if (this.activityLoaded && !reload && page === this.activityPage) {
       return;
     }
     this.activityLoaded = true;
     this.subscriptions.add(
-      this.admin.getActivity().subscribe({
-        next: (body) => { this.activity = body.activity || []; },
+      this.admin.getActivity({
+        q: this.activityQuery,
+        action: this.activityAction,
+        page,
+        perPage: 20,
+      }).subscribe({
+        next: (body) => {
+          this.activity = body.activity || [];
+          this.activityPage = body.page || page;
+          this.activityPages = Math.max(body.pages || 1, 1);
+          this.activityTotal = body.total || 0;
+          this.activityActions = body.actions || [];
+        },
         error: () => { this.activityLoaded = false; },
       })
     );
@@ -286,10 +316,11 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     if (!refused.length || typeof window === 'undefined') {
       return;
     }
-    const lines = ['line,code,reason'].concat(
-      refused.map((row) => [row.line, row.code, '"' + String(row.reason || '').replace(/"/g, '""') + '"'].join(','))
+    const lines = csvDocument(
+      ['line', 'code', 'reason'],
+      refused.map((row) => [row.line, row.code, row.reason])
     );
-    const blob = new Blob([lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const blob = new Blob([lines], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -437,9 +468,39 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     this.runBulk(true);
   }
 
-  /** Write what the preview showed. */
+  /** Write what the preview showed. Refused when the preview is no longer the one on screen. */
   applyBulk(): void {
+    if (!this.bulkPreviewToken) {
+      this.bulkError = 'ADMIN.BULK_PREVIEW_FIRST';
+      return;
+    }
+    if (this.bulkSignature() !== this.bulkPreviewSignature) {
+      this.bulkReport = null;
+      this.bulkPreviewToken = null;
+      this.bulkError = 'ADMIN.BULK_STALE_PREVIEW';
+      return;
+    }
     this.runBulk(false);
+  }
+
+  /** What the preview promised: the mode, the value and exactly which rows are selected. */
+  private bulkSignature(): string {
+    return `${this.bulkMode}|${this.bulkValue}|${Array.from(this.selectedIds).sort().join(',')}`;
+  }
+
+  private newIdempotencyKey(): string {
+    const at = typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random()}`;
+    return `bulk-${at}`;
+  }
+
+  /** Typing a new value or changing the mode invalidates the preview on screen. */
+  resetBulkPreview(): void {
+    this.bulkReport = null;
+    this.bulkPreviewToken = null;
+    this.bulkPreviewSignature = '';
+    this.bulkError = '';
   }
 
   private runBulk(dryRun: boolean): void {
@@ -455,20 +516,37 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
         mode: this.bulkMode,
         value: Number(this.bulkValue),
         dryRun,
+        previewToken: this.bulkPreviewToken || undefined,
+        idempotencyKey: this.bulkIdempotencyKey || undefined,
       }).subscribe({
         next: (report) => {
           this.bulkBusy = false;
           this.bulkReport = report;
-          if (!report.dry_run) {
-            this.bulkDone = String(report.count);
-            this.bulkReport = null;
-            this.selectedIds.clear();
-            this.load(this.page);
+          if (dryRun) {
+            this.bulkPreviewToken = report.preview_token || null;
+            this.bulkPreviewSignature = this.bulkSignature();
+            if (!this.bulkIdempotencyKey) {
+              this.bulkIdempotencyKey = this.newIdempotencyKey();
+            }
+            return;
           }
+          this.bulkDone = String(report.count);
+          this.bulkReport = null;
+          this.bulkPreviewToken = null;
+          this.bulkIdempotencyKey = null;
+          this.bulkPreviewSignature = '';
+          this.selectedIds.clear();
+          this.load(this.page);
         },
         error: (error) => {
           this.bulkBusy = false;
           const status = error && error.status;
+          if (status === 409) {
+            this.bulkReport = null;
+            this.bulkPreviewToken = null;
+            this.bulkError = 'ADMIN.BULK_STALE_PREVIEW';
+            return;
+          }
           this.bulkError = status === 401 || status === 403
             ? 'ADMIN.NOT_ALLOWED'
             : (error && error.error && error.error.error) || 'ADMIN.TABLE_FAILED';

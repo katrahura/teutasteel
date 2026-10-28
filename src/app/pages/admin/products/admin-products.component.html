@@ -88,11 +88,14 @@
   <!-- A bulk price change, offered only once rows are ticked. A preview first, always: the panel and
        the apply are the same call with one flag between them. -->
   <section class="bulk-panel" *ngIf="selectedIds.size && !denied">
-    <h2 class="h6">{{ 'ADMIN.BULK_TITLE' | translate }} — {{ selectedIds.size }}</h2>
+    <h2 class="h6">
+      {{ 'ADMIN.BULK_TITLE' | translate }} — {{ selectedIds.size }}
+      <span class="muted small">({{ 'ADMIN.BULK_SELECTED_ON_PAGE' | translate }})</span>
+    </h2>
     <div class="filters">
       <label class="field">
         <span class="visually-hidden">{{ 'ADMIN.BULK_MODE' | translate }}</span>
-        <select name="bulkMode" [(ngModel)]="bulkMode" (ngModelChange)="bulkReport = null"
+        <select name="bulkMode" [(ngModel)]="bulkMode" (ngModelChange)="resetBulkPreview()"
                 [attr.aria-label]="'ADMIN.BULK_MODE' | translate">
           <option value="percent">{{ 'ADMIN.BULK_PERCENT' | translate }}</option>
           <option value="amount">{{ 'ADMIN.BULK_AMOUNT' | translate }}</option>
@@ -102,7 +105,7 @@
       <label class="field">
         <span class="visually-hidden">{{ 'ADMIN.BULK_VALUE' | translate }}</span>
         <input type="number" step="0.01" name="bulkValue" [(ngModel)]="bulkValue"
-               (ngModelChange)="bulkReport = null" [attr.placeholder]="'ADMIN.BULK_VALUE' | translate"
+               (ngModelChange)="resetBulkPreview()" [attr.placeholder]="'ADMIN.BULK_VALUE' | translate"
                [attr.aria-label]="'ADMIN.BULK_VALUE' | translate" />
       </label>
       <button type="button" class="link" (click)="previewBulk()"
@@ -121,6 +124,8 @@
         <thead>
           <tr>
             <th scope="col">{{ 'ADMIN.COL_CODE' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.COL_SIZE' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.PRICE_UNIT' | translate }}</th>
             <th scope="col" class="right">{{ 'ADMIN.BULK_BEFORE' | translate }}</th>
             <th scope="col" class="right">{{ 'ADMIN.BULK_AFTER' | translate }}</th>
           </tr>
@@ -128,6 +133,10 @@
         <tbody>
           <tr *ngFor="let change of bulkReport.changes">
             <td class="code">{{ change.code }}</td>
+            <td class="muted">{{ change.variant || '—' }}</td>
+            <td class="muted">
+              {{ change.price_unit ? ('ADMIN.UNIT_' + (change.price_unit | uppercase) | translate) : ('ADMIN.UNIT_UNKNOWN' | translate) }}
+            </td>
             <td class="right">{{ change.before.toFixed(2) }} {{ change.currency || '' }}</td>
             <td class="right"><strong>{{ change.after.toFixed(2) }} {{ change.currency || '' }}</strong></td>
           </tr>
@@ -144,8 +153,28 @@
        a request on every visit. `?activity=1` opens it, which is how the dashboard's compact list
        leads to the full one without moving the history into the product workflow. -->
   <section class="import-panel" id="activity" *ngIf="!denied">
-    <details (toggle)="loadActivity()" [open]="activityOpen">
+    <details (toggle)="openActivity()" [open]="activityOpen">
       <summary>{{ 'ADMIN.ACTIVITY_TITLE' | translate }}</summary>
+
+      <!-- The record is searchable and paged: after a year, a list of the last hundred changes is a
+           decoration rather than a record. -->
+      <div class="activity-filters">
+        <input type="search" name="activityQuery" [(ngModel)]="activityQuery"
+               (keyup.enter)="loadActivity(1, true)"
+               [attr.placeholder]="'ADMIN.ACTIVITY_SEARCH' | translate"
+               [attr.aria-label]="'ADMIN.ACTIVITY_SEARCH' | translate" />
+        <select name="activityAction" [(ngModel)]="activityAction"
+                (ngModelChange)="loadActivity(1, true)"
+                [attr.aria-label]="'ADMIN.ACTIVITY_ACTION' | translate">
+          <option value="">{{ 'ADMIN.ACTIVITY_ALL_ACTIONS' | translate }}</option>
+          <option *ngFor="let action of activityActions" [value]="action">{{ action }}</option>
+        </select>
+        <button type="button" class="link" (click)="loadActivity(1, true)">
+          {{ 'ADMIN.ACTIVITY_SEARCH_BUTTON' | translate }}
+        </button>
+        <span class="muted small">{{ activityTotal }} {{ 'ADMIN.ACTIVITY_RECORDS' | translate }}</span>
+      </div>
+
       <table class="table table-sm align-middle mt-2">
         <thead>
           <tr>
@@ -167,6 +196,18 @@
           </tr>
         </tbody>
       </table>
+
+      <div class="d-flex gap-2 mt-2" *ngIf="activityPages > 1">
+        <button type="button" class="btn btn-sm btn-outline-secondary"
+                [disabled]="activityPage <= 1" (click)="loadActivity(activityPage - 1, true)">
+          {{ 'ADMIN.PREVIOUS' | translate }}
+        </button>
+        <span class="muted small">{{ activityPage }} / {{ activityPages }}</span>
+        <button type="button" class="btn btn-sm btn-outline-secondary"
+                [disabled]="activityPage >= activityPages" (click)="loadActivity(activityPage + 1, true)">
+          {{ 'ADMIN.NEXT' | translate }}
+        </button>
+      </div>
     </details>
   </section>
 
@@ -178,6 +219,8 @@
       <p class="muted">{{ 'ADMIN.IMPORT_LEAD' | translate }}
         <a href="/import-template.csv" download>{{ 'ADMIN.IMPORT_TEMPLATE' | translate }}</a>
       </p>
+      <!-- The policy, stated where the file is chosen: this importer is partial by design. -->
+      <p class="muted small">{{ 'ADMIN.IMPORT_POLICY' | translate }}</p>
       <div class="import-row">
         <label class="field">
           <span class="visually-hidden">{{ 'ADMIN.IMPORT_CHOOSE' | translate }}</span>

@@ -11,6 +11,7 @@ import {
   SearchReport,
 } from '../../services/admin.service';
 import { ProductService } from '../../services/product.service';
+import { csvDocument } from '../../shared/csv';
 
 /**
  * The owner's dashboard.
@@ -274,17 +275,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
    * comma or a quote would shift every column after it.
    */
   csvOf(products: GapProduct[]): string {
-    const cell = (value: string | null | undefined): string => {
-      const text = value == null ? '' : String(value);
-      return /[",\r\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
-    };
     const head = [
       this.translate.instant('ADMIN.CODE'),
       this.translate.instant('ADMIN.GROUP'),
       this.translate.instant('ADMIN.CATEGORY'),
     ];
-    const rows = products.map((product) => [product.code, product.group, product.category]);
-    return [head, ...rows].map((row) => row.map(cell).join(',')).join('\r\n');
+    return csvDocument(head, products.map((product) => [product.code, product.group, product.category]));
   }
 
   /** Gather every page of the open list and hand it to the browser as a file. */

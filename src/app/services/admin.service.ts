@@ -179,9 +179,23 @@ export interface BulkPriceChange {
   product_id: number;
   code: string;
   dimension_id: number;
+  /** The size the price belongs to, so a preview names the variant rather than the product alone. */
+  variant?: string;
   before: number;
   after: number;
   currency: string | null;
+  /** What the price is for; null is unknown and is shown as such, never guessed. */
+  price_unit?: string | null;
+}
+
+/** One page of the change history, with what a filter needs to offer. */
+export interface ActivityPage {
+  activity: ActivityRecord[];
+  total: number;
+  page: number;
+  pages: number;
+  per_page: number;
+  actions: string[];
 }
 
 export interface BulkPriceReport {
@@ -191,14 +205,21 @@ export interface BulkPriceReport {
   changes: BulkPriceChange[];
   count: number;
   refused: { product_id: number; code: string; reason: string }[];
+  /** What an apply must carry to prove it is applying this preview. */
+  preview_token?: string;
+  /** True when a retried apply was recognised and the first answer returned. */
+  replayed?: boolean;
 }
-
 /** What a bulk price change asks for. */
 export interface BulkPriceQuery {
   products: number[];
   mode: 'percent' | 'amount' | 'set';
   value: number;
   dryRun: boolean;
+  /** From the preview; required by the server on an apply. */
+  previewToken?: string;
+  /** One key per apply session, so a retry changes the prices once. */
+  idempotencyKey?: string;
 }
 
 /** What the importer answers: what it would do, and what it refused and why. */
@@ -333,7 +354,14 @@ export class AdminService {
   bulkPrices(query: BulkPriceQuery): Observable<BulkPriceReport> {
     return this.http.post<BulkPriceReport>(
       `${this.baseUrl}/product/prices/bulk`,
-      { products: query.products, mode: query.mode, value: query.value, dry_run: query.dryRun },
+      {
+        products: query.products,
+        mode: query.mode,
+        value: query.value,
+        dry_run: query.dryRun,
+        preview_token: query.previewToken || null,
+        idempotency_key: query.idempotencyKey || null,
+      },
       { headers: this.authHeaders() }
     );
   }
@@ -379,10 +407,21 @@ export class AdminService {
     });
   }
 
-  /** The last changes made through the panel, newest first. */
-  getActivity(): Observable<{ activity: ActivityRecord[] }> {
-    return this.http.get<{ activity: ActivityRecord[] }>(`${this.baseUrl}/admin/activity`, {
+  /** The changes made through the panel, newest first, searchable and paged. */
+  getActivity(options: { q?: string; action?: string; page?: number; perPage?: number } = {}):
+    Observable<ActivityPage> {
+    let params = new HttpParams()
+      .set('page', String(options.page ?? 1))
+      .set('per_page', String(options.perPage ?? 20));
+    if ((options.q || '').trim()) {
+      params = params.set('q', (options.q || '').trim());
+    }
+    if (options.action) {
+      params = params.set('action', options.action);
+    }
+    return this.http.get<ActivityPage>(`${this.baseUrl}/admin/activity`, {
       headers: this.authHeaders(),
+      params,
     });
   }
 

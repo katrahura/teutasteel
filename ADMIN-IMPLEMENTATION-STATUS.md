@@ -33,7 +33,7 @@ whole backend suite must pass before a backend commit. A test count read after t
 | 3 — dashboard and quality queue | **verified** — "Needs attention" queue first (seven checks, each linking to the worklist and to the filtered table), reachable-vs-active counted separately, missing-language and negative-price checks, gap filter on `/admin/products` kept in the URL, compact recent changes with a link to the full history | `admin-dashboard`, `admin-products`, `admin.service`, `admin_routes.py` | none | 220 frontend, 221 backend, build 25 routes | see "Phase 3 — what each count means" |
 | 4 — product and variant editing | **implemented, verification pending** — create inside the panel (saved inactive), category reassignment, typed price unit per variant, version-checked saves (409 conflict + reload), stale loads/uploads ignored, dirty-change warnings, sectioned editor, preview link, per-field errors; backend gaps for missing price units | `product-editor`, `admin-products`, `products`, `product_routes.py`, `dimension_schema`, new migration | **one**: `products.version`, `dimensions.price_unit` (`c41f8a2d7e10`) | 227 frontend, 236 backend, migration applied to a throwaway DB, build 25 routes | desktop/phone flows and the customer enquiry regressions are checked in phase 8 |
 | 5 — category and image management | **implemented, verification pending** — searchable collapsible tree with branch counts and thumbnails, create/edit (AL + EN labels, parent, visibility, image + alt), effective visibility shown, impact before switching off, cycle refusal on the server, category writes now admin-only, upload bound to the edited entity, public preview | `admin-categories`, `admin-media`, `category_routes.py`, `category_schema`, `category.py`, `translate-category-title` | `a7d2c9e4f610` (`categories.title_en`) | 237 frontend, 246 backend, migrations applied to a throwaway DB, build 25 routes | browser check in phase 8; media stays product-only (category images live in the category editor) |
-| 6 — bulk prices, imports, history | pending | `admin-products`, `product_routes.py`, `admin_routes.py` | possible | — | preview/apply staleness token |
+| 6 — bulk prices, imports, history | **implemented, verification pending** — apply bound to a signed preview token and refused when prices/selection moved, idempotency key makes a retry change nothing, preview names variant/currency/unit, Decimal half-up money, formula-injection-safe CSV exports, searchable/filterable/paged history | `product_routes.py`, `bulk_application.py`, `admin_routes.py`, `admin-products`, `admin.service`, `shared/csv` | `b9e3f1c25a70` (`bulk_applications`) | 242 frontend, 256 backend, build 25 routes | import stays partial-apply by policy; batch reversal not added |
 | 7 — search insights and content | pending | new `/admin/content`, `admin_routes.py` | possible | — | approved service copy |
 | 8 — final quality and handoff | pending | `ADMIN-HANDOFF.md` | none | — | — |
 
@@ -147,6 +147,23 @@ Limitations recorded: the category thumbnail uses the uploaded URL rather than a
 rendition; the uploader has progress and retry but no cancel button; the Media page remains a
 product worklist, with category images handled inside the category editor.
 
+## Phase 6 — what makes a bulk change safe to retry
+
+| Risk | What happens now | Evidence |
+|---|---|---|
+| Applying a preview the catalogue has moved past | The preview signs (HMAC, app secret) the mode, value, selection and every price it saw. An apply must carry that token; the server recomputes it from the current rows and answers **409 stale_preview**, writing nothing | `test_a_preview_made_before_a_price_moved_is_refused`, `test_a_changed_selection_invalidates_the_preview` |
+| Double click / network retry raising prices twice | An apply carries an idempotency key generated with the preview; the first answer is stored and replayed verbatim (`replayed: true`), with no second write | `test_the_same_apply_retried_changes_the_prices_once` |
+| Rounding nobody can predict | Money is Decimal, two places, **half-up**; 10.05 + 10% is 11.06, not the 11.05 a float `round()` gives | `test_percentages_round_half_up_and_the_preview_names_the_variant` |
+| Not knowing which variant/unit a preview changes | Each row carries the code, the size, the currency and the typed unit (or "unknown") | same test; `test_the_preview_names_the_unit_and_currency_it_is_changing` |
+| A price falling to zero or below | Refused before writing, and listed in `refused` | `test_a_price_that_would_reach_zero_is_refused_rather_than_written` |
+| A CSV cell executing in a spreadsheet | Text cells starting with `= + - @`, tab or CR are prefixed with an apostrophe; quotes/commas are escaped; real numbers stay numbers | `shared/csv.spec.ts`; dashboard and rejected-row exports use it |
+| A history that stops being usable | `/admin/activity` takes `q`, `action`, `actor`, `from`, `to`, `page`, `per_page`, and returns the total, pages and the action list; the products page offers search, an action filter and paging | `test_activity_log.py` filters/paging tests |
+
+Policy kept explicit: the CSV thickness import is **partial** - good lines are applied, refused lines are
+reported with a reason and change nothing, and the import is recorded. That is documented in the
+import panel rather than silently changed to all-or-nothing. Batch price reversal was **not** added;
+the existing single-price revert remains the undo for one row.
+
 ## Unresolved (need the owner)
 
 - Cloudinary *Strict Transformations* is enabled in the account but **not enforced**: a never-requested
@@ -177,6 +194,20 @@ product worklist, with category images handled inside the category editor.
 ## Progress log
 
 Newest first.
+
+- **Phase 6 — implemented, verification pending.** A bulk apply is now bound to its preview: the
+  preview signs the mode, value, selection and every price it saw, the apply must carry that token,
+  and the server recomputes it from the current rows - a stale preview gets 409 and writes nothing.
+  An idempotency key (new `bulk_applications` table, migration `b9e3f1c25a70`) makes a double click or
+  network retry return the first answer instead of raising prices twice. The preview names the size,
+  currency and typed unit of every variant it would change; money moved to Decimal with explicit
+  half-up rounding. Exports are protected against spreadsheet formula injection through
+  `shared/csv.ts` (dashboard worklist and rejected-row file). The history is searchable by text,
+  action and account, filterable by date, paged, and returns its total and the action list. The bulk
+  panel says "selected on this page" so nobody thinks the selection spans the filtered catalogue.
+  Frontend **242 tests**, backend suite, build **25 routes, exit 0**. Deliberately not done: batch
+  price reversal (the single-row revert remains), and the CSV import keeps its documented
+  partial-apply policy.
 
 - **Phase 5 — implemented, verification pending.** The category page is now a searchable, collapsible
   tree with a thumbnail, the branch's product total, its descendant count and the effective
@@ -277,10 +308,11 @@ Newest first.
 
 ## Next (read this first)
 
-**Phase 6 — dependable bulk prices, imports and audit history.** Read `admin-products`' bulk and
-import panels, `product_routes.py`'s `/prices/bulk` and `/import-thickness`, and the activity log.
-The known gaps: a preview is not bound to the inputs that produced it, apply is not idempotent, and
-CSV exports do not guard against spreadsheet formula injection. Phase 4's `expected_version` is the
-pattern for staleness.
+**Phase 7 — search insights and a bounded content workspace.** Search already records terms, hits,
+frequency and last-seen; the work is a date range, normalised terms, zero-result filtering and honest
+labels (a search is not a sale). The content workspace is the larger half: `/admin/content` for the
+service offerings with AL/EN title and description, image/alt, ordering and visibility, reusing the
+existing service ids and keeping the current copy as fallback. Do not publish sample projects as
+customer work.
 
-Then phases 7-8, and the cross-device verification pass for phases 4-5.
+Then phase 8: the cross-device pass for phases 4–6, the customer-page regressions, `ADMIN-HANDOFF.md`.
