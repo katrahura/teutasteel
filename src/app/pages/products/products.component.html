@@ -1288,7 +1288,7 @@
                     </ng-container>
                     <strong>{{ "MISC.PRICE" | translate }}:</strong>
                     {{ dimension.price }}
-                    {{ dimension.currency || "" }}
+                    {{ dimension.currency || "" }}<span *ngIf="dimension.price_unit" class="price-unit"> / {{ priceUnitLabel(dimension.price_unit) }}</span>
                   </ng-container>
                   <!-- What is already on the request list for this thickness. -->
                   <span

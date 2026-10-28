@@ -4,9 +4,16 @@
       <h1 class="h3">{{ 'ADMIN.TABLE_TITLE' | translate }}</h1>
       <p class="muted">{{ 'ADMIN.TABLE_LEAD' | translate }}</p>
     </div>
-    <p class="count" *ngIf="!loading && !denied && !failed">
-      {{ total }} {{ 'ADMIN.PRODUCTS_COUNT' | translate }}
-    </p>
+    <div class="head-actions">
+      <p class="count" *ngIf="!loading && !denied && !failed">
+        {{ total }} {{ 'ADMIN.PRODUCTS_COUNT' | translate }}
+      </p>
+      <!-- A product can be created here: making the owner leave the panel to add one was the whole
+           complaint this table answers. -->
+      <button type="button" class="new-product" *ngIf="!denied" (click)="startCreate()">
+        {{ 'ADMIN.NEW_PRODUCT' | translate }}
+      </button>
+    </div>
   </header>
 
   <!-- Signed in without the right is not a failure: the panel belongs to the owner, and a member of
@@ -66,14 +73,16 @@
   <!-- The editor stays on this page: opening a product must not cost the filters, the page or the
        place in the list. It sits above the table rather than beside it, which is the only shape that
        survives a phone 320px wide. -->
-  <aside class="editor-panel" *ngIf="openId" [attr.aria-label]="'ADMIN.EDITING' | translate">
+  <aside class="editor-panel" *ngIf="openId || creating" [attr.aria-label]="'ADMIN.EDITING' | translate">
     <header class="editor-head">
       <h2>
-        {{ 'ADMIN.EDITING' | translate }}<span *ngIf="openedCode"> — {{ openedCode }}</span>
+        {{ (creating ? 'ADMIN.NEW_PRODUCT' : 'ADMIN.EDITING') | translate }}<span *ngIf="openedCode"> — {{ openedCode }}</span>
       </h2>
       <button type="button" class="link" (click)="closeEditor()">{{ 'ADMIN.CLOSE' | translate }}</button>
     </header>
-    <app-product-editor [productId]="openId" (saved)="onSaved($event)" (closed)="closeEditor()"></app-product-editor>
+    <app-product-editor [productId]="openId" [newProduct]="creating" [adminMode]="true"
+                        [categories]="groups"
+                        (saved)="onSaved($event)" (closed)="closeEditor()"></app-product-editor>
   </aside>
 
   <!-- A bulk price change, offered only once rows are ticked. A preview first, always: the panel and

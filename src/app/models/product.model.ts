@@ -16,6 +16,8 @@
       /** The API sends decimals as strings ("3.80"), so these are not plain numbers. */
       price?: number | string;
       currency?: string;
+      /** What the price is for: piece, tube, sheet, bar, metre, kilogram; null/undefined is unknown. */
+      price_unit?: string | null;
       price_history?: PriceHistory[]; // Adjust the type as needed
     }
     export interface PriceHistory {
@@ -41,6 +43,8 @@
       is_active: boolean;
       new_product:boolean;
       category_id?: number; // Added categoryId field
+      /** The record version the server last reported; a save carries it so a stale form is refused. */
+      version?: number | null;
       // content?: string;
       slug?: string;
       description?: string;

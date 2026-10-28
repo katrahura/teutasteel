@@ -6,17 +6,37 @@
   <div class="modal-dialog modal-xl" *ngIf="product">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ "MISC.EDIT_PRODUCT" | translate }}</h5>
+        <h5 class="modal-title">{{ (newProduct ? "ADMIN.NEW_PRODUCT" : "MISC.EDIT_PRODUCT") | translate }}</h5>
+        <span class="unsaved" *ngIf="dirty">{{ "ADMIN.UNSAVED_CHANGES" | translate }}</span>
         <button
           type="button"
           class="btn-close"
           data-bs-dismiss="modal"
           [attr.aria-label]="'MODAL.CLOSE' | translate"
+          (click)="close()"
         ></button>
       </div>
       <div class="modal-body">
+        <!-- Switched on is not the same as reachable: a product in a disabled category is invisible
+             too. This says which state the record itself is in. -->
+        <p class="notice inactive" *ngIf="loaded && !product.is_active">
+          {{ "ADMIN.PRODUCT_INACTIVE" | translate }}
+          <span *ngIf="newProduct"> {{ "ADMIN.NEW_INACTIVE_HINT" | translate }}</span>
+        </p>
+
+        <!-- The record changed under this form. A reload is offered, not a silent overwrite. -->
+        <div class="notice conflict" *ngIf="conflict" role="alert">
+          <strong>{{ "ADMIN.CONFLICT_TITLE" | translate }}</strong>
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="reload()">
+            {{ "ADMIN.CONFLICT_RELOAD" | translate }}
+          </button>
+        </div>
+
+        <p class="text-muted" *ngIf="loading">{{ "ADMIN.LOADING" | translate }}</p>
+        <p class="field-error" *ngIf="failed">{{ errorMessage }}</p>
+
         <form>
-          <h5>{{ "MISC.GENERAL_INFORMATION" | translate }}</h5>
+          <h5>{{ "ADMIN.SECTION_IDENTITY" | translate }}</h5>
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="editProductCode" class="form-label">{{
@@ -42,6 +62,28 @@
                 [(ngModel)]="product.cut_type"
                 name="cut_type"
               />
+            </div>
+          </div>
+
+          <!-- Reassigning a product without leaving the panel. The list is the catalogue's own
+               groups and sections, passed in by the admin, so the ids are the real ones. -->
+          <div class="row" *ngIf="adminMode">
+            <div class="col-md-6 mb-3">
+              <label for="editProductCategory" class="form-label">{{
+                "ADMIN.CATEGORY" | translate
+              }}</label>
+              <select
+                class="form-select"
+                id="editProductCategory"
+                [(ngModel)]="product.category_id"
+                name="category_id"
+              >
+                <option [ngValue]="undefined">{{ "ADMIN.CHOOSE_CATEGORY" | translate }}</option>
+                <option *ngFor="let option of categoryOptions" [ngValue]="option.id">
+                  {{ option.label }}
+                </option>
+              </select>
+              <p class="field-error" *ngIf="errorFor('category_id')">{{ errorFor('category_id') }}</p>
             </div>
           </div>
 
@@ -76,89 +118,7 @@
             </div>
           </div>
 
-          <!-- This dialog renders whenever product is set, which the *details*
-               dialog also does. Binding image_asset.file_name here therefore threw for any
-               product with no image - including on the details view, for a customer. The
-               `!` marks below are compile-time only; openEditModal still fills in an empty
-               asset so these fields exist while editing. -->
-          <ng-container *ngIf="product?.image_asset">
-          <h5 class="mt-4">{{ "MISC.IMAGE_ASSET" | translate }}</h5>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <div class="mb-3">
-            <label for="editImageUpload" class="form-label">{{ "MISC.IMAGE_UPLOAD" | translate }}</label>
-            <input
-              id="editImageUpload"
-              type="file"
-              accept="image/*"
-              class="form-control"
-              (click)="ensureMediaConfig()"
-              (change)="onImage($event)"
-              [disabled]="uploading"
-            />
-            <small class="text-muted" *ngIf="uploading">
-              {{ "MISC.IMAGE_UPLOADING" | translate }} {{ uploadProgress }}%
-            </small>
-            <small class="field-error" *ngIf="uploadError">{{ uploadError | translate }}</small>
-            <small class="text-muted" *ngIf="mediaConfig && !mediaConfig.configured">
-              {{ "MISC.IMAGE_UPLOAD_UNSET" | translate }}
-            </small>
-          </div>
-
-          <label for="editImageFileName" class="form-label">{{
-                "MISC.IMAGE_FILE_NAME" | translate
-              }}</label>
-              <input
-                type="text"
-                class="form-control"
-                id="editImageFileName"
-                [(ngModel)]="image.file_name!"
-                name="image_file_name"
-              />
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="imageAltText" class="form-label">{{
-                "MISC.ALTERNATIVE_TEXT" | translate
-              }}</label>
-              <input
-                type="text"
-                class="form-control"
-                id="imageAltText"
-                [(ngModel)]="image.alternative_text"
-                name="image_alt_text"
-              />
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="imageThumbnailPath" class="form-label">{{
-                "MISC.THUMBNAIL_PATH" | translate
-              }}</label>
-              <input
-                type="text"
-                class="form-control"
-                id="imageThumbnailPath"
-                [(ngModel)]="thumbnailPath"
-                name="thumbnail_path"
-              />
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="imageOriginalPath" class="form-label">{{
-                "MISC.ORIGINAL_PATH" | translate
-              }}</label>
-              <input
-                type="text"
-                class="form-control"
-                id="imageOriginalPath"
-                [(ngModel)]="originalPath"
-                name="original_path"
-              />
-            </div>
-          </div>
-          </ng-container>
-
-          <h5 class="mt-4">{{ "PRODUCTS.DIMENSIONS" | translate }}</h5>
+          <h5 class="mt-4">{{ "ADMIN.SECTION_PRICES" | translate }}</h5>
           <div *ngIf="(product?.dimensions?.length || 0) > 0">
             <div
               class="row mb-3"
@@ -242,6 +202,7 @@
                 }}</label>
                 <input
                   type="number"
+                  step="0.01"
                   class="form-control"
                   id="price-{{ i }}"
                   [placeholder]="'MISC.PRICE' | translate"
@@ -263,7 +224,27 @@
                   name="currency-{{ i }}"
                 />
               </div>
+              <!-- What the price is for. Unknown is a real answer and stays unknown: nothing here is
+                   inferred from the product's shape. -->
+              <div class="col-md-2">
+                <label for="unit-{{ i }}" class="form-label">{{
+                  "ADMIN.PRICE_UNIT" | translate
+                }}</label>
+                <select
+                  class="form-select"
+                  id="unit-{{ i }}"
+                  [(ngModel)]="dimension.price_unit"
+                  name="unit-{{ i }}"
+                >
+                  <option [ngValue]="null">{{ "ADMIN.UNIT_UNKNOWN" | translate }}</option>
+                  <option *ngFor="let unit of units" [ngValue]="unit">
+                    {{ unitLabel(unit) | translate }}
+                  </option>
+                </select>
+                <p class="field-error" *ngIf="errorFor('dimensions.' + i + '.price_unit')">{{ errorFor('dimensions.' + i + '.price_unit') }}</p>
+              </div>
               <div class="col-md-1">
+                <label class="form-label d-block">&nbsp;</label>
                 <button
                   type="button"
                   class="btn btn-danger"
@@ -272,6 +253,7 @@
                   {{ "MISC.REMOVE" | translate }}
                 </button>
               </div>
+              <p class="field-error" *ngIf="errorFor('dimensions.' + i)">{{ errorFor('dimensions.' + i) }}</p>
             </div>
           </div>
           <div class="mb-3">
@@ -284,7 +266,7 @@
             </button>
           </div>
 
-          <h5 class="mt-4">{{ "MISC.PRODUCT_TRANSLATIONS" | translate }}</h5>
+          <h5 class="mt-4">{{ "ADMIN.SECTION_TEXT" | translate }}</h5>
           <div *ngIf="(product?.translations?.length || 0) > 0">
             <div
               class="row mb-3"
@@ -366,14 +348,115 @@
               {{ "MISC.ADD_TRANSLATION" | translate }}
             </button>
           </div>
+
+          <h5 class="mt-4">{{ "ADMIN.SECTION_IMAGES" | translate }}</h5>
+
+          <!-- This dialog renders whenever product is set, which the *details*
+               dialog also does. Binding image_asset.file_name here therefore threw for any
+               product with no image - including on the details view, for a customer. The
+               `!` marks below are compile-time only; openEditModal still fills in an empty
+               asset so these fields exist while editing. -->
+          <ng-container *ngIf="product?.image_asset">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="mb-3">
+            <label for="editImageUpload" class="form-label">{{ "MISC.IMAGE_UPLOAD" | translate }}</label>
+            <input
+              id="editImageUpload"
+              type="file"
+              accept="image/*"
+              class="form-control"
+              (click)="ensureMediaConfig()"
+              (change)="onImage($event)"
+              [disabled]="uploading"
+            />
+            <small class="text-muted" *ngIf="uploading">
+              {{ "MISC.IMAGE_UPLOADING" | translate }} {{ uploadProgress }}%
+            </small>
+            <small class="field-error" *ngIf="uploadError">{{ uploadError | translate }}</small>
+            <small class="text-muted" *ngIf="mediaConfig && !mediaConfig.configured">
+              {{ "MISC.IMAGE_UPLOAD_UNSET" | translate }}
+            </small>
+          </div>
+
+          <label for="editImageFileName" class="form-label">{{
+                "MISC.IMAGE_FILE_NAME" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="editImageFileName"
+                [(ngModel)]="image.file_name!"
+                name="image_file_name"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="imageAltText" class="form-label">{{
+                "MISC.ALTERNATIVE_TEXT" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="imageAltText"
+                [(ngModel)]="image.alternative_text"
+                name="image_alt_text"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="imageThumbnailPath" class="form-label">{{
+                "MISC.THUMBNAIL_PATH" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="imageThumbnailPath"
+                [(ngModel)]="thumbnailPath"
+                name="thumbnail_path"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="imageOriginalPath" class="form-label">{{
+                "MISC.ORIGINAL_PATH" | translate
+              }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="imageOriginalPath"
+                [(ngModel)]="originalPath"
+                name="original_path"
+              />
+            </div>
+          </div>
+          </ng-container>
+
+          <!-- The public page a customer actually sees, opened in another tab. It shows the saved
+               record: an unsaved edit is not on the website, and pretending otherwise would be
+               showing the owner something no customer can see yet. -->
+          <section class="preview-box" *ngIf="adminMode">
+            <h5 class="mt-4">{{ "ADMIN.SECTION_PREVIEW" | translate }}</h5>
+            <ng-container *ngIf="previewLink(); else notSaved">
+              <a class="preview-link" [href]="previewLink()" target="_blank" rel="noopener noreferrer">
+                {{ "ADMIN.PREVIEW_LINK" | translate }} <span aria-hidden="true">→</span>
+              </a>
+              <p class="text-muted small mb-0">{{ "ADMIN.PREVIEW_SAVED_ONLY" | translate }}</p>
+            </ng-container>
+            <ng-template #notSaved>
+              <p class="text-muted small mb-0">{{ "ADMIN.PREVIEW_SAVE_FIRST" | translate }}</p>
+            </ng-template>
+          </section>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <p class="field-error me-auto" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <button type="button" class="btn btn-secondary" (click)="close()">
           {{ "MODAL.CLOSE" | translate }}
         </button>
-        <button type="button" class="btn btn-primary" (click)="updateProduct()">
-          {{ "MISC.SAVE_CHANGES" | translate }}
+        <button type="button" class="btn btn-primary" (click)="updateProduct()"
+                [disabled]="saving || uploading || loading">
+          {{ (newProduct ? "ADMIN.SAVE_NEW" : "MISC.SAVE_CHANGES") | translate }}
         </button>
       </div>
     </div>

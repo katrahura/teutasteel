@@ -136,6 +136,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       { gap: 'no_details', label: 'ADMIN.NO_DETAILS', count: products.no_details || 0 },
       { gap: 'missing_language', label: 'ADMIN.MISSING_LANGUAGE',
         count: products.missing_language || 0 },
+      { gap: 'no_price_unit', label: 'ADMIN.PRICED_WITHOUT_UNIT',
+        count: products.priced_without_unit || 0 },
       { gap: 'bad_price', label: 'ADMIN.BAD_PRICE', count: products.bad_price || 0 },
     ].filter((item) => item.count > 0);
   }
@@ -353,6 +355,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
     if (this.gap === 'bad_price') {
       return 'ADMIN.BAD_PRICE';
+    }
+    if (this.gap === 'no_price_unit') {
+      return 'ADMIN.PRICED_WITHOUT_UNIT';
     }
     return '';
   }

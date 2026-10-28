@@ -153,4 +153,106 @@ describe('ProductEditorComponent', () => {
     const shown = Array.from(fixture.nativeElement.querySelectorAll('.field-error')) as HTMLElement[];
     expect(shown.some((el) => (el.textContent || '').includes('Not a valid number.'))).toBeTrue();
   });
+
+  it('creates a product inside the panel, switched off, with one variant and both languages', () => {
+    fixture = TestBed.createComponent(ProductEditorComponent);
+    component = fixture.componentInstance;
+    component.newProduct = true;
+    fixture.detectChanges();
+
+    expect(component.loaded).toBeTrue();
+    expect(component.product.is_active).toBeFalse();
+    expect(component.product.dimensions!.length).toBe(1);
+    expect(component.product.translations!.map((row) => row.language)).toEqual(['al', 'en']);
+
+    component.product.category_id = 7;
+    component.product.code = 'NEW-1';
+    component.saved.subscribe(() => undefined);
+    component.updateProduct();
+
+    const post = httpMock.expectOne((req) => req.method === 'POST' && req.url.endsWith('/product/create'));
+    expect(post.request.body.code).toBe('NEW-1');
+    expect(post.request.body.category_id).toBe(7);
+    post.flush(product({ id: 11, code: 'NEW-1', version: 1 }));
+    expect(component.newProduct).toBeFalse();
+  });
+
+  it('refuses to create without a category, before making the request', () => {
+    fixture = TestBed.createComponent(ProductEditorComponent);
+    component = fixture.componentInstance;
+    component.newProduct = true;
+    fixture.detectChanges();
+
+    component.updateProduct();
+    expect(component.errorFor('category_id')).toBeTruthy();
+    httpMock.expectNone((req) => req.method === 'POST');
+  });
+
+  it('carries the version it read, and shows a conflict instead of overwriting', () => {
+    create();
+    load(product({ version: 4 }));
+
+    component.product.code = 'IPE-120';
+    component.updateProduct();
+    const put = httpMock.expectOne((req) => req.method === 'PUT');
+    expect(put.request.body.expected_version).toBe(4);
+
+    put.flush(
+      { error: 'This product changed while you were editing it', detail: 'stale', current_version: 5 },
+      { status: 409, statusText: 'Conflict' }
+    );
+
+    expect(component.conflict).toBeTrue();
+    expect(component.saving).toBeFalse();
+    expect(component.errorMessage).toContain('changed while you were editing');
+  });
+
+  it('sends the price unit the owner chose, and keeps unknown as unknown', () => {
+    create();
+    load();
+
+    component.product.dimensions![0].price_unit = 'metre';
+    component.updateProduct();
+    const put = httpMock.expectOne((req) => req.method === 'PUT');
+    expect(put.request.body.dimensions[0].price_unit).toBe('metre');
+    put.flush(product());
+  });
+
+  it('ignores a slow answer for a product the owner has already left', () => {
+    create(null);
+    component.load(5);
+    component.load(9);
+
+    const first = httpMock.expectOne((req) => req.url.includes('/product/5'));
+    const second = httpMock.expectOne((req) => req.url.includes('/product/9'));
+    // The older product answers last. It must not replace the newer selection.
+    second.flush(product({ id: 9, code: 'NEWER' }));
+    first.flush(product({ id: 5, code: 'OLDER' }));
+
+    expect(component.product.id).toBe(9);
+    expect(component.product.code).toBe('NEWER');
+  });
+
+  it('asks before discarding unsaved changes when the editor closes', () => {
+    create();
+    load();
+    component.product.code = 'CHANGED';
+    const closed = jasmine.createSpy('closed');
+    component.closed.subscribe(closed);
+    spyOn(window, 'confirm').and.returnValue(false);
+
+    component.close();
+    expect(closed).not.toHaveBeenCalled();
+
+    (window.confirm as jasmine.Spy).and.returnValue(true);
+    component.close();
+    expect(closed).toHaveBeenCalled();
+  });
+
+  it('offers the preview of the saved record, not of unsaved edits', () => {
+    create();
+    load();
+    const link = component.previewLink();
+    expect(link).toContain('/products?product=5');
+  });
 });

@@ -4,6 +4,20 @@
 .head h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.01em; }
 .muted { color: #4b5563; font-size: 13.5px; margin: 0; }
 .count { margin: 0; font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; }
+.head-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.new-product {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.new-product:hover { background: #1e293b; }
+.new-product:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
 
 .notice { margin: 14px 0 0; padding: 10px 14px; border-radius: 8px; font-size: 14px; }
 .notice.denied { background: #fef3c7; border: 1px solid #fcd34d; }

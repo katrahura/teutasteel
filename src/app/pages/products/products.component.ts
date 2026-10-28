@@ -389,9 +389,17 @@ toggleParent(parentId: number) {
    * descriptions now carry it in prose, and this is the version a card can show beside the number.
    */
   priceUnit(product: Product): string {
-    // A section shape cannot prove whether a price is per metre, bar or kilogram.
-    // Display an explicit catalogue unit only; otherwise ask for confirmation.
+    // What the owner typed on the variant. A section shape cannot prove whether a price is per
+    // metre, bar or kilogram, so the typed unit wins and is shown in the reader's language.
+    const priced = (product.dimensions || [])
+      .filter((dimension) => Number(dimension.price) > 0)
+      .sort((left, right) => Number(left.price) - Number(right.price))[0];
+    if (priced && priced.price_unit) {
+      return this.priceUnitLabel(priced.price_unit);
+    }
+    // A single unit saved before the field existed, at product level.
     if (product.price_unit?.trim()) return product.price_unit.trim();
+    // The owner's own prose, read only when nothing was typed in the field.
     const declared = product.description || '';
     const units = [
       { expression: /(?:çmimi për gyp|price per tube)/i, key: 'PRODUCTS.UNIT_TUBE' },
@@ -401,6 +409,14 @@ toggleParent(parentId: number) {
     ];
     const unit = units.find(item => item.expression.test(declared));
     return unit ? this.translate.instant(unit.key).replace(/^(per|për)\s+/i, '') : '';
+  }
+
+  /** A typed price unit, in the language the page is being read in. */
+  priceUnitLabel(unit: string | null | undefined): string {
+    if (!unit) {
+      return '';
+    }
+    return this.translate.instant('ADMIN.UNIT_' + unit.toUpperCase());
   }
 
   /** The dimensions the customer ticked, or the only one there is. */

@@ -53,6 +53,8 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   duplicating: number | null = null;
   /** The product open in the panel, and the code of the one just saved. */
   openId: number | null = null;
+  /** The panel is open on a product that does not exist yet. */
+  creating = false;
   /** The code of the product in the panel, so the panel can say which one it is. */
   openedCode: string | null = null;
   savedCode: string | null = null;
@@ -195,6 +197,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
       no_details: 'ADMIN.NO_DETAILS',
       missing_language: 'ADMIN.MISSING_LANGUAGE',
       bad_price: 'ADMIN.BAD_PRICE',
+      no_price_unit: 'ADMIN.PRICED_WITHOUT_UNIT',
     };
     return this.gap ? (keys[this.gap] || '') : '';
   }
@@ -341,10 +344,20 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** Open a blank product in the panel. It is saved switched off. */
+  startCreate(): void {
+    this.savedCode = null;
+    this.copied = null;
+    this.openId = null;
+    this.openedCode = null;
+    this.creating = true;
+  }
+
   /** Open a product in the panel beside the table, without leaving the list. */
   open(row: CatalogueRow): void {
     this.savedCode = null;
     this.copied = null;
+    this.creating = false;
     this.openId = row.id;
     this.openedCode = row.code;
   }
@@ -352,6 +365,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   closeEditor(): void {
     this.openId = null;
     this.openedCode = null;
+    this.creating = false;
   }
 
   /** After a save: close the panel, keep the filters and the page, and say what was saved. */
@@ -359,6 +373,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     this.savedCode = product && product.code ? product.code : null;
     this.openId = null;
     this.openedCode = null;
+    this.creating = false;
     this.load(this.page);
   }
 

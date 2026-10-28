@@ -31,7 +31,7 @@ whole backend suite must pass before a backend commit. A test count read after t
 | 1 — role-aware access and shell | **verified** — `/admin/me`, session service, `adminGuard`, capability tabs, `/admin/forbidden`, header account/role, View website, AL/EN control, read-only settings for an editor, one navigation that becomes a phone panel | `admin-shell`, `app.routes`, `auth.guard`, `app/auth.py`, `admin_routes.py` | none | 5 guard + 6 shell tests | see "Limitations" |
 | 2 — settings reach customers | **verified** — 13 public keys, AL/EN sentence pairs, server + client validation, `ContactService` wired into shell/footer/contact/request/service/home/product enquiries, preview + refresh note in the panel | `public-settings.service`, `contact.service`, `app.component`, `contact`, `home`, `service-detail`, `products`, `admin-settings`, `admin.service` | none (key/value table) | 213 backend, 211 frontend, build 25 routes | see "Phase 2 — the path a setting takes" |
 | 3 — dashboard and quality queue | **verified** — "Needs attention" queue first (seven checks, each linking to the worklist and to the filtered table), reachable-vs-active counted separately, missing-language and negative-price checks, gap filter on `/admin/products` kept in the URL, compact recent changes with a link to the full history | `admin-dashboard`, `admin-products`, `admin.service`, `admin_routes.py` | none | 220 frontend, 221 backend, build 25 routes | see "Phase 3 — what each count means" |
-| 4 — product and variant editing | pending | `product-editor`, `product_routes.py` | likely one (price unit, version) | — | price-unit vocabulary |
+| 4 — product and variant editing | **implemented, verification pending** — create inside the panel (saved inactive), category reassignment, typed price unit per variant, version-checked saves (409 conflict + reload), stale loads/uploads ignored, dirty-change warnings, sectioned editor, preview link, per-field errors; backend gaps for missing price units | `product-editor`, `admin-products`, `products`, `product_routes.py`, `dimension_schema`, new migration | **one**: `products.version`, `dimensions.price_unit` (`c41f8a2d7e10`) | 227 frontend, 236 backend, migration applied to a throwaway DB, build 25 routes | desktop/phone flows and the customer enquiry regressions are checked in phase 8 |
 | 5 — category and image management | pending | `admin-categories`, `admin-media`, `category_routes.py` | none expected | — | category depth policy |
 | 6 — bulk prices, imports, history | pending | `admin-products`, `product_routes.py`, `admin_routes.py` | possible | — | preview/apply staleness token |
 | 7 — search insights and content | pending | new `/admin/content`, `admin_routes.py` | possible | — | approved service copy |
@@ -109,8 +109,27 @@ same function as the worklist. The tests assert the figure equals the list.
 `publicly_reachable` is active products whose whole category chain is on. A product that is off is
 neither reachable nor "hidden by its category", so the two figures do not double-count it.
 
-Price units are **not** checked yet: the field does not exist until phase 4. A check invented before
-the data would be a guess.
+Price units are typed per variant since phase 4, so they *are* checked now (`no_price_unit`): a priced
+row with no unit is listed as work, and unknown stays unknown rather than being inferred from a shape.
+A unit outside the list is refused by the server.
+
+## Phase 4 — what the editor protects
+
+| Risk | What happens now | Evidence |
+|---|---|---|
+| Two people edit one product | Every save carries the version it read; the server checks-and-sets in one statement and answers **409** with the current version, applying nothing | `test_a_stale_save_is_refused_and_leaves_the_product_alone`, `test_a_stale_conflict_does_not_touch_the_variants_or_their_history` |
+| A slow load replaces a newer selection | Each load has a token; an answer for a product already left is dropped | editor spec "ignores a slow answer…" |
+| An upload lands on the wrong product | The upload remembers the product it started on and is discarded if the selection moved | code path in `onImage`; browser check in phase 8 |
+| Untyped or invented price units | `price_unit` is a closed list (piece, tube, sheet, bar, metre, kilogram) or NULL; the editor offers "Unknown" and nothing is inferred | `test_a_price_unit_is_stored_and_unknown_stays_unknown`, `test_a_unit_outside_the_list_is_refused` |
+| Duplicate variants | Two rows describing the same height/width/length/thickness are refused by field path | `test_the_same_variant_twice_is_refused` |
+| Malformed prices | Negative prices and more than two decimals are refused; **zero is allowed** (sold by enquiry) | `test_a_negative_price_is_refused_but_zero_is_allowed`, `test_a_price_with_three_decimal_places_is_refused` |
+| Variant identities lost | Updates keep row ids, delete only rows the form removed, and open price history only for changed prices | `test_editing_one_variant_keeps_the_other_and_the_price_history` |
+| Ordinary account editing | `POST /product/create`, `PUT /product/<id>` and the single-price route now require **staff**; deletes stay administrator-only | `test_an_ordinary_account_may_not_edit_create_or_price` |
+| Silently dropping edits | Closing, switching product or leaving the page warns when the form is dirty | editor spec "asks before discarding…"; `beforeunload` |
+| Preview instead of guessing | The preview opens the public product page for the **saved** record; an unsaved edit says so, and a new product has no link yet | editor spec "offers the preview…" |
+
+Deliberately not done: a general undo/rollback (phase 6 defines the narrower price reversal); a second
+editor for the public catalogue - both call the same component.
 
 ## Unresolved (need the owner)
 
@@ -142,6 +161,22 @@ the data would be a guess.
 ## Progress log
 
 Newest first.
+
+- **Phase 4 — implemented, verification pending.** The editor gained: create mode (one empty variant,
+  both language rows, saved **inactive**), a category select for reassignment, a typed `price_unit`
+  per variant, section headings, a customer-preview link, an inactive banner, a dirty badge and
+  confirm-on-close, `beforeunload` for the tab, a load token so an older answer cannot replace a newer
+  selection, and upload binding to the product it began on. Saves carry `expected_version`; the server
+  answers 409 and changes nothing when it is stale, and the form offers a reload. Backend: the
+  migration `c41f8a2d7e10` adds `products.version` and `dimensions.price_unit` (tested on a throwaway
+  SQLite database, upgrade only; rollback is `flask db downgrade 9a577bc5dd12`); the three write routes
+  now require staff - a real gap, since an ordinary signed-in account could edit products before;
+  negative prices, three-decimal prices, negative measurements and duplicate variants are refused by
+  field path; the dashboard has a ninth check (`no_price_unit`). Backend **236 tests**, frontend
+  **227**, build **25 routes, exit 0**. Not yet checked: the desktop/phone flow in a browser, an
+  actual concurrent-edit round trip between two browsers, the customer single-variant and
+  multiple-thickness enquiry regressions, and the product dialog's long-standing size question. Those
+  are phase 8 checks; the phase is marked implemented, not verified.
 
 - **Phase 3 — verified.** The dashboard leads with "Needs attention": seven checks, only the non-zero
   ones, each row opening the existing worklist (export, paging, empty state kept) and offering the same
@@ -210,12 +245,10 @@ Newest first.
 
 ## Next (read this first)
 
-**Phase 4 — faster, safer product and variant editing.** Read the shared editor
-(`product-editor.component`) and the product/variant routes first. The largest open questions are the
-price-unit vocabulary (a typed field end to end, unknown stays unknown) and optimistic concurrency
-(a version or update token checked in the transaction, with a conflict that offers reload rather
-than overwriting). Then phases 5–8 in order.
+**Phase 5 — reliable category and image management.** Read `admin-categories`, `admin-media`, the
+category routes and the image asset model first. Two known traps: the category page currently links
+to the public catalogue for editing, and a parent cycle has to be refused on the server, not only in
+the form. The media uploader must bind an upload to the entity it started on, exactly as the product
+editor now does.
 
-Phases 0–3 are verified. The open items that are not blockers are listed under "Unresolved" and
-"Limitations"; the owner's decisions there (Cloudinary, stale production build, price rounding,
-delivery wording) are documented rather than guessed.
+Then phases 6–8 in order. Phase 4's browser checks are done with phase 8's cross-device pass.

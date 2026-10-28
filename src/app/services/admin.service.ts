@@ -37,6 +37,8 @@ export interface CatalogueSummary {
     missing_language: number;
     /** A negative price: malformed, unlike zero, which is how an enquiry-only item is written. */
     bad_price: number;
+    /** Priced, and no unit on the priced variant: a figure the customer cannot act on. */
+    priced_without_unit: number;
     in_off_categories: number;
     priced_without_photo: number;
     priced_without_size: number;

@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AdminService, MediaConfig } from '../../../services/admin.service';
 import { CloudinaryService } from '../../../services/cloudinary.service';
 import { ProductService } from '../../../services/product.service';
-import { ImageAsset, Product, ProductDimension, ProductTranslation } from '../../../models/product.model';
+import { ImageAsset, Product, ProductDimension, ProductTranslation, TopCategory } from '../../../models/product.model';
+import { environment } from '../../../../environments/environment';
 
 /** The form's shape before a product is loaded: empty, but never null. */
 const EMPTY_PRODUCT: Product = {
@@ -19,22 +20,38 @@ const EMPTY_PRODUCT: Product = {
   image_asset: { file_name: '', alternative_text: '', thumbnail_path: '', original_path: '' },
 };
 
+/**
+ * The units a price may be quoted in. `null` is the honest unknown: most of the catalogue has never
+ * been asked, and guessing one from the shape would be inventing a commercial term. The server has
+ * the same list; a value outside it is refused there as well.
+ */
+export const PRICE_UNITS = ['piece', 'tube', 'sheet', 'bar', 'metre', 'kilogram'] as const;
+
 /** A message from the API, split into what happened and which fields it blames. */
 interface FieldErrors {
   [path: string]: string;
 }
 
 /**
- * One product's editor: code, cut type, visibility, photograph, dimensions and translations.
+ * One product's editor: code, category, cut type, visibility, photograph, variants and translations.
  *
- * The markup is the catalogue's own modal, moved here unchanged - 367 lines, nineteen fields - so both
- * the catalogue and the administrator's table can open the same editor. It is a component with an id
- * rather than a modal bound to a page's selected product: `productId` comes in, `saved` and `closed`
- * go out, and it knows nothing about the page it is rendered in.
+ * The markup is the catalogue's own modal, moved here unchanged - nineteen fields - so both the
+ * catalogue and the administrator's table open the same editor. It is a component with an id rather
+ * than a modal bound to a page's selected product: `productId` comes in, `saved` and `closed` go
+ * out, and it knows nothing about the page it is rendered in.
  *
  * The API answers a rejected save with a message and a `details` object keyed by field path -
  * `dimensions.0.price`, `translations.1.slug`, `code`. Those are kept as they arrive, so the field
  * that is wrong can say so itself instead of one sentence at the top standing in for all of them.
+ *
+ * Phase 4 additions, each in the smallest form that works:
+ * - `newProduct`: create inside the panel, not only edit;
+ * - `price_unit` per variant, never inferred;
+ * - the version the form was built from travels with the save, so a stale form gets a conflict
+ *   instead of overwriting somebody else's change;
+ * - a load that is no longer wanted (the owner opened another product) is ignored, and an upload is
+ *   bound to the product it started on;
+ * - unsaved changes are warned about before the editor closes or switches product.
  */
 @Component({
   selector: 'app-product-editor',
@@ -58,6 +75,12 @@ export class ProductEditorComponent implements OnChanges, OnInit {
 
   /** Which product to edit. Changing it reloads; the panel stays where it is. */
   @Input() productId: number | null = null;
+
+  /** Create a new product instead of editing one. The admin passes its category list. */
+  @Input() newProduct = false;
+  @Input() adminMode = false;
+  @Input() categories: TopCategory[] = [];
+  @Input() presetCategoryId: number | null = null;
 
   @Output() saved = new EventEmitter<Product>();
   @Output() closed = new EventEmitter<void>();
@@ -92,9 +115,22 @@ export class ProductEditorComponent implements OnChanges, OnInit {
    */
   image: ImageAsset = { file_name: '', alternative_text: '', thumbnail_path: '', original_path: '' };
 
+  /** The version and the form content the editor last loaded or saved, for stale checks and "dirty". */
+  private loadedId: number | null = null;
+  private snapshot = '';
+  /** Incremented on every load, so an answer for an older selection is dropped rather than shown. */
+  private loadToken = 0;
+  /** The record changed under this form: the save was refused, and reloading is the way out. */
+  conflict = false;
+
+  readonly units = PRICE_UNITS;
+
   ngOnInit(): void {
     // Nothing is asked for until somebody reaches for the file field: the form must not open a request
     // just by existing, and a test that only reads the form should not have to answer one.
+    if (this.newProduct && !this.productId) {
+      this.startNew();
+    }
   }
 
   /** Ask once what uploading needs, when the file field is first reached for. */
@@ -112,6 +148,9 @@ export class ProductEditorComponent implements OnChanges, OnInit {
   /**
    * Take a photograph the way the Media page does - from this browser straight to Cloudinary - and
    * write the address it returns into the three fields the form already has.
+   *
+   * Bound to the product the upload started on: switching product while it runs must not attach the
+   * picture to the new one.
    */
   onImage(event: Event): void {
     this.ensureMediaConfig();
@@ -120,11 +159,18 @@ export class ProductEditorComponent implements OnChanges, OnInit {
     if (!file || this.uploading || !this.mediaConfig || !this.mediaConfig.configured) {
       return;
     }
+    const forProduct = this.loadedId;
     this.uploading = true;
     this.uploadProgress = 0;
     this.uploadError = '';
     this.cloudinary.upload(file, this.mediaConfig, (percent) => { this.uploadProgress = percent; })
       .then((url) => {
+        if (this.loadedId !== forProduct) {
+          // The owner moved to another product while this was going up: drop it rather than
+          // assigning a photograph to the wrong record.
+          this.uploading = false;
+          return;
+        }
         this.uploading = false;
         this.image = {
           ...this.image,
@@ -141,32 +187,92 @@ export class ProductEditorComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['productId'] && this.productId) {
-      this.load(this.productId);
+    if (!changes['productId'] || !this.productId) {
+      return;
     }
+    if (this.dirty && this.loaded && !this.confirmDiscard()) {
+      // The address changed but the owner chose to keep what they typed: stay on the old product
+      // rather than silently discarding it.
+      this.productId = this.loadedId;
+      return;
+    }
+    this.load(this.productId);
+  }
+
+  /** A new product, switched off, with one empty variant and both language rows ready. */
+  private startNew(): void {
+    this.loadToken++;
+    this.loadedId = null;
+    this.product = {
+      code: '',
+      cut_type: 0,
+      // A new product starts switched off. Saving a half-written page straight into the public
+      // catalogue is the kind of mistake an "active by default" checkbox invites.
+      is_active: false,
+      new_product: true,
+      category_id: this.presetCategoryId ?? undefined,
+      dimensions: [{ currency: 'EUR' }],
+      translations: [
+        { language: 'al', description: '', content: '', slug: '' },
+        { language: 'en', description: '', content: '', slug: '' },
+      ],
+      image_asset: { file_name: '', alternative_text: '', thumbnail_path: '', original_path: '' },
+    };
+    this.image = { file_name: '', alternative_text: '', thumbnail_path: '', original_path: '' };
+    this.thumbnailPath = '';
+    this.originalPath = '';
+    this.loaded = true;
+    this.loading = false;
+    this.failed = false;
+    this.conflict = false;
+    this.markClean();
   }
 
   load(id: number): void {
+    const token = ++this.loadToken;
     this.loading = true;
     this.failed = false;
+    this.conflict = false;
     this.errorMessage = '';
     this.fieldErrors = {};
     const language = this.translate.currentLang || 'al';
     this.products.getProductById(id, language).subscribe({
       next: (product) => {
+        if (token !== this.loadToken) {
+          // A slower answer for a product the owner has already left. Showing it would replace the
+          // newer selection with an older one.
+          return;
+        }
         this.product = this.withEditableShape(product);
         this.loaded = true;
+        this.loadedId = product && product.id ? product.id : id;
         this.image = { ...this.image, ...(product?.image_asset || {}) };
         this.thumbnailPath = product?.image_asset?.thumbnail_path || '';
         this.originalPath = product?.image_asset?.original_path || '';
         this.loading = false;
+        this.markClean();
       },
       error: (error) => {
+        if (token !== this.loadToken) {
+          return;
+        }
         this.failed = true;
         this.loading = false;
         this.errorMessage = this.explain(error).message;
       },
     });
+  }
+
+  /** Read the product again after a conflict: the owner decides what to keep. */
+  reload(): void {
+    const id = this.loadedId;
+    if (!id) {
+      return;
+    }
+    if (this.dirty && !this.confirmDiscard()) {
+      return;
+    }
+    this.load(id);
   }
 
   /** A product with the pieces the form binds to, so a missing dimension or image cannot crash it. */
@@ -175,6 +281,8 @@ export class ProductEditorComponent implements OnChanges, OnInit {
     editable.dimensions = (product.dimensions || []).map((dimension) => ({
       ...dimension,
       currency: dimension.currency || 'EUR',
+      // NULL is the honest unknown; the select needs one value for it.
+      price_unit: dimension.price_unit || null,
     }));
     editable.translations = (product.translations || []).map((translation) => ({ ...translation }));
     editable.image_asset = product.image_asset || {
@@ -183,6 +291,7 @@ export class ProductEditorComponent implements OnChanges, OnInit {
       thumbnail_path: '',
       original_path: '',
     };
+    editable.version = product.version ?? null;
     return editable;
   }
 
@@ -218,26 +327,30 @@ export class ProductEditorComponent implements OnChanges, OnInit {
 
   /** Save the product, and tell the listener, or say which field is wrong. */
   updateProduct(): void {
-    if (!this.loaded || this.saving) {
+    if (!this.loaded || this.saving || this.uploading) {
+      return;
+    }
+    if (this.newProduct && !this.product.category_id) {
+      this.fieldErrors = { category_id: 'Choose a category' };
       return;
     }
     this.saving = true;
     this.errorMessage = '';
     this.fieldErrors = {};
+    this.conflict = false;
 
-    const payload: Product = {
-      ...this.product,
-      image_asset: {
-        ...this.image,
-        thumbnail_path: this.thumbnailPath,
-        original_path: this.originalPath,
-      },
-    };
+    const payload = this.payload();
+    const request = this.newProduct
+      ? this.products.createProduct(payload)
+      : this.products.updateProduct(payload);
 
-    this.products.updateProduct(payload as unknown as Product).subscribe({
+    request.subscribe({
       next: (saved) => {
         this.saving = false;
         this.product = this.withEditableShape(saved || payload);
+        this.loadedId = this.product.id ?? this.loadedId;
+        this.newProduct = false;
+        this.markClean();
         this.saved.emit(saved || payload);
       },
       error: (error) => {
@@ -245,12 +358,89 @@ export class ProductEditorComponent implements OnChanges, OnInit {
         const explained = this.explain(error);
         this.errorMessage = explained.message;
         this.fieldErrors = explained.fields;
+        if (error && error.status === 409) {
+          this.conflict = true;
+        }
       },
     });
   }
 
+  /**
+   * What is sent.
+   *
+   * The version the form was built from goes with it, so the server can refuse a save built on an
+   * older record. The image paths are the ones the form shows, not the ones the product arrived with.
+   */
+  private payload(): Product {
+    return {
+      ...this.product,
+      image_asset: {
+        ...this.image,
+        thumbnail_path: this.thumbnailPath,
+        original_path: this.originalPath,
+      },
+      ...(this.newProduct ? {} : { expected_version: this.product.version }),
+    } as Product;
+  }
+
+  /** Whether anything on the form differs from what was loaded or saved. */
+  get dirty(): boolean {
+    return this.loaded && JSON.stringify(this.payload()) !== this.snapshot;
+  }
+
+  private markClean(): void {
+    this.snapshot = JSON.stringify(this.payload());
+  }
+
+  private confirmDiscard(): boolean {
+    if (typeof window === 'undefined') {
+      return true;
+    }
+    return window.confirm(this.translate.instant('ADMIN.DISCARD_CONFIRM'));
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    // Closing the tab is the one close the page cannot ask about itself.
+    if (this.dirty) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  }
+
   close(): void {
+    if (this.dirty && !this.confirmDiscard()) {
+      return;
+    }
     this.closed.emit();
+  }
+
+  /** Where a customer would see this product, once it is saved. */
+  previewLink(): string {
+    if (!this.product || !this.product.id) {
+      return '';
+    }
+    return `${(environment.siteUrl || '').replace(/\/$/, '')}/products?product=${this.product.id}`;
+  }
+
+  /** The categories the select offers: groups, then their sections marked as such. */
+  get categoryOptions(): { id: number; label: string }[] {
+    const options: { id: number; label: string }[] = [];
+    for (const group of this.categories || []) {
+      if (group.id) {
+        options.push({ id: group.id, label: group.title });
+      }
+      for (const child of group.children || []) {
+        if (child.id) {
+          options.push({ id: child.id, label: '— ' + child.title });
+        }
+      }
+    }
+    return options;
+  }
+
+  unitLabel(unit: string): string {
+    return 'ADMIN.UNIT_' + unit.toUpperCase();
   }
 
   /**
