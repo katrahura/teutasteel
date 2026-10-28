@@ -1,0 +1,80 @@
+<section class="admin-content pb-5">
+  <div class="head">
+    <div>
+      <h1 class="h3">{{ 'ADMIN.CONTENT_TITLE' | translate }}</h1>
+      <p class="muted">{{ 'ADMIN.CONTENT_LEAD' | translate }}</p>
+    </div>
+  </div>
+
+  <p class="notice denied" *ngIf="denied">{{ 'ADMIN.NOT_ALLOWED' | translate }}</p>
+  <div class="notice failed" *ngIf="failed && !denied">
+    <span>{{ 'ADMIN.TABLE_FAILED' | translate }}</span>
+    <button type="button" class="retry" (click)="load()">{{ 'ADMIN.RETRY' | translate }}</button>
+  </div>
+  <p class="notice read-only" *ngIf="!loading && !denied && !failed && !canWrite">
+    {{ 'ADMIN.CONTENT_READ_ONLY' | translate }}
+  </p>
+  <p class="muted" *ngIf="loading">{{ 'ADMIN.LOADING' | translate }}</p>
+  <p class="notice failed" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+
+  <div class="content-cards" *ngIf="!loading && !denied && !failed">
+    <article class="content-card" *ngFor="let row of rows">
+      <header class="card-head">
+        <h2>{{ row.id }}</h2>
+        <span class="copied" role="status" *ngIf="saved === row.id">{{ 'ADMIN.CONTENT_SAVED' | translate }}</span>
+        <a class="preview" [href]="preview(row.id)" target="_blank" rel="noopener noreferrer">
+          {{ 'ADMIN.PREVIEW' | translate }} <span aria-hidden="true">→</span>
+        </a>
+      </header>
+
+      <fieldset class="readonly-group" [disabled]="!canWrite">
+        <div class="fields">
+          <label class="field">
+            <span>{{ 'ADMIN.CONTENT_TITLE_AL' | translate }}</span>
+            <input [name]="'titleAl-' + row.id" [(ngModel)]="row.title_al" />
+          </label>
+          <label class="field">
+            <span>{{ 'ADMIN.CONTENT_TITLE_EN' | translate }}</span>
+            <input [name]="'titleEn-' + row.id" [(ngModel)]="row.title_en" />
+          </label>
+          <label class="field wide">
+            <span>{{ 'ADMIN.CONTENT_DESCRIPTION_AL' | translate }}</span>
+            <textarea [name]="'descAl-' + row.id" rows="3" [(ngModel)]="row.description_al"></textarea>
+          </label>
+          <label class="field wide">
+            <span>{{ 'ADMIN.CONTENT_DESCRIPTION_EN' | translate }}</span>
+            <textarea [name]="'descEn-' + row.id" rows="3" [(ngModel)]="row.description_en"></textarea>
+          </label>
+          <label class="field">
+            <span>{{ 'ADMIN.CONTENT_IMAGE' | translate }}</span>
+            <input [name]="'image-' + row.id" [(ngModel)]="row.image" />
+          </label>
+          <label class="field">
+            <span>{{ 'ADMIN.CONTENT_ALT_AL' | translate }}</span>
+            <input [name]="'altAl-' + row.id" [(ngModel)]="row.alt_al" />
+          </label>
+          <label class="field">
+            <span>{{ 'ADMIN.CONTENT_ALT_EN' | translate }}</span>
+            <input [name]="'altEn-' + row.id" [(ngModel)]="row.alt_en" />
+          </label>
+          <label class="field small">
+            <span>{{ 'ADMIN.CONTENT_POSITION' | translate }}</span>
+            <input type="number" [name]="'position-' + row.id" [(ngModel)]="row.position" />
+          </label>
+          <label class="field check">
+            <input type="checkbox" [name]="'active-' + row.id"
+                   [ngModel]="row.active !== '0'"
+                   (ngModelChange)="row.active = $event ? '1' : '0'" />
+            <span>{{ 'ADMIN.CONTENT_VISIBLE' | translate }}</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <p class="muted small">{{ 'ADMIN.CONTENT_FALLBACK' | translate }}</p>
+      <button type="button" class="save" *ngIf="canWrite" [disabled]="saving === row.id"
+              (click)="save(row)">
+        {{ 'ADMIN.CONTENT_SAVE' | translate }}
+      </button>
+    </article>
+  </div>
+</section>

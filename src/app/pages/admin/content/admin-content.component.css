@@ -1,0 +1,38 @@
+/* The service copy: one card per offering, because these are read and edited as whole texts. */
+.admin-content { max-width: 1000px; margin: 0 auto; padding: 18px 16px 40px; }
+.head h1 { font-size: 22px; margin: 0 0 4px; }
+.muted { color: #4b5563; font-size: 13.5px; }
+.notice { margin: 12px 0; padding: 10px 14px; border-radius: 8px; font-size: 14px; }
+.notice.denied { background: #fef3c7; border: 1px solid #fcd34d; }
+.notice.failed { background: #fee2e2; border: 1px solid #fca5a5; }
+.notice.read-only { background: #eef2f7; border: 1px solid #cbd5e1; }
+.retry { background: #fff; border: 1px solid #fca5a5; border-radius: 6px; padding: 4px 10px; font-size: 13px; cursor: pointer; }
+
+.content-cards { display: flex; flex-direction: column; gap: 16px; }
+.content-card { border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; padding: 14px 16px; }
+.card-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.card-head h2 { font-size: 16px; margin: 0; }
+.card-head .preview { margin-left: auto; color: #0a58ca; font-weight: 700; font-size: 13px; text-decoration: none; }
+.card-head .preview:focus-visible, .save:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+.copied { color: #15803d; font-size: 12.5px; }
+
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 10px; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: #475569; }
+.field.wide { grid-column: 1 / -1; }
+.field.small { max-width: 120px; }
+.field.check { flex-direction: row; align-items: center; gap: 8px; align-self: end; }
+.field input, .field textarea {
+  padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; font-family: inherit;
+}
+.readonly-group { border: none; margin: 0; padding: 0; min-width: 0; }
+.readonly-group:disabled { opacity: .85; }
+.save {
+  margin-top: 10px; min-height: 44px; padding: 0 16px; border: 0; border-radius: 8px;
+  background: #0f172a; color: #fff; font-size: 13.5px; font-weight: 700; cursor: pointer;
+}
+.save:disabled { background: #cbd5e1; cursor: wait; }
+
+@media (max-width: 640px) {
+  .field input, .field textarea { font-size: 16px; }
+  .card-head .preview { margin-left: 0; }
+}

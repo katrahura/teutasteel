@@ -45,9 +45,10 @@ describe('AdminShellComponent', () => {
       'activity.read', 'settings.read', 'settings.write', 'users.manage',
     ]);
     const links = tabs(fixture);
-    expect(links.length).toBe(6);
+    expect(links.length).toBe(7);
     expect(links).toContain('/admin/users');
     expect(links).toContain('/admin/settings');
+    expect(links).toContain('/admin/content');
     expect(links).toContain('/admin/overview');
   });
 

@@ -75,6 +75,11 @@ import { TranslateModule } from '@ngx-translate/core';
         </a>
         </ng-container>
         <ng-container *ngIf="can('settings.read')">
+        <a routerLink="/admin/content" routerLinkActive="active" (click)="closeMenu()">
+          {{ 'ADMIN.NAV_CONTENT' | translate }}
+        </a>
+        </ng-container>
+        <ng-container *ngIf="can('settings.read')">
         <a routerLink="/admin/settings" routerLinkActive="active" (click)="closeMenu()">
           {{ 'ADMIN.NAV_SETTINGS' | translate }}
         </a>

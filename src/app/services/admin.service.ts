@@ -7,6 +7,8 @@ import { getToken } from './token-storage';
 /** One term somebody typed into the search box, and what came of it. */
 export interface SearchRow {
   term: string;
+  /** The spelling without case or repeated spaces, so two rows that are the same question show it. */
+  normalized?: string;
   lang: string | null;
   /** How many products the last search for this term returned. Zero is the interesting number. */
   hits: number;
@@ -198,6 +200,20 @@ export interface ActivityPage {
   actions: string[];
 }
 
+/** The owner's copy for one service offering; empty means "keep the shipped words". */
+export interface ServiceContentRow {
+  id: string;
+  title_al: string;
+  title_en: string;
+  description_al: string;
+  description_en: string;
+  image: string;
+  alt_al: string;
+  alt_en: string;
+  position: string;
+  active: string;
+}
+
 export interface BulkPriceReport {
   dry_run: boolean;
   mode: string;
@@ -274,8 +290,18 @@ export class AdminService {
    * With onlyEmpty, just those: a tally of a hundred terms is a report, and the handful nobody
    * could find is a to-do list.
    */
-  getSearches(limit: number = 100, onlyEmpty: boolean = false): Observable<SearchReport> {
-    const url = `${this.baseUrl}/admin/searches?limit=${limit}${onlyEmpty ? '&only_empty=1' : ''}`;
+  getSearches(limit: number = 100, onlyEmpty: boolean = false,
+              range: { from?: string; to?: string } = {}): Observable<SearchReport> {
+    let url = `${this.baseUrl}/admin/searches?limit=${limit}`;
+    if (onlyEmpty) {
+      url += '&only_empty=1';
+    }
+    if (range.from) {
+      url += `&from=${encodeURIComponent(range.from)}`;
+    }
+    if (range.to) {
+      url += `&to=${encodeURIComponent(range.to)}`;
+    }
     return this.http.get<SearchReport>(url, {
       headers: this.authHeaders(),
     });
@@ -405,6 +431,17 @@ export class AdminService {
     return this.http.post<AdminUser>(`${this.baseUrl}/admin/users`, body, {
       headers: this.authHeaders(),
     });
+  }
+
+  /** The service copy, every known service, empty where nothing has been written. */
+  getServiceContent(): Observable<{ services: ServiceContentRow[] }> {
+    return this.http.get<{ services: ServiceContentRow[] }>(
+      `${this.baseUrl}/admin/content/services`, { headers: this.authHeaders() });
+  }
+
+  saveServiceContent(services: ServiceContentRow[]): Observable<{ services: ServiceContentRow[] }> {
+    return this.http.put<{ services: ServiceContentRow[] }>(
+      `${this.baseUrl}/admin/content/services`, { services }, { headers: this.authHeaders() });
   }
 
   /** The changes made through the panel, newest first, searchable and paged. */

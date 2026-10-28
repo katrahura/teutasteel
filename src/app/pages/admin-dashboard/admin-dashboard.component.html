@@ -184,6 +184,23 @@
     <section *ngIf="report" class="mt-5">
       <h2 class="h5">{{ 'ADMIN.SEARCHES_TITLE' | translate }}</h2>
       <p class="text-muted small mb-2">{{ 'ADMIN.SEARCHES_HINT' | translate }}</p>
+      <!-- Said plainly, because the rest of the panel is about money: a search is a question, not
+           an order, and this page cannot know whether anybody bought anything. -->
+      <p class="text-muted small mb-2">{{ 'ADMIN.SEARCHES_NOT_SALES' | translate }}</p>
+
+      <div class="search-range">
+        <label class="field">
+          <span>{{ 'ADMIN.SEARCHES_FROM' | translate }}</span>
+          <input type="date" name="searchFrom" [(ngModel)]="searchFrom" />
+        </label>
+        <label class="field">
+          <span>{{ 'ADMIN.SEARCHES_TO' | translate }}</span>
+          <input type="date" name="searchTo" [(ngModel)]="searchTo" />
+        </label>
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="applySearchRange()">
+          {{ 'ADMIN.SEARCHES_APPLY' | translate }}
+        </button>
+      </div>
 
       <div class="d-flex align-items-center gap-2 mb-2">
         <p class="small mb-0" *ngIf="report.total">

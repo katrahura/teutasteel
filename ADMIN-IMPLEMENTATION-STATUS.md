@@ -34,7 +34,7 @@ whole backend suite must pass before a backend commit. A test count read after t
 | 4 — product and variant editing | **implemented, verification pending** — create inside the panel (saved inactive), category reassignment, typed price unit per variant, version-checked saves (409 conflict + reload), stale loads/uploads ignored, dirty-change warnings, sectioned editor, preview link, per-field errors; backend gaps for missing price units | `product-editor`, `admin-products`, `products`, `product_routes.py`, `dimension_schema`, new migration | **one**: `products.version`, `dimensions.price_unit` (`c41f8a2d7e10`) | 227 frontend, 236 backend, migration applied to a throwaway DB, build 25 routes | desktop/phone flows and the customer enquiry regressions are checked in phase 8 |
 | 5 — category and image management | **implemented, verification pending** — searchable collapsible tree with branch counts and thumbnails, create/edit (AL + EN labels, parent, visibility, image + alt), effective visibility shown, impact before switching off, cycle refusal on the server, category writes now admin-only, upload bound to the edited entity, public preview | `admin-categories`, `admin-media`, `category_routes.py`, `category_schema`, `category.py`, `translate-category-title` | `a7d2c9e4f610` (`categories.title_en`) | 237 frontend, 246 backend, migrations applied to a throwaway DB, build 25 routes | browser check in phase 8; media stays product-only (category images live in the category editor) |
 | 6 — bulk prices, imports, history | **implemented, verification pending** — apply bound to a signed preview token and refused when prices/selection moved, idempotency key makes a retry change nothing, preview names variant/currency/unit, Decimal half-up money, formula-injection-safe CSV exports, searchable/filterable/paged history | `product_routes.py`, `bulk_application.py`, `admin_routes.py`, `admin-products`, `admin.service`, `shared/csv` | `b9e3f1c25a70` (`bulk_applications`) | 242 frontend, 256 backend, build 25 routes | import stays partial-apply by policy; batch reversal not added |
-| 7 — search insights and content | pending | new `/admin/content`, `admin_routes.py` | possible | — | approved service copy |
+| 7 — search insights and content | **implemented, verification pending** — search report gains date range, text filter, normalised spelling and "a search is not an order"; staff searches are no longer recorded as customer questions; `/admin/content` edits AL/EN title/description, picture, alt text, order and visibility for the seven services, with the shipped copy as fallback | `admin-dashboard`, `admin.service`, `content.service`, new `admin-content`, `services`, `service-detail`, `home`, `admin_routes.py`, `app/__init__.py` | none (settings key/value) | 252 frontend, 268 backend, build 26 routes | synonyms not added; content dirty-warning is per-card save only |
 | 8 — final quality and handoff | pending | `ADMIN-HANDOFF.md` | none | — | — |
 
 ## What already exists (reuse, do not rebuild)
@@ -195,6 +195,19 @@ the existing single-price revert remains the undo for one row.
 
 Newest first.
 
+- **Phase 7 — implemented, verification pending.** The search report can be read for a date range and
+  filtered by text; each row carries a normalised spelling; the page says plainly that a search is a
+  question, not an order. Searches made while signed in are **not recorded at all**, so the report is
+  what customers asked rather than a log of the owner testing the catalogue - the price is that the
+  owner cannot use their own searches as a test sample, which is the honest trade. New `/admin/content`
+  edits the seven services (stable ids the quote form uses): AL/EN title and description, picture and
+  alt text in each language, order, and whether it is shown. It stores the copy in the settings table
+  under `content.service.<id>.<field>` - no migration - and the public list, detail and home pages read
+  it through one `ContentService`, falling back field by field to the copy that already ships, so a
+  blank panel changes nothing. Editors read it; only an administrator writes. Frontend **252 tests**,
+  build **26 routes** (the new page), backend suite. Not done: synonyms, and the content cards save per
+  service without a page-level unsaved-changes guard (each card states its own saved state).
+
 - **Phase 6 — implemented, verification pending.** A bulk apply is now bound to its preview: the
   preview signs the mode, value, selection and every price it saw, the apply must carry that token,
   and the server recomputes it from the current rows - a stale preview gets 409 and writes nothing.
@@ -308,11 +321,10 @@ Newest first.
 
 ## Next (read this first)
 
-**Phase 7 — search insights and a bounded content workspace.** Search already records terms, hits,
-frequency and last-seen; the work is a date range, normalised terms, zero-result filtering and honest
-labels (a search is not a sale). The content workspace is the larger half: `/admin/content` for the
-service offerings with AL/EN title and description, image/alt, ordering and visibility, reusing the
-existing service ids and keeping the current copy as fallback. Do not publish sample projects as
-customer work.
-
-Then phase 8: the cross-device pass for phases 4–6, the customer-page regressions, `ADMIN-HANDOFF.md`.
+**Phase 8 — final quality and handoff.** The cross-device and customer-page pass for phases 4–7 is
+still owed, as are `ADMIN-HANDOFF.md`, the migration rollback notes, and a release-order note. The
+checks to run: the public home, product groups, search, a direct product link, size/quantity
+selection, an enquiry draft, a service quote context, and the contact links; the admin at 320, 390,
+430, 768 and 1280px; keyboard/focus/labels/error announcements. Record what cannot be observed here
+(a real second browser for the concurrency conflict, a real upload cancellation) rather than claiming
+it.

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription, forkJoin } from 'rxjs';
@@ -28,7 +29,7 @@ import { csvDocument } from '../../shared/csv';
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'],
-  imports: [RouterModule, TranslateModule, CommonModule],
+  imports: [RouterModule, TranslateModule, CommonModule, FormsModule],
   standalone: true,
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
@@ -59,6 +60,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   gapLoading = false;
   /** Whether the searches are filtered to the terms that found nothing. */
   onlyEmpty = false;
+  /** The date range the report is read for; empty means all recorded time. */
+  searchFrom = '';
+  searchTo = '';
   /** True while the whole open list is being gathered for a download. */
   exporting = false;
 
@@ -176,11 +180,16 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.onlyEmpty = onlyEmpty;
     this.remember();
     this.subscriptions.add(
-      this.admin.getSearches(100, onlyEmpty).subscribe({
+      this.admin.getSearches(100, onlyEmpty, { from: this.searchFrom, to: this.searchTo }).subscribe({
         next: (report) => { this.report = report; },
         error: (error) => this.noteRefusal(error),
       })
     );
+  }
+
+  /** Read the report for the dates chosen, keeping whether it is narrowed to empty terms. */
+  applySearchRange(): void {
+    this.loadSearches(this.onlyEmpty);
   }
 
   ngOnDestroy(): void {

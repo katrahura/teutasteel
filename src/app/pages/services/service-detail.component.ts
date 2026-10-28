@@ -7,6 +7,8 @@ import { SERVICES, ServiceOffering } from '../../shared/services';
 import { PROJECTS } from '../../shared/projects';
 import { environment } from '../../../environments/environment';
 import { ContactService } from '../../services/contact.service';
+import { ContentService } from '../../services/content.service';
+import { SharedService } from '../../shared.service';
 
 @Component({
   selector: 'app-service-detail', standalone: true,
@@ -20,12 +22,12 @@ import { ContactService } from '../../services/contact.service';
       </nav>
       <div class="service-intro">
         <div><p class="eyebrow">TEUTA STEEL · {{ location.city }}</p>
-          <h1>{{ offering.titleKey | translate }}</h1>
-          <p class="lead">{{ offering.textKey | translate }}</p>
+          <h1>{{ content.titleOf(offering, shared.lang || 'al', offering.titleKey | translate) }}</h1>
+          <p class="lead">{{ content.textOf(offering, shared.lang || 'al', offering.textKey | translate) }}</p>
           <p class="note">{{ 'JOURNEY.SERVICE_NOTE' | translate }}</p>
           <a class="primary-action" routerLink="/request" [queryParams]="{service: offering.id}">{{ 'SERVICES.ASK' | translate }} <span aria-hidden="true">→</span></a>
         </div>
-        <figure *ngIf="offering.image"><img [src]="offering.image" [alt]="offering.titleKey | translate" width="480" height="480">
+        <figure *ngIf="content.imageOf(offering)"><img [src]="content.imageOf(offering)" [alt]="content.altOf(offering, shared.lang || 'al', offering.titleKey | translate)" width="480" height="480">
           <figcaption>{{ 'JOURNEY.ILLUSTRATION' | translate }}</figcaption>
         </figure>
       </div>
@@ -71,6 +73,9 @@ export class ServiceDetailComponent {
   readonly location = environment.location;
   /** The shop's saved details, with the built-in ones as fallback. */
   readonly contact = inject(ContactService);
+  /** The owner's service copy, with the shipped words as fallback. */
+  readonly content = inject(ContentService);
+  readonly shared = inject(SharedService);
   constructor() {
     inject(ActivatedRoute).paramMap.pipe(takeUntilDestroyed()).subscribe(params => {
       this.service = SERVICES.find(service => service.id === params.get('id'));

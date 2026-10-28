@@ -8,10 +8,11 @@ import { Product, TopCategory } from '../../models/product.model';
 import { SharedService } from '../../shared.service';
 import { translateCategoryTitle } from '../../shared/translate-category-title';
 import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
-import { SERVICES } from '../../shared/services';
+import { SERVICES, ServiceOffering } from '../../shared/services';
 import { shapeFor } from '../../shared/section-shape';
 import { SectionDrawingComponent } from '../../shared/section-drawing/section-drawing.component';
 import { ContactService } from '../../services/contact.service';
+import { ContentService } from '../../services/content.service';
 
 @Component({
   selector: 'app-home',
@@ -36,13 +37,23 @@ export class HomeComponent implements OnDestroy {
    */
   featured: Product[] = [];
 
-  /**
-   * The services the company advertises, from shared/services.ts.
-   *
-   * That list is the one the services page and the quote form use too. Keeping a second copy here
-   * is how the home page came to show five services while the services page showed seven.
-   */
-  readonly services = SERVICES;
+  /** The services the company advertises, from shared/services.ts, in the owner's order. */
+  readonly content = inject(ContentService);
+
+  get services(): ServiceOffering[] {
+    return this.content.ordered(SERVICES);
+  }
+
+  /** The owner's copy for this language, with the shipped words as fallback. */
+  serviceTitle(service: ServiceOffering): string {
+    return this.content.titleOf(service, this.sharedService.lang || 'al',
+      this.translate.instant(service.titleKey));
+  }
+
+  serviceText(service: ServiceOffering): string {
+    return this.content.textOf(service, this.sharedService.lang || 'al',
+      this.translate.instant(service.textKey));
+  }
 
   /** The shop's own details: the saved settings, with the built-in values as fallback. */
   readonly contact = inject(ContactService);
@@ -68,7 +79,7 @@ export class HomeComponent implements OnDestroy {
   }
 
   constructor(
-    private sharedService: SharedService,
+    public sharedService: SharedService,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
     private productService: ProductService,

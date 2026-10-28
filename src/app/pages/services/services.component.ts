@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { SERVICES, ServiceOffering } from '../../shared/services';
 import { PROJECTS } from '../../shared/projects';
+import { SharedService } from '../../shared.service';
+import { ContentService } from '../../services/content.service';
 
 /**
  * What the company does beyond selling stock: cutting, bending and decorating to the customer's
@@ -22,7 +24,14 @@ import { PROJECTS } from '../../shared/projects';
   styleUrl: './services.component.css',
 })
 export class ServicesComponent {
-  readonly services = SERVICES;
+  /** The same language state the shell uses, so an override is read in the reader's language. */
+  readonly shared = inject(SharedService);
+  readonly content = inject(ContentService);
+
+  /** The owner's order and visibility, with the shipped copy as the fallback for everything else. */
+  get services(): ServiceOffering[] {
+    return this.content.ordered(SERVICES);
+  }
 
   /** Draws the empty photograph places while there are no photographs to put in them. */
 
