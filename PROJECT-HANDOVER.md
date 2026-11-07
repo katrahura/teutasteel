@@ -15,7 +15,7 @@ Read this first when continuing work. This document supersedes status statements
 | Backend source | C:\Users\User\source\TSRepos\backend |
 | Frontend repository | https://github.com/katrahura/teutasteel.git |
 | Frontend branch / application commit | `main` in this repository (release commit); the test build is produced from this content with `npm run build:staging` |
-| Backend application commit | 5e2d5caa7574d6bead4289a9ce433d0f3224cde1 |
+| Backend application commit | 77870cf (live; `pre-77870cf` tag marks the previous revision) |
 | Test website | https://test.teutasteel.com/ |
 | API used by test website | https://api.teutasteel.com |
 | Database used by test website | Existing live MySQL, through the live API |

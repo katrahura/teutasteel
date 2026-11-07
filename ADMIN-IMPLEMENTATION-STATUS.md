@@ -42,9 +42,10 @@ repository or redacted; keep admin testing off the shared live database; confirm
 units and the mesh/R-panel data; decide the single dimension-unit presentation (Multival still mixes mm
 and m); consider the 13.90 kB / 14.00 kB stylesheet headroom.
 
-The backend duplicate-code fix (`77870cf`) is **local only** by the owner's release decision. The live
-API therefore still answers a duplicate product code with the old 500; release the backend in the next
-coordinated window before relying on the 409 response.
+The backend duplicate-code fix (`77870cf`) was published after the test-frontend release. The live
+checkout is at that commit, Passenger restarted at 15:14 UTC, and the public API answers 200. The
+previous revision is tagged `pre-77870cf` on the server for rollback. No migration was involved; the
+MySQL head remains `b9e3f1c25a70`.
 
 ## Phases
 
