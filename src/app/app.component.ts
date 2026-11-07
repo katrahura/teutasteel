@@ -1,3 +1,4 @@
+import { environment } from '../environments/environment';
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, ChangeDetectorRef } from '@angular/core';
 import { RouterModule,NavigationEnd, Router } from '@angular/router';
@@ -34,6 +35,8 @@ import { ContactService } from './services/contact.service';
   ]
 })
 export class AppComponent {
+  readonly staging = environment.siteUrl.includes('test.teutasteel.com');
+
   currentRoute: string = '';
   mobileMenuOpen = false;
   toggleMobileMenu(): void {
@@ -88,13 +91,13 @@ export class AppComponent {
       // signing in or out happens on /login, so the navigation follows the route
       this.isLoggedIn = this.authService.isAuthenticated();
       // and the request count, which changes while the visitor is on the products page
-      this.quoteCount = this.quoteList.count();
+      this.quoteCount = this.quoteList.items().length;
     });
 
     // Follow the list from then on, too. The counter used to move only on a route change, so adding
     // a product from a card - which does not navigate - left it showing the old number.
     this.quoteList.changes.subscribe(() => {
-      this.quoteCount = this.quoteList.count();
+      this.quoteCount = this.quoteList.items().length;
     });
   }
 

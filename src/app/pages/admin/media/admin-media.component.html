@@ -7,6 +7,10 @@
     <p class="count" *ngIf="!loading && !denied && !failed">{{ total }} {{ 'ADMIN.MEDIA_COUNT' | translate }}</p>
   </div>
 
+  <div class="notice" role="status" *ngIf="config">
+    <strong>{{ 'ADMIN.MEDIA_TITLE' | translate }}:</strong> {{ (config.configured ? 'ADMIN.MEDIA_READY' : 'ADMIN.MEDIA_UNSET_TITLE') | translate }}
+    <button type="button" class="retry" (click)="refreshConfig()">{{ 'IMPROVE.RETRY' | translate }}</button>
+  </div>
   <!-- Without a preset the upload cannot work, and saying so is more useful than a button that fails. -->
   <div class="notice failed" *ngIf="config && !config.configured">
     <strong>{{ 'ADMIN.MEDIA_UNSET_TITLE' | translate }}</strong>

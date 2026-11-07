@@ -1,0 +1,18 @@
+Options -Indexes -MultiViews
+DirectoryIndex index.html
+PassengerEnabled off
+ErrorDocument 404 /404.html
+RewriteEngine On
+# Serve existing static assets and prerendered pages normally.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+# Only known application routes may use the SPA fallback.
+RewriteRule ^(?:products|request|services|about|contact|guides|projects|login|404|admin-dashboard|user-dashboard)/?$ index.html [L]
+RewriteRule ^services/(?:cnc|shears|profiles|bending|pressbrake|complex|decoration)/?$ index.html [L]
+RewriteRule ^admin(?:/(?:overview|products|categories|media|content|settings|users|forbidden))?/?$ index.html [L]
+RewriteRule ^ 404.php [L]
+<IfModule mod_headers.c>
+Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+Header always set Cache-Control "no-store"
+</IfModule>

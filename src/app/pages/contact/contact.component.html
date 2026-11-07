@@ -39,6 +39,16 @@
         <p class="small mb-2" *ngIf="contact.deliveryText()">{{ contact.deliveryText() }}</p>
         <p class="small mb-2" *ngIf="contact.vatText()">{{ contact.vatText() }}</p>
 
+        <div role="status" class="alert alert-light" *ngIf="reviewing">{{ 'IMPROVE.CHECKING' | translate }}</div>
+        <div role="alert" class="alert alert-warning" *ngIf="needsReview">
+          {{ 'IMPROVE.REVIEW_CHANGED' | translate }}
+          <button type="button" class="btn btn-outline-dark d-block mt-2" (click)="acknowledgeReview()">{{ 'IMPROVE.ACKNOWLEDGE' | translate }}</button>
+        </div>
+        <div role="alert" class="alert alert-warning" *ngIf="reviewFailed">
+          {{ 'IMPROVE.CHECK_FAILED' | translate }}
+          <button type="button" class="btn btn-outline-dark" (click)="refreshPrices()">{{ 'IMPROVE.RETRY' | translate }}</button>
+        </div>
+        <button type="button" class="btn btn-outline-secondary mb-3" *ngIf="requested.length" [disabled]="reviewing" (click)="refreshPrices()">{{ 'IMPROVE.REFRESH' | translate }}</button>
         <!-- The choice made on the services page, kept. That card has always passed ?service= and
              nothing ever read it, so pressing "request a quote" on a service lost the service. -->
         <p class="small mb-2" *ngIf="selectedService">
@@ -62,7 +72,8 @@
             <li class="list-group-item request-row px-0">
               <span class="request-description">
                 <strong>{{ item.code }}</strong>
-                <span class="text-muted small d-block" *ngIf="item.detail"> — {{ item.detail }}</span>
+                <span class="text-warning small d-block" *ngIf="item.reviewStatus === 'changed'">{{ 'IMPROVE.REVIEW_CHANGED_LINE' | translate }}<ng-container *ngIf="item.previousUnitPrice != null"> · {{ 'IMPROVE.PREVIOUS_PRICE' | translate }}: {{ item.previousUnitPrice | number:'1.2-2' }} {{ item.currency }} / {{ item.previousPriceUnit ? ('ADMIN.UNIT_' + item.previousPriceUnit.toUpperCase() | translate) : ('IMPROVE.UNIT_UNKNOWN' | translate) }}</ng-container></span><span *ngIf="item.reviewStatus === 'unavailable'" class="text-danger d-block">{{ 'IMPROVE.UNAVAILABLE' | translate }}</span>
+                <span class="text-muted small d-block" *ngIf="itemDetail(item)"> — {{ itemDetail(item) }}</span>
               </span>
               <span class="request-quantity d-flex align-items-center gap-2">
                 <button
@@ -74,8 +85,8 @@
                 <input
                   type="number"
                   [attr.aria-label]="('PRODUCTS.QUANTITY' | translate) + ' — ' + item.code"
-                  min="1"
-                  step="1"
+                  [min]="itemStep(item)"
+                  [step]="itemStep(item)"
                   class="form-control form-control-sm text-center"
                   style="max-width: 78px"
                   [ngModel]="item.quantity"
@@ -112,7 +123,7 @@
                  unpriced ones below are quoted by the shop, so calling this a total was wrong. -->
             <div class="d-flex align-items-center border-top pt-2 mt-1">
               <strong>{{ "QUOTE.SUBTOTAL" | translate }}</strong>
-              <strong class="ms-auto">{{ pricedTotal }} Eur</strong>
+              <strong class="ms-auto">{{ pricedTotal | number:'1.2-2' }} EUR</strong>
             </div>
           </div>
 
@@ -216,7 +227,7 @@
           rel="noopener noreferrer"
           [class.disabled]="!isQuoteValid()"
           [attr.aria-disabled]="!isQuoteValid()"
-          (click)="isQuoteValid() || $event.preventDefault()"
+          (click)="prepareSend($event)"
         >{{ 'QUOTE.SEND' | translate }}</a>
         <!-- What happens next. Without it, sending the enquiry into WhatsApp is a blank: the visitor
              has no idea whether anyone is there. -->

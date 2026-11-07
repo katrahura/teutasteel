@@ -1,3 +1,8 @@
+import { forkJoin, of, catchError, map } from 'rxjs';
+import { ProductService } from '../../services/product.service';
+import { reviewLine } from '../../shared/enquiry-line';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -17,6 +22,62 @@ import { ContactService } from '../../services/contact.service';
 })
 export class ContactComponent implements OnInit {
   private translate = inject(TranslateService);
+  private products = inject(ProductService);
+  private platform = inject(PLATFORM_ID);
+  reviewing = false;
+  needsReview = false;
+  reviewFailed = false;
+  private reviewedAt = 0;
+  private reviewGeneration = 0;
+
+  get unavailable(): boolean { return this.requested.some(i => i.reviewStatus === 'unavailable'); }
+  acknowledgeReview(): void { this.needsReview = false; }
+
+  refreshPrices(): void {
+    const items = this.quoteList.items();
+    const generation = ++this.reviewGeneration;
+    if (!items.length) { this.reviewing = false; this.reviewFailed = false; this.needsReview = false; return; }
+    this.reviewing = true;
+    this.reviewFailed = false;
+    const ids = [...new Set(items.map(item => item.productId))];
+    forkJoin(ids.map(id => this.products.getPublicProductById(id).pipe(
+      map(product => ({id, product, error: 0})),
+      catchError(error => of({id, product: null, error: error?.status || 0}))
+    ))).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(results => {
+      if (generation !== this.reviewGeneration) return;
+      const reviewed = this.quoteList.items().map(item => {
+        const result = results.find(r => r.id === item.productId);
+        if (!result) return {...item, reviewStatus: 'error' as const};
+        if (!result.product) return {...item, reviewStatus: result.error === 404 ? 'unavailable' as const : 'error' as const};
+        return reviewLine(item, result.product);
+      });
+      this.requested = this.quoteList.replaceReviewed(reviewed);
+      this.needsReview = this.needsReview || reviewed.some(item => item.reviewStatus === 'changed');
+      this.reviewFailed = reviewed.some(item => item.reviewStatus === 'error');
+      this.reviewedAt = Date.now();
+      this.reviewing = false;
+    });
+  }
+
+  itemUnit(item: QuoteItem): string {
+    return item.priceUnit ? this.translate.instant('ADMIN.UNIT_' + item.priceUnit.toUpperCase()) : this.translate.instant('IMPROVE.UNIT_UNKNOWN');
+  }
+  itemStep(item: QuoteItem): number { return ['metre','kilogram'].includes(item.priceUnit || '') ? 0.1 : 1; }
+  itemDetail(item: QuoteItem): string {
+    const d = item.dimensions;
+    const size = d ? [d.length, d.width, d.height].filter(v => Number(v) > 0).join(' × ') : '';
+    const parts = size ? [size + (item.measurementUnit === 'mm' ? ' mm' : ' (' + this.translate.instant('IMPROVE.DIMENSION_UNIT_UNKNOWN') + ')')] : [];
+    if (Number(d?.thickness) > 0) parts.push(this.translate.instant('PRODUCTS.THICKNESS') + ' ' + d!.thickness + ' mm');
+    if (item.unitPrice != null) parts.push(Number(item.unitPrice).toFixed(2) + ' ' + (item.currency || '') + ' / ' + this.itemUnit(item));
+    return parts.join(' · ');
+  }
+  prepareSend(event: Event): void {
+    if (this.requested.length && Date.now() - this.reviewedAt > 60000) {
+      event.preventDefault(); this.refreshPrices(); return;
+    }
+    if (!this.isQuoteValid()) event.preventDefault();
+  }
+
   private quoteList = inject(QuoteListService);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
@@ -89,6 +150,7 @@ export class ContactComponent implements OnInit {
    */
   ngOnInit(): void {
     this.restoreDraft();
+    if (this.requestPage && isPlatformBrowser(this.platform)) this.refreshPrices();
     this.split();
     let firstParams = true;
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
@@ -136,12 +198,15 @@ export class ContactComponent implements OnInit {
 
   /** Only EUR lines contribute to the EUR subtotal. Other currencies require a quote. */
   private priceOf(item: QuoteItem): number | null {
+    if (item.reviewStatus === 'unavailable' || item.reviewStatus === 'error' || item.priceUnit === null) return null;
     const value = Number(item.unitPrice);
     return (item.currency || '').toUpperCase() === 'EUR' && Number.isFinite(value) && value > 0 ? value : null;
   }
 
   removeRequested(item: QuoteItem): void {
     this.requested = this.quoteList.setQuantity(item, 0);
+    this.reviewFailed = this.requested.some(i => i.reviewStatus === 'error');
+    if (!this.requested.length) this.needsReview = false;
   }
 
   /** One more or one fewer of a line, without leaving the page. */
@@ -155,6 +220,7 @@ export class ContactComponent implements OnInit {
   }
 
   clearRequested(): void {
+    this.reviewGeneration++; this.reviewing = false; this.reviewFailed = false; this.needsReview = false;
     this.quoteList.clear();
     this.requested = [];
   }
@@ -197,7 +263,7 @@ export class ContactComponent implements OnInit {
    * nothing, wanting a general quote, would have been stuck behind it. Name and phone are enough.
    */
   isQuoteValid(): boolean {
-    return !!(this.quote.name.trim() && this.quote.phone.trim());
+    return !!(this.quote.name.trim() && this.quote.phone.trim()) && !this.reviewing && !this.reviewFailed && !this.needsReview && !this.unavailable;
   }
 
   /**
@@ -261,8 +327,10 @@ export class ContactComponent implements OnInit {
       lines.push('');
       lines.push(`${this.translate.instant('PRODUCTS.REQUEST_TITLE')}:`);
       items.forEach((item, index) => {
-        const detail = item.detail ? ` — ${item.detail}` : '';
-        lines.push(`${index + 1}. ${item.code}${detail} (${item.quantity})`);
+        const rendered = item.dimensions || item.priceUnit !== undefined ? this.itemDetail(item) : item.detail;
+        const detail = rendered ? ` — ${rendered}` : '';
+        lines.push(`${index + 1}. ${item.code}${detail} (${item.quantity} ${this.itemUnit(item)})`);
+        if (item.productUrl) lines.push(item.productUrl);
       });
     }
     return `https://wa.me/${this.contact.whatsappNumber()}?text=${encodeURIComponent(lines.join('\n'))}`;

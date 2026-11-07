@@ -19,6 +19,7 @@ interface PageSeo {
 }
 
 const PUBLIC_PAGES: Record<string, PageSeo> = {
+  '/404': {titleKey:'IMPROVE.NOT_FOUND',descriptionKey:'IMPROVE.NOT_FOUND_HELP',noindex:true},
   '/': { titleKey: 'SEO.HOME_TITLE', descriptionKey: 'SEO.HOME_DESCRIPTION' },
   '/request': { titleKey: 'SEO.REQUEST_TITLE', descriptionKey: 'SEO.REQUEST_DESCRIPTION', noindex: true },
   '/products': { titleKey: 'SEO.PRODUCTS_TITLE', descriptionKey: 'SEO.PRODUCTS_DESCRIPTION' },
@@ -84,7 +85,7 @@ export class SeoService {
       // login and the dashboards: no canonical, and a title that is not a promise
       // about content a crawler cannot see anyway
       this.setCanonical(null);
-      this.setRobots(null);
+      this.setRobots('noindex, nofollow');
       this.setHead('SEO.PRIVATE_TITLE', 'SEO.PRIVATE_DESCRIPTION', null);
       return;
     }
@@ -99,6 +100,7 @@ export class SeoService {
   }
 
   private setRobots(content: string | null): void {
+    if (environment.siteUrl.includes('test.teutasteel.com')) content = 'noindex, nofollow, noarchive';
     const existing = this.document.head.querySelector('meta[name="robots"]');
     if (!content) {
       // Removed rather than left behind: a page that asked not to be indexed would otherwise mark

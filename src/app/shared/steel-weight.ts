@@ -110,7 +110,18 @@ export function weightPerSheet(size: SectionSize): number | null {
  * Categories rather than guesses: "Angles (L-Profil)" says exactly what it holds, and a product
  * whose category is unknown gets no weight rather than a wrong one.
  */
-export function shapeForCategory(categoryTitle: string | null | undefined): SectionShape {
+export function shapeForCategory(
+  categoryTitle: string | null | undefined,
+  categoryId?: number | null,
+  productCode?: string | null
+): SectionShape {
+  // Sheet geometry alone does not establish material or solid volume. Multiwall
+  // polycarbonate, acrylic and aluminium must never use the solid-steel density.
+  const identity = `${categoryTitle || ''} ${productCode || ''}`.toLowerCase();
+  if ([113, 114, 130].includes(Number(categoryId)) ||
+      /multival|multiwall|polycarb|polikarb|plexiglass|acrylic|alumin/.test(identity)) {
+    return 'unknown';
+  }
   const title = (categoryTitle || '').toLowerCase();
   if (title.indexOf('angle') >= 0) {
     return 'angle';
@@ -124,7 +135,8 @@ export function shapeForCategory(categoryTitle: string | null | undefined): Sect
   if (title.indexOf('tube') >= 0 || title.indexOf('hollow') >= 0) {
     return 'rectangular';
   }
-  if (title.indexOf('sheet') >= 0 || title.indexOf('plate') >= 0) {
+  if ((title.indexOf('sheet') >= 0 || title.indexOf('plate') >= 0) &&
+      /steel|black|galvani[sz]ed|ribbed/.test(title)) {
     return 'sheet';
   }
   return 'unknown';

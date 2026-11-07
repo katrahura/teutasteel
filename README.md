@@ -238,3 +238,7 @@ Both hosts are behind Cloudflare, and it answers **403 to any request that does 
 so the script sends a browser user agent — worth knowing if you write your own check with curl. After a
 deploy, if Cloudflare is caching HTML for the site, purge the cache for the changed files, otherwise
 visitors can keep getting an old `index.html` that points at asset names which no longer exist.
+
+## Project documentation
+
+Start with [PROJECT-HANDOVER.md](PROJECT-HANDOVER.md) for current status, completed design/mobile/admin work, verification limits and outstanding tasks. Read [staging operations](docs/STAGING-OPERATIONS.md) before building, deploying or troubleshooting test.teutasteel.com. The test frontend shares the live API/MySQL; admin changes affect production.

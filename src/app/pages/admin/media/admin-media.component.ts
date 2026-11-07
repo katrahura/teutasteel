@@ -39,6 +39,8 @@ export class AdminMediaComponent implements OnInit, OnDestroy {
   private products = inject(ProductService);
 
   config: MediaConfig | null = null;
+  refreshConfig(): void { this.admin.getMediaConfig().subscribe({next: config => this.config = config, error: () => this.config = null}); }
+
   rows: GapProduct[] = [];
   loading = true;
   denied = false;

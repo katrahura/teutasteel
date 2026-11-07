@@ -1,0 +1,18 @@
+# Seven-point implementation and acceptance
+
+
+## Seven-point implementation — 3 November 2026
+
+Published frontend fixes to https://test.teutasteel.com only. All 274 frontend tests passed; staging build succeeded with 27 prerendered routes. Production frontend was not replaced; backend application source/migrations unchanged.
+
+Implemented visible dimension-free prices; explicit unknown price basis; fractional metre/kilogram quantities; current-price enquiry reconciliation with changed-price acknowledgement, removed-variant refusal and API-failure blocking; complete translated specifications and product URLs; Multival dimensions and non-steel weight correction; direct catalogue shortcuts; all 19 mesh codes in natural order; removal of customer-facing photo production briefs; phone request controls; in-flow staging notice; admin quality reminders and upload config retry; named staging build and no-index/404 handling.
+
+Owner confirmed H/U prices per metre. Live product 4195/dimension4416 is EUR3.50/m; product4196/dimension4417 EUR3.00/m. Profile lengths remain unknown. Backup: /home/[hosting-account]/backups/polycarbonate-accessory-units-20261103.json. Other 556 priced variants still need owner-confirmed selling units; unknown facts remain visibly unconfirmed. Exact mesh images/openings/thickness/finish require supplier evidence.
+
+Owner explicitly approved restricted Cloudinary preset teutasteel_admin_images_v1 and shared live API configuration/restart. Unsigned JPEG/PNG/WebP/AVIF/GIF, generated IDs, no overwrites, product_images folder. Real temporary upload and delivery passed; test asset removed. Private configuration backup: /home/[hosting-account]/backups/backend-env-before-admin-upload-20261103. Public settings returned 200 after restart. Never publish the private env backup or uploader credentials.
+
+Acceptance: actual browser verified H connector 2.5 metres at EUR3.50 = EUR8.75; full enquiry link includes quantity/unit/product URL; request at 320/390/430px has no horizontal overflow and quantity control height45px; English category heading and all R1-R19 cards verified. Test enquiry cleared, service context cleared, language restored AL and viewport reset. No WhatsApp sent. Known public routes return200; unknown routes and missing assets return404; X-Robots-Tag is noindex/nofollow/noarchive. Branded server 404 recovery is verified: the host replaced native ErrorDocument responses, so staging now rewrites unknown paths to a minimal 404.php responder that returns status404 and reads the generated 404.html. No input is executed or reflected. Browser recovery link to products passed. The named staging build includes this handler; PHP support is required on staging.
+
+Pending acceptance: owner chose to do normal signed-in admin media-page check later. Automatic approval review rejected a proposed programmatic admin-token check because it bypassed normal login; that approach was not executed. Do not mint an admin token for acceptance. Signed-in upload binding/cancellation and a fresh keyboard-only admin pass are not claimed verified here.
+
+Release: npm run build:staging creates dist/staging/browser; upload browser files only. Server artifact /home/[hosting-account]/seven-point-staging-20261103.tar.gz. Pre-change test backup /home/[hosting-account]/staging-before-seven-points-20261103.tar.gz. Do not extract into public_html or backend. Do not push backend master: its hook can deploy production. Workstation evidence: C:\Users\User\Documents\Codex\2026-10-08\c-teutasteel-website\outputs (seven-point tests/build logs, mobile screenshot, upload verification, status).

@@ -1,3 +1,4 @@
+<app-catalogue-shortcuts></app-catalogue-shortcuts>
 <!-- Search. Outside both views on purpose: it has to be there whether the visitor is looking at
      the groups or at a set of results, which is exactly what it was not when it lived inside
      *ngIf="showingGroups" - it disappeared the moment the search hid the groups. -->
@@ -1004,14 +1005,13 @@
               <p
                 class="card-text"
                 *ngIf="
-                  lowestPrice(product) > 0 &&
-                  hasAnyDimension(product.dimensions ? product.dimensions[0] : null)
+                  lowestPrice(product) > 0
                 "
               >
                 <strong>{{ "MISC.PRICE" | translate }}:</strong>
                 <span *ngIf="(product.dimensions || []).length > 1">{{ 'PRODUCTS.PRICE_FROM' | translate }} </span>{{ lowestPrice(product) | number:'1.2-2' }}
                 {{ getProductDimension(product, "currency") }}
-                <span class="price-unit" *ngIf="priceUnit(product)">/ {{ priceUnit(product) }}</span>
+                <span class="price-unit" *ngIf="priceUnit(product)">/ {{ priceUnit(product) }}</span><span class="text-muted small" *ngIf="!priceUnit(product)"> · {{ "IMPROVE.UNIT_UNKNOWN" | translate }}</span>
               </p>
               <!-- One dimension: nothing to choose, so the quantity sits on the card itself. Several:
                    the button opens the dialog instead, where a thickness and its quantity live. -->
@@ -1028,12 +1028,12 @@
                   step="1"
                   class="form-control form-control-sm"
                   style="max-width: 84px"
-                  [id]="'card-qty-' + product.id"
+                  [attr.step]="quantityStep(product)" [attr.min]="quantityStep(product)" [id]="'card-qty-' + product.id"
                   [ngModel]="cardQuantity(product)"
                   (ngModelChange)="setCardQuantity(product, $event)"
                   [name]="'card-qty-' + product.id"
                 />
-                <span class="small text-muted">{{ "PRODUCTS.PIECES" | translate }}</span>
+                <span class="small text-muted">{{ quantityUnit(product) }}</span>
                 <!-- The same information the dialog gives for a product with several thicknesses:
                      what is already on the request list, and how much of it. -->
                 <span
@@ -1201,7 +1201,7 @@
             </div>
             <div *ngIf="sharedDimensionValue('width') !== null">
               <strong>{{ "PRODUCTS.WIDTH" | translate }}:</strong>
-              {{ sharedDimensionValue("width") }}
+              {{ sharedDimensionValue("width") }}{{ knownMillimetres() ? ' mm' : '' }}
             </div>
 
             <div *ngIf="sharedDimensionValue('length') !== null">
@@ -1244,7 +1244,7 @@
                 *ngIf="sharedDimensionValue('width') === null && showsValue(dimension.width)"
               >
                 <strong>{{ "PRODUCTS.WIDTH" | translate }}:</strong>
-                {{ dimension.width }}
+                {{ dimension.width }}{{ knownMillimetres() ? ' mm' : '' }}
               </div>
               <div
                 *ngIf="sharedDimensionValue('length') === null && showsValue(dimension.length)"
@@ -1281,14 +1281,14 @@
                     {{ dimension.thickness }} mm
                   </ng-container>
                   <ng-container
-                    *ngIf="showsValue(dimension.price) && hasAnyDimension(dimension)"
+                    *ngIf="showsValue(dimension.price)"
                   >
                     <ng-container *ngIf="showsValue(dimension.thickness)">
                       &middot;
                     </ng-container>
                     <strong>{{ "MISC.PRICE" | translate }}:</strong>
                     {{ dimension.price }}
-                    {{ dimension.currency || "" }}<span *ngIf="dimension.price_unit" class="price-unit"> / {{ priceUnitLabel(dimension.price_unit) }}</span>
+                    {{ dimension.currency || "" }}<span *ngIf="dimension.price_unit" class="price-unit"> / {{ priceUnitLabel(dimension.price_unit) }}</span><span *ngIf="!dimension.price_unit" class="small text-muted"> · {{ "IMPROVE.UNIT_UNKNOWN" | translate }}</span>
                   </ng-container>
                   <!-- What is already on the request list for this thickness. -->
                   <span
@@ -1317,7 +1317,7 @@
                   (ngModelChange)="setQuantity(i, $event)"
                   [name]="'quantity-' + i"
                 />
-                <span class="small text-muted">{{ "PRODUCTS.PIECES" | translate }}</span>
+                <span class="small text-muted">{{ dimension.price_unit ? priceUnitLabel(dimension.price_unit) : ('IMPROVE.UNIT_UNKNOWN' | translate) }}</span>
               </div>
             </li>
           </ul>
@@ -1370,9 +1370,9 @@
           <label class="footer-quantity" *ngFor="let dimension of tickedDimensions(selectedProduct)">
             <span *ngIf="dimension.thickness">{{ dimension.thickness }} mm</span>
             <span>{{ 'PRODUCTS.QUANTITY' | translate }}</span>
-            <input type="number" min="1" step="1" class="form-control" [ngModel]="selectedQuantity(dimension)"
+            <input type="number" [min]="dimensionStep(dimension)" [step]="dimensionStep(dimension)" class="form-control" [ngModel]="selectedQuantity(dimension)"
               (ngModelChange)="setSelectedQuantity(dimension, $event)" [attr.aria-label]="('PRODUCTS.QUANTITY' | translate) + ' ' + (dimension.thickness || '')">
-            <span>{{ 'PRODUCTS.PIECES' | translate }}</span>
+            <span>{{ dimension.price_unit ? priceUnitLabel(dimension.price_unit) : ('IMPROVE.UNIT_UNKNOWN' | translate) }}</span>
           </label>
         </div>
           <button

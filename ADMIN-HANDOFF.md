@@ -133,3 +133,7 @@ The later source review found functional defects beyond the manual gaps above. R
 Correction to earlier metadata wording: public settings are browser-fetched. An ordinary rebuild alone does not put saved values into the hardcoded index.html metadata or the prerendered built-in contact values; an explicit metadata update is required. The admin now explains that limitation.
 
 These repairs add no migration, but depend on the existing Harness migrations. Frontend and backend need a coordinated release because imports now require the reviewed preview signature. No production writes, deployment or push was performed. The new code remains uncommitted for review; do not assume the working trees are still clean as they were in the earlier handoff.
+
+## Current-status reconciliation — 28 October 2026
+
+The implementation/verification statements above describe their original point in time. The repairs were subsequently committed and pushed. The test frontend is now deployed at https://test.teutasteel.com and uses the existing live API and live MySQL by explicit owner choice; admin edits there affect production. Live backend was observed at 5e2d5ca and MySQL at b9e3f1c25a70 (head). Read PROJECT-HANDOVER.md and docs/STAGING-OPERATIONS.md for current state, remaining checks and deployment precautions. Do not treat older “uncommitted/not pushed/not deployed” statements as current status.

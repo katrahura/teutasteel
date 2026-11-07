@@ -1,4 +1,5 @@
-import {  ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { CatalogueShortcutsComponent } from '../../shared/catalogue-shortcuts.component';
+import {  ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -41,7 +42,7 @@ type DimensionKey =
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ImageFallbackDirective, SectionDrawingComponent, ProductEditorComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ImageFallbackDirective, SectionDrawingComponent, ProductEditorComponent, CatalogueShortcutsComponent],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
   animations: [
@@ -55,6 +56,10 @@ type DimensionKey =
   ],
 })
 export class ProductsComponent implements OnInit, OnDestroy {
+  /** The shared editor, when it is in the page. Its own guard is the authority on unsaved work. */
+  @ViewChild(ProductEditorComponent) productEditor?: ProductEditorComponent;
+  canLeave(): boolean { return this.productEditor?.canLeave() ?? true; }
+
 topCategories: TopCategory[] = [];
 childrenMap = new Map<number, Category[]>(); // parentId -> children[]
 loadingGroups = false;
@@ -178,7 +183,7 @@ toggleParent(parentId: number) {
   };
   constructor(private translate: TranslateService ,public sharedService: SharedService,private router: Router,private route: ActivatedRoute,private productService: ProductService,@Inject(PLATFORM_ID) private platformId: Object,private authService: AuthService, private changeDetector: ChangeDetectorRef, private quoteList: QuoteListService, private contact: ContactService) {
     // Read once on construction; the service guards its storage, so the prerender is safe here.
-    this.quoteCount = this.quoteList.count();
+    this.quoteCount = this.quoteList.items().length;
   }
 
   /** How many items are on the request list, for the bar above the products. */
@@ -286,7 +291,7 @@ toggleParent(parentId: number) {
         this.quoteList.setQuantity(item, 0);
       }
     });
-    this.quoteCount = this.quoteList.count();
+    this.quoteCount = this.quoteList.items().length;
     this.quoteNotice = product.code;
     // Read the quantities first, because re-seeding replaces them with what the list holds.
     const summary = chosen
@@ -339,24 +344,19 @@ toggleParent(parentId: number) {
       ? ' · ' + this.translate.instant('PRODUCTS.THICKNESS_UNCONFIRMED')
       : '');
     return { productId: product.id || 0, code: product.code,
-      variantKey: this.variantKey(dimension), detail,
+      measurementUnit: [111,113].includes(product.category_id || this.selectedCategory?.id || 0) ? 'mm' : null, variantKey: this.variantKey(dimension), dimensionId: dimension?.id, priceUnit: dimension?.price_unit || null, detail,
       dimensions: { height: dimension.height, width: dimension.width, length: dimension.length, thickness: dimension.thickness, weight: dimension.weight },
       unitPrice: Number.isFinite(price) && price > 0 ? price : null,
       currency: dimension.currency || 'EUR', quantity: 0 };
   }
 
   private describeDimension(dimension: ProductDimension): string {
+    if (!dimension) return '';
     const parts: string[] = [];
-    if (this.showsValue(dimension.thickness)) {
-      parts.push(`${this.translate.instant('PRODUCTS.THICKNESS')} ${dimension.thickness} mm`);
-    }
-    if (this.showsValue(dimension.height)) {
-      parts.push(`${dimension.height}${dimension.width ? ' × ' + dimension.width : ''} mm`);
-    }
-    if (this.showsValue(dimension.length)) parts.push(this.formatLength(dimension.length));
-    if (this.showsValue(dimension.price)) {
-      parts.push(`${dimension.price} ${dimension.currency || ''}`.trim());
-    }
+    if (this.showsValue(dimension.thickness)) parts.push(`${this.translate.instant('PRODUCTS.THICKNESS')} ${dimension.thickness} mm`);
+    const fullSize = [dimension.length, dimension.width, dimension.height].filter(v => Number(v) > 0).join(' × ');
+    if (fullSize) parts.push(fullSize + (this.knownMillimetres() ? ' mm' : ' (' + this.translate.instant('IMPROVE.DIMENSION_UNIT_UNKNOWN') + ')'));
+    if (this.showsValue(dimension.price)) parts.push(Number(dimension.price).toFixed(2) + ' ' + (dimension.currency || '') + ' / ' + (dimension.price_unit ? this.priceUnitLabel(dimension.price_unit) : this.translate.instant('IMPROVE.UNIT_UNKNOWN')));
     return parts.join(' — ');
   }
 
@@ -372,7 +372,7 @@ toggleParent(parentId: number) {
     // The category listing does not carry each product's category, and the page already knows which
     // one is open - so fall back to that rather than losing the weight for want of a label.
     const category = (product as any)?.category || (this as any).selectedCategory;
-    const shape = shapeForCategory(category ? category.title : null);
+    const shape = shapeForCategory(category?.title, category?.id || product?.category_id, product?.code);
     return describeWeight(shape, {
       height: dimension?.height,
       width: dimension?.width,
@@ -418,6 +418,14 @@ toggleParent(parentId: number) {
     }
     return this.translate.instant('ADMIN.UNIT_' + unit.toUpperCase());
   }
+
+  knownMillimetres(): boolean { return [111,113].includes(this.selectedCategory?.id || this.selectedProduct?.category_id || 0); }
+  dimensionStep(d: ProductDimension): number { return ['metre','kilogram'].includes(d.price_unit || '') ? 0.1 : 1; }
+  quantityUnit(product: Product): string {
+    const unit = product.dimensions?.[0]?.price_unit;
+    return unit ? this.priceUnitLabel(unit) : this.translate.instant('IMPROVE.UNIT_UNKNOWN');
+  }
+  quantityStep(product: Product): number { return ['metre','kilogram'].includes(product.dimensions?.[0]?.price_unit || '') ? 0.1 : 1; }
 
   /** The dimensions the customer ticked, or the only one there is. */
   /**
@@ -485,6 +493,11 @@ toggleParent(parentId: number) {
    * customer comparing tubes is choosing a length as much as a section.
    */
   shortSize(product: Product | null | undefined, categoryId?: number | null): string {
+    if (product?.category_id === 113 || categoryId === 113) {
+      const d = product?.dimensions?.[0];
+      if (d?.width && d?.length) return `${d.length / 1000} × ${d.width / 1000} m`;
+    }
+
     const dimension = (product?.dimensions || [])[0];
     if (!dimension) {
       return '';
@@ -575,7 +588,7 @@ toggleParent(parentId: number) {
     const number = Number(value);
     this.cardQuantities = {
       ...this.cardQuantities,
-      [product.id || 0]: Number.isFinite(number) && number > 0 ? Math.floor(number) : 1,
+      [product.id || 0]: Number.isFinite(number) && number > 0 ? (['metre','kilogram'].includes(product.dimensions?.[0]?.price_unit || '') ? Math.round(number * 1000) / 1000 : Math.floor(number)) : 1,
     };
   }
 
@@ -592,7 +605,7 @@ toggleParent(parentId: number) {
       this.quoteItem(product, dimension),
       this.cardQuantity(product)
     );
-    this.quoteCount = this.quoteList.count();
+    this.quoteCount = this.quoteList.items().length;
     this.quoteNotice = product.code;
     this.refreshCardList();
   }
@@ -1586,23 +1599,9 @@ this.showProducts(this.selectedCategory)
           .filter(({ index }: { index: number }) => useDialogSelection && this.selectedProduct?.id === product.id && this.isChosen(index));
     const wanted = chosen
       .map(({ dimension }: { dimension: ProductDimension }) => {
-        const parts = [];
-        if (dimension.thickness) {
-          parts.push(
-            `${this.translate.instant("PRODUCTS.THICKNESS")} ${dimension.thickness} mm`
-          );
-        } else if (dimension.height) {
-          parts.push(`${dimension.height}${dimension.width ? 'x' + dimension.width : ''} mm`);
-        }
-        if (dimension.length) {
-          parts.push(
-            `${this.translate.instant("PRODUCTS.LENGTH")} ${this.formatLength(dimension.length)}`
-          );
-        }
-        if (dimension.price) {
-          parts.push(`${dimension.price} ${dimension.currency || ''}`.trim());
-        }
-        return parts.join(' - ');
+        const quantity = useDialogSelection ? this.quantityFor(product, dimension) : this.cardQuantity(product);
+        const unit = dimension.price_unit ? this.priceUnitLabel(dimension.price_unit) : this.translate.instant('IMPROVE.UNIT_UNKNOWN');
+        return `${this.describeDimension(dimension)} · ${this.translate.instant('PRODUCTS.QUANTITY')}: ${quantity} ${unit}`;
       })
       .filter(Boolean);
     // Written in the customer's language: the page was Albanian and the message went out in
@@ -1660,15 +1659,16 @@ this.showProducts(this.selectedCategory)
     // Product text (description/slug) is stored per language in the API, so the
     // requested language has to travel with the request.
     const lang = this.currentLanguage();
-    const sub = this.productService.getCategoryById(category_id, page, 8, lang, {
+    const sub = this.productService.getCategoryById(category_id, page, category_id === 111 ? 100 : 8, lang, {
       thickness: this.filterThickness,
       minHeight: this.filterMinHeight,
       maxHeight: this.filterMaxHeight,
     }).subscribe({
       next: (categoryResponse: CategoryResponse) => {
         this.products = categoryResponse.products || [];
+        if (category_id === 111) this.products.sort((a,b) => a.code.localeCompare(b.code, undefined, {numeric:true}));
         const title = (categoryResponse as any).title;
-        if (title && this.selectedCategory) this.selectedCategory = { ...this.selectedCategory, title };
+        if (title && this.selectedCategory) this.selectedCategory = { ...this.selectedCategory, title, title_en: (categoryResponse as any).title_en };
         // Which of these are already on the request list, so the cards can say so.
         this.refreshCardList();
         this.currentPage = categoryResponse.pagination.page;
@@ -1778,7 +1778,7 @@ this.showProducts(this.selectedCategory)
     const number = Number(value);
     this.quantities = {
       ...this.quantities,
-      [index]: Number.isFinite(number) && number > 0 ? Math.floor(number) : 0,
+      [index]: Number.isFinite(number) && number > 0 ? (this.dimensionStep(this.selectedProduct?.dimensions?.[index] || {}) < 1 ? Math.round(number * 1000) / 1000 : Math.floor(number)) : 0,
     };
   }
 

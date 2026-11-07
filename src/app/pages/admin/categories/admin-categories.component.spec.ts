@@ -133,6 +133,15 @@ describe('AdminCategoriesComponent', () => {
     httpMock.expectOne((req) => req.url.startsWith(categoriesUrl)).flush(categories());
   });
 
+  it('does not switch a row while a form is open', () => {
+    // The switch would change the record behind the form and reload the tree around a stale editor.
+    create(true);
+    const spy = spyOn((component as any).products, 'updateCategory');
+    component.edit(component.rows.find((row) => row.category.id === 1)!);
+    component.toggle(component.all.find((c) => c.id === 4)!);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
   it('shows an editor a read-only tree, with no way to start an edit', () => {
     create(false);
     component.startNew();

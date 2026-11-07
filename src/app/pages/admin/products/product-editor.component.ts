@@ -96,6 +96,8 @@ export class ProductEditorComponent implements OnChanges, OnInit, OnDestroy {
    * exist with empty dimensions, translations and an empty image from the first render.
    */
   product: Product = EMPTY_PRODUCT;
+  get unconfirmedUnits(): number { return (this.product.dimensions || []).filter(d => Number(d.price) > 0 && !d.price_unit).length; }
+
   loaded = false;
   loading = false;
   saving = false;

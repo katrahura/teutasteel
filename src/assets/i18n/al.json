@@ -548,7 +548,8 @@
     "CONTENT_VISIBLE": "Shfaqet në faqe",
     "CONTENT_FALLBACK": "Fusha bosh mban fjalët dhe figurën që faqja ka tashmë.",
     "CONTENT_SAVE": "Ruaj këtë shërbim",
-    "CANCEL_UPLOAD": "Anulo ngarkimin"
+    "CANCEL_UPLOAD": "Anulo ngarkimin",
+    "MEDIA_READY": "Gati për ngarkim"
   },
   "MISC": {
     "IMAGE_ASSET": "Imazhi i Produktit",
@@ -734,7 +735,7 @@
     "TUBE_4": "Kur porositni, jepni përmasat e jashtme dhe murin; nëse vizatimi thotë DN, thoni çka do të thotë.",
     "SHEET_TITLE": "Trashësia e llamarinës",
     "SHEET_1": "Llamarina shitet sipas trashësisë në milimetra, dhe dallimi mes 0,5 dhe 0,7 mm vendos çka bën paneli.",
-    "SHEET_2": "0,5 mm për dekor dhe sipër dyer; 1–2 mm për pjesë që mbajnë peshë; 3 mm e lart për pllaka.",
+    "SHEET_2": "Trashësia e vetme nuk përcakton përshtatshmërinë. Dërgoni materialin, përmasat, mbështetjet dhe përdorimin për konfirmim sipas projektit.",
     "SHEET_3": "Fleta ka edhe përmasat e vet (1000×2000, 1250×2500, 1500×3000), dhe çmimi zakonisht jepet për fletë ose për metër katror.",
     "SHEET_4": "Prandaj të dy numrat kanë rëndësi kur krahasoni.",
     "DRAW_TITLE": "Si përgatitet një vizatim prerjeje",
@@ -889,5 +890,28 @@
     "CLEAR_DRAFT": "Pastro të dhënat e formularit",
     "PRODUCT_UNAVAILABLE": "Ky produkt nuk është i disponueshëm. Kërkoni në katalog ose na kontaktoni për ndihmë."
   },
-  "MEDIA_PRESET_WORD": "Unsigned"
+  "MEDIA_PRESET_WORD": "Unsigned",
+  "IMPROVE": {
+    "UNIT_UNKNOWN": "Njësia e çmimit për konfirmim",
+    "CHECKING": "Duke kontrolluar çmimet dhe disponueshmërinë…",
+    "REVIEW_CHANGED": "Të dhënat e katalogut ndryshuan. Kontrolloni artikujt e përditësuar para vazhdimit.",
+    "ACKNOWLEDGE": "I kontrollova këto ndryshime",
+    "RETRY": "Kontrollo përsëri",
+    "CHECK_FAILED": "Disa artikuj nuk u kontrolluan. Provoni përsëri para dërgimit.",
+    "UNAVAILABLE": "Ky variant nuk është më i disponueshëm. Hiqeni dhe zgjidhni një produkt aktual.",
+    "CURRENT_PRICE": "Çmimi aktual në katalog",
+    "REFRESH": "Përditëso çmimet",
+    "POLYCARBONATE": "Polikarbonat dhe aksesorë",
+    "MESH": "Rrjetë metalike e zgjeruar",
+    "GRATING": "Grila çeliku",
+    "EXPLORE": "Gjej sipas llojit të produktit",
+    "NOT_FOUND": "Faqja nuk u gjet",
+    "NOT_FOUND_HELP": "Kjo adresë nuk përputhet me një faqe. Kërkoni në katalog ose na kontaktoni.",
+    "LIVE_DATA": "Faqe testimi · Ndryshimet prekin të dhënat reale",
+    "QUALITY": "Verifikimi i produkteve",
+    "QUALITY_HELP": "Kontrolloni njësinë e shitjes, përmasat dhe gjuhën para publikimit. Mos plotësoni të dhëna të panjohura me hamendje.",
+    "DIMENSION_UNIT_UNKNOWN": "njësia e përmasave për konfirmim",
+    "REVIEW_CHANGED_LINE": "Të dhëna të përditësuara të katalogut",
+    "PREVIOUS_PRICE": "Çmimi i ruajtur më parë"
+  }
 }

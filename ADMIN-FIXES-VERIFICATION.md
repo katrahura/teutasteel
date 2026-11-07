@@ -43,3 +43,7 @@ The chat outputs folder contains admin-fixes-backend-final.log, admin-fixes-fron
 - Release the backend and frontend together in a coordinated window. The new backend intentionally refuses an old frontend's unbound import apply; an old import form must be refreshed onto the new frontend before use. Preview signatures from an older backend are no longer valid and must be regenerated.
 - Persist and protect the existing application secret as before. No new external service or credential is required.
 - Original Harness limitations about static metadata, external upload configuration and physical-device testing remain relevant. This repair does not claim that every feature in phases 0–8 has been manually certified.
+
+## Current-status reconciliation — 28 October 2026
+
+The implementation/verification statements above describe their original point in time. The repairs were subsequently committed and pushed. The test frontend is now deployed at https://test.teutasteel.com and uses the existing live API and live MySQL by explicit owner choice; admin edits there affect production. Live backend was observed at 5e2d5ca and MySQL at b9e3f1c25a70 (head). Read PROJECT-HANDOVER.md and docs/STAGING-OPERATIONS.md for current state, remaining checks and deployment precautions. Do not treat older “uncommitted/not pushed/not deployed” statements as current status.

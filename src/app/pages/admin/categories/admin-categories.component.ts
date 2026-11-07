@@ -282,7 +282,9 @@ export class AdminCategoriesComponent implements OnInit, OnDestroy {
 
   /** Switch one category on or off without opening the editor. Visibility only; nothing is deleted. */
   toggle(category: Category): void {
-    if (!this.canWrite || !category.id) {
+    // While a form is open, the switch is not offered: it would change a record behind the form and
+    // reload the tree around a stale editor. The form's own visibility checkbox is the way to do it.
+    if (this.editing || !this.canWrite || !category.id) {
       return;
     }
     const wanted = !category.is_active;

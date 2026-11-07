@@ -1,5 +1,5 @@
 <!-- Edit Product Modal -->
-<div class="editor-form">
+<div class="editor-form"><aside class="alert alert-light"><strong>{{ "IMPROVE.QUALITY" | translate }}</strong><p>{{ "IMPROVE.QUALITY_HELP" | translate }}</p><p *ngIf="unconfirmedUnits" class="text-warning mb-0">{{ "IMPROVE.UNIT_UNKNOWN" | translate }}: {{ unconfirmedUnits }}</p></aside>
   <!-- the bindings below read product.*, so the dialog only exists once a
        product has been chosen; otherwise every change detection threw
        "Cannot read properties of null" -->

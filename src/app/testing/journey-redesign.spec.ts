@@ -28,10 +28,10 @@ describe('Redesigned customer journey', () => {
       {productId:7,variantKey:'id:22',code:'40x40',detail:'2 mm',quantity:3}
     ]));
     const fixture=TestBed.createComponent(AppComponent);fixture.detectChanges();
-    expect(fixture.componentInstance.quoteCount).toBe(5);
+    expect(fixture.componentInstance.quoteCount).toBe(2);
     expect(fixture.nativeElement.querySelector('.mobile-enquiry').getAttribute('href')).toBe('/request');
     TestBed.inject(QuoteListService).setQuantity(TestBed.inject(QuoteListService).items()[0],4);
-    fixture.detectChanges();expect(fixture.componentInstance.quoteCount).toBe(7);
+    fixture.detectChanges();expect(fixture.componentInstance.quoteCount).toBe(2);
     fixture.componentInstance.currentRoute='/request?service=cnc';fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.mobile-enquiry')).toBeNull();fixture.destroy();
   });

@@ -83,3 +83,14 @@ describe('QuoteListService', () => {
   });
 
 });
+
+// Per-metre quantities must not silently become whole pieces.
+describe('metre enquiry quantities',()=>{
+ it('preserves fractional lengths while keeping piece quantities integral',()=>{
+  TestBed.configureTestingModule({});const service=TestBed.inject(QuoteListService);service.clear();
+  service.setQuantity({productId:4195,variantKey:'id:4416',code:'H',detail:'',quantity:1,priceUnit:'metre'},2.5);
+  expect(service.items()[0].quantity).toBe(2.5);
+  service.setQuantity({productId:1,variantKey:'id:1',code:'Panel',detail:'',quantity:1,priceUnit:'piece'},2.5);
+  expect(service.items()[1].quantity).toBe(2);service.clear();
+ });
+});

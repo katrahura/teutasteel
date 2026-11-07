@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
-    "serve:ssr:teutasteel-website": "node dist/teutasteel-website/server/server.mjs"
+    "serve:ssr:teutasteel-website": "node dist/teutasteel-website/server/server.mjs",
+    "build:staging": "ng build --configuration staging && node tools/prepare-staging.mjs"
   },
   "private": true,
   "dependencies": {

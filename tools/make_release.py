@@ -125,7 +125,7 @@ After uploading:
 4. If Cloudflare has a caching rule for HTML, purge it, or visitors can keep an old
    index.html that points at asset names which no longer exist.
 
-The API is deployed separately (a git push to 160.153.129.39, then flask db
+The API is deployed separately (a git push to [origin-ip], then flask db
 upgrade). Until it is, the catalogue sections hide themselves and the products page
 shows a translated "catalogue unavailable" notice - the rest of the site works.
 """

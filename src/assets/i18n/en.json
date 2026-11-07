@@ -475,7 +475,8 @@
     "CONTENT_VISIBLE": "Shown on the site",
     "CONTENT_FALLBACK": "A blank field keeps the words and picture the page already has.",
     "CONTENT_SAVE": "Save this service",
-    "CANCEL_UPLOAD": "Cancel upload"
+    "CANCEL_UPLOAD": "Cancel upload",
+    "MEDIA_READY": "Ready to upload"
   },
   "MISC": {
     "IMAGE_ASSET": "Image Asset",
@@ -661,7 +662,7 @@
     "TUBE_4": "When ordering, give the outside dimensions and the wall; if a drawing says DN, say which you mean.",
     "SHEET_TITLE": "Sheet thickness",
     "SHEET_1": "Sheet is sold by thickness in millimetres, and the difference between 0.5 and 0.7 mm decides what a panel will do.",
-    "SHEET_2": "0.5 mm for decoration and door tops; 1-2 mm for parts that carry weight; 3 mm and up for plate.",
+    "SHEET_2": "Thickness alone does not establish suitability. Send the material, dimensions, supports and intended use for project-specific confirmation.",
     "SHEET_3": "A sheet also has its own size (1000 x 2000, 1250 x 2500, 1500 x 3000), and the price is usually given per sheet or per square metre.",
     "SHEET_4": "Which is why both numbers matter when you compare.",
     "DRAW_TITLE": "Preparing a cutting drawing",
@@ -852,5 +853,28 @@
     "CLEAR_DRAFT": "Clear form details",
     "PRODUCT_UNAVAILABLE": "This product is unavailable. Search the catalogue or contact us for help."
   },
-  "MEDIA_PRESET_WORD": "Unsigned"
+  "MEDIA_PRESET_WORD": "Unsigned",
+  "IMPROVE": {
+    "UNIT_UNKNOWN": "Price basis to confirm",
+    "CHECKING": "Checking current prices and availability…",
+    "REVIEW_CHANGED": "Catalogue details changed. Review the updated lines before continuing.",
+    "ACKNOWLEDGE": "I reviewed these changes",
+    "RETRY": "Check again",
+    "CHECK_FAILED": "Some items could not be checked. Retry before sending.",
+    "UNAVAILABLE": "This variant is no longer available. Remove it and choose a current product.",
+    "CURRENT_PRICE": "Current catalogue price",
+    "REFRESH": "Refresh prices",
+    "POLYCARBONATE": "Polycarbonate & accessories",
+    "MESH": "Expanded metal mesh",
+    "GRATING": "Steel grating",
+    "EXPLORE": "Find by product type",
+    "NOT_FOUND": "Page not found",
+    "NOT_FOUND_HELP": "This address does not match a page. Search the catalogue or contact us for help.",
+    "LIVE_DATA": "Test website · Changes affect live data",
+    "QUALITY": "Product verification",
+    "QUALITY_HELP": "Check selling unit, dimensions and language before publishing. Leave unknown facts unconfirmed.",
+    "DIMENSION_UNIT_UNKNOWN": "dimension unit to confirm",
+    "REVIEW_CHANGED_LINE": "Updated catalogue details",
+    "PREVIOUS_PRICE": "Previously saved price"
+  }
 }

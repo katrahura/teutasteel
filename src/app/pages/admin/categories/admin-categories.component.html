@@ -150,7 +150,7 @@
             <ng-container *ngIf="canWrite">
               <button type="button" class="link" (click)="edit(row)">{{ 'ADMIN.CATEGORY_EDIT' | translate }}</button>
               <button type="button" class="link" (click)="startNew(row.category)">{{ 'ADMIN.CATEGORY_ADD_CHILD' | translate }}</button>
-              <button type="button" class="link" (click)="toggle(row.category)">
+              <button type="button" class="link" (click)="toggle(row.category)" [disabled]="!!editing">
                 {{ (row.category.is_active ? 'ADMIN.CATEGORIES_SWITCH_OFF' : 'ADMIN.CATEGORIES_SWITCH_ON') | translate }}
               </button>
             </ng-container>

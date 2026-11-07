@@ -16,6 +16,9 @@ export const appRoutes: Routes = [
   { path: '', component: HomeComponent, data: { animation: 'HomePage' } },
   {
     path: 'products',
+    // The shared editor also opens from this page for staff; its unsaved work is guarded here as
+    // well as from the editor's own close button.
+    canDeactivate: [unsavedChangesGuard],
     loadComponent: () =>
       import('./pages/products/products.component').then((m) => m.ProductsComponent),
     data: { animation: 'ProductsPage' },
@@ -150,5 +153,6 @@ export const appRoutes: Routes = [
     data: { animation: 'LoginPage' },
   },
 
-  { path: '**', redirectTo: '', pathMatch: 'full' }  // Catch-all fallback
+  { path: '404', loadComponent: () => import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent) },
+  { path: '**', loadComponent: () => import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent) }  // Catch-all fallback
 ];

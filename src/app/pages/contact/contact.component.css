@@ -70,3 +70,5 @@ body {
 
 .draft-controls { margin-bottom: 16px; font-size: 13px; color: #64748b; }
 .draft-controls p { margin-bottom: 6px; }
+
+.request-quantity button,.request-quantity input{min-width:44px;min-height:44px}

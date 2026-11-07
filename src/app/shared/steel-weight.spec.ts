@@ -94,6 +94,23 @@ describe('steel weight', () => {
     });
   });
 
+  it('does not calculate solid-steel weights for non-steel or unspecified sheets', () => {
+    for (const title of ['Multiwall sheet (Multival)', 'Polycarbonate sheets',
+      'Plexiglass', 'Aluminium and special sheet', 'Sheets']) {
+      expect(shapeForCategory(title)).toBe('unknown');
+    }
+    expect(shapeForCategory('Steel sheets', 113)).toBe('unknown');
+    expect(shapeForCategory('Steel sheets', 114)).toBe('unknown');
+    expect(shapeForCategory('Steel sheets', 130)).toBe('unknown');
+    expect(shapeForCategory('Steel sheets', null, 'Multival')).toBe('unknown');
+    for (const thickness of [4, 6, 8, 10]) {
+      expect(describeWeight(shapeForCategory('Multiwall sheet (Multival)', 113),
+        {width: 2100, length: 6000, thickness})).toBeNull();
+    }
+    expect(describeWeight(shapeForCategory('Steel sheets'),
+      {width: 1000, length: 2000, thickness: 4})).toBe('62.8 kg');
+  });
+
   it('describes the answer the way a customer reads it', () => {
     expect(describeWeight('flat', { width: 40, thickness: 5 })).toBe('1.57 kg/m');
     expect(describeWeight('sheet', { width: 1000, length: 2000, thickness: 1.2 })).toBe('18.84 kg');

@@ -6,6 +6,13 @@ export interface QuoteItem {
   productId: number;
   variantKey?: string;
   dimensions?: { height?: number; width?: number; length?: number; thickness?: number | string | null; weight?: number };
+  measurementUnit?: 'mm' | null;
+  previousUnitPrice?: number | null;
+  previousPriceUnit?: string | null;
+  dimensionId?: number;
+  priceUnit?: string | null;
+  productUrl?: string;
+  reviewStatus?: 'changed' | 'unavailable' | 'error';
   unitPrice?: number | null;
   currency?: string;
   code: string;
@@ -100,12 +107,12 @@ export class QuoteListService {
    * removes that line and leaves its neighbour alone.
    */
   setQuantity(item: QuoteItem, quantity: number): QuoteItem[] {
-    const wanted = Math.floor(Number(quantity));
+    const wanted = ['metre', 'kilogram'].includes(item.priceUnit || '') ? Math.round(Number(quantity) * 1000) / 1000 : Math.floor(Number(quantity));
     const items = this.items();
     const at = items.findIndex(
       (other) => this.sameLine(other, item)
     );
-    if (!Number.isFinite(wanted) || wanted < 1) {
+    if (!Number.isFinite(wanted) || wanted <= 0) {
       // Zero takes that line off and leaves its neighbours where they are.
       return this.save(at >= 0 ? items.filter((_other, index) => index !== at) : items);
     }
@@ -149,6 +156,8 @@ export class QuoteListService {
     if (other.variantKey && item.variantKey) return other.variantKey === item.variantKey;
     return (other.detail || '') === (item.detail || '');
   }
+
+  replaceReviewed(items: QuoteItem[]): QuoteItem[] { return this.save(items); }
 
   private save(items: QuoteItem[]): QuoteItem[] {
     this.storage()?.setItem(this.key, JSON.stringify(items));

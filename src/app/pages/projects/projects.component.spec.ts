@@ -44,9 +44,9 @@ describe('ProjectsComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('PROJECTS.PHOTO_TOMORROW');
   });
 
-  it('lists what still has to be photographed, while these are samples', () => {
-    // The briefs are the owner's shooting list: the page is a to-do as much as a gallery.
-    expect(fixture.nativeElement.querySelectorAll('.photos ol').length).toBe(12);
-    expect(fixture.nativeElement.textContent).toContain('PROJECTS.P1_PHOTO_2');
+  it('keeps internal photography briefs off the customer page while preserving sample disclosure', () => {
+    expect(fixture.nativeElement.querySelectorAll('.photos ol').length).toBe(0);
+    expect(fixture.nativeElement.textContent).not.toContain('PROJECTS.P1_PHOTO_2');
+    expect(fixture.nativeElement.textContent).toContain('PROJECTS.SAMPLE_NOTE');
   });
 });
