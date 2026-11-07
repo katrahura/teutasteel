@@ -128,10 +128,10 @@ h1.text-center, h2.text-center {
   color: #78350f;
 }
 
-/* The section beside a photograph, in the dialog. The review asked for a representative photograph
-   combined with an accurate dimension drawing, and this is where it matters: nearly every product
-   in the decorative group has both, and a photograph of a laser-cut sheet does not say what size it
-   is. The picture and the drawing then sit side by side, each saying what the other cannot. */.drawing-with-photo {
+/* The section drawing, in the dialog, when there is no photograph. It used to sit beside a real
+   photograph; the owner asked for one visual at a time, so it now follows the card's rule and is the
+   fallback only. The dimensions are still printed in the details beside it. */
+.drawing-with-photo {
   display: flex;
   flex-direction: column;
   align-items: center;
