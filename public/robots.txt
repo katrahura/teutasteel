@@ -7,4 +7,9 @@ Disallow: /admin-dashboard
 Disallow: /user-dashboard
 Disallow: /login
 
+# Pages that carry a noindex meta themselves; keeping crawlers out is the stronger signal.
+Disallow: /request
+Disallow: /projects
+Disallow: /404
+
 Sitemap: https://www.teutasteel.com/sitemap.xml

@@ -54,6 +54,7 @@ const HTML_LANG: Record<string, string> = { al: 'sq', en: 'en' };
 @Injectable({ providedIn: 'root' })
 export class SeoService {
   private currentPath = '/';
+  private currentQuery = '';
 
   constructor(
     private router: Router,
@@ -65,7 +66,10 @@ export class SeoService {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event) => {
-        this.currentPath = (event as NavigationEnd).urlAfterRedirects.split('?')[0].split('#')[0];
+        const full = (event as NavigationEnd).urlAfterRedirects;
+        const queryAt = full.indexOf('?');
+        this.currentPath = (queryAt >= 0 ? full.slice(0, queryAt) : full).split('#')[0];
+        this.currentQuery = queryAt >= 0 ? full.slice(queryAt).split('#')[0] : '';
         this.apply();
       });
 
@@ -91,12 +95,38 @@ export class SeoService {
     }
 
     const base = environment.siteUrl.replace(/\/$/, '');
-    const url = this.currentPath === '/' ? `${base}/` : `${base}${this.currentPath}`;
+    // The deployed host answers directory routes with a trailing slash; the canonical should name
+    // the address that actually returns 200, not the one that redirects to it.
+    const path = this.currentPath === '/' ? '/' : `${this.currentPath.replace(/\/+$/, '')}/`;
+    const query = this.canonicalQuery();
+    const url = `${base}${path}${query}`;
     // A page that asks not to be indexed has no use for a canonical, and the two together would
     // contradict each other.
     this.setRobots(page.noindex ? 'noindex, nofollow' : null);
     this.setCanonical(page.noindex ? null : url);
     this.setHead(page.titleKey, page.descriptionKey, url);
+  }
+
+  /**
+   * Keeps the product/category part of the address, and drops everything else.
+   *
+   * `/products?product=2166` and `/products?category=113` are distinct, shareable pages; without
+   * this, every one of them carried the same canonical (`/products`) and told a search engine they
+   * were duplicates. Search terms, page numbers and edit parameters are not canonical pages.
+   */
+  private canonicalQuery(): string {
+    if (!this.currentQuery) return '';
+    const incoming = new URLSearchParams(this.currentQuery);
+    const ordered = new URLSearchParams();
+    const product = incoming.get('product');
+    const category = incoming.get('category');
+    // The category is where the visitor came from, not a second product page. Canonicalising every
+    // product to its own `?product=` address keeps the sitemap entry and the dialog's share link the
+    // same page; only a pure category listing uses `?category=`.
+    if (product) ordered.set('product', product);
+    else if (category) ordered.set('category', category);
+    const value = ordered.toString();
+    return value ? `?${value}` : '';
   }
 
   private setRobots(content: string | null): void {

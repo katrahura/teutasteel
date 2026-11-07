@@ -93,7 +93,7 @@ describe('SeoService', () => {
 
     expect(TestBed.inject(Title).getTitle()).toBe('Produkte | TeutaSteel');
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
-      .toBe(`${environment.siteUrl}/products`);
+      .toBe(`${environment.siteUrl}/products/`);
     expect(document.head.querySelector('meta[name="description"]')?.getAttribute('content'))
       .toBe('Përshkrim produkte');
   });
@@ -106,7 +106,7 @@ describe('SeoService', () => {
 
     expect(TestBed.inject(Title).getTitle()).toBe('Shërbime prerjeje dhe lakimi çeliku');
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
-      .toBe(`${environment.siteUrl}/services`);
+      .toBe(`${environment.siteUrl}/services/`);
     expect(document.head.querySelector('meta[name="description"]')?.getAttribute('content'))
       .toBe('Përshkrim shërbime');
   });
@@ -116,7 +116,7 @@ describe('SeoService', () => {
 
     expect(TestBed.inject(Title).getTitle()).toBe('Udhëzues praktikë për çelikun');
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
-      .toBe(`${environment.siteUrl}/guides`);
+      .toBe(`${environment.siteUrl}/guides/`);
   });
 
   it('keeps the gallery of samples out of search engines, and takes the mark away after it', () => {
@@ -134,7 +134,7 @@ describe('SeoService', () => {
     // Left behind, the mark would keep every page visited after it out of the index.
     expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
-      .toBe(`${environment.siteUrl}/products`);
+      .toBe(`${environment.siteUrl}/products/`);
   });
 
   it('keeps exactly one canonical link', () => {
@@ -144,7 +144,7 @@ describe('SeoService', () => {
 
     expect(document.head.querySelectorAll('link[rel="canonical"]').length).toBe(1);
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
-      .toBe(`${environment.siteUrl}/about`);
+      .toBe(`${environment.siteUrl}/about/`);
   });
 
   it('leaves private pages without a canonical', () => {
@@ -167,11 +167,20 @@ describe('SeoService', () => {
       .toBe(`${environment.siteUrl}/`);
   });
 
-  it('ignores query strings when working out the page', () => {
-    navigate('/products?page=2');
+  it('keeps product and category addresses and ignores other query strings', () => {
+    navigate('/products?page=2&q=tube');
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
+      .toBe(`${environment.siteUrl}/products/`);
 
+    // A shared product link is its own page; a page number or a search term is not. The category
+    // the visitor came from is not part of the product's canonical address.
+    navigate('/products?page=2&product=2166&category=113');
     expect(TestBed.inject(Title).getTitle()).toBe('Produkte | TeutaSteel');
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
-      .toBe(`${environment.siteUrl}/products`);
+      .toBe(`${environment.siteUrl}/products/?product=2166`);
+
+    navigate('/products?category=113&page=2');
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href'))
+      .toBe(`${environment.siteUrl}/products/?category=113`);
   });
 });

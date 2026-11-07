@@ -9,7 +9,9 @@
     "test": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
     "serve:ssr:teutasteel-website": "node dist/teutasteel-website/server/server.mjs",
-    "build:staging": "ng build --configuration staging && node tools/prepare-staging.mjs"
+    "build:staging": "ng build --configuration staging && node tools/prepare-staging.mjs",
+    "build:seo": "ng build && node tools/generate-sitemap.mjs",
+    "sitemap": "node tools/generate-sitemap.mjs"
   },
   "private": true,
   "dependencies": {
