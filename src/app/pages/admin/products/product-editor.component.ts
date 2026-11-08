@@ -347,7 +347,7 @@ export class ProductEditorComponent implements OnChanges, OnInit, OnDestroy {
       return;
     }
     if (this.newProduct && !this.product.category_id) {
-      this.fieldErrors = { category_id: 'Choose a category' };
+      this.fieldErrors = { category_id: this.translate.instant('ADMIN.CHOOSE_CATEGORY') };
       return;
     }
     this.saving = true;
@@ -510,7 +510,7 @@ export class ProductEditorComponent implements OnChanges, OnInit, OnDestroy {
       // Something like "Validation Error" on its own says nothing; the fields do the talking.
       return { message: `${sentence}: ${Object.values(fields)[0]}`, fields };
     }
-    return { message: sentence || 'The save did not go through.', fields };
+    return { message: sentence || this.translate.instant('PRODUCTS.SAVE_FAILED'), fields };
   }
 
   private tryParse(text: string): unknown {

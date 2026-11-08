@@ -11,7 +11,8 @@
     "serve:ssr:teutasteel-website": "node dist/teutasteel-website/server/server.mjs",
     "build:staging": "ng build --configuration staging && node tools/prepare-staging.mjs",
     "build:seo": "ng build && node tools/generate-sitemap.mjs",
-    "sitemap": "node tools/generate-sitemap.mjs"
+    "sitemap": "node tools/generate-sitemap.mjs",
+    "check:i18n": "node tools/check-i18n.mjs"
   },
   "private": true,
   "dependencies": {

@@ -1171,15 +1171,15 @@ addDimension() {
 
 createProduct() {
   if (!this.selectedCategory) {
-    alert('Please select a category first.');
+    alert(this.translate.instant('MISC.CHOOSE_A_CATEGORY_FIRST'));
     return;
   }
   if (this.newProduct.dimensions.length === 0) {
-    alert('Please add at least one dimension.');
+    alert(this.translate.instant('MISC.ADD_DIMENSION_FIRST'));
     return;
   }
   if (this.newProduct.translations.length === 0) {
-    alert('Please add at least one translation.');
+    alert(this.translate.instant('MISC.ADD_TRANSLATION_FIRST'));
     return;
   }
   

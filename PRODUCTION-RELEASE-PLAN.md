@@ -91,6 +91,7 @@ Can ship with a documented follow-up:
 - [ ] `git status` clean in frontend and backend; local `main`/`master` equal their remotes.
 - [ ] Backend: `pytest -q` — currently **278 passed**.
 - [ ] Frontend: `npx ng test --watch=false --browsers=ChromeHeadless` — currently **275 passed**.
+- [ ] Translation parity: `npm run check:i18n` — every key present in both languages, no empty value or placeholder mismatch.
 - [ ] Production build: `npm run build:seo` — **27 routes** plus a **1,402-URL sitemap**.
 - [ ] Staging build still removes the sitemap and sets `noindex`: `npm run build:staging`.
 - [ ] Check the built `index.html` for `siteUrl` `https://www.teutasteel.com`, `apiUrl` `https://api.teutasteel.com`, one title, canonical, description and two JSON-LD blocks.
