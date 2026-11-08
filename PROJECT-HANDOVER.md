@@ -21,6 +21,7 @@ Read this first when continuing work. This document supersedes status statements
 | Database used by test website | Existing live MySQL, through the live API |
 | Live backend observed | master at 77870cf |
 | Search-engine operations | [docs/SEO-OPERATIONS.md](docs/SEO-OPERATIONS.md) |
+| Production release | [PRODUCTION-RELEASE-PLAN.md](PRODUCTION-RELEASE-PLAN.md) |
 | Live MySQL migration observed | b9e3f1c25a70 (head), read-only check on 28 October |
 
 **This is a separate frontend preview sharing production data. It is not an isolated test environment. Admin edits made from the test website affect the live catalogue and settings.** The owner explicitly selected this arrangement after being offered an isolated alternative.
