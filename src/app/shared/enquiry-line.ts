@@ -18,7 +18,7 @@ export function reviewLine(item: QuoteItem, product: Product): QuoteItem {
   const dimensions = {height: d.height, width: d.width, length: d.length, thickness: d.thickness, weight: d.weight};
   const next: QuoteItem = {...item, code: product.code, dimensionId: d.id,
     variantKey: d.id != null ? `id:${d.id}` : item.variantKey,
-    dimensions, measurementUnit: [111,113].includes(product.category_id || 0) ? 'mm' : item.measurementUnit || null, unitPrice: Number.isFinite(price) && price > 0 ? price : null,
+    dimensions, measurementUnit: 'mm', unitPrice: Number.isFinite(price) && price > 0 ? price : null,
     priceUnit: d.price_unit || null, currency: d.currency || '',
     productUrl: `${environment.siteUrl}/products?product=${product.id}`, reviewStatus: undefined};
   const changed = item.code !== next.code || item.unitPrice !== next.unitPrice ||

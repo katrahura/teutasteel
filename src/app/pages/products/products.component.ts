@@ -344,7 +344,7 @@ toggleParent(parentId: number) {
       ? ' · ' + this.translate.instant('PRODUCTS.THICKNESS_UNCONFIRMED')
       : '');
     return { productId: product.id || 0, code: product.code,
-      measurementUnit: [111,113].includes(product.category_id || this.selectedCategory?.id || 0) ? 'mm' : null, variantKey: this.variantKey(dimension), dimensionId: dimension?.id, priceUnit: dimension?.price_unit || null, detail,
+      measurementUnit: 'mm', variantKey: this.variantKey(dimension), dimensionId: dimension?.id, priceUnit: dimension?.price_unit || null, detail,
       dimensions: { height: dimension.height, width: dimension.width, length: dimension.length, thickness: dimension.thickness, weight: dimension.weight },
       unitPrice: Number.isFinite(price) && price > 0 ? price : null,
       currency: dimension.currency || 'EUR', quantity: 0 };
@@ -419,7 +419,14 @@ toggleParent(parentId: number) {
     return this.translate.instant('ADMIN.UNIT_' + unit.toUpperCase());
   }
 
-  knownMillimetres(): boolean { return [111,113].includes(this.selectedCategory?.id || this.selectedProduct?.category_id || 0); }
+  /**
+   * The catalogue stores every dimension row in millimetres; `thickness` is documented that way in
+   * the model, and the steel descriptions state widths in mm. The old category whitelist (111/113)
+   * made ordinary tubes and flat bars say "dimension unit to confirm" even when their own description
+   * said "40 mm wide". A future category in another unit needs an explicit unit column, not another
+   * id in a list here.
+   */
+  knownMillimetres(): boolean { return true; }
   dimensionStep(d: ProductDimension): number { return ['metre','kilogram'].includes(d.price_unit || '') ? 0.1 : 1; }
   quantityUnit(product: Product): string {
     const unit = product.dimensions?.[0]?.price_unit;
