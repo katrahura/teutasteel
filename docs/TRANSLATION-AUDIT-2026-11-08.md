@@ -75,6 +75,19 @@ are not translated.
 - To fix product text properly, the owner needs to supply/write English descriptions, or approve a
   reviewed translation pass; do not machine-generate 900 pages without review.
 
+## Screenshot follow-up — product 4541
+
+The screenshot showed `SHP - 40x1m` asking the customer to confirm both the dimension unit and the
+price unit, while its own description said “40 mm wide … 1 m — price per metre”.
+
+- The seven variants of 4541 now store `price_unit = metre`; a backup of the before-state is at
+  `backups/unit-4541-before-20261108.json` on the server, and the change was written to the activity
+  log as `product.unit`.
+- Dimension labels no longer use the 111/113 whitelist: every catalogue dimension row is millimetres,
+  so the dialog and saved enquiry now say mm instead of “dimension unit to confirm”.
+- The other 555 priced variants still have no confirmed unit. This one was corrected because its own
+  description stated the unit; the rest need the same owner confirmation described above.
+
 ## Commands
 
 ```powershell
