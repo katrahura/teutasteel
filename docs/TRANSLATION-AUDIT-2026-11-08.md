@@ -88,6 +88,20 @@ price unit, while its own description said “40 mm wide … 1 m — price per m
 - The other 555 priced variants still have no confirmed unit. This one was corrected because its own
   description stated the unit; the rest need the same owner confirmation described above.
 
+## Screenshot follow-up — product 4295
+
+`30x10` square tube, 6 m: the description says “çmimi për gyp” / “price per 6 m bar”, but its three
+variants had no price unit, so every footer row repeated “Njësia e çmimit për konfirmim”.
+
+- The three variants now store `price_unit = tube`; before-state backup:
+  `backups/unit-4295-before-20261108.json`; activity log `product.unit`.
+- The footer now reads `30x10 · 1.3 mm · Sasia · Tub`, etc., instead of repeating the long unknown
+  label.
+- The dialog also prints the height in mm (`Lartësia: 30 mm`) rather than a bare number.
+
+The remaining tube categories still need the same decision: some descriptions say “price per 6 m bar”
+and some “price per tube”; the data should use one of the allowed units consistently.
+
 ## Commands
 
 ```powershell

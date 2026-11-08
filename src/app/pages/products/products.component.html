@@ -1191,11 +1191,9 @@
                 (isRound(selectedProduct) ? "PRODUCTS.DIAMETER" : "PRODUCTS.HEIGHT")
                   | translate
               }}:</strong>
-              <!-- No unit: the catalogue is not consistent about one. Sheets are entered in
-                   millimetres (1000 x 2000) and some sheet sizes in metres (2 x 1), so printing
-                   "mm" after a width that is really two metres was stating something untrue. The
-                   thickness below keeps its millimetres, where the catalogue does agree. -->
-              {{ sharedDimensionValue("height") }}
+              <!-- The catalogue stores these dimensions in millimetres; the length is shown in
+                   metres because that is how the bar is sold. -->
+              {{ sharedDimensionValue("height") }}{{ knownMillimetres() ? ' mm' : '' }}
             </div>
             <div *ngIf="sharedDimensionValue('width') !== null">
               <strong>{{ "PRODUCTS.WIDTH" | translate }}:</strong>
@@ -1236,7 +1234,7 @@
                   (isRound(selectedProduct) ? "PRODUCTS.DIAMETER" : "PRODUCTS.HEIGHT")
                     | translate
                 }}:</strong>
-                {{ dimension.height }}
+                {{ dimension.height }}{{ knownMillimetres() ? ' mm' : '' }}
               </div>
               <div
                 *ngIf="sharedDimensionValue('width') === null && showsValue(dimension.width)"
