@@ -3,9 +3,14 @@
     python tools/make_release.py            # after npm run build
 
 Writes dist/release/teutasteel-frontend-<date>.zip containing the contents of
-dist/teutasteel-website/browser/ (what belongs in the web root) plus an .htaccess
-and a README for whoever uploads it. Refuses to package a build that is older than
-the sources it came from.
+dist/teutasteel-website/browser/ (what belongs in the web root) plus the production
+.htaccess, 404.php, the branded 404 page and a README for whoever uploads it.
+
+The server files are taken from tools/production.htaccess and tools/production-404.php
+so they can be reviewed as ordinary files in the repository rather than as strings in
+this script. The branded 404.html is the prerendered /404 route from the build itself.
+
+Refuses to package a build that is older than the sources it came from.
 """
 from __future__ import annotations
 
@@ -22,71 +27,8 @@ SERVER = PROJECT / "dist" / "teutasteel-website" / "server"
 SOURCE_DIRS = ["src", "public", "tools"]
 SOURCE_FILES = ["angular.json", "package.json", "README.md"]
 
-HTACCESS = """\
-# Teuta Steel - frontend
-
-# MultiViews would answer /products with products.html if one existed; this app uses
-# directories with index.html, so turn it off.
-Options -MultiViews
-DirectoryIndex index.html
-
-# Some shared hosts still do not know these types. Browsers sniff images, but it is
-# better to say so than to rely on that.
-AddType image/webp .webp
-AddType font/woff2 .woff2
-
-<IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript \\
-    text/javascript application/json application/xml image/svg+xml
-</IfModule>
-
-<IfModule mod_headers.c>
-  # File names are hashed at build time, so they can be cached hard; the HTML must
-  # not be, or a cached shell keeps pointing at assets that a deploy has removed.
-  <FilesMatch "\\.(js|css|woff2?|png|jpe?g|webp|svg|ico)$">
-    Header set Cache-Control "public, max-age=31536000, immutable"
-  </FilesMatch>
-  <FilesMatch "\\.(html|json|xml|txt)$">
-    Header set Cache-Control "public, max-age=0, must-revalidate"
-  </FilesMatch>
-
-  # The site as it stands today sends none of these. They cost nothing and close easy
-  # doors: sniffing, framing, and leaking the full URL of every page to wherever a
-  # visitor clicks through to.
-  Header set X-Content-Type-Options "nosniff"
-  Header set X-Frame-Options "SAMEORIGIN"
-  Header set Referrer-Policy "strict-origin-when-cross-origin"
-  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
-
-  # HSTS, without includeSubDomains: this host is HTTPS-only behind Cloudflare, but
-  # other subdomains (mail, cpanel) may not be, and the header is cached by browsers for
-  # a year - it cannot be taken back. Add includeSubDomains later via Cloudflare's own
-  # HSTS setting, once every subdomain is known to be HTTPS.
-  Header always set Strict-Transport-Security "max-age=31536000"
-
-  # A Content-Security-Policy is deliberately NOT set here. Cloudflare injects its own
-  # scripts into the page, so a policy strict enough to be worth having must allow them,
-  # and it can only be tested against the deployed site. The sources this app needs are:
-  #   script-src   'self' https://static.cloudflareinsights.com
-  #   style-src    'self' 'unsafe-inline'      (Angular writes inline styles)
-  #   img-src      'self' data: https://res.cloudinary.com
-  #   font-src     'self' https://fonts.gstatic.com
-  #   frame-src    https://www.google.com      (the map on /contact)
-  #   connect-src  'self' https://api.teutasteel.com
-  # Turn it on in report-only mode first and watch the browser console.
-</IfModule>
-
-<IfModule mod_expires.c>
-  ExpiresActive On
-  ExpiresByType text/css "access plus 1 year"
-  ExpiresByType application/javascript "access plus 1 year"
-  ExpiresByType image/webp "access plus 1 year"
-  ExpiresByType image/png "access plus 1 year"
-  ExpiresByType image/jpeg "access plus 1 year"
-  ExpiresByType image/svg+xml "access plus 1 year"
-  ExpiresByType text/html "access plus 0 seconds"
-</IfModule>
-"""
+HTACCESS_SOURCE = PROJECT / "tools" / "production.htaccess"
+PHP_404_SOURCE = PROJECT / "tools" / "production-404.php"
 
 RELEASE_README = """\
 Teuta Steel - frontend release
@@ -95,40 +37,71 @@ Teuta Steel - frontend release
 Upload everything in this archive into the web root of www.teutasteel.com,
 replacing the files that are there (keep the directory structure).
 
-Before you upload: the site being replaced is a Bootstrap Studio export. Its own
-folders are still on the server and nothing here overwrites them. They are no
-longer used by anything and can be deleted once the new site is live:
+Do not delete, before the upload, the files that are not in this archive:
+  /api/            legacy API endpoints still served from this root
+  /.well-known/    if present
+Anything under /assets/ that the old site still references externally is archived
+separately by the operator, not by this archive.
 
-    assets/bootstrap/    assets/css/    assets/fonts/    assets/img/    assets/js/
-    manifest.json (this archive replaces it)
+What is included beyond the build
+---------------------------------
+  .htaccess   the production server rules (see below)
+  404.php     returns a real HTTP 404 status and the branded 404 page
+  404.html    the branded page itself, prerendered from the site
+  privacy/    the standalone privacy page (indexable, no JavaScript needed)
 
 The .htaccess
 -------------
+It sets one canonical host (www), sends the old page URLs to their new pages with a
+single 301 each, serves the prerendered pages, sends every known application route to
+the SPA shell, and answers everything else with 404.php. It also turns off MultiViews,
+declares the WebP and woff2 types, compresses text, sets caching (a year for the
+hashed assets, revalidate for the HTML) and adds security headers.
 
-It turns off MultiViews, declares the WebP and woff2 types, compresses text, and sets
-caching (a year for the hashed assets, revalidate for the HTML) plus five security
-headers - nosniff, SAMEORIGIN, a referrer policy, a permissions policy and HSTS.
+Old URL -> new URL (each must be 301, one hop):
+  /index.html        -> /
+  /produktet.html    -> /products/
+  /cnc.html          -> /services/cnc/
+  /na-kontaktoni.html-> /contact/
+  /rreth-nesh.html   -> /about/
+  /Calculator.html   -> /request/
+  /privacy           -> /privacy/   (the directory redirects itself)
 
 IF THE SITE RETURNS 500 AFTER UPLOADING, DELETE .htaccess. That file is the only thing
 here that can take the whole site down: a directive Apache cannot parse fails every
 request. Everything else in this archive works without it, and you lose nothing but the
-headers and the caching. Try re-uploading it afterwards, or send it to be checked.
+headers, the redirects and the caching. Try re-uploading it afterwards, or send it to be
+checked.
+
+If /api/ stops answering after this upload, the root .htaccess is the suspect: it
+switches Passenger off for the web root. A preserved legacy directory that is itself a
+Passenger application must re-enable it in its own .htaccess.
 
 After uploading:
 
 1. Check https://www.teutasteel.com/ in a browser, then /products, /about and
-   /contact.
-2. Run tools/headers_check.py from the development machine; it checks the security and
-   caching headers and prints what is missing.
-3. Run tools/smoke_test.py; it checks 28 things about the site and the API and tells
-   you which ones failed.
-4. If Cloudflare has a caching rule for HTML, purge it, or visitors can keep an old
+   /contact and /privacy/.
+2. Check the redirect map above: each old URL must make exactly one 301.
+3. Check an unknown path returns 404 (not the SPA shell) and that /api/ still answers.
+4. Run tools/headers_check.py from the development machine; it checks the security
+   and caching headers and prints what is missing.
+5. Run tools/smoke_test.py; it checks the site and the API and tells you which checks
+   failed.
+6. If Cloudflare has a caching rule for HTML, purge it, or visitors can keep an old
    index.html that points at asset names which no longer exist.
 
-The API is deployed separately (a git push to [origin-ip], then flask db
+The API is deployed separately (a git push to the backend remote, then flask db
 upgrade). Until it is, the catalogue sections hide themselves and the products page
 shows a translated "catalogue unavailable" notice - the rest of the site works.
 """
+
+
+def read_server_file(path: pathlib.Path) -> str:
+    """A file that must be in the archive; fail loudly rather than ship without it."""
+    text = path.read_text(encoding="utf-8")
+    if not text.strip():
+        raise SystemExit(f"{path} is empty - refusing to package it")
+    return text
 
 
 def newest_source_time() -> tuple[float, str]:
@@ -165,7 +138,9 @@ def main() -> int:
     # what a static host must be able to serve, checked rather than assumed
     required = [
         "index.html", "products/index.html", "about/index.html", "contact/index.html",
-        "login/index.html", "admin/index.html", "admin/overview/index.html", "admin/products/index.html", "user-dashboard/index.html",
+        "privacy/index.html", "404/index.html",
+        "login/index.html", "admin/index.html", "admin/overview/index.html", "admin/products/index.html",
+        "user-dashboard/index.html", "guides/index.html",
         "robots.txt", "sitemap.xml", "manifest.json", "favicon.ico",
         "icons/icon-192.png", "icons/icon-512.png", "assets/logo.svg",
     ]
@@ -176,6 +151,10 @@ def main() -> int:
             print("   " + entry)
         return 1
 
+    htaccess = read_server_file(HTACCESS_SOURCE)
+    php_404 = read_server_file(PHP_404_SOURCE)
+    branded_404 = read_server_file(BROWSER / "404" / "index.html")
+
     out_dir = pathlib.Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d-%H%M")
@@ -185,14 +164,17 @@ def main() -> int:
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
         for path in files:
             bundle.write(path, path.relative_to(BROWSER).as_posix())
-        bundle.writestr(".htaccess", HTACCESS)
+        bundle.writestr(".htaccess", htaccess)
+        bundle.writestr("404.php", php_404)
+        bundle.writestr("404.html", branded_404)
         bundle.writestr("RELEASE-README.txt", RELEASE_README)
 
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     size = archive.stat().st_size
     print(f"wrote {archive}")
-    print(f"   {len(files)} files from the build, plus .htaccess and RELEASE-README.txt")
-    print(f"   {size / 1024:.0f} kB, sha256 {digest[:16]}")
+    print(f"   {len(files)} files from the build, plus .htaccess, 404.php, 404.html and RELEASE-README.txt")
+    print(f"   {size / 1024:.0f} kB")
+    print(f"   sha256 {digest}")
     print(f"   the SSR bundle in {SERVER.name}/ is not included: a static host does not need it")
 
     biggest = sorted(files, key=lambda p: p.stat().st_size, reverse=True)[:5]

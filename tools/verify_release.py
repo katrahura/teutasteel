@@ -4,9 +4,9 @@ The browser checks have been running against dist/.../browser, which is what the
 made from but not what is shipped. A packager that drops a file, or mislays the .htaccess,
 would leave every one of those checks passing against something nobody uploads.
 
-This compares the archive's contents with the build, checks the .htaccess is present and
-still carries the headers, and unpacks it so the browser checks can run against the real
-article:
+This compares the archive's contents with the build, checks the .htaccess, 404.php and
+404.html are present and still carry what the release depends on, and unpacks it so the
+browser checks can run against the real article:
 
     python tools/verify_release.py
     # then, in another shell, serve the printed directory and point the checks at it
@@ -22,9 +22,12 @@ import zipfile
 PROJECT = pathlib.Path(__file__).resolve().parent.parent
 RELEASE_DIR = PROJECT / "dist" / "release"
 BUILD_DIR = PROJECT / "dist" / "teutasteel-website" / "browser"
-# added by the packager, not part of the build
-ADDED = {".htaccess": 1, "RELEASE-README.txt": 0}
+# added by the packager, not part of the build. 404.html is produced from the build's
+# prerendered 404/index.html, so it leaves the build and arrives at the root under a
+# different name: it is expected here, not a packager error.
+ADDED = {".htaccess": 1, "RELEASE-README.txt": 0, "404.php": 1, "404.html": 0}
 EXPECTED_HTACCESS = [
+    # caching and security headers
     'Header set X-Content-Type-Options "nosniff"',
     'Header set X-Frame-Options "SAMEORIGIN"',
     'Header set Referrer-Policy "strict-origin-when-cross-origin"',
@@ -32,7 +35,24 @@ EXPECTED_HTACCESS = [
     'Header always set Strict-Transport-Security "max-age=31536000"',
     'Header set Cache-Control "public, max-age=31536000, immutable"',
     'Header set Cache-Control "public, max-age=0, must-revalidate"',
-    "Options -MultiViews",
+    'Header set Cache-Control "no-cache"',
+    "Options -Indexes -MultiViews",
+    # one canonical host, a real 404, and the legacy redirect map
+    "ErrorDocument 404 /404.php",
+    r"RewriteRule ^(?:products|request|services|about|contact|guides|projects|login|404|admin-dashboard|user-dashboard)/?$ index.html [L]",
+    'RewriteRule ^ https://www.teutasteel.com%{REQUEST_URI} [R=301,L]',
+    r"RewriteRule ^index\.html$ / [R=301,L]",
+    r"RewriteRule ^produktet\.html$ /products/ [R=301,L]",
+    r"RewriteRule ^cnc\.html$ /services/cnc/ [R=301,L]",
+    r"RewriteRule ^na-kontaktoni\.html$ /contact/ [R=301,L]",
+    r"RewriteRule ^rreth-nesh\.html$ /about/ [R=301,L]",
+    r"RewriteRule ^Calculator\.html$ /request/ [R=301,L]",
+    "RewriteRule ^ 404.php [L]",
+]
+# the 404 responder must answer 404 and must not carry an indexing instruction
+EXPECTED_404_PHP = [
+    "http_response_code(404);",
+    "readfile($page);",
 ]
 
 
@@ -73,6 +93,21 @@ def main() -> int:
         if htaccess and not any(".htaccess is missing" in p for p in problems):
             print(f"   .htaccess carries all {len(EXPECTED_HTACCESS)} expected directives")
 
+        php_404 = bundle.read("404.php").decode("utf-8", "replace") if "404.php" in names else ""
+        for line in EXPECTED_404_PHP:
+            if line not in php_404:
+                problems.append(f"404.php is missing: {line}")
+        if php_404 and not any("404.php is missing" in p for p in problems):
+            print(f"   404.php answers 404 and reads the branded page")
+
+        # A 404 page that carries no content is worse than a host error page: prove the
+        # branded page actually made it into the root of the archive.
+        branded = bundle.read("404.html").decode("utf-8", "replace") if "404.html" in names else ""
+        if "404.html" in names and len(branded) < 500:
+            problems.append("404.html is present but too small to be the branded page")
+        elif branded:
+            print(f"   404.html is the branded page ({len(branded) / 1024:.1f} kB)")
+
         biggest = sorted(((item.file_size, item.filename) for item in bundle.infolist()),
                          reverse=True)[:3]
         print("\n   largest entries:")
@@ -94,7 +129,7 @@ def main() -> int:
         for problem in problems:
             print("   " + problem)
         return 1
-    print("RESULT: PASS - the archive is the build, plus the headers and the readme")
+    print("RESULT: PASS - the archive is the build, plus the server rules, the 404 and the readme")
     print(f"\nServe it and point the browser checks at it:\n"
           f"   cd \"{unpacked}\" && python -m http.server 4321\n"
           f"   node --experimental-websocket tools/frontend_only_check.mjs\n"

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="sq">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Politika e privatësisë — Teuta Steel</title>
+  <meta name="description" content="Si i përpunon Teuta Steel të dhënat e vizitorëve të www.teutasteel.com: formulari i kërkesës, WhatsApp, Cloudinary, Google Maps dhe të drejtat tuaja.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.teutasteel.com/privacy/">
+  <meta name="theme-color" content="#17212b">
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+  <!-- Standalone page: no scripts, no external fonts. It has to read correctly even
+       if the Angular application fails to load, which is the point of a policy page. -->
+  <style>
+    :root {
+      --slate: #17212b;
+      --slate-soft: #24313d;
+      --amber: #f4bb68;
+      --ink: #1f2937;
+      --muted: #4b5563;
+      --bg: #f6f6f4;
+      --card: #ffffff;
+      --rule: #e3e5e8;
+      --link: #0a58ca;
+      --max: 60rem;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+    a { color: var(--link); }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid var(--amber);
+      outline-offset: 2px;
+    }
+    .skip {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--slate);
+      color: #fff;
+      padding: .75rem 1rem;
+      z-index: 10;
+    }
+    .skip:focus { left: 1rem; top: 1rem; }
+    .shell { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 1.25rem; }
+
+    header.bar { background: var(--slate); color: #fff; }
+    header.bar .shell {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
+      padding-top: .9rem;
+      padding-bottom: .9rem;
+    }
+    .brand { display: inline-flex; align-items: center; gap: .6rem; color: #fff; text-decoration: none; font-weight: 700; letter-spacing: .01em; }
+    .brand img { width: 34px; height: 34px; display: block; }
+    .bar a.home { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.45); padding-bottom: 2px; font-size: .95rem; }
+    .bar a.home:hover { border-bottom-color: var(--amber); }
+
+    .langs {
+      background: var(--slate-soft);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .langs .shell {
+      display: flex;
+      gap: .5rem;
+      padding-top: .55rem;
+      padding-bottom: .55rem;
+      font-size: .95rem;
+    }
+    .langs a { color: #fff; text-decoration: none; padding: .25rem .7rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.35); }
+    .langs a:hover { background: rgba(255,255,255,.1); border-color: var(--amber); }
+
+    main { padding: 2rem 0 3rem; }
+    article {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      padding: clamp(1.25rem, 3vw, 2.5rem);
+      box-shadow: 0 1px 2px rgba(15,23,42,.05);
+    }
+    article + article { margin-top: 2rem; }
+    h1 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); line-height: 1.25; margin: 0 0 .35rem; }
+    .updated { margin: 0 0 1.75rem; color: var(--muted); font-size: .95rem; }
+    h2 {
+      font-size: 1.15rem;
+      margin: 2rem 0 .6rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--rule);
+    }
+    h2:first-of-type { border-top: 0; padding-top: 0; }
+    p { margin: 0 0 .9rem; }
+    ul { margin: 0 0 1rem; padding-left: 1.25rem; }
+    li { margin-bottom: .4rem; }
+    li > strong { color: var(--ink); }
+    .note {
+      background: #fbf6ec;
+      border-left: 4px solid var(--amber);
+      padding: .9rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.25rem 0;
+    }
+
+    footer.site { background: var(--slate); color: #e8ebee; padding: 1.75rem 0; font-size: .95rem; }
+    footer.site .shell { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; justify-content: space-between; align-items: center; }
+    footer.site a { color: #fff; }
+    footer.site .fine { color: #c3cad1; }
+
+    @media print {
+      body { background: #fff; }
+      header.bar, .langs, footer.site { background: #fff; color: #000; }
+      header.bar a.home, footer.site a, .brand { color: #000; }
+      article { border: 0; box-shadow: none; padding: 0; }
+      .langs, .skip { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<a class="skip" href="#main">Kalo në përmbajtje</a>
+
+<header class="bar">
+  <div class="shell">
+    <a class="brand" href="/">
+      <img src="/assets/logo.svg" alt="" aria-hidden="true">
+      <span>Teuta Steel</span>
+    </a>
+    <a class="home" href="/">Kthehu në faqen kryesore</a>
+  </div>
+</header>
+
+<nav class="langs" aria-label="Gjuha / Language">
+  <div class="shell">
+    <a href="#sq" lang="sq" hreflang="sq">Shqip</a>
+    <a href="#en" lang="en" hreflang="en">English</a>
+  </div>
+</nav>
+
+<main id="main" class="shell">
+
+  <!-- Albanian -->
+  <article id="sq" lang="sq">
+    <h1>Politika e privatësisë — Teuta Steel</h1>
+    <p class="updated">Përditësuar më: 19 nëntor 2026 · <a href="#en" hreflang="en">Read in English</a></p>
+
+    <p>Kjo faqe shpjegon çfarë të dhënash përpunohen kur vizitoni <strong>www.teutasteel.com</strong>, pse përpunohen dhe çfarë mund të bëni me to. Ajo përshkruan faqen e re të Teuta Steel, e cila ndryshon nga faqja e vjetër në disa pika — për shembull, formulari i kërkesës tani përgatit një mesazh WhatsApp në vend që të dërgojë të dhëna në një server.</p>
+
+    <h2>1. Kush jemi</h2>
+    <p>Teuta Steel është furnizues i produkteve të çelikut të galvanizuar dhe i shërbimeve të përpunimit të çelikut, me seli në Rruga Idriz Seferi 26, Gjilan, Kosovë. Për çdo pyetje rreth kësaj politike mund të na shkruani në <a href="mailto:info@teutasteel.com">info@teutasteel.com</a>.</p>
+
+    <h2>2. Çfarë informacioni përpunohet</h2>
+    <ul>
+      <li><strong>Kërkesat për ofertë.</strong> Formulari i kërkesës nuk dërgon të dhëna në serverët tanë. Të dhënat që shkruani — emri, numri i telefonit, email-i nëse e jepni, produktet, sasitë dhe shënimi — përdoren vetëm për të përgatitur një mesazh WhatsApp. Mesazhi dërgohet nga ju, nga aplikacioni juaj i WhatsApp-it, dhe mbetet në bisedën tuaj me ne.</li>
+      <li><strong>Lista e kërkesave dhe gjuha e zgjedhur.</strong> Faqja ruan në shfletuesin tuaj (ruajtje lokale) produktet që keni zgjedhur për kërkesë dhe gjuhën që keni zgjedhur, që puna të mos humbasë kur ndryshoni faqe. Këto të dhëna nuk largohen nga pajisja juaj; fshihen kur pastroni listën ose të dhënat e shfletuesit, ose kur përdorni një shfletues privat.</li>
+      <li><strong>Llogaritë e stafit.</strong> Stafi hyn në panelin e administrimit me email dhe fjalëkalim. Fjalëkalimi ruhet vetëm i përpunuar (hash) në bazën e të dhënave të faqes, dhe sesioni mbahet si token në shfletuesin e stafit. Këto të dhëna nuk kanë lidhje me vizitorët e faqes.</li>
+      <li><strong>Të dhëna teknike.</strong> Ofruesi i hostimit dhe rrjeti i shpërndarjes së përmbajtjes mund të regjistrojnë të dhëna standarde — adresën IP, faqen e kërkuar, kohën dhe llojin e shfletuesit — për siguri, parandalim abuzimi dhe diagnostikim.</li>
+    </ul>
+
+    <h2>3. Shërbime të palëve të treta</h2>
+    <p>Faqja përdor shërbime të jashtme që ngarkohen drejtpërdrejt nga shfletuesi juaj. Në ato raste, ofruesi përkatës merr të dhëna teknike standarde (si adresa IP dhe lloji i shfletuesit) dhe mund të vendosë cookie-t e veta; ne nuk i kontrollojmë ato cookie.</p>
+    <ul>
+      <li><strong>WhatsApp (Meta)</strong> — vetëm kur zgjidhni ta dërgoni kërkesën; mesazhi dërgohet nga ju. <a href="https://www.whatsapp.com/legal/privacy-policy" rel="noopener noreferrer" target="_blank">Politika e WhatsApp-it</a></li>
+      <li><strong>Cloudinary</strong> — fotografitë e produkteve shërbehen nga <code>res.cloudinary.com</code>. <a href="https://cloudinary.com/privacy" rel="noopener noreferrer" target="_blank">Politika e Cloudinary</a></li>
+      <li><strong>Google Maps</strong> — harta në faqen e kontaktit ngarkohet nga <code>google.com</code>. <a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank">Politika e Google</a></li>
+      <li><strong>Google Fonts</strong> — stili i shkronjave ngarkohet nga <code>fonts.googleapis.com</code>. <a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank">Politika e Google</a></li>
+    </ul>
+
+    <h2>4. Cookie-t dhe ruajtja në shfletues</h2>
+    <p>Faqja nuk përdor cookie reklamimi dhe, në kohën e publikimit të kësaj faqeje, nuk përdor mjete analitike (si Google Analytics) ose pikselë gjurmimi. Ruajtja lokale përdoret vetëm për gjuhën dhe listën e kërkesave, siç përshkruhet më sipër. Nëse kjo ndryshon në të ardhmen, kjo faqe do të përditësohet përpara se mjeti të aktivizohet.</p>
+
+    <h2>5. Ndarja e të dhënave</h2>
+    <p>Nuk shesim dhe nuk ndajmë të dhënat tuaja personale me palë të treta për marketing. Të dhënat shkojnë vetëm te shërbimet e përmendura më lart, dhe vetëm kur ju i përdorni ato.</p>
+
+    <h2>6. Sa kohë ruhen të dhënat</h2>
+    <ul>
+      <li>Lista e kërkesave dhe gjuha mbeten në shfletuesin tuaj derisa t'i fshini.</li>
+      <li>Bisedat në WhatsApp mbeten në pajisjen dhe në llogarinë tuaj; ne i mbajmë ato vetëm aq kohë sa nevojitet për t'iu përgjigjur kërkesës suaj dhe për të përgatitur ofertën.</li>
+      <li>Të dhënat teknike mbahen sipas politikës së ofruesit të hostimit dhe të rrjetit të shpërndarjes.</li>
+    </ul>
+
+    <h2>7. Të drejtat tuaja</h2>
+    <p>Mund të kërkoni qasje në të dhënat që kemi për ju, korrigjimin ose fshirjen e tyre, të kundërshtoni përpunimin dhe të tërhiqni pëlqimin kur përpunimi bazohet në të. Për çdo kërkesë shkruani në <a href="mailto:info@teutasteel.com">info@teutasteel.com</a>. Nëse nuk jeni të kënaqur me përgjigjen, mund të ankoheni pranë Agjencisë për Informim dhe Privatësi të Kosovës.</p>
+
+    <h2>8. Ndryshimet në këtë politikë</h2>
+    <p>Kjo politikë mund të përditësohet kur faqja ose shërbimet ndryshojnë. Data e përditësimit shfaqet në krye të kësaj faqeje.</p>
+
+    <h2>9. Kontakti</h2>
+    <p>
+      Email: <a href="mailto:info@teutasteel.com">info@teutasteel.com</a><br>
+      Telefon: <a href="tel:+38344133208">+383 44 133 208</a><br>
+      WhatsApp: <a href="https://wa.me/38344776650" rel="noopener noreferrer" target="_blank">+383 44 776 650</a><br>
+      Adresa: Rruga Idriz Seferi 26, Gjilan, Kosovë
+    </p>
+  </article>
+
+  <!-- English -->
+  <article id="en" lang="en">
+    <h1>Privacy Policy — Teuta Steel</h1>
+    <p class="updated">Last updated: 19 November 2026 · <a href="#sq" hreflang="sq">Lexo në shqip</a></p>
+
+    <p>This page explains what data is processed when you visit <strong>www.teutasteel.com</strong>, why it is processed and what you can do about it. It describes the new Teuta Steel site, which differs from the previous one in a few places — for example, the request form now prepares a WhatsApp message instead of sending data to a server.</p>
+
+    <h2>1. Who we are</h2>
+    <p>Teuta Steel supplies galvanized steel products and steel processing services, based at Rruga Idriz Seferi 26, Gjilan, Kosovo. For any question about this policy, write to <a href="mailto:info@teutasteel.com">info@teutasteel.com</a>.</p>
+
+    <h2>2. What information is processed</h2>
+    <ul>
+      <li><strong>Requests for a quote.</strong> The request form sends nothing to our servers. What you type — name, phone number, email if you give it, products, quantities and the note — is used only to prepare a WhatsApp message. That message is sent by you, from your own WhatsApp application, and stays in your conversation with us.</li>
+      <li><strong>Request list and chosen language.</strong> The site keeps the products you have selected for a request, and the language you chose, in your browser's local storage so that your work is not lost when you change page. This data does not leave your device; it is removed when you clear the list or your browser data, or when you use a private window.</li>
+      <li><strong>Staff accounts.</strong> Staff sign in to the administration panel with email and password. The password is stored only as a hash in the site's database, and the session is held as a token in the staff member's browser. This data is unrelated to visitors.</li>
+      <li><strong>Technical data.</strong> The hosting provider and the content delivery network may record standard technical data — IP address, requested page, time and browser type — for security, abuse prevention and diagnostics.</li>
+    </ul>
+
+    <h2>3. Third-party services</h2>
+    <p>The site uses external services that load directly from your browser. In those cases the provider receives standard technical data (such as your IP address and browser type) and may set its own cookies; we do not control those cookies.</p>
+    <ul>
+      <li><strong>WhatsApp (Meta)</strong> — only when you choose to send the request; the message is sent by you. <a href="https://www.whatsapp.com/legal/privacy-policy" rel="noopener noreferrer" target="_blank">WhatsApp's privacy policy</a></li>
+      <li><strong>Cloudinary</strong> — product photographs are served from <code>res.cloudinary.com</code>. <a href="https://cloudinary.com/privacy" rel="noopener noreferrer" target="_blank">Cloudinary's privacy policy</a></li>
+      <li><strong>Google Maps</strong> — the map on the contact page loads from <code>google.com</code>. <a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank">Google's privacy policy</a></li>
+      <li><strong>Google Fonts</strong> — the font stylesheet loads from <code>fonts.googleapis.com</code>. <a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank">Google's privacy policy</a></li>
+    </ul>
+
+    <h2>4. Cookies and browser storage</h2>
+    <p>The site sets no advertising cookies and, as of the publication of this page, runs no analytics (such as Google Analytics) and no tracking pixels. Local storage is used only for the language and the request list described above. If that changes, this page will be updated before the tool is enabled.</p>
+
+    <h2>5. Sharing</h2>
+    <p>We do not sell or share your personal data with third parties for marketing. Data reaches only the services listed above, and only when you use them.</p>
+
+    <h2>6. How long data is kept</h2>
+    <ul>
+      <li>The request list and language stay in your browser until you clear them.</li>
+      <li>WhatsApp conversations stay on your device and in your account; we keep them only as long as needed to answer your request and prepare a quote.</li>
+      <li>Technical data is kept according to the hosting and content-delivery provider's policy.</li>
+    </ul>
+
+    <h2>7. Your rights</h2>
+    <p>You may ask for access to the data we hold about you, for its correction or deletion, object to processing, and withdraw consent where processing is based on it. Write to <a href="mailto:info@teutasteel.com">info@teutasteel.com</a> for any request. If you are not satisfied with the answer, you may complain to the Information and Privacy Agency of Kosovo.</p>
+
+    <h2>8. Changes to this policy</h2>
+    <p>This policy may be updated when the site or the services change. The update date appears at the top of this page.</p>
+
+    <h2>9. Contact</h2>
+    <p>
+      Email: <a href="mailto:info@teutasteel.com">info@teutasteel.com</a><br>
+      Phone: <a href="tel:+38344133208">+383 44 133 208</a><br>
+      WhatsApp: <a href="https://wa.me/38344776650" rel="noopener noreferrer" target="_blank">+383 44 776 650</a><br>
+      Address: Rruga Idriz Seferi 26, Gjilan, Kosovo
+    </p>
+  </article>
+
+</main>
+
+<footer class="site">
+  <div class="shell">
+    <span><a href="/">www.teutasteel.com</a></span>
+    <span class="fine">© <span id="year">2026</span> Teuta Steel · <a href="/contact/">Kontakt / Contact</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -125,7 +125,13 @@
         </div>
       </div>
       <div class="shell fine">
-        <span>{{ 'FOOTER.COPYRIGHT' | translate: { year: year } }}</span>
+        <span>
+          {{ 'FOOTER.COPYRIGHT' | translate: { year: year } }}
+          <!-- A plain link, not routerLink: /privacy/ is a standalone static page served by the
+               web server, and the application has no route for it - a routerLink would match the
+               catch-all and show the 404 page instead. -->
+          · <a id="footer-privacy" href="/privacy/">{{ 'FOOTER.PRIVACY' | translate }}</a>
+        </span>
 
         <!-- Staff access, moved out of the navigation. Accounts are created by an administrator -
              there is no sign-up anywhere - so the customer this site is for is not the person who

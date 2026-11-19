@@ -80,16 +80,33 @@ Add new strings to both `al.json` and `en.json`; `en.json` is the fallback.
 
 ## Deploying
 
-1. `npm run build`
+1. `npm run build:seo`
+   Prerenders the known routes and replaces `public/sitemap.xml` with the full catalogue sitemap (1,403 URLs on
+   19 November 2026: 14 fixed pages, 43 categories and 1,346 products). Plain `npm run build` leaves the
+   fixed-pages sitemap in place.
 2. `python tools/make_release.py` — writes `dist/release/teutasteel-frontend-<date>.zip`: the contents of
-   `dist/teutasteel-website/browser/`, plus an `.htaccess` (caching, compression, the WebP MIME type) and a
-   short README for whoever uploads it. It refuses to package a build older than the sources, and checks
-   that the pages, robots, sitemap, manifest and icons are all present before writing anything.
+   `dist/teutasteel-website/browser/`, plus the production `.htaccess` (`tools/production.htaccess`), a
+   production `404.php` (`tools/production-404.php`), the branded `404.html` (copied from the build's
+   prerendered `/404` route) and a short README for whoever uploads it. It refuses to package a build older
+   than the sources, and checks that the pages, the privacy page, the 404 page, robots, sitemap, manifest and
+   icons are all present before writing anything.
 3. upload the contents of that archive to the web root (the `server/` folder is only needed on a Node host
    that runs the SSR entry, and is not in the archive)
 4. prerendered pages exist for `/`, `/products`, `/about`, `/contact`, `/login`, `/admin-dashboard` and
    `/user-dashboard`; the host must serve `<path>/index.html` for those
 5. `robots.txt`, `sitemap.xml`, `manifest.json` and `icons/` are copied from `public/` into the build
+
+The archive also carries two things the old packager did not:
+
+- **The privacy page.** `public/privacy/index.html` is a standalone, indexable, JavaScript-free page at
+  `/privacy/`. The footer links to it with a plain `href`, not a `routerLink`: the application has no
+  `privacy` route, so a router link would match the catch-all and show the 404 page. Its copy is a draft
+  awaiting the owner's review — see [docs/PRIVACY-PAGE-2026-11-19.md](docs/PRIVACY-PAGE-2026-11-19.md).
+- **The production server rules.** `.htaccess` makes `www` canonical, sends each legacy page to its new
+  address with a single 301 (`/produktet.html` → `/products/`, `/Calculator.html` → `/request/`, …), serves
+  the prerendered pages, and answers every other path with a real 404 from `404.php` rather than with the
+  SPA shell. If `/api/` stops answering after an upload, the root `.htaccess` is the suspect: it switches
+  Passenger off, and a preserved legacy Passenger application must re-enable it in its own directory.
 
 The site being replaced is a Bootstrap Studio export whose folders are still on the server
 (`assets/css/`, `assets/img/`, …). Nothing in this build overwrites them; they are unused once the new site
@@ -189,7 +206,9 @@ python tools\verify_release.py
 ```
 
 It compares the archive's entries with the build file by file (nothing missing, nothing extra), checks that
-the `.htaccess` still carries all eight of its directives, and unpacks the archive to a temporary directory.
+the `.htaccess` still carries all nineteen of its directives (caching, security headers, the canonical host,
+the legacy redirect map and the 404 fallback), checks `404.php` answers 404 and reads the branded page, and
+unpacks the archive to a temporary directory.
 Point the browser checks at that copy to test the real article:
 
 ```powershell

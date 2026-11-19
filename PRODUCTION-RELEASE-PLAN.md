@@ -1,7 +1,7 @@
 # Production release plan — Teuta Steel
 
-Status: **preparation**, 8 November 2026.
-Current frontend: `3adba84` (SEO build ready). Current backend: `77870cf` (live).
+Status: **preparation**, 19 November 2026.
+Current frontend: `9680c07` plus the release-preparation work described in Phase 3/4. Current backend: `77870cf` (live).
 Production frontend: still the old static site. Test site: new Angular build, deliberately `noindex`.
 
 This plan is ordered. Do not skip a gate; a later phase assumes the earlier one is signed off.
@@ -88,14 +88,14 @@ Can ship with a documented follow-up:
 
 ## Phase 3 — code, tests and build
 
-- [ ] `git status` clean in frontend and backend; local `main`/`master` equal their remotes.
-- [ ] Backend: `pytest -q` — currently **278 passed**.
-- [ ] Frontend: `npx ng test --watch=false --browsers=ChromeHeadless` — currently **275 passed**.
-- [ ] Translation parity: `npm run check:i18n` — every key present in both languages, no empty value or placeholder mismatch.
-- [ ] Production build: `npm run build:seo` — **27 routes** plus a **1,402-URL sitemap**.
-- [ ] Staging build still removes the sitemap and sets `noindex`: `npm run build:staging`.
-- [ ] Check the built `index.html` for `siteUrl` `https://www.teutasteel.com`, `apiUrl` `https://api.teutasteel.com`, one title, canonical, description and two JSON-LD blocks.
-- [ ] Check no `test.teutasteel.com` URLs in the production artifact.
+- [x] `git status` clean in frontend and backend; local `main`/`master` equal their remotes. _(Frontend clean at `9680c07`; backend clean apart from the pre-existing untracked `DEPLOYMENT-NOTES.md`.)_
+- [x] Backend: `pytest -q` — **278 passed, 0 failed, 0 skipped** (19 November, `master` at `77870cf`, 7m35s; run with `venv\Scripts\python.exe` because `.venv` has no pytest installed).
+- [x] Frontend: `npx ng test --watch=false --browsers=ChromeHeadless` — **275 passed, 0 failed, 0 skipped** (19 November, commit `9680c07`).
+- [x] Translation parity: `npm run check:i18n` — **869 keys in both languages**, no empty value or placeholder mismatch (19 November; 868 before the privacy link's one new key).
+- [x] Production build: `npm run build:seo` — **27 routes** plus a **1,403-URL sitemap** (14 fixed pages including `/privacy/`, 43 categories, 1,346 products).
+- [ ] Staging build still removes the sitemap and sets `noindex`: `npm run build:staging`. _(Not run in this pass; the staging tooling is unchanged.)_
+- [x] Check the built `index.html` for `siteUrl` `https://www.teutasteel.com`, `apiUrl` `https://api.teutasteel.com`, one title, canonical, description and two JSON-LD blocks. _(Both hosts found in the production bundle; canonical is `https://www.teutasteel.com/`.)_
+- [x] Check no `test.teutasteel.com` URLs in the production artifact. _(None in 122 built files.)_
 - [ ] Fix before launch if they are judged blocking:
   - [ ] Product stylesheet is **13.90 kB against a 14.00 kB error limit**; trim or consciously accept.
   - [ ] External Cloudinary cancellation and a signed-in media-page save.
@@ -105,7 +105,37 @@ Can ship with a documented follow-up:
 
 **Gate G3:** tests/build green, production artifact inspected, no new warnings or TODO blockers.
 
+### Phase 3 results — 19 November 2026
+
+Run on this workstation against `main` at `9680c07` plus the Phase 4 work:
+
+| Check | Command | Result |
+|---|---|---|
+| Backend tests | `venv\Scripts\python.exe -m pytest -q` | PASS — 278 passed, 0 failed, 0 skipped (7m35s) |
+| i18n parity | `npm run check:i18n` | PASS — 869 keys in both languages |
+| Frontend tests | `npx ng test --watch=false --browsers=ChromeHeadless` | PASS — 275 passed, 0 failed, 0 skipped |
+| Production build | `npm run build:seo` | PASS — 27 prerendered routes, sitemap 1,403 URLs |
+| Artifact hosts | built `index.html` / bundles | `siteUrl` and `apiUrl` correct; no `test.teutasteel.com`, no localhost |
+| Privacy page | `privacy/index.html` in the build | present and byte-identical to `public/privacy/index.html` |
+| Release archive | `python tools/make_release.py` | 126 entries (122 build files + `.htaccess`, `404.php`, `404.html`, `RELEASE-README.txt`), 5,633 kB |
+| Archive verification | `python tools/verify_release.py` | PASS — every build file present, nothing unexpected, 19 `.htaccess` directives and the 404 responder checked |
+
+Release archive: `dist/release/teutasteel-frontend-20261119-2147.zip`,
+sha256 `8044b7fd4a57bd70a1398ff63a1f3eadaa51e9e60ce95c8dd29a5b02ac27170f`.
+
+Known non-blocking warnings, unchanged and not raised: product stylesheet 13.90 kB against the 10.24 kB
+warning budget (still below the 14 kB error limit), the automatic `@angular/localize` polyfill, and two
+Bootstrap `>>` selector warnings. The backend suite warns 770 times about deprecated marshmallow and
+SQLAlchemy APIs; no test fails on them. The frontend and i18n checks were re-run after the last source
+change (the footer privacy link and its translation key), so the numbers above describe the committed tree.
+
 ## Phase 4 — SEO, old URLs, privacy and server rules
+
+> **Status 19 November 2026:** implemented in the repository and in the release archive, not yet deployed.
+> The privacy page is `public/privacy/index.html` (draft copy pending the owner's review — see
+> [docs/PRIVACY-PAGE-2026-11-19.md](docs/PRIVACY-PAGE-2026-11-19.md)); the server rules are
+> `tools/production.htaccess` and `tools/production-404.php`, packaged by `tools/make_release.py` together
+> with the branded `404.html`. `tools/verify_release.py` checks the archive for all of it.
 
 Create `privacy/index.html` from the existing `/privacy` page, reviewed for the new site (request form, Cloudinary, analytics, admin). Add the footer link and keep `/privacy/` indexable.
 
@@ -126,11 +156,11 @@ Old URL map — every entry needs a test after deployment:
 | `/api/*` | unchanged | verify |
 | old `/assets/*` | archive; add redirects only for images still referenced externally | audit |
 
-- [ ] `www` is canonical; `https://teutasteel.com/*` → `https://www.teutasteel.com/*` (single 301, no chain).
-- [ ] HTTPS enforced; Cloudflare SSL mode verified; HSTS considered after a successful week.
-- [ ] `robots.txt` production allows public pages and points to `sitemap.xml`; no `noindex` header.
-- [ ] `sitemap.xml` contains **1,402** canonical URLs (or the regenerated count).
-- [ ] Old query-string URLs and `/index` variants are tested.
+- [x] `www` is canonical; `https://teutasteel.com/*` → `https://www.teutasteel.com/*` (single 301, no chain). _(Rule written; verify on the deployed host — a local static server ignores `.htaccess`.)_
+- [ ] HTTPS enforced; Cloudflare SSL mode verified; HSTS considered after a successful week. _(HSTS header is in the `.htaccess`; Cloudflare SSL mode must still be checked on the host.)_
+- [x] `robots.txt` production allows public pages and points to `sitemap.xml`; no `noindex` header. _(Header is absent from the production `.htaccess`; `robots.txt` unchanged from `public/`.)_
+- [x] `sitemap.xml` contains **1,403** canonical URLs (the 1,402 from the plan plus the new `/privacy/`).
+- [ ] Old query-string URLs and `/index` variants are tested. _(Needs the deployed host.)_
 - [ ] Search Console domain property verified by DNS TXT (can be done before cutover).
 - [ ] Bing Webmaster Tools prepared.
 
@@ -278,6 +308,10 @@ Owner:
 3. Give a launch window and Search Console/DNS access.
 
 Engineering:
-1. Create the reviewed privacy page and production `.htaccess`.
-2. Run the Phase 3 checks and produce the release artifact with a checksum.
-3. Rehearse in `public_html_new`, then agree the go/no-go.
+1. ~~Create the reviewed privacy page and production `.htaccess`.~~ Done in the repository on 19 November;
+   the privacy copy still needs the owner's review (see [docs/PRIVACY-PAGE-2026-11-19.md](docs/PRIVACY-PAGE-2026-11-19.md)).
+2. ~~Run the Phase 3 checks and produce the release artifact with a checksum.~~ Done — see "Phase 3
+   results". Rebuild after any further source change, because `make_release.py` refuses a stale build.
+3. Rehearse in `public_html_new` (Phase 5), then agree the go/no-go.
+4. Outstanding before Phase 5: confirm the data gate and Calculator redirect (owner), and run the staging
+   build check (`npm run build:staging`) once no further frontend change is planned.

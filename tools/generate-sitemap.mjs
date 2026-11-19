@@ -26,6 +26,7 @@ const FIXED = [
   '/guides/',
   '/about/',
   '/contact/',
+  '/privacy/',
   '/services/cnc/',
   '/services/shears/',
   '/services/profiles/',

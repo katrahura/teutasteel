@@ -1,0 +1,104 @@
+# Teuta Steel - production frontend (www.teutasteel.com)
+#
+# Packaged into the release archive by tools/make_release.py; the staging build has
+# its own file (tools/staging.htaccess) and must not reuse this one: this file
+# deliberately has no noindex/no-store headers.
+#
+# If the site returns 500 after an upload, deleting this file is the fastest way
+# back: every other file in the archive works without it.
+
+Options -Indexes -MultiViews
+DirectoryIndex index.html
+
+# The web root must be served as static files, not by the Plesk Passenger app that
+# serves the backend. If any preserved legacy directory in this root is itself a
+# Passenger application, that directory re-enables Passenger in its own .htaccess.
+PassengerEnabled off
+
+# Unknown paths are handled by a real 404, not by the SPA shell.
+ErrorDocument 404 /404.php
+
+# Some shared hosts still do not know these types.
+AddType image/webp .webp
+AddType font/woff2 .woff2
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript \
+    text/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+RewriteEngine On
+
+# One canonical host. Do not touch api.teutasteel.com.
+RewriteCond %{HTTP_HOST} ^teutasteel\.com$ [NC]
+RewriteRule ^ https://www.teutasteel.com%{REQUEST_URI} [R=301,L]
+
+# Legacy pages, one hop each. These run before the file check on purpose: the old
+# files that may still exist in the root must redirect rather than be served.
+RewriteRule ^index\.html$ / [R=301,L]
+RewriteRule ^produktet\.html$ /products/ [R=301,L]
+RewriteRule ^cnc\.html$ /services/cnc/ [R=301,L]
+RewriteRule ^na-kontaktoni\.html$ /contact/ [R=301,L]
+RewriteRule ^rreth-nesh\.html$ /about/ [R=301,L]
+RewriteRule ^Calculator\.html$ /request/ [R=301,L]
+
+# Existing files and directories first: the prerendered pages, the static privacy
+# page (privacy/index.html), robots.txt, sitemap.xml and the hashed assets.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Known application routes use the SPA shell when no prerendered copy exists.
+# /privacy is deliberately absent: it is a real directory with its own page, so it
+# is served above and stays indexable.
+RewriteRule ^(?:products|request|services|about|contact|guides|projects|login|404|admin-dashboard|user-dashboard)/?$ index.html [L]
+RewriteRule ^services/(?:cnc|shears|profiles|bending|pressbrake|complex|decoration)/?$ index.html [L]
+RewriteRule ^admin(?:/(?:overview|products|categories|media|content|settings|users|forbidden))?/?$ index.html [L]
+
+# Anything else is a real 404.
+RewriteRule ^ 404.php [L]
+
+<IfModule mod_headers.c>
+  # Only the fingerprinted assets can be cached hard. The HTML must revalidate, or a
+  # cached shell keeps pointing at asset names a deploy has removed.
+  <FilesMatch "\.(?:js|css|woff2?|png|jpe?g|webp|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(?:json|xml|txt)$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # HSTS without includeSubDomains: mail/cpanel subdomains are not known to be
+  # HTTPS-only, and the header is cached by browsers for a year once sent.
+  Header always set Strict-Transport-Security "max-age=31536000"
+
+  # A Content-Security-Policy is deliberately NOT set here. Cloudflare injects its
+  # own scripts into the page, so a policy must allow them and can only be tested
+  # against the deployed site. Sources this app needs:
+  #   script-src   'self' https://static.cloudflareinsights.com
+  #   style-src    'self' 'unsafe-inline'      (Angular writes inline styles)
+  #   img-src      'self' data: https://res.cloudinary.com
+  #   font-src     'self' https://fonts.gstatic.com
+  #   frame-src    https://www.google.com      (the map on /contact)
+  #   connect-src  'self' https://api.teutasteel.com
+  # Turn it on in report-only mode first and watch the browser console.
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
