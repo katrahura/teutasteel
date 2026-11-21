@@ -36,9 +36,10 @@
 .langs { display: flex; gap: 4px; }
 .lang-btn {
   background: none; border: 0; color: #94a3b8; cursor: pointer; font: inherit;
-  padding: 3px 7px; border-radius: 5px;
+  padding: 3px 7px; border-radius: 5px; min-width: 30px; min-height: 28px;
 }
 .lang-btn.active { background: var(--accent); color: #111827; font-weight: 700; }
+.lang-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* navigation */
 header.nav {
@@ -89,6 +90,7 @@ footer.site-footer .fine {
   border-top: 1px solid rgba(255, 255, 255, .12); margin-top: 36px; padding-top: 18px;
   display: flex; justify-content: space-between; font-size: 13.5px;
 }
+footer.site-footer .privacy-line { white-space: nowrap; }
 
 /* Signing in lives here now. Quiet, and where the person who needs it will look. */
 footer.site-footer .staff { display: inline-flex; align-items: center; gap: 16px; flex-wrap: wrap; }
@@ -138,6 +140,12 @@ footer.site-footer .staff [hidden] { display: none; }
 @media (max-width: 620px) {
   .topbar .shell { height: auto; padding: 8px 20px; flex-wrap: wrap; gap: 8px; }
   footer.site-footer .cols { grid-template-columns: 1fr; }
+  /* The phone is where the language switch is used most, and it measured 31 x 27px: a third of
+     the 44px target every other control on the site meets. It keeps its small look but gains a
+     proper tap area. */
+  .lang-btn { min-width: 44px; min-height: 44px; padding: 8px 10px; }
+  .topbar-right { gap: 10px; }
+  .topbar a { display: inline-flex; align-items: center; min-height: 40px; }
 }
 
 footer {

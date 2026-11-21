@@ -1,74 +1,127 @@
-.container {
-  max-width: 600px;
-  margin: 0 auto; /* Center the container */
-  background-color: #f8f9fa; /* Light background for the form */
-  padding: 30px;
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-}
-
-.contact-form .form-label {
-  font-weight: bold;
-  color: #333;
-}
-
-.contact-form .form-control {
-  border-radius: 5px; /* Soft rounded corners */
-}
-
-.contact-form textarea {
-  resize: none; /* Disable resize for consistency */
-}
-
-.contact-form button {
-  width: 100%; /* Make the button full width */
-  padding: 10px;
-  font-size: 1.2rem;
-}
-
-.contact-form button:hover {
-  background-color: var(--brand-primary-dark); /* Darker blue on hover */
-  transition: background-color 0.3s ease; /* Smooth transition */
-}
-
-/* The map can be reached with the keyboard and operated from inside, so it has to
-   show when it has focus. The ring is drawn on the wrapper rather than the frame:
-   once focus is inside a cross-origin document, the frame's own outline is the
-   browser's, and not something this stylesheet controls. */
-.map-responsive:focus-within {
-  outline: 2px solid var(--brand-primary);
-  outline-offset: 2px;
-}
-
-h2 {
-  color: #333;
-}
-
-body {
-  background-color: #eef2f5; /* Light background to contrast with the form */
-}
-
-/* Requests use the full phone width; contact information keeps its quieter panel. */
 :host { display: block; }
-.container { max-width: 900px; padding: 24px; box-shadow: none; background: transparent; }
-.request-card { max-width: 760px; border-radius: 14px; }
-.request-card .card-body { padding: 28px; }
+
+/* Contact -------------------------------------------------------------------------------------- */
+.contact-container { max-width: 1100px; padding: 20px 16px 52px; }
+
+.contact-head { max-width: 660px; margin: 6px auto 34px; text-align: center; }
+.contact-head h1 { font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin: 0; }
+.contact-head .lead { color: var(--ink-soft, #4b5563); font-size: 17px; margin: 10px 0 0; }
+
+/* Two panels rather than one centred column of lines. The details and the map answer two halves
+   of the same question, and on a wide screen they can be read side by side. */
+.contact-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 26px; align-items: stretch; }
+
+.contact-panel {
+  background: #f8fafc; border: 1px solid var(--line, #e5e7eb); border-radius: 16px;
+  padding: 28px; min-width: 0;
+}
+.contact-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
+.contact-list li { display: flex; gap: 14px; align-items: flex-start; }
+.contact-icon {
+  width: 42px; height: 42px; border-radius: 11px; flex: none;
+  background: var(--ink, #111827); color: var(--accent, #f59e0b);
+  display: grid; place-items: center; font-size: 19px;
+}
+.contact-value { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.contact-label {
+  font-size: 11.5px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+  color: #64748b;
+}
+.contact-value a, .contact-address {
+  color: var(--ink, #111827); font-size: 16px; font-weight: 600;
+  text-decoration: none; overflow-wrap: anywhere;
+}
+.contact-value a:hover { color: var(--accent-dark, #b45309); text-decoration: underline; text-underline-offset: 3px; }
+.contact-value a:focus-visible { outline: 2px solid var(--accent, #f59e0b); outline-offset: 2px; border-radius: 4px; }
+.contact-note { font-size: 12.5px; color: #64748b; }
+
+.contact-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.contact-actions .btn { min-height: 46px; display: inline-flex; align-items: center; gap: 8px; }
+
+.contact-socials {
+  display: flex; gap: 10px; margin-top: 24px; padding-top: 20px;
+  border-top: 1px solid var(--line, #e5e7eb);
+}
+.contact-socials a {
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid #cbd5e1;
+  display: grid; place-items: center; color: #334155; background: #fff; font-size: 18px;
+  text-decoration: none;
+}
+.contact-socials a:hover { border-color: var(--accent, #f59e0b); color: var(--accent-dark, #b45309); }
+.contact-socials a:focus-visible { outline: 2px solid var(--accent, #f59e0b); outline-offset: 2px; }
+
+.contact-map {
+  background: #fff; border: 1px solid var(--line, #e5e7eb); border-radius: 16px;
+  padding: 24px; display: flex; flex-direction: column; min-width: 0;
+}
+.contact-map h2 { font-size: 18px; font-weight: 800; margin: 0 0 14px; }
+.map-responsive {
+  border-radius: 10px; overflow: hidden; border: 1px solid var(--line, #e5e7eb);
+  flex: 1; min-height: 330px;
+}
+/* The map can be reached with the keyboard and operated from inside, so it has to show when it
+   has focus. The ring is drawn on the wrapper rather than the frame: once focus is inside a
+   cross-origin document, the frame's own outline is the browser's. */
+.map-responsive:focus-within { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+.map-responsive iframe { display: block; width: 100%; height: 100%; min-height: 330px; }
+.contact-hours { display: flex; gap: 8px; align-items: center; margin: 14px 0 0; font-size: 14px; color: #475569; }
+.contact-hours i { color: var(--accent-dark, #b45309); }
+
+.contact-notes { margin-top: 22px; font-size: 14px; color: var(--ink-soft, #4b5563); }
+.contact-notes p { margin: 0 0 6px; }
+
+/* Request -------------------------------------------------------------------------------------- */
+.request-container { max-width: 900px; padding: 16px 16px 52px; }
+.request-card {
+  max-width: 780px; border: 1px solid var(--line, #e5e7eb); border-radius: 16px;
+  box-shadow: 0 12px 34px rgba(17, 24, 39, .07);
+}
+.request-card .card-body { padding: 30px; }
+
+.draft-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap; background: #f8fafc; border: 1px solid var(--line, #e5e7eb);
+  border-radius: 10px; padding: 10px 14px; margin-bottom: 18px;
+}
+.draft-row p { margin: 0; font-size: 13px; color: #64748b; max-width: 52ch; }
+.draft-row .btn { white-space: nowrap; }
+
 .request-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding-block: 18px; }
 .request-description { grid-column: 1 / -1; min-width: 0; overflow-wrap: anywhere; }
 .request-description .small { margin-top: 5px; }
 .request-quantity { min-width: 0; }
-.request-quantity .btn { min-width: 40px; min-height: 40px; }
-.request-quantity .form-control { width: 76px; min-height: 40px; }
+.request-quantity .btn { min-width: 44px; min-height: 44px; }
+.request-quantity .form-control { width: 76px; min-height: 44px; }
 .request-remove { justify-self: end; align-self: center; min-height: 40px; }
-@media(max-width: 600px) {
-  .container { padding: 0; }
+
+/* The send action keeps WhatsApp's association but uses a green dark enough for white text at
+   the 4.5:1 the rest of the site holds itself to. */
+.btn-whatsapp-send {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: #0f7a41; border: 1px solid #0f7a41; color: #fff;
+  border-radius: 10px; padding: 12px 20px; font-weight: 700; text-decoration: none;
+}
+.btn-whatsapp-send:hover { background: #0b5c31; border-color: #0b5c31; color: #fff; }
+.btn-whatsapp-send:focus-visible { outline: 2px solid #111827; outline-offset: 2px; }
+.btn-whatsapp-send.disabled, .btn-whatsapp-send[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+
+@media (max-width: 860px) {
+  .contact-layout { grid-template-columns: 1fr; }
+  .contact-head h1 { font-size: 32px; }
+  .contact-map { min-height: 0; }
+}
+@media (max-width: 600px) {
+  .contact-container { padding: 12px 0 40px; }
+  .contact-panel, .contact-map { padding: 20px; border-radius: 14px; }
+  .contact-head { margin-bottom: 24px; }
+  .contact-head h1 { font-size: 28px; }
+  .contact-head .lead { font-size: 16px; }
+  .request-container { padding: 8px 0 40px; }
   .request-card .card-body { padding: 18px; }
   .request-row { gap: 10px; }
 }
-
-@media(max-width:360px) { .request-row { grid-template-columns:1fr; } .request-description { grid-column:1; } .request-remove { grid-column:1; justify-self:start; } }
-
-.draft-controls { margin-bottom: 16px; font-size: 13px; color: #64748b; }
-.draft-controls p { margin-bottom: 6px; }
-
-.request-quantity button,.request-quantity input{min-width:44px;min-height:44px}
+@media (max-width: 360px) {
+  .request-row { grid-template-columns: 1fr; }
+  .request-description { grid-column: 1; }
+  .request-remove { grid-column: 1; justify-self: start; }
+}

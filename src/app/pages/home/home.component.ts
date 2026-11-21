@@ -209,7 +209,7 @@ export class HomeComponent implements OnDestroy {
     if (!priced) {
       return null;
     }
-    const unit = priced.price_unit ? this.translate.instant('ADMIN.UNIT_' + priced.price_unit.toUpperCase()) : this.translate.instant('IMPROVE.UNIT_UNKNOWN');
+    const unit = priced.price_unit ? this.translate.instant('ADMIN.UNIT_' + priced.price_unit.toUpperCase()) : this.translate.instant('PRODUCTS.UNIT_TO_CONFIRM');
     return `${Number(priced.price).toFixed(2)} ${priced.currency || 'EUR'} / ${unit}`;
   }
 

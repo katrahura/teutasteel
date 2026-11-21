@@ -24,6 +24,7 @@
   },
   "ABOUT": {
     "TITLE": "About Us",
+    "LEAD": "Steel supply and fabrication to drawing, for construction, industry and trade.",
     "MISSION_TITLE": "Our Mission",
     "MISSION_CONTENT": "At <strong>TeutaSteel</strong>, our mission is to provide reliable and superior steel solutions tailored to the unique needs of our clients. Whether you’re looking for structural steel, pipes, or custom-made steel components, we deliver products that exceed industry standards and ensure long-lasting performance.",
     "OFFER_TITLE": "What We Offer",
@@ -101,6 +102,9 @@
     "GROUPS_TITLE": "Product Groups",
     "VIEW_PRODUCTS_BUTTON": "View Products",
     "PRODUCTS_TITLE": "Products",
+    "PRICE_ON_REQUEST": "On request",
+    "UNIT_TO_CONFIRM": "to confirm",
+    "BREADCRUMB": "Catalogue path",
     "BACK_TO_GROUPS_BUTTON": "Back to Groups",
     "DIMENSIONS": "Dimensions",
     "CHOOSE_THICKNESS": "Choose the thickness you need.",
@@ -150,7 +154,7 @@
     "FILTERS": "Filters",
     "FILTER_THICKNESS": "Thickness",
     "FILTER_ANY": "All",
-    "FILTER_SIZE_FROM": "Height (mm), from",
+    "FILTER_SIZE_FROM": "Height (mm)",
     "FILTER_SIZE_TO": "to",
     "FILTER_APPLY": "Apply",
     "FILTER_CLEAR": "Clear filters",
@@ -188,7 +192,8 @@
     "VISIT_US": "Visit Us",
     "MAP_TITLE": "Map showing the Teuta Steel location",
     "WHATSAPP": "WhatsApp",
-    "EMAIL_FOR_DRAWINGS": "For drawings and DXF files"
+    "EMAIL_FOR_DRAWINGS": "For drawings and DXF files",
+    "SOCIAL": "Social media"
   },
   "ADMIN": {
     "ADMIN_DASHBOARD": "Admin Dashboard",
@@ -572,7 +577,10 @@
   "LOGIN": {
     "LOGIN": "Login",
     "INVALID": "Invalid username or password.",
-    "SESSION_EXPIRED": "Your session has expired. Please sign in again."
+    "SESSION_EXPIRED": "Your session has expired. Please sign in again.",
+    "STAFF_ONLY": "Staff access",
+    "STAFF_HINT": "Accounts are created by an administrator. There is no open sign-up.",
+    "BACK_HOME": "Back to the home page"
   },
   "MOBILE_MENU": {
     "OPEN": "Open menu",

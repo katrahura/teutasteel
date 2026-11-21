@@ -329,7 +329,16 @@ export class ContactComponent implements OnInit {
       items.forEach((item, index) => {
         const rendered = item.dimensions || item.priceUnit !== undefined ? this.itemDetail(item) : item.detail;
         const detail = rendered ? ` — ${rendered}` : '';
-        lines.push(`${index + 1}. ${item.code}${detail} (${item.quantity} ${this.itemUnit(item)})`);
+        // The unit beside a quantity is the unit the quantity is counted in, which is not the
+        // same question as "what does the price buy". With no recorded unit, say the count and
+        // leave the price basis to the detail: "(1 Price basis to confirm)" told the shop nothing.
+        const quantity = item.priceUnit
+          ? `${item.quantity} ${this.itemUnit(item)}`
+          : `${item.quantity}`;
+        const priceNote = item.unitPrice == null
+          ? ` — ${this.translate.instant('PRODUCTS.PRICE_ON_REQUEST')}`
+          : '';
+        lines.push(`${index + 1}. ${item.code}${detail}${priceNote} (${quantity})`);
         if (item.productUrl) lines.push(item.productUrl);
       });
     }

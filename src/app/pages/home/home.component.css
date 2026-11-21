@@ -138,7 +138,7 @@ section.services-wrap { background: #f5f7f9; border-top: 1px solid var(--line, #
 .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
 .pcard {
   border: 1px solid var(--line, #e5e7eb); border-radius: 10px; overflow: hidden; background: #fff;
-  text-decoration: none; color: inherit; display: flex; flex-direction: column;
+  text-decoration: none; color: inherit; display: flex; flex-direction: column; min-width: 0;
   box-shadow: 0 1px 2px rgba(16, 21, 27, .05), 0 8px 24px rgba(16, 21, 27, .06);
   transition: transform .18s ease, border-color .18s ease;
 }
@@ -146,22 +146,53 @@ section.services-wrap { background: #f5f7f9; border-top: 1px solid var(--line, #
 .pcard-photo { height: 132px; background: #f5f7f9; display: grid; place-items: center; }
 .pcard-photo img { width: 100%; height: 132px; object-fit: cover; }
 .pcard-none { color: #9ca3af; font-size: 26px; }
-.pcard-body { padding: 14px 16px 18px; }
-.pcard-code { display: block; font-weight: 800; font-size: 16px; letter-spacing: -.01em; }
+.pcard-body { padding: 14px 16px 18px; min-width: 0; }
+.pcard-code { display: block; font-weight: 800; font-size: 16px; letter-spacing: -.01em; overflow-wrap: anywhere; }
 .pcard-price { display: block; margin-top: 6px; font-weight: 800; font-size: 19px; }
-.pcard-desc { display: block; margin-top: 6px; font-size: 13.5px; color: var(--ink-soft, #4b5563); }
+.pcard-desc {
+  display: -webkit-box; margin-top: 6px; font-size: 13.5px; color: var(--ink-soft, #4b5563);
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  overflow-wrap: anywhere;
+}
 
 @media (max-width: 980px) {
   .hero .grid, .quote .shell { grid-template-columns: 1fr; }
-  .tiles, .services { grid-template-columns: repeat(2, 1fr); }
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .services { grid-template-columns: repeat(2, 1fr); }
+  .cards { grid-template-columns: repeat(2, 1fr); }
   .trust .shell { grid-template-columns: repeat(2, 1fr); }
   .hero h1 { font-size: 34px; }
   .sec-head { flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 620px) {
-  .tiles, .services { grid-template-columns: 1fr; }
+  .tiles { grid-template-columns: 1fr; }
+  /* Seven service cards stacked made the phone homepage 7,000px long before a visitor reached the
+     products. A horizontal strip keeps every service and its link, and puts the whole offer one
+     swipe away. */
+  .services {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(248px, 78vw);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    padding: 2px 2px 10px;
+    scrollbar-width: thin;
+  }
+  .service { scroll-snap-align: start; }
+  .service-img { height: 130px; }
   section.groups, section.services-wrap { padding: 44px 0; }
   .hero { padding: 44px 0 50px; }
+  .cards { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .pcard-photo, .pcard-photo img { height: 108px; }
+  .pcard-body { padding: 11px 12px 14px; }
+  .pcard-code { font-size: 15px; }
+  .pcard-price { font-size: 16px; margin-top: 4px; }
+  .pcard-desc { display: none; }
+  .featured { padding: 44px 0; }
+}
+@media (max-width: 360px) {
+  .cards { grid-template-columns: 1fr; }
 }
 
 .hero-contact { display:flex; gap:14px; align-items:center; margin-top:18px; font-size:15px; }
@@ -174,7 +205,9 @@ section.services-wrap { background: #f5f7f9; border-top: 1px solid var(--line, #
 .hero-illustration { margin:0 0 20px; }
 .hero-illustration img { display:block; width:100%; height:240px; object-fit:contain; background:#f1f5f9; border-radius:12px; }
 .hero-illustration figcaption { color:#cbd5e1; font-size:12px; margin-top:7px; }
-.hero-card { background:#ffffff08; box-shadow:none; }
+/* Opaque, not a translucent white: a solid panel reads the same over the gradient and gives the
+   text a background the contrast audit can actually measure. */
+.hero-card { background:#1c2733; box-shadow:none; }
 .hero .grid { align-items:center; }
 .catalogue-status { padding-top:32px; padding-bottom:16px; }
 .service h3 a { color:inherit; text-decoration:none; }
@@ -199,6 +232,10 @@ section.services-wrap { background: #f5f7f9; border-top: 1px solid var(--line, #
   .home > .groups { order: 2; padding: 28px 0; }
   .hero-card { order: 3; margin: 0 20px 28px; background: #f1f5f9; color: #111827; }
   .hero-card li { color: #334155; }
+  /* The card turns light on a phone, so its two coloured details have to turn with it. The amber
+     tick measured 2.15:1 and the caption 1.48:1 on #f1f5f9. */
+  .hero-card .tick { color: #b45309; }
+  .hero-illustration figcaption { color: #475569; }
   .hero-illustration img { height: 160px; }
   .groups .sec-head { gap: 12px; }
   .groups .tiles { gap: 10px; }

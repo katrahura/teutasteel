@@ -97,6 +97,7 @@
   },
   "ABOUT": {
     "TITLE": "Rreth Nesh",
+    "LEAD": "Furnizim çeliku dhe përpunim sipas vizatimit, për ndërtim, industri dhe zeje.",
     "MISSION_TITLE": "Misioni Ynë",
     "MISSION_CONTENT": "Në <strong>TeutaSteel</strong>, misioni ynë është të ofrojmë zgjidhje të besueshme dhe superiore çeliku të përshtatura për nevojat unike të klientëve tanë. Nëse jeni duke kërkuar për çelik strukturor, tuba ose komponentë të bërë me porosi, ne ofrojmë produkte që tejkalojnë standardet e industrisë dhe sigurojnë performancë afatgjatë.",
     "OFFER_TITLE": "Çfarë Ofrojmë",
@@ -174,6 +175,9 @@
     "GROUPS_TITLE": "Grupet e Produkteve",
     "VIEW_PRODUCTS_BUTTON": "Shiko Produktet",
     "PRODUCTS_TITLE": "Produkte",
+    "PRICE_ON_REQUEST": "Sipas kërkesës",
+    "UNIT_TO_CONFIRM": "për konfirmim",
+    "BREADCRUMB": "Rruga e kategorive",
     "BACK_TO_GROUPS_BUTTON": "Kthehu te Grupet",
     "DIMENSIONS": "Përmasat",
     "CHOOSE_THICKNESS": "Zgjidhni trashësinë që ju nevojitet.",
@@ -223,7 +227,7 @@
     "FILTERS": "Filtrat",
     "FILTER_THICKNESS": "Trashësia",
     "FILTER_ANY": "Të gjitha",
-    "FILTER_SIZE_FROM": "Lartësia (mm), nga",
+    "FILTER_SIZE_FROM": "Lartësia (mm)",
     "FILTER_SIZE_TO": "deri",
     "FILTER_APPLY": "Filtro",
     "FILTER_CLEAR": "Pastro filtrat",
@@ -261,7 +265,8 @@
     "VISIT_US": "Na Vizitoni",
     "MAP_TITLE": "Harta që tregon vendndodhjen e Teuta Steel",
     "WHATSAPP": "WhatsApp",
-    "EMAIL_FOR_DRAWINGS": "Për vizatime dhe DXF"
+    "EMAIL_FOR_DRAWINGS": "Për vizatime dhe DXF",
+    "SOCIAL": "Rrjetet sociale"
   },
   "ADMIN": {
     "ADMIN_DASHBOARD": "Paneli i Administratorit",
@@ -645,7 +650,10 @@
   "LOGIN": {
     "LOGIN": "Hyrje",
     "INVALID": "Emri i përdoruesit ose fjalëkalimi është i gabuar.",
-    "SESSION_EXPIRED": "Sesioni skadoi. Ju lutemi hyni përsëri."
+    "SESSION_EXPIRED": "Sesioni skadoi. Ju lutemi hyni përsëri.",
+    "STAFF_ONLY": "Qasje për stafin",
+    "STAFF_HINT": "Llogaritë krijohen nga administratori. Nuk ka regjistrim të hapur.",
+    "BACK_HOME": "Kthehu te faqja kryesore"
   },
   "MOBILE_MENU": {
     "OPEN": "Hap menunë",

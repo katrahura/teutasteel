@@ -129,8 +129,9 @@
           {{ 'FOOTER.COPYRIGHT' | translate: { year: year } }}
           <!-- A plain link, not routerLink: /privacy/ is a standalone static page served by the
                web server, and the application has no route for it - a routerLink would match the
-               catch-all and show the 404 page instead. -->
-          · <a id="footer-privacy" href="/privacy/">{{ 'FOOTER.PRIVACY' | translate }}</a>
+               catch-all and show the 404 page instead. The dot and the link are one unit so a narrow
+               line does not end with a floating separator. -->
+          <span class="privacy-line">· <a id="footer-privacy" href="/privacy/">{{ 'FOOTER.PRIVACY' | translate }}</a></span>
         </span>
 
         <!-- Staff access, moved out of the navigation. Accounts are created by an administrator -
@@ -142,7 +143,7 @@
              [attr.aria-label]="'NAVBAR.LOGIN' | translate">
             <i class="bi bi-person-circle" aria-hidden="true"></i> {{ 'NAVBAR.LOGIN' | translate }}
           </a>
-          <a id="nav-admin" [routerLink]="['/admin-dashboard']" [hidden]="!isLoggedIn"
+          <a id="nav-admin" [routerLink]="['/admin/overview']" [hidden]="!isLoggedIn"
              [attr.aria-label]="'ADMIN.PANEL_TITLE' | translate">
             <i class="bi bi-speedometer2" aria-hidden="true"></i> {{ 'ADMIN.PANEL_TITLE' | translate }}
           </a>

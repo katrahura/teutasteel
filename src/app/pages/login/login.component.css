@@ -1,76 +1,74 @@
-.login-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 30px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: linear-gradient(to bottom, #ffffff, #f3f4f6);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+:host { display: block; }
+
+.login-page { background: #f5f7f9; padding: 56px 20px 72px; }
+.login-shell { width: 100%; max-width: 920px; margin: 0 auto; }
+
+.login-card {
+  display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  background: #fff; border: 1px solid var(--line, #e5e7eb); border-radius: 20px;
+  overflow: hidden; box-shadow: 0 24px 60px rgba(17, 24, 39, .12);
 }
 
-h2 {
-  text-align: center;
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-  font-family: 'Arial', sans-serif;
+.login-brand {
+  position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 26px;
+  padding: 38px; color: #fff;
+  background: linear-gradient(160deg, #111827 0%, #1b2733 58%, #243447 100%);
+}
+.login-brand::after {
+  content: ""; position: absolute; right: -90px; bottom: -120px;
+  width: 320px; height: 320px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 158, 11, .24), transparent 64%);
+  pointer-events: none;
+}
+.login-logo {
+  position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 10px;
+  color: #fff; font-weight: 900; font-size: 20px; letter-spacing: -.03em; text-decoration: none;
+}
+.login-logo img { border-radius: 8px; }
+.login-brand-copy { position: relative; z-index: 1; margin-top: auto; }
+.login-kicker {
+  display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--accent, #f59e0b);
+}
+.login-brand-copy p { color: #cbd5e1; font-size: 15.5px; line-height: 1.6; margin: 10px 0 0; }
+.login-back {
+  position: relative; z-index: 1; color: #fbbf24; font-size: 14px; font-weight: 700;
+  text-decoration: none;
+}
+.login-back:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.login-back:focus-visible { outline: 2px solid var(--accent, #f59e0b); outline-offset: 3px; border-radius: 4px; }
+
+.login-form-panel { padding: 44px 40px; display: flex; flex-direction: column; justify-content: center; }
+.login-form-panel h1 { font-size: 30px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 24px; }
+
+.form-group { margin-bottom: 18px; }
+.form-group label {
+  display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;
+}
+.form-group input {
+  width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px;
+  font-size: 16px; color: #111827; background: #fff;
+}
+.form-group input:focus {
+  border-color: var(--accent, #f59e0b);
+  outline: 2px solid var(--accent, #f59e0b); outline-offset: 1px;
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  font-size: 14px;
-  font-weight: bold;
-  color: #555;
-  margin-bottom: 5px;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
-}
-
-input:focus {
-  border-color: var(--brand-primary);
-  /* the outline used to be removed here, leaving keyboard users only a 1px border
-     colour change to tell them which field they were in */
-  outline: 2px solid var(--brand-primary);
-  outline-offset: 1px;
-}
-
-/* the same for the submit button: as a bare .btn it gets no ring from Bootstrap */
-button.btn:focus-visible {
-  outline: 2px solid var(--brand-primary-dark);
-  outline-offset: 2px;
-}
-
-button.btn {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  color: #fff;
-  background-color: var(--brand-primary);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button.btn:hover {
-  background-color: var(--brand-primary-dark);
-}
+.login-submit { width: 100%; min-height: 48px; font-size: 16px; }
 
 .error-message {
-  color: #d9534f;
-  font-size: 14px;
-  margin-top: 10px;
-  text-align: center;
+  color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+  font-size: 14px; padding: 9px 12px; margin: 0 0 16px;
+}
+
+.login-signed-in { display: grid; gap: 10px; }
+.login-signed-in .btn { min-height: 46px; }
+
+@media (max-width: 760px) {
+  .login-page { padding: 28px 16px 44px; }
+  .login-card { grid-template-columns: 1fr; }
+  .login-brand { padding: 24px; gap: 16px; }
+  .login-brand-copy { margin-top: 0; }
+  .login-form-panel { padding: 28px 22px; }
+  .login-form-panel h1 { font-size: 26px; }
 }

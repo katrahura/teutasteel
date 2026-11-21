@@ -102,6 +102,8 @@ toggleParent(parentId: number) {
   private scrollToGroupId: number | null = null;
   products: Product[] = [];
   selectedProduct: any = null;
+  /** The card control that opened the detail dialog, focused again when it closes. */
+  private lastDialogTrigger: HTMLElement | null = null;
   currentPage = 1;
   totalPages = 1;
 
@@ -429,8 +431,11 @@ toggleParent(parentId: number) {
   knownMillimetres(): boolean { return true; }
   dimensionStep(d: ProductDimension): number { return ['metre','kilogram'].includes(d.price_unit || '') ? 0.1 : 1; }
   quantityUnit(product: Product): string {
+    // The unit a quantity is counted in. When no selling unit is recorded, the card says nothing
+    // rather than "price unit to be confirmed": that sentence describes the price basis, and put
+    // beside "Quantity" it read as if the customer were choosing a unit they could not see.
     const unit = product.dimensions?.[0]?.price_unit;
-    return unit ? this.priceUnitLabel(unit) : this.translate.instant('IMPROVE.UNIT_UNKNOWN');
+    return unit ? this.priceUnitLabel(unit) : '';
   }
   quantityStep(product: Product): number { return ['metre','kilogram'].includes(product.dimensions?.[0]?.price_unit || '') ? 0.1 : 1; }
 
@@ -692,6 +697,12 @@ toggleParent(parentId: number) {
     this.selectedProduct = product;
     this.clearChoices();
 
+    // Remember where the dialog was opened from, so closing it can put the keyboard back there
+    // instead of dropping focus onto the document body.
+    const target = event.target as HTMLElement | null;
+    const card = target?.closest?.('.product-card') as HTMLElement | null;
+    this.lastDialogTrigger = (card?.querySelector('.image-container') as HTMLElement | null) || null;
+
     // Only in a browser. This was reachable by clicking a card, so `document` and Bootstrap were
     // always there; opening a product from a shared link made it reachable from the category's
     // response as well, and that also arrives while the page is being rendered on the server. There
@@ -711,7 +722,12 @@ toggleParent(parentId: number) {
     const modalElement = document.getElementById('productDetailsModal');
     // Bootstrap closes the dialog on Escape and on the backdrop without telling the component, so
     // the address would go on pointing at a product nobody is looking at.
-    modalElement?.addEventListener('hidden.bs.modal', () => this.rememberProduct(null), { once: true });
+    modalElement?.addEventListener('hidden.bs.modal', () => {
+      this.rememberProduct(null);
+      const trigger = this.lastDialogTrigger;
+      this.lastDialogTrigger = null;
+      if (trigger && document.contains(trigger)) trigger.focus();
+    }, { once: true });
     const modalInstance = new bootstrap.Modal(modalElement as HTMLElement);
     modalInstance.show();
   }

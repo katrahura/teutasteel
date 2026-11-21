@@ -1,35 +1,101 @@
-<section class="py-4 px-3 mb-5">
-  <h1 class="h2 text-center mb-4">{{ (requestPage ? 'QUOTE.TITLE' : 'CONTACT.TITLE') | translate }}</h1>
-  <div class="container text-center">
+<section class="contact-page py-4 px-3 mb-5">
+  <!-- Contact ------------------------------------------------------------------------------- -->
+  <div class="container contact-container" *ngIf="!requestPage">
+    <header class="contact-head">
+      <h1 class="h2">{{ 'CONTACT.TITLE' | translate }}</h1>
+      <p class="lead">{{ 'CONTACT.REACH_US' | translate }}</p>
+    </header>
 
-    <ng-container *ngIf="!requestPage">
-    <p class="lead">{{ 'CONTACT.REACH_US' | translate }}</p>
+    <div class="contact-layout">
+      <section class="contact-panel" [attr.aria-label]="'CONTACT.TITLE' | translate">
+        <ul class="contact-list">
+          <li>
+            <span class="contact-icon" aria-hidden="true"><i class="bi bi-telephone"></i></span>
+            <span class="contact-value">
+              <span class="contact-label">{{ 'CONTACT.PHONE' | translate }}</span>
+              <a [href]="'tel:' + contact.phoneDial()">{{ contact.phoneDisplay() }}</a>
+            </span>
+          </li>
+          <li>
+            <span class="contact-icon" aria-hidden="true"><i class="bi bi-whatsapp"></i></span>
+            <span class="contact-value">
+              <span class="contact-label">{{ 'CONTACT.WHATSAPP' | translate }}</span>
+              <a [href]="contact.whatsappLink()" target="_blank" rel="noopener noreferrer">{{ contact.whatsappDisplay() }}</a>
+            </span>
+          </li>
+          <li>
+            <span class="contact-icon" aria-hidden="true"><i class="bi bi-envelope"></i></span>
+            <span class="contact-value">
+              <span class="contact-label">{{ 'CONTACT.EMAIL' | translate }}</span>
+              <a [href]="'mailto:' + contact.email()">{{ contact.email() }}</a>
+              <span class="contact-note">{{ 'CONTACT.EMAIL_FOR_DRAWINGS' | translate }}</span>
+            </span>
+          </li>
+          <li>
+            <span class="contact-icon" aria-hidden="true"><i class="bi bi-geo-alt"></i></span>
+            <span class="contact-value">
+              <span class="contact-label">{{ 'CONTACT.ADDRESS' | translate }}</span>
+              <span class="contact-address">{{ contact.address() }}</span>
+            </span>
+          </li>
+        </ul>
 
-    <div class="mb-4">
-      <!-- The space after each colon is written as &nbsp; inside the label, not left as whitespace in
-           the template. Angular drops whitespace-only text nodes between two elements, so
-           "Telefoni: <a>" was rendering as "Telefoni:+383 44 133 208" - and the address below, whose
-           value is text rather than an element, was the only line that looked right, which is what
-           gave the cause away. The note about drawings is on its own line for the same reason: it was
-           running into the email address, "info@teutasteel.comPër vizatime dhe DXF". -->
-      <p><strong>{{ 'CONTACT.PHONE' | translate }}:&nbsp;</strong><a [href]="'tel:' + contact.phoneDial()">{{ contact.phoneDisplay() }}</a></p>
-      <!-- Both of these were labelled "Telefoni", and this one's link was built from the
-           digits-only WhatsApp value, so it had no + and would not dial internationally. -->
-      <p><strong>{{ 'CONTACT.WHATSAPP' | translate }}:&nbsp;</strong><a [href]="contact.whatsappLink()" target="_blank" rel="noopener noreferrer">{{ contact.whatsappDisplay() }}</a></p>
-      <p><strong>{{ 'CONTACT.EMAIL' | translate }}:&nbsp;</strong><a [href]="'mailto:' + contact.email()">{{ contact.email() }}</a>
-        <span class="text-muted small d-block">{{ 'CONTACT.EMAIL_FOR_DRAWINGS' | translate }}</span></p>
-      <p>
-        <strong>{{ 'CONTACT.ADDRESS' | translate }}:&nbsp;</strong>{{ contact.address() }}
-      </p>
+        <div class="contact-actions">
+          <a class="btn btn-accent" routerLink="/request"
+             [queryParams]="selectedService ? { service: selectedService.id } : null">{{ 'QUOTE.TITLE' | translate }}</a>
+          <a class="btn btn-outline-dark" [href]="contact.whatsappLink()" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-whatsapp" aria-hidden="true"></i> WhatsApp
+          </a>
+        </div>
+
+        <div class="contact-socials" [attr.aria-label]="'CONTACT.SOCIAL' | translate">
+          <!-- These pointed at the profile pages, which is a dead end: a visitor lands on the page and
+               has to find the message button themselves. m.me and ig.me open a conversation. -->
+          <a href="https://m.me/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Messenger"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+          <a href="https://ig.me/m/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+          <a [href]="contact.whatsappLink()" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>
+          <a href="https://www.tiktok.com/@teutasteel" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="bi bi-tiktok" aria-hidden="true"></i></a>
+        </div>
+      </section>
+
+      <section class="contact-map" [attr.aria-label]="'CONTACT.VISIT_US' | translate">
+        <h2 class="h5">{{ 'CONTACT.VISIT_US' | translate }}</h2>
+        <!-- The pin is the pair the old site used and the place OpenStreetMap knows as
+             "Teuta Steel"; this embed used to point 221 m away, at a different street.
+             The same coordinates are in index.html's structured data. -->
+        <div class="map-responsive">
+          <iframe
+            src="https://www.google.com/maps?q=42.454842,21.463374&z=17&hl=sq&output=embed"
+            width="100%"
+            height="330"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            [title]="'CONTACT.MAP_TITLE' | translate"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        <p class="contact-hours">
+          <i class="bi bi-clock" aria-hidden="true"></i>
+          {{ 'CONTACT.AVAILABILITY' | translate }}
+        </p>
+      </section>
     </div>
 
-    <a class="btn btn-primary mb-4" routerLink="/request" [queryParams]="selectedService ? { service: selectedService.id } : null">{{ 'QUOTE.TITLE' | translate }}</a>
-    </ng-container>
+    <div class="contact-notes">
+      <p *ngIf="contact.deliveryText()">{{ contact.deliveryText() }}</p>
+      <p *ngIf="contact.vatText()">{{ contact.vatText() }}</p>
+    </div>
+  </div>
+
+  <!-- Request a quote ------------------------------------------------------------------------ -->
+  <div class="container request-container" *ngIf="requestPage">
+    <h1 class="h2 text-center mb-4">{{ 'QUOTE.TITLE' | translate }}</h1>
 
     <!-- The quote form. The site had no way to ask for anything: no cart, no quote, and this
          page had no inputs at all. It hands the enquiry to WhatsApp the way the product cards
          do, so nothing has to be checked anywhere else. -->
-    <div *ngIf="requestPage" class="card request-card mx-auto my-4 text-start">
+    <div class="card request-card mx-auto my-4 text-start">
       <div class="card-body">
         <p class="text-muted small">{{ 'QUOTE.INTRO' | translate }}</p>
 
@@ -145,11 +211,19 @@
         <p *ngIf="!requested.length && !selectedService" class="alert alert-light border">
           {{ 'PRODUCTS.REQUEST_EMPTY' | translate }} <a routerLink="/products">{{ 'MISC.VIEW_PRODUCTS' | translate }}</a>
         </p>
+
         <h2 class="h5 mt-3">{{ 'QUOTE.CONTACT_DETAILS' | translate }}</h2>
+
+        <!-- The draft notice used to sit in the first column of the name/phone row, which pushed
+             the phone field onto the same line as a heading and left the two fields out of line.
+             It is a full-width row of its own now. -->
+        <div class="draft-row">
+          <p>{{ 'MOBILE_UI.DRAFT_NOTICE' | translate }}</p>
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="clearDraft()">{{ 'MOBILE_UI.CLEAR_DRAFT' | translate }}</button>
+        </div>
+
         <div class="row g-2">
           <div class="col-md-6">
-            <div class="draft-controls"><p>{{ 'MOBILE_UI.DRAFT_NOTICE' | translate }}</p>
-              <button type="button" class="btn btn-outline-secondary" (click)="clearDraft()">{{ 'MOBILE_UI.CLEAR_DRAFT' | translate }}</button></div>
             <label class="form-label" for="quoteName">{{ 'QUOTE.NAME' | translate }} *</label>
             <input id="quoteName" class="form-control" type="text"
                    [(ngModel)]="quote.name" (ngModelChange)="saveDraft()" name="quoteName" autocomplete="name" />
@@ -221,52 +295,18 @@
           {{ 'QUOTE.REQUIRED' | translate }}
         </p>
         <a
-          class="btn btn-success"
+          class="btn btn-whatsapp-send"
           [href]="getQuoteLink()"
           target="_blank"
           rel="noopener noreferrer"
           [class.disabled]="!isQuoteValid()"
           [attr.aria-disabled]="!isQuoteValid()"
           (click)="prepareSend($event)"
-        >{{ 'QUOTE.SEND' | translate }}</a>
+        ><i class="bi bi-whatsapp" aria-hidden="true"></i> {{ 'QUOTE.SEND' | translate }}</a>
         <!-- What happens next. Without it, sending the enquiry into WhatsApp is a blank: the visitor
              has no idea whether anyone is there. -->
         <p class="text-muted small mt-2 mb-0">{{ 'QUOTE.REPLY_EXPECTATION' | translate }}</p>
       </div>
     </div>
-
-    <ng-container *ngIf="!requestPage">
-    <div class="d-flex justify-content-center gap-4 mb-5">
-      <!-- These pointed at the profile pages, which is a dead end: a visitor lands on the page and
-           has to find the message button themselves. m.me and ig.me open a conversation. -->
-      <a href="https://m.me/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Messenger"><i class="bi bi-facebook fs-2" aria-hidden="true"></i></a>
-      <a href="https://ig.me/m/teutasteel" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram fs-2" aria-hidden="true"></i></a>
-      <a [href]="contact.whatsappLink()" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp fs-2" aria-hidden="true"></i></a>
-      <a href="https://www.tiktok.com/@teutasteel" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="bi bi-tiktok fs-2" aria-hidden="true"></i></a>
-    </div>
-    <div class="map-responsive mt-4">
-      <h5 class="mt-5">{{ 'CONTACT.VISIT_US' | translate }}</h5>
-
-  <!-- The pin is the pair the old site used and the place OpenStreetMap knows as
-       "Teuta Steel"; this embed used to point 221 m away, at a different street.
-       The same coordinates are in index.html's structured data. -->
-  <iframe 
-    src="https://www.google.com/maps?q=42.454842,21.463374&z=17&hl=sq&output=embed"
-    width="100%" 
-    height="350" 
-    style="border:0;" 
-    allowfullscreen="" 
-    loading="lazy" 
-    [title]="'CONTACT.MAP_TITLE' | translate"
-    referrerpolicy="no-referrer-when-downgrade">
-  </iframe>
-</div>
-
-    <hr class="my-4">
-    <p class="mb-2" *ngIf="contact.deliveryText()">{{ contact.deliveryText() }}</p>
-    <p class="mb-2" *ngIf="contact.vatText()">{{ contact.vatText() }}</p>
-    <small>{{ 'CONTACT.AVAILABILITY' | translate }}</small>
-
-    </ng-container>
   </div>
 </section>

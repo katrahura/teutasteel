@@ -1,40 +1,93 @@
-.about-us h2 {
-  color: #333;
+:host { display: block; }
+
+.about-page { background: #fff; }
+.about-shell { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+/* The page had no opening of its own: a centred heading, then four columns of body text on a
+   white field. The slate band gives it the same starting point as the home and service pages, and
+   the mission - the part a first-time visitor actually reads - moves into it. */
+.about-hero {
+  position: relative; overflow: hidden; color: #fff;
+  background: linear-gradient(135deg, #111827 0%, #1b2733 58%, #243447 100%);
+  padding: 58px 0 62px;
+}
+.about-hero::after {
+  content: ""; position: absolute; right: -110px; top: -140px;
+  width: 440px; height: 440px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 158, 11, .22), transparent 63%);
+  pointer-events: none;
+}
+.about-kicker {
+  display: inline-block; font-size: 12.5px; font-weight: 700; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--accent, #f59e0b); margin-bottom: 10px;
+}
+.about-hero h1 {
+  font-size: 46px; line-height: 1.08; letter-spacing: -.025em; font-weight: 800;
+  margin: 0 0 14px; color: #fff;
+}
+.about-lead { color: #cbd5e1; font-size: 18px; line-height: 1.6; max-width: 60ch; margin: 0; }
+.about-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.about-hero-actions .btn { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; }
+.btn-hero-outline {
+  background: transparent; border: 1px solid rgba(255, 255, 255, .45); color: #fff; font-weight: 700;
+}
+.btn-hero-outline:hover { background: rgba(255, 255, 255, .1); border-color: #fff; color: #fff; }
+
+.about-body {
+  display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: 28px; align-items: start; padding-top: 48px; padding-bottom: 68px;
+}
+.about-main { display: grid; gap: 22px; min-width: 0; }
+
+.about-block {
+  background: #fff; border: 1px solid var(--line, #e5e7eb); border-radius: 16px; padding: 28px;
+}
+.about-block h2 {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 22px; font-weight: 800; letter-spacing: -.01em; margin: 0 0 16px;
+}
+.about-block h2 i { color: var(--accent-dark, #b45309); font-size: 20px; }
+.about-prose { margin: 0; color: #374151; font-size: 16px; line-height: 1.68; }
+
+.about-offer, .about-values { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.about-offer li, .about-values li {
+  display: flex; align-items: flex-start; gap: 12px;
+  color: #374151; font-size: 15.5px; line-height: 1.6;
+}
+.about-offer li + li, .about-values li + li {
+  border-top: 1px solid #f1f5f9; padding-top: 16px;
+}
+.about-item-icon {
+  width: 34px; height: 34px; flex: none; border-radius: 9px;
+  background: #fffbeb; color: var(--accent-dark, #b45309);
+  border: 1px solid #fde68a; display: grid; place-items: center; font-size: 15px;
 }
 
-.about-us ul {
-  list-style-type: disc;
-  padding-left: 20px;
-}
+.about-side { position: sticky; top: 96px; display: grid; gap: 22px; min-width: 0; }
+.about-why { background: var(--ink, #111827); color: #fff; border-radius: 16px; padding: 28px; }
+.about-why h2 { font-size: 20px; font-weight: 800; margin: 0 0 18px; color: #fff; }
+.about-why ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+.about-why li { display: flex; gap: 12px; color: #d1d5db; font-size: 14.5px; line-height: 1.55; }
+.about-why i { color: var(--accent, #f59e0b); font-size: 18px; flex: none; margin-top: 1px; }
 
-.about-us .btn {
-  background-color: var(--brand-primary);
-  color: #fff;
+.about-cta {
+  background: #fffbeb; border: 1px solid #fcd34d; border-radius: 16px; padding: 26px;
 }
+.about-cta h2 { font-size: 20px; font-weight: 800; margin: 0 0 8px; }
+.about-cta p { margin: 0 0 16px; color: var(--ink-soft, #4b5563); font-size: 14.5px; line-height: 1.55; }
+.about-cta .btn { width: 100%; min-height: 46px; display: inline-flex; align-items: center; justify-content: center; }
+.about-cta .about-cta-note { margin: 14px 0 0; font-size: 12.5px; color: #6b7280; }
 
-/* #555 measured 2.8:1 against the darker end of .about-gradient, below the 4.5:1
-   WCAG AA asks for: the page's gradient darkens towards the bottom right, and the
-   body text sits over it. The standard body colour measures about 6:1 there. */
-.about-us p, .about-us li {
-  color: #212529;
+@media (max-width: 980px) {
+  .about-body { grid-template-columns: 1fr; }
+  .about-side { position: static; }
 }
-h1, p {
-  font-family: 'Montserrat', sans-serif;
+@media (max-width: 620px) {
+  .about-hero { padding: 38px 0 42px; }
+  .about-hero h1 { font-size: 32px; }
+  .about-lead { font-size: 16px; }
+  .about-hero-actions .btn { flex: 1 1 150px; }
+  .about-body { padding: 28px 0 42px; gap: 18px; }
+  .about-block, .about-why, .about-cta { padding: 20px; border-radius: 14px; }
+  .about-block h2 { font-size: 20px; }
 }
-h1, p {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 1s ease-in-out forwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-

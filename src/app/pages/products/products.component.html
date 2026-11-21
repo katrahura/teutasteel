@@ -1,17 +1,17 @@
-<app-catalogue-shortcuts></app-catalogue-shortcuts>
+<app-catalogue-shortcuts *ngIf="showingGroups"></app-catalogue-shortcuts>
 <!-- Search. Outside both views on purpose: it has to be there whether the visitor is looking at
      the groups or at a set of results, which is exactly what it was not when it lived inside
      *ngIf="showingGroups" - it disappeared the moment the search hid the groups. -->
-<!-- 90px, not mt-5's 48: the navigation bar is 62px tall and overlays the page, so 48 put the box
-     14px underneath it. -->
-<div class="container" style="margin-top: 90px">
+<!-- The header is sticky and part of the flow, so the search sits a normal gap below it rather than
+     under a 90px allowance for an overlay that no longer exists. -->
+<div class="container" style="margin-top: 24px">
   <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8">
       <label class="form-label visually-hidden" for="catalogueSearch">
         {{ "PRODUCTS.SEARCH" | translate }}
       </label>
       <div class="input-group">
-        <span class="input-group-text" aria-hidden="true">🔍</span>
+        <span class="input-group-text" aria-hidden="true"><i class="bi bi-search"></i></span>
         <input
           id="catalogueSearch"
           type="search"
@@ -196,7 +196,19 @@
                         loading="lazy"
                       />
                     </div>
-                    <div class="text-center mt-3">
+                    <!-- The name comes before the button. It used to be the other way round, so
+                         every card in the grid read "View Products" first and only then said what
+                         the products were - a grid of buttons with the labels underneath. -->
+                    <div class="card-body py-2">
+                      <h5 class="card-title">
+                        {{ getTranslatedCategoryTitle(child) }}
+                        <span
+                          *ngIf="child.is_active === false"
+                          class="badge bg-secondary ms-2"
+                        >{{ "MISC.INACTIVE" | translate }}</span>
+                      </h5>
+                    </div>
+                    <div class="child-actions text-center">
                       <button
                         *ngIf="isLoggedIn"
                         class="btn btn-primary edit-btn"
@@ -210,15 +222,6 @@
                       >
                         {{ "PRODUCTS.VIEW_PRODUCTS_BUTTON" | translate }}
                       </button>
-                    </div>
-                    <div class="card-body py-2">
-                      <h5 class="card-title">
-                        {{ getTranslatedCategoryTitle(child) }}
-                        <span
-                          *ngIf="child.is_active === false"
-                          class="badge bg-secondary ms-2"
-                        >{{ "MISC.INACTIVE" | translate }}</span>
-                      </h5>
                     </div>
                   </div>
                 </div>
@@ -826,11 +829,23 @@
     <h1 class="h2 text-center mb-5 mt-5" *ngIf="searchTerm">
       {{ "PRODUCTS.SEARCH_RESULTS_FOR" | translate }} &ldquo;{{ searchTerm }}&rdquo;
     </h1>
-    <h1 class="h2 text-center mb-5 mt-5" *ngIf="!searchTerm">
-      {{ getTranslatedCategoryTitle(selectedCategory) }} {{ "PRODUCTS.PRODUCTS_TITLE" | translate }}
-    </h1>
+    <!-- The category name and the word "Products" used to sit in one heading, unseparated, so it
+         read "Laser cut sheets Products". The group is a path, not part of the name: it is the way
+         back, and it is the first thing in the readable order for a screen reader. -->
+    <ng-container *ngIf="!searchTerm">
+      <nav class="catalogue-crumbs" [attr.aria-label]="'PRODUCTS.BREADCRUMB' | translate">
+        <button type="button" class="crumb-link" (click)="clearSearch()">
+          {{ "PRODUCTS.GROUPS_TITLE" | translate }}
+        </button>
+        <span class="crumb-sep" aria-hidden="true">/</span>
+        <span class="crumb-current" aria-current="page">{{ getTranslatedCategoryTitle(selectedCategory) }}</span>
+      </nav>
+      <h1 class="h2 mt-2 mb-3">
+        {{ getTranslatedCategoryTitle(selectedCategory) }}
+      </h1>
+    </ng-container>
     <div *ngIf="statusMessage" class="alert alert-success" role="status">{{ statusMessage | translate }}</div>
-    <button class="btn btn-secondary mb-1" (click)="clearSearch()">
+    <button class="btn btn-secondary mb-1" *ngIf="searchTerm" (click)="clearSearch()">
       {{ "PRODUCTS.BACK_TO_GROUPS_BUTTON" | translate }}
     </button>
     <div class="text-center text-muted my-5" *ngIf="searchTerm && !searching && !searchError && products.length === 0">
@@ -892,13 +907,11 @@
                  The two boxes are a pair now, narrow enough to sit together, and the catalogue's
                  range is said once, in the label. -->
             <div class="size-filter d-flex flex-wrap align-items-center gap-2">
-              <span class="small text-muted">
-                {{ "PRODUCTS.FILTER_SIZE_FROM" | translate }} ({{ "PRODUCTS.FILTER_SIZE_TO" | translate }} {{ facets.height_max }} mm)
+              <span class="small text-muted filter-label">
+                {{ "PRODUCTS.FILTER_SIZE_FROM" | translate }}
               </span>
-              <!-- The two boxes and the word between them are one unit, so they wrap together. Left to
-                   wrap on their own, the label, the first box and "deri" took the first line and the
-                   second box sat alone on the next. -->
-              <span class="d-flex align-items-center gap-2">
+              <!-- The two boxes and the word between them are one unit, so they wrap together. -->
+              <span class="d-flex align-items-center gap-2 size-pair">
                 <label class="form-label visually-hidden" for="filterMinHeight">
                   {{ "PRODUCTS.FILTER_SIZE_FROM" | translate }}
                 </label>
@@ -911,8 +924,10 @@
                   {{ "PRODUCTS.FILTER_SIZE_TO" | translate }}
                 </label>
                 <input id="filterMaxHeight" class="form-control form-control-sm size-input" type="number"
+                       [placeholder]="facets.height_max"
                        [(ngModel)]="filterMaxHeight" [ngModelOptions]="{ standalone: true }"
                        (change)="applyFilters()" />
+                <span class="small text-muted">mm</span>
               </span>
             </div>
           </ng-container>
@@ -1011,7 +1026,13 @@
                 <strong>{{ "MISC.PRICE" | translate }}:</strong>
                 <span *ngIf="(product.dimensions || []).length > 1">{{ 'PRODUCTS.PRICE_FROM' | translate }} </span>{{ lowestPrice(product) | number:'1.2-2' }}
                 {{ getProductDimension(product, "currency") }}
-                <span class="price-unit" *ngIf="priceUnit(product)">/ {{ priceUnit(product) }}</span><span class="text-muted small" *ngIf="!priceUnit(product)"> · {{ "IMPROVE.UNIT_UNKNOWN" | translate }}</span>
+                <span class="price-unit" *ngIf="priceUnit(product)">/ {{ priceUnit(product) }}</span><span class="text-muted small" *ngIf="!priceUnit(product)" [title]="'IMPROVE.UNIT_UNKNOWN' | translate"> · {{ "PRODUCTS.UNIT_TO_CONFIRM" | translate }}</span>
+              </p>
+              <!-- No stored price is a fact worth saying. The card used to leave the line out
+                   altogether, which looks the same as a page that failed to load one. -->
+              <p class="card-text text-muted" *ngIf="lowestPrice(product) <= 0">
+                <strong>{{ "MISC.PRICE" | translate }}:</strong>
+                {{ "PRODUCTS.PRICE_ON_REQUEST" | translate }}
               </p>
               <!-- One dimension: nothing to choose, so the quantity sits on the card itself. Several:
                    the button opens the dialog instead, where a thickness and its quantity live. -->
@@ -1033,7 +1054,7 @@
                   (ngModelChange)="setCardQuantity(product, $event)"
                   [name]="'card-qty-' + product.id"
                 />
-                <span class="small text-muted">{{ quantityUnit(product) }}</span>
+                <span class="small text-muted" *ngIf="quantityUnit(product)">{{ quantityUnit(product) }}</span>
                 <!-- The same information the dialog gives for a product with several thicknesses:
                      what is already on the request list, and how much of it. -->
                 <span
@@ -1083,7 +1104,7 @@
         *ngIf="totalPages > 1"
       >
         <button
-          class="btn btn-outline-primary me-2"
+          class="btn btn-outline-secondary me-2"
           (click)="loadPreviousPage()"
           [disabled]="currentPage === 1"
         >
@@ -1094,7 +1115,7 @@
           {{ "MISC.OF" | translate }} {{ totalPages }}
         </span>
         <button
-          class="btn btn-outline-primary ms-2"
+          class="btn btn-outline-secondary ms-2"
           (click)="loadNextPage()"
           [disabled]="currentPage === totalPages"
         >
@@ -1124,13 +1145,20 @@
   aria-labelledby="productDetailsModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
-      <!-- This dialog had no close button at all: it could be left only with Escape or by clicking
-           the backdrop, and a telephone has no Escape key. Floated rather than given a header,
-           because the two-column layout starts at the top of the dialog on purpose. -->
-      <button type="button" class="btn-close modal-close" data-bs-dismiss="modal"
-              [attr.aria-label]="'MODAL.CLOSE' | translate"></button>
+      <!-- A real header: what this is, and a close control in the place people look for it. The
+           code used to sit inside the details column and the close button floated over the picture. -->
+      <header class="product-modal-header">
+        <div class="product-modal-heading">
+          <span class="product-modal-kicker" *ngIf="selectedCategory">
+            {{ getTranslatedCategoryTitle(selectedCategory) }}
+          </span>
+          <h2 id="productDetailsModalLabel" class="product-modal-code">{{ selectedProduct?.code }}</h2>
+        </div>
+        <button type="button" class="btn-close modal-close" data-bs-dismiss="modal"
+                [attr.aria-label]="'MODAL.CLOSE' | translate"></button>
+      </header>
       <div class="modal-body d-flex">
         <!-- Left Section -->
         <div class="image-container">
@@ -1171,7 +1199,23 @@
 
         <!-- Right Section -->
         <div class="info-container">
-          <h5 id="productDetailsModalLabel">{{ selectedProduct?.code }}</h5>
+          <!-- The one number somebody opens this dialog to see, before the size table. -->
+          <div class="product-price-summary" *ngIf="selectedProduct">
+            <ng-container *ngIf="lowestPrice(selectedProduct) > 0; else priceOnRequest">
+              <span class="product-price-label">{{ "MISC.PRICE" | translate }}</span>
+              <span class="product-price-value">
+                <span class="product-price-from" *ngIf="(selectedProduct.dimensions || []).length > 1">{{ "PRODUCTS.PRICE_FROM" | translate }}</span>
+                {{ lowestPrice(selectedProduct) | number:'1.2-2' }} {{ lowestPriceCurrency(selectedProduct) }}
+              </span>
+              <span class="product-price-unit" *ngIf="priceUnit(selectedProduct)">/ {{ priceUnit(selectedProduct) }}</span>
+              <span class="product-price-unit" *ngIf="!priceUnit(selectedProduct)">· {{ "PRODUCTS.UNIT_TO_CONFIRM" | translate }}</span>
+            </ng-container>
+            <ng-template #priceOnRequest>
+              <span class="product-price-label">{{ "MISC.PRICE" | translate }}</span>
+              <span class="product-price-value">{{ "PRODUCTS.PRICE_ON_REQUEST" | translate }}</span>
+            </ng-template>
+          </div>
+
           <h6 *ngIf="hasAnythingToShow()">
             {{ "PRODUCTS.DIMENSIONS" | translate }}:
           </h6>
@@ -1313,7 +1357,7 @@
                   (ngModelChange)="setQuantity(i, $event)"
                   [name]="'quantity-' + i"
                 />
-                <span class="small text-muted">{{ dimension.price_unit ? priceUnitLabel(dimension.price_unit) : ('IMPROVE.UNIT_UNKNOWN' | translate) }}</span>
+                <span class="small text-muted" *ngIf="dimension.price_unit">{{ priceUnitLabel(dimension.price_unit) }}</span>
               </div>
             </li>
           </ul>
@@ -1368,7 +1412,7 @@
             <span>{{ 'PRODUCTS.QUANTITY' | translate }}</span>
             <input type="number" [min]="dimensionStep(dimension)" [step]="dimensionStep(dimension)" class="form-control" [ngModel]="selectedQuantity(dimension)"
               (ngModelChange)="setSelectedQuantity(dimension, $event)" [attr.aria-label]="('PRODUCTS.QUANTITY' | translate) + ' ' + (dimension.thickness || '')">
-            <span>{{ dimension.price_unit ? priceUnitLabel(dimension.price_unit) : ('IMPROVE.UNIT_UNKNOWN' | translate) }}</span>
+            <span *ngIf="dimension.price_unit">{{ priceUnitLabel(dimension.price_unit) }}</span>
           </label>
         </div>
           <button
