@@ -1,8 +1,10 @@
 # Production release plan — Teuta Steel
 
-Status: **preparation**, 19 November 2026.
-Current frontend: `9680c07` plus the release-preparation work described in Phase 3/4. Current backend: `77870cf` (live).
+Status: **preparation**, 19 November 2026 (review release candidate added 21 November 2026).
+Current frontend: `074504c` (the 21 November visual/functional review), tagged `release-20261121`. Current backend: `77870cf` (live).
 Production frontend: still the old static site. Test site: new Angular build, deliberately `noindex`.
+
+Release candidate 21 November 2026: `npm run build:seo` produced 27 prerendered routes and a 1,403-URL sitemap; 275/275 frontend tests and 877 translation keys pass; keyboard audit 0 problems and contrast audit 0 failures. The archive is `dist/release/teutasteel-frontend-20261121-1112.zip` (5,657 kB, sha256 `2b7dd4684abcbf9db38d6359c07185c639610c7a57eeeffd810829f4e4806d41`), and `tools/verify_release.py` passed with 126 entries. It is built and verified but **not deployed**; Phases 5–7 still require the owner gates, a backup and host access.
 
 This plan is ordered. Do not skip a gate; a later phase assumes the earlier one is signed off.
 
